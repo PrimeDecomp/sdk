@@ -2,6 +2,15 @@
 
 char* __THPVersion = "<< Dolphin SDK - THP\trelease build: Aug 27 2002 20:42:01 >>";
 
+#ifdef PRIME1
+ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Ydchuff);
+ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Udchuff);
+ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Vdchuff);
+ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Yachuff);
+ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Uachuff);
+ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Vachuff);
+ATTRIBUTE_ALIGN_DECL(32, static f32 __THPIDCTWorkspace[64]);
+#else
 static THPHuffmanTab* Ydchuff ATTRIBUTE_ALIGN(32);
 static THPHuffmanTab* Udchuff ATTRIBUTE_ALIGN(32);
 static THPHuffmanTab* Vdchuff ATTRIBUTE_ALIGN(32);
@@ -9,12 +18,19 @@ static THPHuffmanTab* Yachuff ATTRIBUTE_ALIGN(32);
 static THPHuffmanTab* Uachuff ATTRIBUTE_ALIGN(32);
 static THPHuffmanTab* Vachuff ATTRIBUTE_ALIGN(32);
 static f32 __THPIDCTWorkspace[64] ATTRIBUTE_ALIGN(32);
+#endif
 static u8* __THPHuffmanBits;
 static u8* __THPHuffmanSizeTab;
 static u16* __THPHuffmanCodeTab;
+#ifdef PRIME1
+ATTRIBUTE_ALIGN_DECL(32, static THPSample* Gbase);
+ATTRIBUTE_ALIGN_DECL(32, static u32 Gwid);
+ATTRIBUTE_ALIGN_DECL(32, static f32* Gq);
+#else
 static THPSample* Gbase ATTRIBUTE_ALIGN(32);
 static u32 Gwid ATTRIBUTE_ALIGN(32);
 static f32* Gq ATTRIBUTE_ALIGN(32);
+#endif
 static u8* __THPLCWork512[3];
 static u8* __THPLCWork640[3];
 static u32 __THPOldGQR5;

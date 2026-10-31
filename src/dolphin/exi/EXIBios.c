@@ -1,9 +1,38 @@
 #include "GameVersions.h"
+#ifdef PRIME1
+
+#endif
 #include "dolphin/os.h"
 #include "dolphin/hw_regs.h"
 
 #pragma scheduling off
 
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+static const char* __EXIVersion =
+    "<< Dolphin SDK - EXI\trelease build: Sep  5 2002 05:33:04 (0x2301) >>";
+#else
+static const char* __EXIVersion =
+    "<< Dolphin SDK - EXI\trelease build: Nov 11 2002 05:21:45 (0x2301) >>";
+#endif
+
+#define MAX_DEV 3
+#define MAX_CHAN 3
+
+#define REG_MAX 5
+#define REG(chan, idx) (__EXIRegs[((chan)*REG_MAX) + (idx)])
+
+#define STATE_IDLE 0x00
+#define STATE_DMA 0x01
+#define STATE_IMM 0x02
+#define STATE_BUSY (STATE_DMA | STATE_IMM)
+#define STATE_SELECTED 0x04
+#define STATE_ATTACHED 0x08
+#define STATE_LOCKED 0x10
+
+#define EXI_0CR(tstart, dma, rw, tlen)                                                             \
+  ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
+#else
 #if VERSION >= VERSION_R32J01
 const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:22 (0x4199_60831) >>";
 #else
@@ -33,6 +62,7 @@ static const char* __EXIVersion =
 #else
 #define DMA_ADDR_MASK 0x3ffffe0
 #endif
+#endif
 
 #define CPR_CS(x) ((1u << (x)) << 7)
 #define CPR_CLK(x) ((x) << 4)
@@ -58,9 +88,11 @@ static EXIControl Ecb[MAX_CHAN];
 static u32 IDSerialPort1 = 0;
 
 s32 __EXIProbeStartTime[2] : (OS_BASE_CACHED | 0x30C0);
+#ifndef PRIME1
 
 #if VERSION >= VERSION_R32J01
 static u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
+#endif
 #endif
 
 static void SetExiInterruptMask(s32 chan, EXIControl* exi) {
@@ -94,6 +126,12 @@ static void SetExiInterruptMask(s32 chan, EXIControl* exi) {
 
 static void CompleteTransfer(s32 chan) {
   EXIControl* exi = &Ecb[chan];
+#ifdef PRIME1
+  u8* buf;
+  u32 data;
+  int i;
+  int len;
+#else
 #if VERSION >= VERSION_R32J01
   int len;
   u8* buf;
@@ -104,6 +142,7 @@ static void CompleteTransfer(s32 chan) {
   u32 data;
   int i;
   int len;
+#endif
 #endif
 
   if (exi->state & STATE_BUSY) {
@@ -194,7 +233,11 @@ BOOL EXIDma(s32 chan, void* buf, s32 len, u32 type, EXICallback callback) {
 
   exi->state |= STATE_DMA;
 
+#ifdef PRIME1
+  REG(chan, 1) = (u32)buf & 0x3ffffe0;
+#else
   REG(chan, 1) = (u32)buf & DMA_ADDR_MASK;
+#endif
   REG(chan, 2) = (u32)len;
   REG(chan, 3) = EXI_0CR(1, 1, type, 0);
 
@@ -218,7 +261,13 @@ BOOL EXISync(s32 chan) {
       if (exi->state & STATE_SELECTED) {
         CompleteTransfer(chan);
         if (__OSGetDIConfig() != 0xff
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
           || (OSGetConsoleType() & OS_CONSOLE_MASK) == OS_CONSOLE_TDEV
+#endif
+#else
+          || (OSGetConsoleType() & OS_CONSOLE_MASK) == OS_CONSOLE_TDEV
+#endif
           || exi->immLen != 4 ||
             (REG(chan, 0) & 0x00000070) != (EXI_FREQ_1M << 4) ||
             (REG(chan, 4) != EXI_USB_ADAPTER && REG(chan, 4) != EXI_IS_VIEWER &&
@@ -234,8 +283,10 @@ BOOL EXISync(s32 chan) {
   return rc;
 }
 
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 static
+#endif
 #endif
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext) {
   u32 cpr;
@@ -271,8 +322,10 @@ EXICallback EXISetExiCallback(s32 chan, EXICallback exiCallback) {
   OSRestoreInterrupts(enabled);
   return prev;
 }
+#ifndef PRIME1
 
 static BOOL __EXIProbe(s32 chan);
+#endif
 
 void EXIProbeReset(void) {
   __EXIProbeStartTime[0] = __EXIProbeStartTime[1] = 0;
@@ -540,13 +593,24 @@ static void EXTIntrruptHandler(__OSInterrupt interrupt, OSContext* context) {
   }
 }
 
+#ifndef PRIME1
 extern BOOL __OSInIPL;
 void __OSEnableBarnacle(s32 chan, u32 dev);
 
+#endif
 void EXIInit(void) {
+#ifdef PRIME1
+  
+#if VERSION < VERSION_GM8E_02
+  OSRegisterVersion(__EXIVersion);
+#else
+  while (((REG(0, 3) & 1) == 1) || ((REG(1, 3) & 1) == 1) || ((REG(2, 3) & 1) == 1)) {}
+#endif
+#else
   u32 id;
 
   while (((REG(0, 3) & 1) == 1) || ((REG(1, 3) & 1) == 1) || ((REG(2, 3) & 1) == 1)) {}
+#endif
 
   __OSMaskInterrupts(OS_INTERRUPTMASK_EXI_0_EXI | OS_INTERRUPTMASK_EXI_0_TC |
                      OS_INTERRUPTMASK_EXI_0_EXT | OS_INTERRUPTMASK_EXI_1_EXI |
@@ -568,6 +632,13 @@ void EXIInit(void) {
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_EXI, EXIIntrruptHandler);
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_TC, TCIntrruptHandler);
 
+#ifdef PRIME1
+  if ((OSGetConsoleType() & 0x10000000) != 0) {
+    __EXIProbeStartTime[0] = __EXIProbeStartTime[1] = 0;
+    Ecb[0].idTime = Ecb[1].idTime = 0;
+    __EXIProbe(0);
+    __EXIProbe(1);
+#else
   EXIGetID(0, 2, &IDSerialPort1);
 
   if (__OSInIPL) {
@@ -576,9 +647,18 @@ void EXIInit(void) {
     __OSEnableBarnacle(1, 0);
   } else if (EXIGetID(1, 0, &id) && id == 0x7010000) {
     __OSEnableBarnacle(0, 2);
+#endif
   }
+#ifdef PRIME1
+  
+#if VERSION >= VERSION_GM8E_02
+  EXIGetID(0, 2, &IDSerialPort1);
+  OSRegisterVersion(__EXIVersion);
+#endif
+#else
 
   OSRegisterVersion(__EXIVersion);
+#endif
 }
 
 BOOL EXILock(s32 chan, u32 dev, EXICallback unlockedCallback) {
@@ -655,10 +735,19 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
   s32 startTime;
   BOOL enabled;
   
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
   if (chan == 0 && dev == 2 && IDSerialPort1 != 0) {
     *id = IDSerialPort1;
     return 1;
   }
+#endif
+#else
+  if (chan == 0 && dev == 2 && IDSerialPort1 != 0) {
+    *id = IDSerialPort1;
+    return 1;
+  }
+#endif
 
   if (chan < 2 && dev == 0) {
     if (!__EXIProbe(chan)) {
@@ -677,7 +766,13 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
     startTime = __EXIProbeStartTime[chan];
   }
 
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
   enabled = OSDisableInterrupts();
+#endif
+#else
+  enabled = OSDisableInterrupts();
+#endif
   err = !EXILock(chan, dev, (chan < 2 && dev == 0) ? UnlockedHandler : NULL);
   if (!err) {
     err = !EXISelect(chan, dev, EXI_FREQ_1M);
@@ -691,7 +786,13 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
     }
     EXIUnlock(chan);
   }
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
   OSRestoreInterrupts(enabled);
+#endif
+#else
+  OSRestoreInterrupts(enabled);
+#endif
 
   if (chan < 2 && dev == 0) {
     EXIDetach(chan);
@@ -719,10 +820,19 @@ char* EXIGetTypeString(u32 type) {
     return "Memory Card 251";
   case EXI_MEMORY_CARD_507:
     return "Memory Card 507";
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
   case EXI_MEMORY_CARD_1019:
     return "Memory Card 1019";
   case EXI_MEMORY_CARD_2043:
     return "Memory Card 2043";
+#endif
+#else
+  case EXI_MEMORY_CARD_1019:
+    return "Memory Card 1019";
+  case EXI_MEMORY_CARD_2043:
+    return "Memory Card 2043";
+#endif
   case EXI_USB_ADAPTER:
     return "USB Adapter";
   case 0x80000000 | EXI_MEMORY_CARD_59:
@@ -732,12 +842,27 @@ char* EXIGetTypeString(u32 type) {
     return "Net Card";
   case EXI_ETHER_VIEWER:
     return "Artist Ether";
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
   case 0x4220000:
     return "Broadband Adapter";
+#endif
+#else
+  case 0x4220000:
+    return "Broadband Adapter";
+#endif
   case EXI_STREAM_HANGER:
     return "Stream Hanger";
   case EXI_IS_VIEWER:
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+    return "IS Viewer";
+#else
     return "IS-DOL-VIEWER";
+#endif
+#else
+    return "IS-DOL-VIEWER";
+#endif
   }
 }
 

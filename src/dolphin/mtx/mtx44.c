@@ -134,6 +134,10 @@ void C_MTX44Identity(Mtx44 m) {
 
 #ifdef GEKKO
 void PSMTX44Identity(register Mtx44 m) {
+#ifdef PRIME1
+  register f32 c1 = 1.0F;
+  register f32 c0 = 0.0F;
+#else
 #if VERSION >= VERSION_R32J01
   register f32 c1;
   register f32 c0;
@@ -143,15 +147,21 @@ void PSMTX44Identity(register Mtx44 m) {
   register f32 c1 = 1.0F;
   register f32 c0 = 0.0F;
 #endif
+#endif
 
   asm
   {
+#ifdef PRIME1
+        stfs        c1,  0(m);
+        psq_st      c0,  4(m), 0, 0;
+#else
 #if VERSION >= VERSION_R32J01
         psq_st      c0,  4(m), 0, 0;
         stfs        c1,  0(m);
 #else
         stfs        c1,  0(m);
         psq_st      c0,  4(m), 0, 0;
+#endif
 #endif
         psq_st      c0, 12(m), 0, 0;
         stfs        c1, 20(m);
@@ -491,12 +501,17 @@ void PSMTX44Trans(register Mtx44 m, register f32 xT, register f32 yT, register f
   asm
   {
         stfs        xT,     12(m); 
+#ifdef PRIME1
+        stfs        yT,     28(m); 
+        ps_merge00  c_01,   c_zero, c_one; 
+#else
 #if VERSION >= VERSION_R32J01
         ps_merge00  c_01,   c_zero, c_one; 
         stfs        yT,     28(m); 
 #else
         stfs        yT,     28(m); 
         ps_merge00  c_01,   c_zero, c_one; 
+#endif
 #endif
         stfs        zT,     44(m); 
         psq_st      c_one,   0(m), 1, 0;

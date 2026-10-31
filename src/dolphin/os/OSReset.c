@@ -1,6 +1,8 @@
 #include "dolphin/OSRtcPriv.h"
+#ifndef PRIME1
 #include "dolphin/dvd.h"
 #include "dolphin/os/OSBootInfo.h"
+#endif
 #include "dolphin/os.h"
 #include "dolphin/vi.h"
 #include "dolphin/hw_regs.h"
@@ -24,9 +26,13 @@ typedef struct OSResetQueue {
   OSResetFunctionInfo* last;
 } OSResetQueue;
 
+#ifdef PRIME1
+OSResetQueue ResetFunctionQueue;
+#else
 static OSResetQueue ResetFunctionQueue;
 static u32 bootThisDol;
 extern OSExecParams __OSRebootParams;
+#endif
 
 void OSRegisterResetFunction(OSResetFunctionInfo* func) {
   OSResetFunctionInfo* tmp;
@@ -59,11 +65,21 @@ void OSRegisterResetFunction(OSResetFunctionInfo* func) {
   tmp->next = func;
 }
 
+#ifdef PRIME1
+BOOL __OSCallResetFunctions(u32 arg0) {
+  OSResetFunctionInfo* iter;
+  s32 retCode = 0;
+#else
 BOOL __OSCallResetFunctions(BOOL final) {
   OSResetFunctionInfo* info;
   s32 err;
   u32 priority;
+#endif
 
+#ifdef PRIME1
+  for (iter = ResetFunctionQueue.first; iter != NULL; iter = iter->next) {
+    retCode |= !iter->func(arg0);
+#else
   priority = 0;
   err = 0;
 
@@ -73,10 +89,16 @@ BOOL __OSCallResetFunctions(BOOL final) {
     err |= !info->func(final);
     priority = info->priority;
     info = info->next;
+#endif
   }
+#ifdef PRIME1
+  retCode |= !__OSSyncSram();
+  if (retCode) {
+#else
 
   err |= !__OSSyncSram();
   if (err) {
+#endif
     return 0;
   }
   return 1;
@@ -137,9 +159,17 @@ static void KillThreads(void) {
     case 1:
     case 4:
       OSCancelThread(thread);
+#ifdef PRIME1
+      break;
+#else
       continue;
+#endif
     default:
+#ifdef PRIME1
+      break;
+#else
       continue;
+#endif
     }
   }
 }
@@ -151,18 +181,32 @@ void __OSDoHotReset(s32 arg0) {
   Reset(arg0 * 8);
 }
 
+#ifdef PRIME1
+void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
+#else
 static void __OSShutdownDevices(BOOL doRecal) {
+#endif
   BOOL rc;
   BOOL disableRecalibration;
+#ifdef PRIME1
+  u32 unk[3];
+  OSDisableScheduler();
+#else
 
+#endif
   __OSStopAudioSystem();
 
+#ifdef PRIME1
+  if (reset == OS_RESET_SHUTDOWN) {
+#else
   if (!doRecal) {
+#endif
     disableRecalibration = __PADDisableRecalibration(TRUE);
   }
 
   while (!__OSCallResetFunctions(FALSE))
     ;
+#ifndef PRIME1
   while (!__OSSyncSram())
     ;
 
@@ -182,14 +226,29 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
   OSSram* sram;
 
   OSDisableScheduler();
+#endif
 
   if (reset == OS_RESET_HOTRESET && forceMenu) {
+#ifdef PRIME1
+    OSSram* sram;
+
+#endif
     sram = __OSLockSram();
     sram->flags |= 0x40;
     __OSUnlockSram(TRUE);
 
+#ifdef PRIME1
+    while (!__OSSyncSram())
+      ;
+#else
     resetCode = 0;
+#endif
   }
+#ifdef PRIME1
+  OSDisableInterrupts();
+  __OSCallResetFunctions(TRUE);
+  LCDisable();
+#else
 
   if (reset == OS_RESET_SHUTDOWN ||
       (reset == OS_RESET_RESTART && (bootThisDol || resetCode + 0x3fff0000 == 0))) {
@@ -198,25 +257,48 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
     __OSShutdownDevices(TRUE);
   }
 
+#endif
   if (reset == OS_RESET_HOTRESET) {
     __OSDoHotReset(resetCode);
   } else if (reset == OS_RESET_RESTART) {
+#ifdef PRIME1
+    KillThreads();
+#else
     if (forceMenu == TRUE) {
       OSReport("OSResetSystem(): You can't specify TRUE to forceMenu if you restart. Ignored\n");
     }
+#endif
     OSEnableScheduler();
+#ifdef PRIME1
+    __OSReboot(resetCode, forceMenu);
+#else
     __OSReboot(resetCode, bootThisDol);
+#endif
   }
+#ifdef PRIME1
+  KillThreads();
+#else
 
+#endif
   memset(OSPhysicalToCached(0x40), 0, 0xcc - 0x40);
   memset(OSPhysicalToCached(0xd4), 0, 0xe8 - 0xd4);
   memset(OSPhysicalToCached(0xf4), 0, 0xf8 - 0xf4);
   memset(OSPhysicalToCached(0x3000), 0, 0xc0);
   memset(OSPhysicalToCached(0x30c8), 0, 0xd4 - 0xc8);
   memset(OSPhysicalToCached(0x30e2), 0, 1);
+#ifdef PRIME1
+
+  __PADDisableRecalibration(disableRecalibration);
+#endif
 }
 
 u32 OSGetResetCode(void) {
+#ifdef PRIME1
+  if (DAT_800030e2 != 0) {
+    return 0x80000000;
+  }
+  return ((DAT_cc003000.resetCode & ~7) >> 3);
+#else
   u32 resetCode;
   if (__OSRebootParams.valid)
     resetCode = 0x80000000 | __OSRebootParams.restartCode;
@@ -224,8 +306,10 @@ u32 OSGetResetCode(void) {
     resetCode = (__PIRegs[9] & 0xFFFFFFF8) / 8;
 
   return resetCode;
+#endif
 }
 
+#ifndef PRIME1
 u32 OSSetBootDol(u32 dolOffset) {
   u32 oldDol;
 
@@ -233,3 +317,5 @@ u32 OSSetBootDol(u32 dolOffset) {
   bootThisDol = dolOffset;
   return oldDol;
 }
+
+#endif

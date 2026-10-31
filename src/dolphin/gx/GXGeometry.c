@@ -1,10 +1,76 @@
+#ifdef PRIME1
+#include "dolphin/gx.h"
+#else
 #include <GameVersions.h>
 #include <stddef.h>
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
+#endif
 
+#ifdef PRIME1
+#include "dolphin/gx/GXPriv.h"
+#else
 #include <dolphin/gx/__gx.h>
+#endif
 
+#ifdef PRIME1
+void __GXSetDirtyState(void) {
+#define dState __GXData->dirtyState
+
+  if (dState & 1) {
+    __GXSetSUTexRegs();
+  }
+  if (dState & 2) {
+    __GXUpdateBPMask();
+  }
+  if (dState & 4) {
+    __GXSetGenMode();
+  }
+  if (dState & 8) {
+    __GXSetVCD();
+  }
+  if (dState & 0x10) {
+    __GXSetVAT();
+  }
+  if (dState & 0x18) {
+    __GXCalculateVLim();
+  }
+
+  __GXData->dirtyState = 0;
+}
+
+void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts) {
+
+  if (__GXData->dirtyState != 0) {
+    __GXSetDirtyState();
+  }
+
+  if (*(u32 *)&__GXData->vNumNot == 0) { // checks both vNum and bpSentNot
+    __GXSendFlushPrim();
+  }
+  GX_WRITE_U8(vtxfmt | type);
+  GX_WRITE_U16(nverts);
+}
+
+void __GXSendFlushPrim(void) {
+  u32 i;
+  u32 numD = __GXData->vNum * __GXData->vLim;
+
+  GX_WRITE_U8(0x98);
+  GX_WRITE_U16(__GXData->vNum);
+  for (i = 0; i < numD; i += 4) {
+    GX_WRITE_U32(0);
+  }
+  __GXData->bpSentNot = 1;
+}
+
+void GXSetLineWidth(u8 width, GXTexOffset texOffsets) {
+
+  SET_REG_FIELD(__GXData->lpSize, 8, 0, width);
+  SET_REG_FIELD(__GXData->lpSize, 3, 16, texOffsets);
+  GX_WRITE_RAS_REG(__GXData->lpSize);
+  __GXData->bpSentNot = 0;
+#else
 #if VERSION >= VERSION_R32J01
 static inline void __GXSetAmbMat(u32 dirty)
 {
@@ -176,21 +242,41 @@ void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts)
     }
     GX_WRITE_U8(vtxfmt | type);
     GX_WRITE_U16(nverts);
+#endif
 }
 
+#ifdef PRIME1
+void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets) {
+#else
 void __GXSendFlushPrim(void)
 {
     u32 i;
     u32 numD = __GXData->vNum * __GXData->vLim;
+#endif
 
+#ifdef PRIME1
+  SET_REG_FIELD(__GXData->lpSize, 8, 8, pointSize);
+  SET_REG_FIELD(__GXData->lpSize, 3, 19, texOffsets);
+  GX_WRITE_RAS_REG(__GXData->lpSize);
+  __GXData->bpSentNot = 0;
+#else
     GX_WRITE_U8(0x98);
     GX_WRITE_U16(__GXData->vNum);
     for (i = 0; i < numD; i += 4) {
         GX_WRITE_U32(0);
     }
     __GXData->bpSentNot = 1;
+#endif
 }
 
+#ifdef PRIME1
+void GXEnableTexOffsets(GXTexCoordID coord, u8 line_enable, u8 point_enable) {
+
+  SET_REG_FIELD(__GXData->suTs0[coord], 1, 18, line_enable);
+  SET_REG_FIELD(__GXData->suTs0[coord], 1, 19, point_enable);
+  GX_WRITE_RAS_REG(__GXData->suTs0[coord]);
+  __GXData->bpSentNot = 0;
+#else
 void GXSetLineWidth(u8 width, GXTexOffset texOffsets)
 {
     CHECK_GXBEGIN(0x1B8, "GXSetLineWidth");
@@ -198,16 +284,48 @@ void GXSetLineWidth(u8 width, GXTexOffset texOffsets)
     SET_REG_FIELD(0x1BA, __GXData->lpSize, 3, 16, texOffsets);
     GX_WRITE_RAS_REG(__GXData->lpSize);
     __GXData->bpSentNot = 0;
+#endif
 }
 
+#ifdef PRIME1
+void GXSetCullMode(GXCullMode mode) {
+  GXCullMode hwMode;
+#else
 void GXGetLineWidth(u8 *width, GXTexOffset *texOffsets)
 {
     ASSERTMSGLINE(0x1CF, width != NULL && texOffsets != NULL, "GXGet*: invalid null pointer");
+#endif
 
+#ifdef PRIME1
+  switch (mode) {
+  case GX_CULL_FRONT:
+    hwMode = GX_CULL_BACK;
+    break;
+  case GX_CULL_BACK:
+    hwMode = GX_CULL_FRONT;
+    break;
+  default:
+    hwMode = mode;
+    break;
+  }
+
+  SET_REG_FIELD(__GXData->genMode, 2, 14, hwMode);
+  __GXData->dirtyState |= 4;
+#else
     *width      = GET_REG_FIELD(__GXData->lpSize, 8, 0);
     *texOffsets = GET_REG_FIELD(__GXData->lpSize, 3, 16);
+#endif
 }
 
+#ifdef PRIME1
+void GXSetCoPlanar(GXBool enable) {
+  u32 reg;
+
+  SET_REG_FIELD(__GXData->genMode, 1, 19, enable);
+  reg = 0xFE080000;
+  GX_WRITE_RAS_REG(reg);
+  GX_WRITE_RAS_REG(__GXData->genMode);
+#else
 void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets)
 {
     CHECK_GXBEGIN(0x1E4, "GXSetPointSize");
@@ -215,16 +333,24 @@ void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets)
     SET_REG_FIELD(0x1E6, __GXData->lpSize, 3, 19, texOffsets);
     GX_WRITE_RAS_REG(__GXData->lpSize);
     __GXData->bpSentNot = 0;
+#endif
 }
 
+#ifdef PRIME1
+void __GXSetGenMode(void) {
+  GX_WRITE_RAS_REG(__GXData->genMode);
+  __GXData->bpSentNot = 0;
+#else
 void GXGetPointSize(u8 *pointSize, GXTexOffset *texOffsets)
 {
     ASSERTMSGLINE(0x1FB, pointSize != NULL && texOffsets != NULL, "GXGet*: invalid null pointer");
 
     *pointSize  = (int)GET_REG_FIELD(__GXData->lpSize, 8, 8);
     *texOffsets = GET_REG_FIELD(__GXData->lpSize, 3, 19);
+#endif
 }
 
+#ifndef PRIME1
 void GXEnableTexOffsets(GXTexCoordID coord, u8 line_enable, u8 point_enable)
 {
     CHECK_GXBEGIN(0x211, "GXEnableTexOffsets");
@@ -277,3 +403,5 @@ void __GXSetGenMode(void)
     GX_WRITE_RAS_REG(__GXData->genMode);
     __GXData->bpSentNot = 0;
 }
+
+#endif

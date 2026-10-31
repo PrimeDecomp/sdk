@@ -97,8 +97,10 @@ BOOL OSSetThreadPriority(OSThread* thread, OSPriority priority);
 OSPriority OSGetThreadPriority(OSThread* thread);
 void OSSleepThread(OSThreadQueue* queue);
 void OSWakeupThread(OSThreadQueue* queue);
+#ifndef PRIME1
 void OSSleepTicks(OSTime ticks);
 void __OSPromoteThread(OSThread* thread, OSPriority priority);
+#endif
 
 void* OSGetThreadSpecific(s32 index);
 void OSSetThreadSpecific(s32 index, void* ptr);

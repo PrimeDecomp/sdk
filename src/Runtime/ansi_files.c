@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <critical_regions.h>
+#endif
 #include "ansi_files.h"
 
 static unsigned char stdin_buff[0x100];
@@ -85,7 +87,11 @@ void __close_all() {
   FILE* p = &__files[0];
   FILE* plast;
 
+#ifdef PRIME1
+  // __begin_critical_region(2);
+#else
   __begin_critical_region(files_access);
+#endif
 
   while (p != NULL) {
     if (p->mode.file_kind != __closed_file) {
@@ -103,7 +109,11 @@ void __close_all() {
     }
   }
 
+#ifdef PRIME1
+  // __end_critical_region(2);
+#else
   __end_critical_region(files_access);
+#endif
 }
 
 int __flush_all() {

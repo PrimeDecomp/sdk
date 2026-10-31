@@ -1,6 +1,8 @@
 #include <limits.h>
 #include <locale.h>
+#ifndef PRIME1
 #include <ctype.h>
+#endif
 
 struct lconv __lconv = {
     ".",      // decimal_point
@@ -29,6 +31,11 @@ struct lconv __lconv = {
     CHAR_MAX, // int_n_sign_posn
 };
 
+#ifdef PRIME1
+// Just here to generate the extra string,
+// the real usage is inside setlocale, which is stripped
+static char* locale_name = "C";
+#else
 #if VERSION >= VERSION_R32J01
 // Guessed name
 struct _loc_ctype_cmpt _loc_ctyp_C = {"C",
@@ -81,4 +88,5 @@ struct __locale _current_locale = {0,           "C",         &_loc_coll_C, &_loc
 // Just here to generate the extra string,
 // the real usage is inside setlocale, which is stripped
 static char* locale_name = "C";
+#endif
 #endif

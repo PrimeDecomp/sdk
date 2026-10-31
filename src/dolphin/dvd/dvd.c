@@ -1,18 +1,35 @@
+#ifdef PRIME1
+#include "GameVersions.h"
+
+#endif
 #include <dolphin/DVDPriv.h>
 #include <dolphin/dvd.h>
 #include <dolphin/hw_regs.h>
 #include <dolphin/os.h>
 #include <dolphin/os/OSBootInfo.h>
 
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+const char* __DVDVersion = "<< Dolphin SDK - DVD\trelease build: Sep  5 2002 05:34:06 (0x2301) >>";
+#else
+const char* __DVDVersion = "<< Dolphin SDK - DVD\trelease build: Oct 29 2002 09:56:49 (0x2301) >>";
+#endif
+#else
 const char* __DVDVersion = "<< Dolphin SDK - DVD\trelease build: Apr  5 2004 04:14:51 (0x2301) >>";
+#endif
 
 typedef void (*stateFunc)(DVDCommandBlock* block);
 stateFunc LastState;
 
 extern OSThreadQueue __DVDThreadQueue;
 
+#ifdef PRIME1
+ATTRIBUTE_ALIGN_DECL(32, static DVDBB2 BB2);
+ATTRIBUTE_ALIGN_DECL(32, static DVDDiskID CurrDiskID);
+#else
 static DVDBB2 BB2 ATTRIBUTE_ALIGN(32);
 static DVDDiskID CurrDiskID ATTRIBUTE_ALIGN(32);
+#endif
 static DVDCommandBlock* executing;
 static DVDDiskID* IDShouldBe;
 static OSBootInfo* bootInfo;
@@ -35,7 +52,9 @@ static volatile BOOL FirstTimeInBootrom = FALSE;
 static DVDCommandBlock DummyCommandBlock;
 static OSAlarm ResetAlarm;
 
+#ifndef PRIME1
 static u32 MotorState = 0;
+#endif
 static BOOL DVDInitialized = FALSE;
 
 /* States */
@@ -77,7 +96,9 @@ static void defaultOptionalCommandChecker(DVDCommandBlock* block, DVDLowCallback
 static DVDOptionalCommandChecker checkOptionalCommand = defaultOptionalCommandChecker;
 
 extern void __DVDInterruptHandler(__OSInterrupt interrupt, OSContext* context);
+#ifndef PRIME1
 extern BOOL __DVDLowTestAlarm(const OSAlarm* alarm);
+#endif
 
 static void defaultOptionalCommandChecker(DVDCommandBlock* block, DVDLowCallback cb) {}
 
@@ -92,7 +113,9 @@ void DVDInit() {
   __DVDClearWaitingQueue();
   __DVDInitWA();
   bootInfo = (OSBootInfo*)OSPhysicalToCached(0x0000);
+#ifndef PRIME1
   MotorState = 0;
+#endif
   IDShouldBe = &(bootInfo->DVDDiskID);
   __OSSetInterruptHandler(21, __DVDInterruptHandler);
   __OSUnmaskInterrupts(0x400);
@@ -111,7 +134,16 @@ static void stateReadingFST() {
   LastState = (stateFunc)stateReadingFST;
 
   if (bootInfo->FSTMaxLength < BB2.FSTLength) {
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+#define LINE 630
+#else
+#define LINE 647
+#endif
+    OSPanic("dvd.c", LINE, "DVDChangeDisk(): FST in the new disc is too big.   ");
+#else
     OSPanic("dvd.c", 661, "DVDChangeDisk(): FST in the new disc is too big.   ");
+#endif
   }
 
   DVDLowRead(bootInfo->FSTLocation, OSRoundUp32B(BB2.FSTLength), BB2.FSTPosition,
@@ -122,6 +154,9 @@ static void cbForStateReadingFST(u32 intType) {
   DVDCommandBlock* finished;
 
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
@@ -152,8 +187,13 @@ inline static void stateError(u32 error) {
 static void cbForStateError(u32 intType) {
   DVDCommandBlock* finished;
 
+#ifndef PRIME1
   executing->state = -1;
+#endif
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
@@ -246,11 +286,17 @@ static void cbForStateGettingError(u32 intType) {
   u32 resume;
 
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
 
   if (intType & 2) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateError(0x1234567);
     return;
   }
@@ -261,6 +307,9 @@ static void cbForStateGettingError(u32 intType) {
   errorCategory = CategorizeError(error);
 
   if (errorCategory == 1) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateError(error);
     return;
   }
@@ -309,6 +358,9 @@ static void cbForStateGettingError(u32 intType) {
     stateMotorStopped();
     return;
   } else {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateError(0x1234567);
     return;
   }
@@ -316,6 +368,9 @@ static void cbForStateGettingError(u32 intType) {
 
 static void cbForUnrecoveredError(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
@@ -330,9 +385,15 @@ static void cbForUnrecoveredError(u32 intType) {
 
 static void cbForUnrecoveredErrorRetry(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
+#ifdef PRIME1
+  executing->state = -1;
+#endif
 
   if (intType & 2) {
     __DVDStoreErrorCode(0x1234567);
@@ -348,11 +409,17 @@ static void stateGoToRetry() { DVDLowStopMotor(cbForStateGoToRetry); }
 
 static void cbForStateGoToRetry(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
 
   if (intType & 2) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateError(0x1234567);
     return;
   }
@@ -406,6 +473,9 @@ static void stateCheckID2a() {
 
 static void cbForStateCheckID2a(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
@@ -425,11 +495,17 @@ static void stateCheckID2() {
 
 static void cbForStateCheckID1(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
 
   if (intType & 2) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateError(0x1234567);
     return;
   }
@@ -444,6 +520,9 @@ static void cbForStateCheckID1(u32 intType) {
 
 static void cbForStateCheckID2(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
@@ -462,6 +541,9 @@ static void cbForStateCheckID2(u32 intType) {
 
 static void cbForStateCheckID3(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
@@ -504,7 +586,9 @@ static void stateCoverClosed() {
     break;
 
   default:
+#ifndef PRIME1
     MotorState = 0;
+#endif
     DVDReset();
     OSCreateAlarm(&ResetAlarm);
     OSSetAlarm(&ResetAlarm, OSMillisecondsToTicks(1150), AlarmHandler);
@@ -518,6 +602,9 @@ static void stateCoverClosed_CMD(DVDCommandBlock* block) {
 
 static void cbForStateCoverClosed(u32 intType) {
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
@@ -570,7 +657,16 @@ static void stateReady() {
   if (ResumeFromHere) {
     switch (ResumeFromHere) {
     case 1:
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+      executing->state = 1;
+      stateCoverClosed();
+#else
       goto cover_closed;
+#endif
+#else
+      goto cover_closed;
+#endif
       break;
     case 2:
       executing->state = 11;
@@ -594,16 +690,25 @@ cover_closed:
       break;
 
     case 5:
+#ifdef PRIME1
+      executing->state = -1;
+#endif
       stateError(CancelLastError);
       break;
     }
 
     ResumeFromHere = 0;
+#ifdef PRIME1
+  } else {
+#else
   } else if (MotorState == 0) {
+#endif
     executing->state = 1;
     stateBusy(executing);
+#ifndef PRIME1
   } else {
     stateCoverClosed();
+#endif
   }
 }
 
@@ -688,10 +793,12 @@ static void stateBusy(DVDCommandBlock* block) {
     block->currTransferSize = sizeof(DVDDriveInfo);
     DVDLowInquiry(block->addr, cbForStateBusy);
     break;
+#ifndef PRIME1
   case 16:
     __DIRegs[1] = __DIRegs[1];
     DVDLowStopMotor(cbForStateBusy);
     break;
+#endif
   default:
     checkOptionalCommand(block, cbForStateBusy);
     break;
@@ -737,12 +844,18 @@ static void cbForStateBusy(u32 intType) {
   DVDCommandBlock* finished;
 
   if (intType == 16) {
+#ifdef PRIME1
+    executing->state = -1;
+#endif
     stateTimeout();
     return;
   }
 
   if ((CurrCommand == 3) || (CurrCommand == 15)) {
     if (intType & 2) {
+#ifdef PRIME1
+      executing->state = -1;
+#endif
       stateError(0x1234567);
       return;
     }
@@ -783,6 +896,7 @@ static void cbForStateBusy(u32 intType) {
 
   if (intType & 1) {
     NumInternalRetry = 0;
+#ifndef PRIME1
 
     if (CurrCommand == 16) {
       MotorState = 1;
@@ -795,6 +909,7 @@ static void cbForStateBusy(u32 intType) {
       stateReady();
       return;
     }
+#endif
 
     if (CheckCancel(0))
       return;
@@ -867,6 +982,9 @@ static void cbForStateBusy(u32 intType) {
     }
   } else {
     if (CurrCommand == 14) {
+#ifdef PRIME1
+      executing->state = -1;
+#endif
       stateError(0x01234567);
       return;
     }
@@ -922,6 +1040,7 @@ BOOL DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, s32 off
   block->length = length;
   block->offset = offset;
   block->transferredSize = 0;
+#ifndef PRIME1
   block->callback = callback;
 
   idle = issueCommand(prio, block);
@@ -931,6 +1050,7 @@ BOOL DVDSeekAbsAsyncPrio(DVDCommandBlock* block, s32 offset, DVDCBCallback callb
   BOOL idle;
   block->command = 2;
   block->offset = offset;
+#endif
   block->callback = callback;
 
   idle = issueCommand(prio, block);
@@ -1137,7 +1257,13 @@ void DVDResume(void) {
 BOOL DVDCancelAsync(DVDCommandBlock* block, DVDCBCallback callback) {
   BOOL enabled;
   DVDLowCallback old;
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
   DVDCommandBlock* finished;
+#endif
+#else
+  DVDCommandBlock* finished;
+#endif
 
   enabled = OSDisableInterrupts();
 
@@ -1213,7 +1339,13 @@ BOOL DVDCancelAsync(DVDCommandBlock* block, DVDCBCallback callback) {
       ResumeFromHere = 2;
     if (block->state == 7)
       ResumeFromHere = 7;
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
     executing = &DummyCommandBlock;
+#endif
+#else
+    executing = &DummyCommandBlock;
+#endif
     block->state = 10;
     if (block->callback) {
       (block->callback)(-3, block);
@@ -1269,7 +1401,11 @@ static void cbForCancelSync(s32 result, DVDCommandBlock* block) {
   OSWakeupThread(&__DVDThreadQueue);
 }
 
+#ifdef PRIME1
+inline BOOL DVDCancelAllAsync(DVDCBCallback callback) {
+#else
 BOOL DVDCancelAllAsync(DVDCBCallback callback) {
+#endif
   BOOL enabled;
   DVDCommandBlock* p;
   BOOL retVal;
@@ -1370,8 +1506,15 @@ BOOL DVDCheckDisk(void) {
     coverReg = __DIRegs[1];
     if (((coverReg >> 2) & 1) || (coverReg & 1)) {
       retVal = FALSE;
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
     } else if (ResumeFromHere) {
       retVal = FALSE;
+#endif
+#else
+    } else if (ResumeFromHere) {
+      retVal = FALSE;
+#endif
     } else {
       retVal = TRUE;
     }
@@ -1402,9 +1545,12 @@ void __DVDPrepareResetAsync(DVDCBCallback callback) {
   OSRestoreInterrupts(enabled);
 }
 
+#ifndef PRIME1
 BOOL __DVDTestAlarm(const OSAlarm* alarm) {
   if (alarm == &ResetAlarm) {
     return TRUE;
   }
   return __DVDLowTestAlarm(alarm);
 }
+
+#endif

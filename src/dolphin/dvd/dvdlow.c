@@ -394,8 +394,10 @@ BOOL DVDLowAudioBufferConfig(BOOL enable, u32 size, DVDLowCallback callback) {
   return TRUE;
 }
 
+#ifndef PRIME1
 u32 DVDLowGetLength(void) { return __DIRegs[6]; }
 
+#endif
 void DVDLowReset() {
   u32 reg;
   OSTime resetStart;
@@ -423,7 +425,9 @@ DVDLowCallback DVDLowClearCallback() {
   DVDLowCallback old;
   __DIRegs[1] = 0;
   old = Callback;
+#ifndef PRIME1
   WaitingCoverClose = FALSE;
+#endif
   Callback = NULL;
   return old;
 }
@@ -436,6 +440,7 @@ void __DVDLowSetWAType(u32 type, u32 location) {
   OSRestoreInterrupts(enabled);
 }
 
+#ifndef PRIME1
 BOOL __DVDLowTestAlarm(const OSAlarm* alarm) {
   if (alarm == &AlarmForBreak) {
     return TRUE;
@@ -445,3 +450,5 @@ BOOL __DVDLowTestAlarm(const OSAlarm* alarm) {
   }
   return FALSE;
 }
+
+#endif

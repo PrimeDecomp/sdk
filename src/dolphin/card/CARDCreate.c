@@ -5,7 +5,9 @@
 
 #include <dolphin/CARDPriv.h>
 
+#ifndef PRIME1
 #line 90
+#endif
 static void CreateCallbackFat(s32 chan, s32 result) {
   CARDControl* card;
   CARDDir* dir;
@@ -21,13 +23,17 @@ static void CreateCallbackFat(s32 chan, s32 result) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[card->freeNo];
+#ifndef PRIME1
 
+#endif
   memcpy(ent->gameName, card->diskID->gameName, sizeof(ent->gameName));
   memcpy(ent->company, card->diskID->company, sizeof(ent->company));
   ent->permission = CARD_ATTR_PUBLIC;
   ent->copyTimes = 0;
+#ifndef PRIME1
 
   ASSERT(CARDIsValidBlockNo(card, card->startBlock));
+#endif
   ent->startBlock = card->startBlock;
 
   ent->bannerFormat = 0;
@@ -55,31 +61,46 @@ error:
   }
 }
 
+#ifndef PRIME1
 #line 165
+#endif
 s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* fileInfo,
                     CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir;
   CARDDir* ent;
+#ifdef PRIME1
+  s32 result;
+#endif
   u16 fileNo;
   u16 freeNo;
   u16* fat;
+#ifndef PRIME1
   s32 result;
+#endif
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
   ASSERT(strlen(fileName) <= CARD_FILENAME_MAX);
+#endif
   if (strlen(fileName) > (u32)CARD_FILENAME_MAX) {
     return CARD_RESULT_NAMETOOLONG;
   }
 
   result = __CARDGetControlBlock(chan, &card);
+#ifndef PRIME1
 
+#endif
   if (result < 0) {
+#ifndef PRIME1
   
+#endif
     return result;
   }
 
+#ifndef PRIME1
   ASSERT(0 < size && (size % card->sectorSize) == 0);
+#endif
   if (size <= 0 || (size % card->sectorSize) != 0) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -124,6 +145,7 @@ s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* file
   return result;
 }
 
+#ifndef PRIME1
 s32 CARDCreate(s32 chan, const char* fileName, u32 size, CARDFileInfo* fileInfo) {
   s32 result;
   result = CARDCreateAsync(chan, fileName, size, fileInfo, __CARDSyncCallback);
@@ -133,3 +155,5 @@ s32 CARDCreate(s32 chan, const char* fileName, u32 size, CARDFileInfo* fileInfo)
 
   return __CARDSync(chan);
 }
+
+#endif

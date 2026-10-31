@@ -1,5 +1,7 @@
+#ifndef PRIME1
 #include <critical_regions.h>
 #include <signal.h>
+#endif
 #include <stdlib.h>
 
 void __destroy_global_chain(void);
@@ -14,6 +16,7 @@ int __aborting;
 
 static void (*__atexit_funcs[64])(void);
 
+#ifndef PRIME1
 void abort(void) {
   raise(SIGABRT);
   __aborting = 1;
@@ -29,13 +32,16 @@ void abort(void) {
   _ExitProcess();
 }
 
+#endif
 void exit(int status) {
   int i;
   void (**dtor)(void);
 
   if (!__aborting) {
+#ifndef PRIME1
     __begin_critical_region(atexit_funcs_access);
     __end_critical_region(atexit_funcs_access);
+#endif
     __destroy_global_chain();
     dtor = _dtors;
     while (*dtor != NULL) {
@@ -47,11 +53,15 @@ void exit(int status) {
       __stdio_exit = NULL;
     }
   }
+#ifndef PRIME1
   __begin_critical_region(atexit_funcs_access);
+#endif
   while (__atexit_curr_func > 0)
     __atexit_funcs[--__atexit_curr_func]();
+#ifndef PRIME1
   __end_critical_region(atexit_funcs_access);
   __kill_critical_regions();
+#endif
   if (__console_exit != NULL) {
     __console_exit();
     __console_exit = NULL;

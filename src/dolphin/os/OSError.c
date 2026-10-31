@@ -1,4 +1,8 @@
+#ifdef PRIME1
+#include <dolphin/base/PPCArch.h>
+#else
 #include <dolphin/PPCArch.h>
+#endif
 #include <dolphin/hw_regs.h>
 #include <dolphin/os.h>
 #include <stdio.h>

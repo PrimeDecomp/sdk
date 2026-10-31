@@ -10,12 +10,16 @@
 
 #define __CARDGetDirCheck(dir) ((CARDDirCheck*)&(dir)[CARD_MAX_FILE])
 
+#ifndef PRIME1
 #line 78
+#endif
 void __CARDCheckSum(void* ptr, int length, u16* checksum, u16* checksumInv) {
   u16* p;
   int i;
 
+#ifndef PRIME1
   ASSERT(length % sizeof(u16) == 0);
+#endif
   length /= sizeof(u16);
   *checksum = *checksumInv = 0;
   for (i = 0, p = ptr; i < length; i++, p++) {
@@ -166,24 +170,32 @@ static s32 VerifyFAT(CARDControl* card, int* outCurrent) {
   return errors;
 }
 
+#ifndef PRIME1
 #line 286
+#endif
 s32 __CARDVerify(CARDControl* card) {
   s32 result;
   int errors;
 
   result = VerifyID(card);
   if (result < 0) {
+#ifndef PRIME1
 
+#endif
     return result;
   }
 
   errors = VerifyDir(card, NULL);
   errors += VerifyFAT(card, NULL);
+#ifndef PRIME1
 
+#endif
   switch (errors) {
   case 0:
+#ifndef PRIME1
     ASSERT(card->currentDir);
     ASSERT(card->currentFat);
+#endif
     return CARD_RESULT_READY;
   case 1:
     return CARD_RESULT_BROKEN;
@@ -192,7 +204,9 @@ s32 __CARDVerify(CARDControl* card) {
   }
 }
 
+#ifndef PRIME1
 #line 329
+#endif
 s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir[2];
@@ -210,23 +224,33 @@ s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
   BOOL updateDir = FALSE;
   BOOL updateOrphan = FALSE;
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
 
+#endif
   if (xferBytes) {
     *xferBytes = 0;
   }
 
   result = __CARDGetControlBlock(chan, &card);
+#ifndef PRIME1
 
+#endif
   if (result < 0) {
+#ifndef PRIME1
 
+#endif
     return result;
   }
 
   result = VerifyID(card);
+#ifndef PRIME1
 
+#endif
   if (result < 0) {
+#ifndef PRIME1
 
+#endif
     return __CARDPutControlBlock(card, result);
   }
 
@@ -241,24 +265,32 @@ s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
   fat[0] = (u16*)((u8*)card->workArea + (3 + 0) * CARD_SYSTEM_BLOCK_SIZE);
   fat[1] = (u16*)((u8*)card->workArea + (3 + 1) * CARD_SYSTEM_BLOCK_SIZE);
 
+#ifndef PRIME1
   ASSERT(errors == 0 || errors == 1);
 
+#endif
   switch (errors) {
   case 0:
+#ifndef PRIME1
     ASSERT(card->currentDir);
     ASSERT(card->currentFat);
 
+#endif
     break;
   case 1:
     if (!card->currentDir) {
+#ifndef PRIME1
       ASSERT(card->currentFat);
 
+#endif
       card->currentDir = dir[currentDir];
       memcpy(dir[currentDir], dir[currentDir ^ 1], CARD_SYSTEM_BLOCK_SIZE);
       updateDir = TRUE;
     } else {
+#ifndef PRIME1
 
       ASSERT(!card->currentFat);
+#endif
       card->currentFat = fat[currentFat];
       memcpy(fat[currentFat], fat[currentFat ^ 1], CARD_SYSTEM_BLOCK_SIZE);
       updateFat = TRUE;
@@ -343,6 +375,7 @@ s32 CARDCheckAsync(s32 chan, CARDCallback callback) {
   return CARDCheckExAsync(chan, &xferBytes, callback);
 }
 
+#ifndef PRIME1
 s32 CARDCheckEx(s32 chan, s32* xferBytes) {
   s32 result;
 
@@ -358,3 +391,5 @@ s32 CARDCheck(s32 chan) {
 
   return CARDCheckEx(chan, &xferBytes);
 }
+
+#endif

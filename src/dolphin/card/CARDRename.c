@@ -5,7 +5,9 @@
 
 #include <dolphin/CARDPriv.h>
 
+#ifndef PRIME1
 #line 77
+#endif
 s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir;
@@ -14,10 +16,12 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   int fileNo;
   int newNo;
   int oldNo;
+#ifndef PRIME1
 
   ASSERT(0 <= chan && chan < 2);
   ASSERT(*old != 0xff && *new != 0xff);
   ASSERT(*old != 0x00 && *new != 0x00);
+#endif
 
   if (*old == 0xff || *new == 0xff || *old == 0x00 || *new == 0x00) {
     return CARD_RESULT_FATAL_ERROR;
@@ -59,7 +63,11 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   }
 
   ent = &dir[oldNo];
+#ifdef PRIME1
+  result = __CARDAccess(card, ent);
+#else
   result = __CARDIsWritable(card, ent);
+#endif
   if (result < 0) {
     return __CARDPutControlBlock(card, result);
   }
@@ -74,6 +82,7 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   return result;
 }
 
+#ifndef PRIME1
 s32 CARDRename(s32 chan, const char* old, const char* new) {
   s32 result;
   result = CARDRenameAsync(chan,  old, new, __CARDSyncCallback);
@@ -83,3 +92,5 @@ s32 CARDRename(s32 chan, const char* old, const char* new) {
 
   return __CARDSync(chan);
 }
+
+#endif

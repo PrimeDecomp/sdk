@@ -5,6 +5,10 @@
 
 #include <dolphin/CARDPriv.h>
 #include <dolphin/OSRtcPriv.h>
+#ifdef PRIME1
+
+void __CARDSyncCallback(s32 chan, s32 result);
+#endif
 
 u8 GameChoice : (OS_BASE_CACHED | 0x000030E3);
 
@@ -54,6 +58,7 @@ static BOOL IsCard(u32 id) {
   }
 
   return TRUE;
+#ifndef PRIME1
 }
 void __CARDDisable(BOOL disable) {
   BOOL enabled;
@@ -71,6 +76,7 @@ BOOL CARDProbe(s32 chan) {
     return FALSE;
   }
   return EXIProbe(chan);
+#endif
 }
 
 s32 CARDProbeEx(s32 chan, s32* memSize, s32* sectorSize) {
@@ -128,7 +134,9 @@ s32 CARDProbeEx(s32 chan, s32* memSize, s32* sectorSize) {
   return result;
 }
 
+#ifndef PRIME1
 #line 389
+#endif
 static s32 DoMount(s32 chan) {
   CARDControl* card;
   u32 id;
@@ -139,38 +147,59 @@ static s32 DoMount(s32 chan) {
   u8 checkSum;
   int step;
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
 
+#endif
   card = &__CARDBlock[chan];
 
   if (card->mountStep == 0) {
+#ifndef PRIME1
 
+#endif
     if (EXIGetID(chan, 0, &id) == 0) {
+#ifndef PRIME1
 
+#endif
       result = CARD_RESULT_NOCARD;
     } else if (IsCard(id)) {
+#ifndef PRIME1
 
+#endif
       result = CARD_RESULT_READY;
     } else {
+#ifndef PRIME1
 
+#endif
       result = CARD_RESULT_WRONGDEVICE;
     }
+#ifndef PRIME1
 
+#endif
     if (result < 0) {
+#ifndef PRIME1
 
+#endif
       goto error;
     }
 
     card->cid = id;
 
     card->size = (u16)(id & 0xFC);
+#ifndef PRIME1
     ASSERT(card->size);
+#endif
     card->sectorSize = SectorSizeTable[(id & 0x00003800) >> 11];
+#ifndef PRIME1
     ASSERT(card->sectorSize);
+#endif
     card->cBlock = (u16)((card->size * 1024 * 1024 / 8) / card->sectorSize);
+#ifndef PRIME1
     ASSERT(8 <= card->cBlock);
 
+#endif
     card->latency = LatencyTable[(id & 0x00000700) >> 8];
+#ifndef PRIME1
 
     result = __CARDReadVendorID(chan, &card->vendorID);
     if (result < 0) {
@@ -182,6 +211,7 @@ static s32 DoMount(s32 chan) {
     } else {
       card->pageSize = CARD_PAGE_SIZE;
     }
+#endif
 
     result = __CARDClearStatus(chan);
     if (result < 0) {
@@ -269,12 +299,16 @@ error:
   return result;
 }
 
+#ifndef PRIME1
 #line 566
+#endif
 void __CARDMountCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   card = &__CARDBlock[chan];
 
   switch (result) {
@@ -307,25 +341,37 @@ void __CARDMountCallback(s32 chan, s32 result) {
   }
 
   callback = card->apiCallback;
+#ifndef PRIME1
 
+#endif
   card->apiCallback = 0;
+#ifndef PRIME1
 
+#endif
   __CARDPutControlBlock(card, result);
+#ifndef PRIME1
 #line 620
   ASSERT(callback);
 
+#endif
   callback(chan, result);
 }
 
+#ifndef PRIME1
 #line 647
+#endif
 s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback,
                    CARDCallback attachCallback) {
   CARDControl* card;
   BOOL enabled;
+#ifdef PRIME1
+
+#else
   // clang-format off
   ASSERT(workArea && ((u32) workArea % 32 == 0));
   ASSERT(0 <= chan && chan < 2);
   // clang-format on
+#endif
   if (chan < 0 || 2 <= chan) {
     return CARD_RESULT_FATAL_ERROR;
   }
@@ -376,22 +422,37 @@ s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback,
   return DoMount(chan);
 }
 
+#ifdef PRIME1
+s32 CARDMount(s32 chan, void *workArea, CARDCallback detachCallback) {
+    s32 result = CARDMountAsync(chan, workArea, detachCallback, __CARDSyncCallback);
+#else
 s32 CARDMount(s32 chan, void* workArea, CARDCallback detachCallback) {
   s32 result;
   result = CARDMountAsync(chan, workArea, detachCallback, __CARDSyncCallback);
   if (result < 0) {
     return result;
   }
+#endif
 
+#ifdef PRIME1
+    if (result < 0)
+        return result;
+    return __CARDSync(chan);
+#else
   return __CARDSync(chan);
+#endif
 }
 
+#ifndef PRIME1
 #line 754
+#endif
 static void DoUnmount(s32 chan, s32 result) {
   CARDControl* card;
   BOOL enabled;
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   card = &__CARDBlock[chan];
   enabled = OSDisableInterrupts();
   if (card->attached) {
@@ -405,12 +466,16 @@ static void DoUnmount(s32 chan, s32 result) {
   OSRestoreInterrupts(enabled);
 }
 
+#ifndef PRIME1
 #line 789
+#endif
 s32 CARDUnmount(s32 chan) {
   CARDControl* card;
   s32 result;
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   result = __CARDGetControlBlock(chan, &card);
   if (result < 0) {
     return result;

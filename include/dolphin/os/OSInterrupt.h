@@ -1,7 +1,9 @@
 #ifndef _DOLPHIN_OSINTERRUPT
 #define _DOLPHIN_OSINTERRUPT
 
+#ifndef PRIME1
 #include <GameVersions.h>
+#endif
 #include <dolphin/os/OSContext.h>
 #include <dolphin/types.h>
 
@@ -36,7 +38,9 @@ extern "C" {
 #define __OS_INTERRUPT_PI_VI 24
 #define __OS_INTERRUPT_PI_DEBUG 25
 #define __OS_INTERRUPT_PI_HSP 26
+#ifndef PRIME1
 #define __OS_INTERRUPT_PI_ACR 27
+#endif
 #define __OS_INTERRUPT_MAX 32
 
 #define OS_INTERRUPTMASK(interrupt) (0x80000000u >> (interrupt))
@@ -84,6 +88,13 @@ extern "C" {
 #define OS_INTERRUPTMASK_PI_VI OS_INTERRUPTMASK(__OS_INTERRUPT_PI_VI)
 #define OS_INTERRUPTMASK_PI_DEBUG OS_INTERRUPTMASK(__OS_INTERRUPT_PI_DEBUG)
 #define OS_INTERRUPTMASK_PI_HSP OS_INTERRUPTMASK(__OS_INTERRUPT_PI_HSP)
+#ifdef PRIME1
+#define OS_INTERRUPTMASK_PI                                                                        \
+  (OS_INTERRUPTMASK_PI_CP | OS_INTERRUPTMASK_PI_SI | OS_INTERRUPTMASK_PI_DI |                      \
+   OS_INTERRUPTMASK_PI_RSW | OS_INTERRUPTMASK_PI_ERROR | OS_INTERRUPTMASK_PI_VI |                  \
+   OS_INTERRUPTMASK_PI_PE_TOKEN | OS_INTERRUPTMASK_PI_PE_FINISH | OS_INTERRUPTMASK_PI_DEBUG |      \
+   OS_INTERRUPTMASK_PI_HSP)
+#else
 #define OS_INTERRUPTMASK_PI_ACR OS_INTERRUPTMASK(__OS_INTERRUPT_PI_ACR)
 #define OS_INTERRUPTMASK_PI_BASE                                                                        \
   (OS_INTERRUPTMASK_PI_CP | OS_INTERRUPTMASK_PI_SI | OS_INTERRUPTMASK_PI_DI |                      \
@@ -94,6 +105,7 @@ extern "C" {
 #define OS_INTERRUPTMASK_PI (OS_INTERRUPTMASK_PI_BASE | OS_INTERRUPTMASK_PI_ACR)
 #else
 #define OS_INTERRUPTMASK_PI OS_INTERRUPTMASK_PI_BASE
+#endif
 #endif
 
 typedef s16 __OSInterrupt;

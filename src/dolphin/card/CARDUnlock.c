@@ -8,7 +8,11 @@
 static void InitCallback(void* task);
 static void DoneCallback(void* task);
 
+#ifdef PRIME1
+ATTRIBUTE_ALIGN_DECL(32, static u8 CardData[]) = {
+#else
 static u8 CardData[] ATTRIBUTE_ALIGN(32) = {
+#endif
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x21, 0x02, 0xFF, 0x00, 0x21,
     0x13, 0x06, 0x12, 0x03, 0x12, 0x04, 0x13, 0x05, 0x00, 0x92, 0x00, 0xFF, 0x00, 0x88, 0xFF, 0xFF,
@@ -48,6 +52,20 @@ static int CARDRand(void) {
 }
 
 static void CARDSrand(unsigned int seed) { next = seed; }
+#ifdef PRIME1
+
+static u32 GetInitVal(void) {
+  u32 tmp;
+  u32 tick;
+
+  tick = OSGetTick();
+  CARDSrand(tick);
+  tmp = 0x7fec8000;
+  tmp |= CARDRand();
+  tmp &= 0xfffff000;
+  return tmp;
+}
+#endif
 
 static u32 exnor_1st(u32 data, u32 rshift) {
   u32 wk;
@@ -105,18 +123,26 @@ static u32 bitrev(u32 data) {
 #define SEC_AD3(x) ((u8)(((x) >> 19) & 0x03))
 #define SEC_BA(x) ((u8)(((x) >> 12) & 0x7f))
 
+#ifndef PRIME1
 #line 235
+#endif
 static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 rlen, s32 mode) {
   CARDControl* card;
   BOOL err;
   u8 cmd[5];
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   card = &__CARDBlock[chan];
+#ifdef PRIME1
+  if (!EXISelect(chan, 0, 4)) {
+#else
 #ifdef _DEBUG
   if (!EXISelect(chan, 0, __CARDFreq)) {
 #else
   if (!EXISelect(chan, 0, 4)) {
+#endif
 #endif
     return CARD_RESULT_NOCARD;
   }
@@ -141,6 +167,7 @@ static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 rlen, s32 mode) {
   err |= !EXIDeselect(chan);
 
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
+#ifndef PRIME1
 }
 
 static u32 GetInitVal(void) {
@@ -153,6 +180,7 @@ static u32 GetInitVal(void) {
   tmp |= CARDRand();
   tmp &= 0xfffff000;
   return tmp;
+#endif
 }
 
 // Calculate Dummy Read Length, 4-32Bytes
@@ -291,7 +319,11 @@ s32 __CARDUnlock(s32 chan, u8 flashID[12]) {
   DCFlushRange(param, sizeof(DecodeParameters));
 
   task->priority = 255;
+#ifdef PRIME1
+  task->iram_mmem_addr = (u16*)OSPhysicalToCached(CardData);
+#else
   task->iram_mmem_addr = (u16*)OSCachedToPhysical(CardData);
+#endif
   task->iram_length = 0x160;
   task->iram_addr = 0;
   task->dsp_init_vector = 0x10;
@@ -309,7 +341,9 @@ s32 __CARDUnlock(s32 chan, u8 flashID[12]) {
   return CARD_RESULT_READY;
 }
 
+#ifndef PRIME1
 #line 495
+#endif
 static void InitCallback(void* _task) {
   s32 chan;
   CARDControl* card;
@@ -317,19 +351,25 @@ static void InitCallback(void* _task) {
   DecodeParameters* param;
 
   task = _task;
+#ifndef PRIME1
   
+#endif
   for (chan = 0; chan < 2; ++chan) {
+#ifndef PRIME1
     /*
     
     
     */
+#endif
     card = &__CARDBlock[chan];
     if ((DSPTaskInfo*)&card->task == task) {
       break;
     }
   }
+#ifndef PRIME1
 
   ASSERT(0 <= chan && chan < 2);
+#endif
   param = (DecodeParameters*)card->workArea;
 
   DSPSendMailToDSP(0xff000000);
@@ -341,7 +381,9 @@ static void InitCallback(void* _task) {
     ;
 }
 
+#ifndef PRIME1
 #line 531
+#endif
 static void DoneCallback(void* _task) {
   u8 rbuf[64];
   u32 data;
@@ -363,18 +405,22 @@ static void DoneCallback(void* _task) {
   u8* output;
   task = _task;
   for (chan = 0; chan < 2; ++chan) {
+#ifndef PRIME1
     /*
     
     
     
     */
+#endif
     card = &__CARDBlock[chan];
     if ((DSPTaskInfo*)&card->task == task) {
       break;
     }
   }
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   param = (DecodeParameters*)card->workArea;
   input = (u8*)((u8*)param + sizeof(DecodeParameters));
   input = (u8*)OSRoundUp32B(input);

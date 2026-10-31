@@ -4,11 +4,16 @@
 #include <dolphin/os.h>
 
 #include <dolphin/CARDPriv.h>
+#ifndef PRIME1
 #include <dolphin/OSRtcPriv.h>
+#endif
 
 u16 __CARDVendorID = 0xffff;
+#ifndef PRIME1
 u8 __CARDPermMask = CARD_DIR_PERM_PUBLIC | CARD_DIR_PERM_NO_COPY | CARD_DIR_PERM_NO_MOVE;
+#endif
 
+#ifndef PRIME1
 u16 CARDSetVendorID(u16 vendorID) {
   u16 prevID;
   prevID = __CARDVendorID;
@@ -19,14 +24,24 @@ u16 CARDSetVendorID(u16 vendorID) {
 u16 CARDGetVendorID() { return __CARDVendorID; }
 
 #line 98
+#endif
 s32 CARDGetSerialNo(s32 chan, u64* serialNo) {
   CARDControl* card;
+#ifndef PRIME1
   s32 result;
+#endif
   CARDID* id;
+#ifndef PRIME1
   u64 code;
+#endif
   int i;
+#ifdef PRIME1
+  u64 code;
+  s32 result;
+#else
 
   ASSERT(0 <= chan && chan < 2);
+#endif
 
   if (!(0 <= chan && chan < 2)) {
     return CARD_RESULT_FATAL_ERROR;
@@ -46,6 +61,7 @@ s32 CARDGetSerialNo(s32 chan, u64* serialNo) {
   return __CARDPutControlBlock(card, CARD_RESULT_READY);
 }
 
+#ifndef PRIME1
 #line 141
 s32 CARDGetUniqueCode(s32 chan, u64* uniqueCode) {
   CARDControl* card;
@@ -133,3 +149,5 @@ static BOOL __CARDEnablePerm(u8 perm, BOOL enable) {
 BOOL __CARDEnableGlobal(BOOL enable) { return __CARDEnablePerm(CARD_DIR_PERM_GLOBAL, enable); }
 
 BOOL __CARDEnableCompany(BOOL enable) { return __CARDEnablePerm(CARD_DIR_PERM_COMPANY, enable); }
+
+#endif

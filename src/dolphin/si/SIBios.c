@@ -1,12 +1,21 @@
 #include <dolphin/OSRtcPriv.h>
 #include <dolphin/os.h>
+#ifdef PRIME1
+#include <dolphin/si.h>
+#endif
 #include <dolphin/sipriv.h>
+#ifndef PRIME1
 
 vu32 __SIRegs[64] : 0xCC006400;
+#endif
 
 extern OSTime __OSGetSystemTime();
 
+#ifdef PRIME1
+const char* __SIVersion = "<< Dolphin SDK - SI\trelease build: Sep  5 2002 05:33:08 (0x2301) >>";
+#else
 const char* __SIVersion = "<< Dolphin SDK - SI\trelease build: Apr  5 2004 04:14:16 (0x2301) >>";
+#endif
 
 typedef struct SIControl {
   s32 chan;

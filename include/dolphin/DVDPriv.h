@@ -40,8 +40,10 @@ typedef void (*DVDLowCallback)(u32 intType);
 extern DVDDiskID* DVDGetCurrentDiskID();
 DVDLowCallback DVDLowClearCallback();
 BOOL DVDLowSeek(u32 offset, DVDLowCallback callback);
+#ifndef PRIME1
 u32 DVDLowGetLength(void);
 BOOL DVDSeekAbsAsyncPrio(DVDCommandBlock* block, s32 offset, DVDCBCallback callback, s32 prio);
+#endif
 void __DVDLowSetWAType(u32 type, u32 location);
 DVDCommandBlock* __DVDPopWaitingQueue();
 

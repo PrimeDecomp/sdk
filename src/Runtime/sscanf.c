@@ -1,4 +1,5 @@
 #include "stdio.h"
+#ifndef PRIME1
 
 #include <ctype.h>
 #include <math.h>
@@ -777,6 +778,7 @@ exit:
 
   return items_assigned;
 }
+#endif
 
 int __StringRead(void* isc, int ch, int Action) {
   char ret;
@@ -803,6 +805,7 @@ int __StringRead(void* isc, int ch, int Action) {
   return 0; 
 }
 
+#ifndef PRIME1
 static inline int vsscanf(const char *s, const char *format, va_list arg) {
   __InStrCtrl isc;
   isc.NextChar = (char *)s;
@@ -824,3 +827,5 @@ int sscanf(const char *s, const char *pFormat, ...) {
   va_end(args);
   return ret;
 }
+
+#endif

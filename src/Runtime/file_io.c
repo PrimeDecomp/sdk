@@ -1,6 +1,9 @@
 #include "ansi_files.h"
 #include "types.h"
 
+#ifdef PRIME1
+#pragma dont_inline on 
+#endif
 int fclose(FILE* file) {
   int flush_result, close_result;
 
@@ -66,3 +69,6 @@ int fflush(FILE* file) {
   file->buffer_len = 0;
   return 0;
 }
+#ifdef PRIME1
+#pragma dont_inline reset
+#endif

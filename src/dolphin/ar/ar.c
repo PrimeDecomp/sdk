@@ -3,10 +3,16 @@
 #include "dolphin/hw_regs.h"
 #include "dolphin/os.h"
 
+#ifndef PRIME1
 // static const char* __ARVersion =
 //  "<< Dolphin SDK - AR\trelease build: Sep  5 2002 05:34:27 (0x2301) >>";
+#endif
 static const char* __ARVersion =
+#ifdef PRIME1
+    "<< Dolphin SDK - AR\trelease build: Sep  5 2002 05:34:27 (0x2301) >>";
+#else
     "<< Dolphin SDK - AR\trelease build: Apr  5 2004 04:15:03 (0x2301) >>";
+#endif
 
 static ARCallback __AR_Callback;
 static u32 __AR_Size;
@@ -21,7 +27,9 @@ static volatile BOOL __AR_init_flag = FALSE;
 
 static void __ARHandler(__OSInterrupt interrupt, OSContext* context);
 static void __ARChecksize(void);
+#ifndef PRIME1
 static void __ARClearArea(u32 start_addr, u32 length);
+#endif
 
 ARCallback ARRegisterDMACallback(ARCallback callback) {
   ARCallback oldCb;

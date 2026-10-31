@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <GameVersions.h>
+#endif
 #include "dolphin/dsp.h"
 #include "dolphin/os.h"
 
@@ -8,6 +10,10 @@
 extern "C" {
 #endif
 
+#ifdef PRIME1
+static const char* __DSPVersion =
+    "<< Dolphin SDK - DSP\trelease build: Sep  5 2002 05:35:13 (0x2301) >>";
+#else
 #if VERSION >= VERSION_R32J01
 const char* __DSPVersion = "<< RVL_SDK - DSP \trelease build: Aug  8 2007 01:59:06 (0x4199_60831) >>";
 #define DSP_BUILD_DATE "Aug  8 2007"
@@ -18,14 +24,17 @@ static const char* __DSPVersion =
 #define DSP_BUILD_DATE "Apr  5 2004"
 #define DSP_BUILD_TIME "04:15:32"
 #endif
+#endif
 
 static s32 __DSP_init_flag = 0;
 extern DSPTaskInfo* __DSP_tmp_task;
 extern DSPTaskInfo* __DSP_last_task;
 extern DSPTaskInfo* __DSP_first_task;
 extern DSPTaskInfo* __DSP_curr_task;
+#ifndef PRIME1
 extern DSPTaskInfo* __DSP_rude_task;
 extern BOOL __DSP_rude_task_pending;
+#endif
 
 extern void __DSPHandler(__OSInterrupt, OSContext*);
 extern void __DSP_debug_printf(const char* fmt, ...);
@@ -51,7 +60,11 @@ void DSPSendMailToDSP(u32 mail) {
 void DSPInit(void) {
   u32 oldInt;
   u16 reg;
+#ifdef PRIME1
+  __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", "Sep  5 2002", "05:35:13");
+#else
   __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", DSP_BUILD_DATE, DSP_BUILD_TIME);
+#endif
 
   if (__DSP_init_flag == 1) {
     return;
@@ -95,10 +108,12 @@ void DSPHalt(void) {
 
 u32 DSPGetDMAStatus(void) { return __DSPRegs[5] & 0x200; }
 
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 BOOL DSPCheckInit(void) { return __DSP_init_flag; }
 #endif
 
+#endif
 DSPTaskInfo* DSPAddTask(DSPTaskInfo* task) {
   u32 oldInt;
   oldInt = OSDisableInterrupts();
@@ -113,6 +128,7 @@ DSPTaskInfo* DSPAddTask(DSPTaskInfo* task) {
   return task;
 }
 
+#ifndef PRIME1
 DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task) {
   u32 oldInt;
   oldInt = OSDisableInterrupts();
@@ -149,6 +165,7 @@ DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task) {
 }
 #endif
 
+#endif
 #ifdef __cplusplus
 }
 #endif

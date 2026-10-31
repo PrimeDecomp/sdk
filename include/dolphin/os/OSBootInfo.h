@@ -1,7 +1,12 @@
 #ifndef _DOLPHIN_OSBOOTINFO
 #define _DOLPHIN_OSBOOTINFO
 
+#ifdef PRIME1
+#include "dolphin/DVDPriv.h"
+#include "dolphin/types.h"
+#else
 #include "dolphin/dvd.h"
+#endif
 
 typedef struct OSBootInfo {
   DVDDiskID DVDDiskID;
@@ -38,4 +43,14 @@ typedef struct BI2Debug {
   u32 padSpec;       // 0x24
 } BI2Debug;
 
+#ifdef PRIME1
+// Magic number defines.
+#define OS_BOOTINFO_MAGIC 0x0D15EA5E
+#define OS_BOOTINFO_MAGIC_JTAG 0xE5207C22
+#define OS_DVD_MAGIC_NINTENDO 0xC2339F3D
+#define OS_THREAD_STACK_MAGIC 0xDEADBABE
+
+#define OS_BOOTROM_ADDR 0x81300000
+
+#endif
 #endif // _DOLPHIN_OSBOOTINFO

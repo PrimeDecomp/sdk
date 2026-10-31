@@ -1,33 +1,62 @@
 #include "string.h"
 
+#ifdef PRIME1
+void* memcpy(void* dst, const void* src, size_t n) {
+  const char* p;
+  char* q;
+#else
 void *memcpy(void *dst, const void *src, size_t n) {
   const char *p;
   char *q;
+#endif
   int rev = ((unsigned long)src < (unsigned long)dst);
 
   if (!rev) {
 
+#ifdef PRIME1
+    for (p = (const char*)src - 1, q = (char*)dst - 1, n++; --n;)
+#else
     for (p = (const char *)src - 1, q = (char *)dst - 1, n++; --n;)
+#endif
       *++q = *++p;
 
   } else {
+#ifdef PRIME1
+    for (p = (const char*)src + n, q = (char*)dst + n, n++; --n;)
+#else
     for (p = (const char *)src + n, q = (char *)dst + n, n++; --n;)
+#endif
       *--q = *--p;
   }
   return (dst);
 }
 
+#ifdef PRIME1
+#define cps ((unsigned char*)src)
+#define cpd ((unsigned char*)dst)
+#define lps ((unsigned long*)src)
+#define lpd ((unsigned long*)dst)
+#else
 #define cps ((unsigned char *)src)
 #define cpd ((unsigned char *)dst)
 #define lps ((unsigned long *)src)
 #define lpd ((unsigned long *)dst)
+#endif
 #define deref_auto_inc(p) *++(p)
 
+#ifdef PRIME1
+void __fill_mem(void* dst, int val, size_t n) {
+#else
 void __fill_mem(void *dst, int val, size_t n) {
+#endif
   unsigned long v = (unsigned char)val;
   unsigned long i;
 
+#ifdef PRIME1
+  cpd = ((unsigned char*)dst) - 1;
+#else
   cpd = ((unsigned char *)dst) - 1;
+#endif
 
   if (n >= 32) {
     i = (~(unsigned long)dst) & 3;
@@ -43,7 +72,11 @@ void __fill_mem(void *dst, int val, size_t n) {
     if (v)
       v |= v << 24 | v << 16 | v << 8;
 
+#ifdef PRIME1
+    lpd = ((unsigned long*)(cpd + 1)) - 1;
+#else
     lpd = ((unsigned long *)(cpd + 1)) - 1;
+#endif
 
     i = n >> 5;
 
@@ -66,7 +99,11 @@ void __fill_mem(void *dst, int val, size_t n) {
         deref_auto_inc(lpd) = v;
       while (--i);
 
+#ifdef PRIME1
+    cpd = ((unsigned char*)(lpd + 1)) - 1;
+#else
     cpd = ((unsigned char *)(lpd + 1)) - 1;
+#endif
 
     n &= (unsigned char)3;
   }
@@ -79,7 +116,11 @@ void __fill_mem(void *dst, int val, size_t n) {
   return;
 }
 
+#ifdef PRIME1
+void* memset(void* str, int c, size_t n) {
+#else
 void *memset(void *str, int c, size_t n) {
+#endif
   __fill_mem(str, c, n);
   return str;
 }

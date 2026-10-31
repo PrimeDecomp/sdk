@@ -1,8 +1,12 @@
 #include "dolphin/arq.h"
 #include "dolphin/os.h"
 
+#ifdef PRIME1
+const char* __ARQVersion = "<< Dolphin SDK - ARQ\trelease build: Sep  5 2002 05:34:29 (0x2301) >>";
+#else
 //const char* __ARQVersion = "<< Dolphin SDK - ARQ\trelease build: Sep  5 2002 05:34:29 (0x2301) >>";
 const char* __ARQVersion = "<< Dolphin SDK - ARQ\trelease build: Apr  5 2004 04:15:04 (0x2301) >>";
+#endif
 static ARQRequest* __ARQRequestQueueHi;
 static ARQRequest* __ARQRequestTailHi;
 static ARQRequest* __ARQRequestQueueLo;
@@ -78,13 +82,21 @@ void __ARQCallbackHack(void) { return; }
 void __ARQInterruptServiceRoutine(void) {
 
   if (__ARQCallbackHi) {
+#ifdef PRIME1
+    (*__ARQCallbackHi)((uintptr_t)__ARQRequestPendingHi);
+#else
     (*__ARQCallbackHi)((u32)__ARQRequestPendingHi);
+#endif
     __ARQRequestPendingHi = NULL;
     __ARQCallbackHi = NULL;
   }
 
   else if (__ARQCallbackLo) {
+#ifdef PRIME1
+    (*__ARQCallbackLo)((uintptr_t)__ARQRequestPendingLo);
+#else
     (*__ARQCallbackLo)((u32)__ARQRequestPendingLo);
+#endif
     __ARQRequestPendingLo = NULL;
     __ARQCallbackLo = NULL;
   }

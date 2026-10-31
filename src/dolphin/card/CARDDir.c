@@ -5,32 +5,49 @@
 
 #include <dolphin/CARDPriv.h>
 
+#ifdef PRIME1
+CARDDir* __CARDGetDirBlock(CARDControl* card) { return card->currentDir; }
+#else
 #line 53
 CARDDir* __CARDGetDirBlock(CARDControl* card) {
   ASSERT(card->currentDir);
   return card->currentDir;
 }
+#endif
 
+#ifndef PRIME1
 #line 69
+#endif
 static void WriteCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
+#ifndef PRIME1
   CARDDir* dir0;
   CARDDir* dir1;
+#endif
 
   card = &__CARDBlock[chan];
   if (0 <= result) {
+#ifdef PRIME1
+    CARDDir* dir0 = (CARDDir*)((u8*)card->workArea + 0x2000);
+    CARDDir* dir1 = (CARDDir*)((u8*)card->workArea + 0x4000);
+#else
     dir0 = (CARDDir*)((u8*)card->workArea + 0x2000);
     dir1 = (CARDDir*)((u8*)card->workArea + 0x4000);
     ASSERT(card->currentDir);
+#endif
 
     if (card->currentDir == dir0) {
+#ifndef PRIME1
     
+#endif
       card->currentDir = dir1;
       memcpy(dir1, dir0, 0x2000);
     } else {
+#ifndef PRIME1
     
       ASSERT(card->currentDir == dir1);
+#endif
       card->currentDir = dir0;
       memcpy(dir0, dir1, 0x2000);
     }
@@ -51,6 +68,9 @@ static void EraseCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
   CARDDir* dir;
+#ifdef PRIME1
+  u32 tmp[2];
+#endif
   u32 addr;
 
   card = &__CARDBlock[chan];
@@ -78,14 +98,21 @@ error:
   }
 }
 
+#ifndef PRIME1
 #line 167
+#endif
 s32 __CARDUpdateDir(s32 chan, CARDCallback callback) {
   CARDControl* card;
   CARDDirCheck* check;
+#ifdef PRIME1
+  u32 tmp[2];
+#endif
   u32 addr;
   CARDDir* dir;
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   card = &__CARDBlock[chan];
   if (!card->attached) {
     return CARD_RESULT_NOCARD;

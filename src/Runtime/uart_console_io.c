@@ -1,5 +1,7 @@
 #include "console_io.h"
+#ifndef PRIME1
 #include <dolphin/os.h>
+#endif
 
 int __TRK_write_console(__file_handle handle, unsigned char* buffer, size_t* count,
                         __idle_proc idle_proc);
@@ -17,22 +19,40 @@ static inline int __init_uart_console(void) {
 
   return (err);
 }
+#ifndef PRIME1
 
+#endif
 int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
                     __idle_proc idle_proc) {
+#ifdef PRIME1
+  if (__init_uart_console() != 0) {
+    return 1;
+  }
+#else
   if ((OSGetConsoleType() & OS_CONSOLE_TDEV) == 0) {
     if (__init_uart_console() != 0) {
       return 1;
     }
+#endif
 
+#ifdef PRIME1
+  if (WriteUARTN(buffer, *count) != 0) {
+    *count = 0;
+    return 1;
+#else
     if (WriteUARTN(buffer, *count) != 0) {
       *count = 0;
       return 1;
     }
+#endif
   }
 
   __TRK_write_console(handle, buffer, count, idle_proc);
   return 0;
 }
 
+#ifdef PRIME1
+int __close_console() { return 0; }
+#else
 int __close_console(__file_handle handle) { return 0; }
+#endif

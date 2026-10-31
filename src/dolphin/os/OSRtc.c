@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include "GameVersions.h"
+#endif
 #include "dolphin/OSRtcPriv.h"
 #include "dolphin/os.h"
 
@@ -21,7 +23,11 @@ typedef struct SramControlBlock {
   void (*callback)(void);
 } SramControlBlock;
 
+#ifdef PRIME1
+ATTRIBUTE_ALIGN_DECL(32, static SramControlBlock Scb);
+#else
 static SramControlBlock Scb ATTRIBUTE_ALIGN(32);
+#endif
 
 static BOOL GetRTC(u32* rtc) {
   BOOL err;
@@ -156,8 +162,10 @@ void __OSInitSram() {
   Scb.locked = Scb.enabled = FALSE;
   Scb.sync = ReadSram(Scb.sram);
   Scb.offset = RTC_SRAM_SIZE;
+#ifndef PRIME1
 
   OSSetGbsMode(OSGetGbsMode());
+#endif
 }
 
 static void* LockSram(u32 offset) {
@@ -199,6 +207,7 @@ static BOOL UnlockSram(BOOL commit, u32 offset) {
 
     if (offset < Scb.offset) {
       Scb.offset = offset;
+#ifndef PRIME1
     }
 
     if (Scb.offset <= 0x14) {
@@ -206,6 +215,7 @@ static BOOL UnlockSram(BOOL commit, u32 offset) {
       if (((u32)sram->gbs & 0x7c00) == 0x5000 || ((u32)sram->gbs & 0xc0) == 0xc0) {
         sram->gbs = 0;
       }
+#endif
     }
 
     Scb.sync = WriteSram(Scb.sram + Scb.offset, Scb.offset, RTC_SRAM_SIZE - Scb.offset);
@@ -251,6 +261,107 @@ BOOL __OSReadROM(void* buffer, s32 length, s32 offset) {
 }
 
 inline OSSram* __OSLockSramHACK() { return LockSram(0); }
+#ifdef PRIME1
+u32 OSGetSoundMode() {
+  OSSram* sram;
+  u32 mode;
+
+  sram = __OSLockSramHACK();
+  mode = (sram->flags & 0x4) ? OS_SOUND_MODE_STEREO : OS_SOUND_MODE_MONO;
+  __OSUnlockSram(FALSE);
+  return mode;
+}
+
+void OSSetSoundMode(u32 mode) {
+  OSSram* sram;
+  mode <<= 2;
+  mode &= 4;
+
+  sram = __OSLockSramHACK();
+  if (mode == (sram->flags & 4)) {
+    __OSUnlockSram(FALSE);
+    return;
+  }
+
+  sram->flags &= ~4;
+  sram->flags |= mode;
+  __OSUnlockSram(TRUE);
+}
+
+u32 OSGetProgressiveMode() {
+  OSSram* sram;
+  u32 mode;
+
+  sram = __OSLockSramHACK();
+  mode = (sram->flags & 0x80) >> 7;
+  __OSUnlockSram(FALSE);
+  return mode;
+}
+
+void OSSetProgressiveMode(u32 mode) {
+  OSSram* sram;
+  mode <<= 7;
+  mode &= 0x80;
+
+  sram = __OSLockSramHACK();
+  if (mode == (sram->flags & 0x80)) {
+    __OSUnlockSram(FALSE);
+    return;
+  }
+
+  sram->flags &= ~0x80;
+  sram->flags |= mode;
+  __OSUnlockSram(TRUE);
+}
+
+u8 OSGetLanguage() {
+  OSSram* sram;
+  u8 language;
+
+  sram = __OSLockSramHACK();
+  language = sram->language;
+  __OSUnlockSram(FALSE);
+  return language;
+}
+
+void OSSetLanguage(u8 language) {
+  OSSram* sram = __OSLockSram();
+
+  if (language == sram->language) {
+    __OSUnlockSram(FALSE);
+    return;
+  }
+
+  sram->language = language;
+  __OSUnlockSram(TRUE);
+}
+
+u32 OSGetEuRgb60Mode() {
+  OSSram* sram;
+  u32 mode;
+
+  sram = __OSLockSramHACK();
+  mode = (sram->ntd & 0x40) >> 6;
+  __OSUnlockSram(FALSE);
+  return mode;
+}
+
+void OSSetEuRgb60Mode(u32 mode) {
+  OSSram* sram;
+  mode <<= 6;
+  mode &= 0x40;
+
+  sram = __OSLockSramHACK();
+  if (mode == (sram->ntd & 0x40)) {
+    __OSUnlockSram(FALSE);
+    return;
+  }
+
+  sram->ntd &= ~0x40;
+  sram->ntd |= mode;
+  __OSUnlockSram(TRUE);
+}
+#else
 #if VERSION < VERSION_R32J01
 u32 OSGetSoundMode() {
   OSSram* sram;
@@ -340,6 +451,7 @@ void OSSetEuRgb60Mode(u32 mode) {
   __OSUnlockSram(TRUE);
 }
 #endif
+#endif
 
 u16 OSGetWirelessID(s32 channel) {
   OSSramEx* sram;
@@ -364,6 +476,7 @@ void OSSetWirelessID(s32 channel, u16 id) {
   __OSUnlockSramEx(FALSE);
 }
 
+#ifndef PRIME1
 u16 OSGetGbsMode(void) {
   OSSramEx* sram;
   u16 mode;
@@ -443,4 +556,6 @@ BOOL __OSClearRTCFlags(void) {
 
   return !err;
 }
+#endif
+
 #endif

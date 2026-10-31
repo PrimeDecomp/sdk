@@ -39,13 +39,17 @@ error:
   }
 }
 
+#ifndef PRIME1
 #line 88
+#endif
 s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
+#ifndef PRIME1
 
   ASSERT(0 < length && length % CARD_SEG_SIZE == 0);
   ASSERT(0 <= chan && chan < 2);
 
+#endif
   card = &__CARDBlock[chan];
   if (!card->attached) {
     return CARD_RESULT_NOCARD;
@@ -68,10 +72,19 @@ static void BlockWriteCallback(s32 chan, s32 result) {
     goto error;
   }
 
+#ifdef PRIME1
+  card->xferred += CARD_PAGE_SIZE;
+#else
   card->xferred += card->pageSize;
+#endif
 
+#ifdef PRIME1
+  card->addr += CARD_PAGE_SIZE;
+  (u8*)card->buffer += CARD_PAGE_SIZE;
+#else
   card->addr += card->pageSize;
   (u8*)card->buffer += card->pageSize;
+#endif
   if (--card->repeat <= 0) {
     goto error;
   }
@@ -93,27 +106,40 @@ error:
   }
 }
 
+#ifndef PRIME1
 #line 149
+#endif
 s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
+#ifndef PRIME1
 
+#endif
   card = &__CARDBlock[chan];
+#ifndef PRIME1
   ASSERT(0 < length && length % card->pageSize == 0);
   ASSERT(0 <= chan && chan < 2);
+#endif
   if (!card->attached) {
     return CARD_RESULT_NOCARD;
   }
 
   card->xferCallback = callback;
+#ifdef PRIME1
+  card->repeat = (int)(length / CARD_PAGE_SIZE);
+#else
   card->repeat = (int)(length / card->pageSize);
+#endif
   card->addr = addr;
   card->buffer = dst;
 
   return __CARDWritePage(chan, BlockWriteCallback);
 }
 
+#ifndef PRIME1
 #line 182
 s32 CARDGetXferredBytes(s32 chan) {
   ASSERT(0 <= chan && chan < 2);
   return __CARDBlock[chan].xferred;
 }
+
+#endif

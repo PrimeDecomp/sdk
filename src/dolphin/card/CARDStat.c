@@ -61,15 +61,19 @@ static void UpdateIconOffsets(CARDDir* ent, CARDStat* stat) {
   stat->offsetData = offset;
 }
 
+#ifndef PRIME1
 #line 166
+#endif
 s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   CARDControl* card;
   CARDDir* dir;
   CARDDir* ent;
   s32 result;
+#ifndef PRIME1
 
   ASSERT(0 <= chan && chan < 2);
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
+#endif
 
   if (fileNo < 0 || CARD_MAX_FILE <= fileNo) {
     return CARD_RESULT_FATAL_ERROR;
@@ -81,7 +85,14 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
+#ifdef PRIME1
+  result = __CARDAccess(card, ent);
+  if (result == CARD_RESULT_NOPERM) {
+    result = __CARDIsWritable(ent);
+  }
+#else
   result = __CARDIsReadable(card, ent);
+#endif
 
   if (result >= 0) {
     memcpy(stat->gameName, ent->gameName, sizeof(stat->gameName));
@@ -101,13 +112,16 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   return __CARDPutControlBlock(card, result);
 }
 
+#ifndef PRIME1
 #line 225
+#endif
 s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir;
   CARDDir* ent;
   s32 result;
 
+#ifndef PRIME1
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
   ASSERT(0 <= chan && chan < 2);
 
@@ -122,6 +136,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
             stat->commentAddr % CARD_SYSTEM_BLOCK_SIZE <=CARD_SYSTEM_BLOCK_SIZE - CARD_COMMENT_SIZE, 
             "CARDSetStatus[Async](): comment strings (set by stat->commentAddr) must not cross 8KB byte boundary.");
   // clang-format on
+#endif
   if (fileNo < 0 || CARD_MAX_FILE <= fileNo ||
       (stat->iconAddr != 0xffffffff && CARD_READ_SIZE <= stat->iconAddr) ||
       (stat->commentAddr != 0xffffffff &&
@@ -135,7 +150,11 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
+#ifdef PRIME1
+  result = __CARDAccess(card, ent);
+#else
   result = __CARDIsWritable(card, ent);
+#endif
   if (result < 0) {
     return __CARDPutControlBlock(card, result);
   }
@@ -159,6 +178,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
   return result;
 }
 
+#ifndef PRIME1
 s32 CARDSetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   s32 result;
   result = CARDSetStatusAsync(chan, fileNo, stat, __CARDSyncCallback);
@@ -168,3 +188,5 @@ s32 CARDSetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
 
   return __CARDSync(chan);
 }
+
+#endif

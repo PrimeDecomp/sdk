@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include "GameVersions.h"
+#endif
 #include "dolphin/os/OSPriv.h"
 
 static vu32 RunQueueBits;
@@ -19,9 +21,11 @@ volatile OSContext* __OSFPUContext : OS_BASE_CACHED + 0x00D8;
 
 static void DefaultSwitchThreadCallback(OSThread* from, OSThread* to) {}
 
+#ifndef PRIME1
 extern void __OSUnlockAllMutex(OSThread* thread);
 extern OSErrorHandler __OSErrorTable[];
 extern u32 __OSFpscrEnableBits;
+#endif
 extern u8 _stack_addr[];
 extern u8 _stack_end[];
 
@@ -223,6 +227,7 @@ static void UpdatePriority(OSThread* thread) {
   } while (thread);
 }
 
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 void __OSPromoteThread(OSThread* thread, OSPriority priority) {
   do {
@@ -237,6 +242,7 @@ void __OSPromoteThread(OSThread* thread, OSPriority priority) {
 }
 #endif
 
+#endif
 static void __OSSwitchThread(OSThread* nextThread) {
   OSSetCurrentThread(nextThread);
   OSSetCurrentContext(&nextThread->context);
@@ -278,8 +284,13 @@ static OSThread* SelectThread(BOOL yield) {
     }
   }
 
+#ifdef PRIME1
+  OSSetCurrentThread(NULL);
+#endif
   if (RunQueueBits == 0) {
+#ifndef PRIME1
     OSSetCurrentThread(NULL);
+#endif
     OSSetCurrentContext(&IdleContext);
     do {
       OSEnableInterrupts();
@@ -320,6 +331,7 @@ void OSYieldThread(void) {
   SelectThread(TRUE);
   OSRestoreInterrupts(enabled);
 }
+#ifndef PRIME1
 
 #if VERSION >= VERSION_R32J01
 BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack,
@@ -400,6 +412,7 @@ void OSExitThread(void* val) {
   __OSReschedule();
   OSRestoreInterrupts(enabled);
 }
+#endif
 #endif
 
 void OSCancelThread(OSThread* thread) {
@@ -537,6 +550,7 @@ void OSWakeupThread(OSThreadQueue* queue) {
   OSRestoreInterrupts(enabled);
 }
 
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 static void SleepAlarmHandler(OSAlarm* alarm, OSContext* context) {
   OSResumeThread((OSThread*)OSGetAlarmUserData(alarm));
@@ -564,6 +578,7 @@ void OSSleepTicks(OSTime ticks) {
 }
 #endif
 
+#endif
 void OSClearStack(u8 val) {
   register u32 sp;
   register u32* p;
@@ -576,9 +591,12 @@ void OSClearStack(u8 val) {
   }
 }
 
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 // IdleThread has no users but lives on in the retail binary
 extern void fake_function(...);
 void FORCEACTIVE_OSThread_c(void);
 void FORCEACTIVE_OSThread_c(void) { fake_function(&IdleThread); }
+#endif
+
 #endif

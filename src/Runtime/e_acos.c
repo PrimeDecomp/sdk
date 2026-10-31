@@ -74,8 +74,10 @@ double x;
       else
         return pi + 2.0 * pio2_lo; /* acos(-1)= pi */
     }
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
     errno = EDOM;
+#endif
 #endif
     return NAN; /* acos(|x|>1) is NaN */
   }

@@ -1,5 +1,10 @@
 #include "GameVersions.h"
+#ifdef PRIME1
+
+#include "dolphin/base/PPCArch.h"
+#else
 #include "dolphin/PPCArch.h"
+#endif
 #include "dolphin/os.h"
 
 // Can't use this due to weird condition register issues
@@ -130,6 +135,9 @@ asm void DCZeroRange(register void* addr, register u32 nBytes) {
 
 asm void ICInvalidateRange(register void* addr, register u32 nBytes) {
   nofralloc
+#ifdef PRIME1
+  nofralloc
+#endif
   cmplwi nBytes, 0
   blelr
   clrlwi r5, addr, 27
@@ -259,10 +267,14 @@ asm void LCDisable() {
 asm void LCLoadBlocks(register void* destTag, register void* srcAddr, register u32 numBlocks) {
   nofralloc
   rlwinm  r6, numBlocks, 30, 27, 31
+#ifdef PRIME1
+  rlwinm  srcAddr, srcAddr, 0, 4, 31
+#else
 #if VERSION >= VERSION_R32J01
   rlwinm  srcAddr, srcAddr, 0, 3, 31
 #else
   rlwinm  srcAddr, srcAddr, 0, 4, 31
+#endif
 #endif
   or      r6, r6, srcAddr
   mtspr   DMA_U, r6
@@ -276,10 +288,14 @@ asm void LCLoadBlocks(register void* destTag, register void* srcAddr, register u
 asm void LCStoreBlocks(register void* destAddr, register void* srcTag, register u32 numBlocks) {
   nofralloc
   rlwinm  r6, numBlocks, 30, 27, 31
+#ifdef PRIME1
+  rlwinm  destAddr, destAddr, 0, 4, 31
+#else
 #if VERSION >= VERSION_R32J01
   rlwinm  destAddr, destAddr, 0, 3, 31
 #else
   rlwinm  destAddr, destAddr, 0, 4, 31
+#endif
 #endif
   or      r6, r6, destAddr
   mtspr   DMA_U, r6
@@ -339,11 +355,28 @@ asm u32 LCQueueLength() {
 
 asm void LCQueueWait(register u32 len) {
   nofralloc
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+  addi len, len, 1
+@1
+  mfspr r4, HID2
+  extrwi  r4, r4, 4, 4
+  cmpw cr2, r4, r3
+  bge cr2, @1
+#else
+@1
+  mfspr r4, HID2
+  extrwi  r4, r4, 4, 4
+  cmpw r4, r3
+  bgt @1
+#endif
+#else
 @1
   mfspr r4, HID2
   rlwinm r4, r4, 8, 28, 31
   cmpw r4, r3
   bgt @1
+#endif
   blr
 }
 

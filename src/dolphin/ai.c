@@ -2,7 +2,11 @@
 #include "dolphin/hw_regs.h"
 #include "dolphin/os.h"
 
+#ifdef PRIME1
+const char* __AIVersion = "<< Dolphin SDK - AI\trelease build: Sep  5 2002 05:34:25 (0x2301) >>";
+#else
 const char* __AIVersion = "<< Dolphin SDK - AI\trelease build: Apr  5 2004 04:15:02 (0x2301) >>";
+#endif
 
 static AISCallback __AIS_Callback = NULL;
 static AIDCallback __AID_Callback = NULL;

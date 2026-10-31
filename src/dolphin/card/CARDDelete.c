@@ -30,20 +30,26 @@ error:
   }
 }
 
+#ifndef PRIME1
 #line 127
+#endif
 s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir;
   CARDDir* ent;
   s32 result;
 
+#ifndef PRIME1
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
   ASSERT(0 <= chan && chan < 2);
 
+#endif
   if (fileNo < 0 || CARD_MAX_FILE <= fileNo) {
     return CARD_RESULT_FATAL_ERROR;
   }
+#ifndef PRIME1
   
+#endif
   result = __CARDGetControlBlock(chan, &card);
   if (result < 0) {
     return result;
@@ -51,7 +57,11 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
+#ifdef PRIME1
+  result = __CARDAccess(card, ent);
+#else
   result = __CARDIsWritable(card, ent);
+#endif
   if (result < 0) {
     return __CARDPutControlBlock(card, result);
   }
@@ -68,15 +78,19 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
   }
   return result;
 }
+#ifndef PRIME1
 s32 CARDFastDelete(s32 chan, s32 fileNo) {
   s32 result;
   result = CARDFastDeleteAsync(chan, fileNo, __CARDSyncCallback);
   if (result < 0) {
     return result;
   }
+#endif
 
+#ifndef PRIME1
   return __CARDSync(chan);
 }
+#endif
 s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback) {
   CARDControl* card;
   s32 fileNo;
@@ -109,6 +123,7 @@ s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback) {
   return result;
 }
 
+#ifndef PRIME1
 s32 CARDDelete(s32 chan, const char* fileName){
   s32 result;
   result = CARDDeleteAsync(chan, fileName, __CARDSyncCallback);
@@ -118,3 +133,5 @@ s32 CARDDelete(s32 chan, const char* fileName){
 
   return __CARDSync(chan);
 }
+
+#endif

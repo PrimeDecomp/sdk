@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <GameVersions.h>
+#endif
 #include <dolphin/os.h>
 #include <dolphin/db.h>
 
@@ -284,11 +286,27 @@ asm void OSLoadContext(register OSContext* context) {
   lwz      r6,context->srr0
   addi     r5,r4,__RAS_OSDisableInterrupts_begin@l
   cmplw    r6,r5
+#ifdef PRIME1
+#if VERSION == VERSION_GM8EAB_00
+  blt      _notInRAS
+#else
   ble      _notInRAS
+#endif
+#else
+  ble      _notInRAS
+#endif
   lis      r4,__RAS_OSDisableInterrupts_end@ha
   addi     r0,r4,__RAS_OSDisableInterrupts_end@l
   cmplw    r6,r0
+#ifdef PRIME1
+#if VERSION == VERSION_GM8EAB_00
+  bgt      _notInRAS
+#else
   bge      _notInRAS
+#endif
+#else
+  bge      _notInRAS
+#endif
   stw      r5,context->srr0
 
 _notInRAS:
@@ -384,6 +402,7 @@ asm int OSSwitchFiber(register u32 pc, register u32 newsp) {
   blr
   // clang-format on
 }
+#ifndef PRIME1
 
 #if VERSION >= VERSION_R32J01
 asm int OSSwitchFiberEx(u32 r3, u32 r4, u32 r5, u32 r6, register u32 pc, register u32 newsp) {
@@ -403,6 +422,7 @@ asm int OSSwitchFiberEx(u32 r3, u32 r4, u32 r5, u32 r6, register u32 pc, registe
   blr
   // clang-format on
 }
+#endif
 #endif
 
 void OSClearContext(register OSContext* context) {

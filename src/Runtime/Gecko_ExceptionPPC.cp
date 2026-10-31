@@ -1,10 +1,20 @@
+#ifndef PRIME1
 #include "Gecko_ExceptionPPC.h"
 #include "NMWException.h"
+#endif
 #include "__ppc_eabi_linker.h"
+#ifdef PRIME1
+#include "NMWException.h"
+#endif
 
 #if __MWERKS__
+#ifdef PRIME1
+#pragma exceptions on 
+#else
 #pragma exceptions on
 #endif
+#endif
+#ifndef PRIME1
 
 #define RETURN_ADDRESS 4
 
@@ -75,6 +85,7 @@ typedef struct FragmentInfo {
   char* TOC;
   int active;
 } FragmentInfo;
+#endif
 
 typedef struct ProcessInfo {
   __eti_init_info* exception_info;
@@ -82,6 +93,9 @@ typedef struct ProcessInfo {
   int active;
 } ProcessInfo;
 
+#ifdef PRIME1
+static ProcessInfo fragmentinfo[1];
+#else
 typedef struct ActionIterator {
   MWExceptionInfo info;
   char* current_SP;
@@ -93,33 +107,57 @@ typedef struct ActionIterator {
 static ProcessInfo fragmentinfo[MAXFRAGMENTS];
 
 typedef void (*DeleteFunc)(void*);
+#endif
 
 int __register_fragment(struct __eti_init_info* info, char* TOC) {
   ProcessInfo* f;
   int i;
 
+#ifdef PRIME1
+  for (i = 0, f = fragmentinfo; i < 1; ++i, ++f) {
+#else
   for (i = 0, f = fragmentinfo; i < MAXFRAGMENTS; ++i, ++f) {
+#endif
     if (f->active == 0) {
       f->exception_info = info;
       f->TOC = TOC;
       f->active = 1;
+#ifdef PRIME1
+      return (i);
+#else
       return i;
+#endif
     }
   }
+#ifdef PRIME1
+  
+  return (-1);
+#else
 
   return -1;
+#endif
 }
 
+#ifdef PRIME1
+void __unregister_fragment(int fragmentId) {
+#else
 void __unregister_fragment(int fragmentID) {
+#endif
   ProcessInfo* f;
+#ifdef PRIME1
+  if (fragmentId >= 0 && fragmentId < 1) {
+    f = &fragmentinfo[fragmentId];
+#else
   if (fragmentID >= 0 && fragmentID < MAXFRAGMENTS) {
     f = &fragmentinfo[fragmentID];
+#endif
     f->exception_info = 0;
     f->TOC = 0;
     f->active = 0;
   }
 }
 
+#ifndef PRIME1
 static inline int ExPPC_FindExceptionFragment(char* returnaddr, FragmentInfo* frag) {
   ProcessInfo* f;
   int i;
@@ -972,3 +1010,5 @@ asm void __throw(char* throwtype, void* location, void* dtor) {
   blr
   /* clang-format on */
 }
+
+#endif

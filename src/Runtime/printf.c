@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <critical_regions.h>
+#endif
 // #include <cctype>
 #include <ansi_files.h>
 #include <ansi_fp.h>
@@ -1224,11 +1226,15 @@ int printf(const char* format, ...) {
     return -1;
   }
 
+#ifndef PRIME1
   __begin_critical_region(files_access);
+#endif
   va_start(l, format);
   ret = __pformatter(&__FileWrite, (void*)stdout, format, l);
   va_end(l);
+#ifndef PRIME1
   __end_critical_region(files_access);
+#endif
   return ret;
 }
 
@@ -1244,11 +1250,15 @@ int fprintf(FILE* file, const char* format, ...) {
     return -1;
   }
 
+#ifndef PRIME1
   __begin_critical_region(files_access);
+#endif
   va_start(l, format);
   ret = __pformatter(&__FileWrite, file, format, l);
   va_end(l);
+#ifndef PRIME1
   __end_critical_region(files_access);
+#endif
   return ret;
 }
 
@@ -1256,16 +1266,24 @@ int fprintf(FILE* file, const char* format, ...) {
  * @note Address: 0x800C76D8
  * @note Size: 0x98
  */
+#ifdef PRIME1
+size_t vprintf(const char* pFormat, va_list arg) {
+#else
 int vprintf(const char* pFormat, va_list arg) {
+#endif
   int ret;
 
   if (fwide(stdout, -1) >= 0) {
     return -1;
   }
 
+#ifndef PRIME1
   __begin_critical_region(files_access);
+#endif
   ret = __pformatter(&__FileWrite, (void*)stdout, pFormat, arg);
+#ifndef PRIME1
   __end_critical_region(files_access);
+#endif
   return ret;
 }
 
@@ -1281,7 +1299,11 @@ void vfprintf(void) {
  * @note Address: 0x800C7664
  * @note Size: 0x74
  */
+#ifdef PRIME1
+size_t vsnprintf(char* s, size_t n, const char* format, va_list arg) {
+#else
 int vsnprintf(char* s, size_t n, const char* format, va_list arg) {
+#endif
   int end;
   __OutStrCtrl osc;
   osc.CharStr = s;
@@ -1301,7 +1323,11 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg) {
  * @note Address: 0x800C75EC
  * @note Size: 0x78
  */
+#ifdef PRIME1
+size_t vsprintf(char* s, const char* format, va_list arg) {
+#else
 int vsprintf(char* s, const char* format, va_list arg) {
+#endif
   return vsnprintf(s, 0xFFFFFFFF, format, arg);
 }
 
@@ -1319,7 +1345,11 @@ int snprintf(char* s, size_t n, const char* format, ...) {
  * @note Address: 0x800C7438
  * @note Size: 0xE0
  */
+#ifdef PRIME1
+size_t sprintf(char* s, const char* format, ...) {
+#else
 int sprintf(char* s, const char* format, ...) {
+#endif
   va_list args;
   va_start(args, format);
   return vsnprintf(s, 0xFFFFFFFF, format, args);

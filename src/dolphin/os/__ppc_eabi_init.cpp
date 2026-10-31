@@ -1,12 +1,19 @@
+#ifdef PRIME1
+#include "dolphin/__ppc_eabi_init.h"
+#include "dolphin/base/PPCArch.h"
+#else
 #include "GameVersions.h"
 #include <dolphin/__ppc_eabi_init.h>
 #include <dolphin/PPCArch.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 void __OSPSInit();
+#ifndef PRIME1
 void __OSFPRInit();
+#endif
 void __OSCacheInit();
 
 asm void __init_hardware(void) {
@@ -18,7 +25,9 @@ asm void __init_hardware(void) {
 
   mflr r31
   bl __OSPSInit
+#ifndef PRIME1
   bl __OSFPRInit
+#endif
   bl __OSCacheInit
   mtlr r31
   blr
@@ -46,6 +55,9 @@ loop:
   // clang-format on
 }
 
+#ifdef PRIME1
+void __init_user() { __init_cpp(); }
+#else
 __declspec(weak) void InitMetroTRK_BBA() { return; }
 
 #if VERSION >= VERSION_R32J01
@@ -65,6 +77,7 @@ asm void __init_user() {
 #else
 void __init_user() { __init_cpp(); }
 #endif
+#endif
 
 typedef void (*voidfunctionptr)(void); // pointer to function returning void
 __declspec(section ".init") extern voidfunctionptr _ctors[];
@@ -80,6 +93,9 @@ void __init_cpp(void) {
   }
 }
 
+#ifdef PRIME1
+void _ExitProcess(void) { PPCHalt(); }
+#else
 #if VERSION < VERSION_R32J01
 void _ExitProcess(void) { PPCHalt(); }
 #else
@@ -89,6 +105,7 @@ void exit(int status) {
   }
   PPCHalt();
 }
+#endif
 #endif
 
 #ifdef __cplusplus

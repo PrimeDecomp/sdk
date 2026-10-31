@@ -28,6 +28,28 @@ asm void __ptmf_test(register PTMF* ptmf) {
   blr
 }
 
+#ifdef PRIME1
+asm long __ptmf_cmpr(void) {
+  nofralloc
+
+  lwz r5, 0(r3)
+  lwz r6, 0(r4)
+  lwz r7, 4(r3)
+  lwz r8, 4(r4)
+  lwz r9, 8(r3)
+  lwz r10, 8(r4)
+  li r3, 1
+  cmpw cr0, r5, r6
+  cmpw cr6, r7, r8
+  cmpw cr7, r9, r10
+  bnelr cr0
+  bnelr cr6
+  bnelr cr7
+  li r3, 0
+  blr
+}
+
+#endif
 asm void __ptmf_scall(...) {
   nofralloc
   lwz r0, PTMF.this_delta(r12)
@@ -42,6 +64,7 @@ asm void __ptmf_scall(...) {
   mtctr r12
   bctr
 }
+#ifndef PRIME1
 asm void __ptmf_scall4(...) {
   nofralloc
   lwz r0, PTMF.this_delta(r12)
@@ -56,4 +79,5 @@ asm void __ptmf_scall4(...) {
   mtctr r12
   bctr
 }
+#endif
 /* clang-format - on*/

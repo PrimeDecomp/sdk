@@ -3,10 +3,14 @@
 
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/types.h>
+#ifdef PRIME1
+#include <dolphin/vitypes.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+#ifndef PRIME1
 
 #define VI_TVMODE(format, interlace) (((format) << 2) + (interlace))
 
@@ -37,6 +41,7 @@ typedef enum {
 } VITVMode;
 
 typedef enum { VI_XFBMODE_SF = 0, VI_XFBMODE_DF } VIXFBMode;
+#endif
 
 typedef struct _GXRenderModeObj {
   /*0x00*/ VITVMode viTVmode;
@@ -60,6 +65,12 @@ typedef struct _GXColor {
   u8 b;
   u8 a;
 } GXColor;
+#ifdef PRIME1
+
+typedef struct _GXFogAdjTable {
+  u16 r[10];
+} GXFogAdjTable;
+#endif
 
 typedef struct _GXTexObj {
 #ifdef TARGET_PC
@@ -101,15 +112,25 @@ typedef struct _GXTlutRegion {
   u32 dummy[4];
 } GXTlutRegion;
 
+#ifndef PRIME1
 typedef struct _GXFogAdjTable {
   u16 r[10];
 } GXFogAdjTable;
 
+#endif
 typedef struct _GXVtxAttrFmtList {
+#ifdef PRIME1
+  // total size: 0x10
+  GXAttr attr;     // offset 0x0, size 0x4
+  GXCompCnt cnt;   // offset 0x4, size 0x4
+  GXCompType type; // offset 0x8, size 0x4
+  u8 frac;         // offset 0xC, size 0x1
+#else
   GXAttr attr;
   GXCompCnt cnt;
   GXCompType type;
   u8 frac;
+#endif
 } GXVtxAttrFmtList;
 
 #ifdef __cplusplus

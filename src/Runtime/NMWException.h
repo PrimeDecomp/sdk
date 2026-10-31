@@ -2,8 +2,10 @@
 #define _NMWEXCEPTION
 
 #include <stddef.h>
+#ifndef PRIME1
 
 #include "__ppc_eabi_linker.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,6 +21,7 @@ extern "C" {
 #define DTORARG_TYPE int
 
 #define DTORCALL_COMPLETE(dtor, objptr) (((void (*)(void*, DTORARG_TYPE))dtor)(objptr, -1))
+#ifndef PRIME1
 #define DTORCALL_PARTIAL(dtor, objptr) (((void (*)(void*, DTORARG_TYPE))dtor)(objptr, 0))
 
 typedef short vbase_ctor_arg_type;
@@ -32,17 +35,20 @@ typedef struct CatchInfo {
   long pointercopy;
   void* stacktop;
 } CatchInfo;
+#endif
 
 typedef struct DestructorChain {
   struct DestructorChain* next;
   void* destructor;
   void* object;
 } DestructorChain;
+#ifndef PRIME1
 
 void __end__catch(CatchInfo* catchinfo);
 void __throw(char* throwtype, void* location, void* dtor);
 char __throw_catch_compare(const char* throwtype, const char* catchtype, long* offset_result);
 void __unexpected(CatchInfo* catchinfo);
+#endif
 
 void __unregister_fragment(int fragmentID);
 int __register_fragment(struct __eti_init_info* info, char* TOC);

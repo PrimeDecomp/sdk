@@ -1,8 +1,13 @@
 #ifndef _DOLPHIN_OSSERIAL
 #define _DOLPHIN_OSSERIAL
 
+#ifdef PRIME1
+#include <dolphin/hw_regs.h>
+#else
 #include <types.h>
+#endif
 
+#ifndef PRIME1
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -65,5 +70,6 @@ void SISetSamplingRate(u32 msec);
 
 #ifdef __cplusplus
 }
+#endif
 #endif
 #endif // _DOLPHIN_OSSERIAL

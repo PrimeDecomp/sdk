@@ -1,13 +1,25 @@
 #ifndef _DOLPHIN_OSMODULE
 #define _DOLPHIN_OSMODULE
+#ifdef PRIME1
+
+#include "GameVersions.h"
+#endif
 
 #include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
+#define OS_MODULE_VERSION 3
+#else
+#define OS_MODULE_VERSION 2
+#endif
+#else
 
 #define OS_MODULE_VERSION 3
+#endif
 typedef struct OSModuleHeader OSModuleHeader;
 
 typedef u32 OSModuleID;

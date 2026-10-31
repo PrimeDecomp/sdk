@@ -1,30 +1,71 @@
+#ifdef PRIME1
+#include "GameVersions.h"
+#else
 #include <GameVersions.h>
 #include <string.h>
+#endif
 
+#ifdef PRIME1
+#include "dolphin/base/PPCArch.h"
+#include "dolphin/gx.h"
+#include "dolphin/hw_regs.h"
+#include "dolphin/mtx.h"
+#include "dolphin/os.h"
+#include "dolphin/vi.h"
+#else
 #include <dolphin/PPCArch.h>
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #include <dolphin/vi.h>
+#endif
 
+#ifdef PRIME1
+#include "dolphin/gx/GXPriv.h"
+#else
 #include <dolphin/gx/__gx.h>
+#endif
 
+#ifdef PRIME1
+static GXData gxData;
+#else
 #if VERSION >= VERSION_R32J01
 const char* __GXVersion = "<< RVL_SDK - GX \trelease build: Nov 29 2006 18:10:50 (0x4200_60308) >>";
 #else
 const char* __GXVersion = "<< Dolphin SDK - GX\trelease build: Apr  5 2004 04:14:28 (0x2301) >>";
 #endif
 
+#endif
 static GXFifoObj FifoObj;
 
+#ifdef PRIME1
+GXData *const __GXData = &gxData;
+#else
 static struct __GXData_struct gxData;
 struct __GXData_struct* const __GXData = &gxData;
+#endif
 
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+char *__GXVersion = "<< Dolphin SDK - GX\trelease build: Sep  5 2002 05:33:28 (0x2301) >>";
+#elif VERSION == VERSION_GM8E_02
+char *__GXVersion = "<< Dolphin SDK - GX\trelease build: Feb  7 2003 04:01:13 (0x2301) >>";
+#else
+char *__GXVersion = "<< Dolphin SDK - GX	release build: Nov  7 2002 05:47:57 (0x2301) >>";
+#endif
+#else
 // these are supposed to be in-function static, but it messed up sbss order
 u32 resetFuncRegistered;
 u32 calledOnce;
 OSTime time;
 u32 peCount;
+#endif
 
+#ifdef PRIME1
+void *__piReg = NULL;
+void *__cpReg = NULL;
+void *__peReg = NULL;
+void *__memReg = NULL;
+#else
 void *__memReg;
 void *__peReg;
 void *__cpReg;
@@ -34,6 +75,7 @@ static u16 DefaultTexData[] __attribute__((aligned(32))) = {
     0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
     0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
 };
+#endif
 
 static GXVtxAttrFmtList GXDefaultVATList[] = {
     {GX_VA_POS, GX_POS_XYZ, GX_F32, 0},
@@ -53,6 +95,14 @@ static GXVtxAttrFmtList GXDefaultVATList[] = {
 
 static f32 GXDefaultProjData[] = {1.0f, 0.0f, 1.0f, 0.0f, -1.0f, -2.0f, 0.0f};
 
+#ifdef PRIME1
+static asm BOOL IsWriteGatherBufferEmpty(void) {
+  nofralloc;
+  sync;
+  mfspr r3, WPAR;
+  andi.r3, r3, 1;
+  blr;
+#else
 static u32 GXTexRegionAddrTable[] = {
     0x00000, 0x10000, 0x20000, 0x30000, 0x40000, 0x50000, 0x60000, 0x70000, 0x08000, 0x18000,
     0x28000, 0x38000, 0x48000, 0x58000, 0x68000, 0x78000, 0x00000, 0x90000, 0x20000, 0xB0000,
@@ -76,8 +126,17 @@ asm BOOL IsWriteGatherBufferEmpty(void)
     sync
     mfspr r3, WPAR
     andi. r3, r3, 1
+#endif
 }
 
+#ifdef PRIME1
+static void EnableWriteGatherPipe(void) {
+  u32 hid2;
+  hid2 = PPCMfhid2();
+  PPCMtwpar(OSUncachedToPhysical((void *)GXFIFO_ADDR));
+  hid2 |= 0x40000000;
+  PPCMthid2(hid2);
+#else
 static void EnableWriteGatherPipe(void)
 {
     u32 hid2 = PPCMfhid2();
@@ -85,21 +144,47 @@ static void EnableWriteGatherPipe(void)
     PPCMtwpar(OSUncachedToPhysical((void *)GXFIFO_ADDR));
     hid2 |= 0x40000000;
     PPCMthid2(hid2);
+#endif
 }
 
+#ifdef PRIME1
+static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *obj, GXTexMapID id) {
+  GXTexFmt format;
+#else
 static void DisableWriteGatherPipe(void)
 {
     u32 hid2 = PPCMfhid2();
+#endif
 
+#ifdef PRIME1
+  format = GXGetTexObjFmt(obj);
+
+  if (format != GX_TF_C4 && format != GX_TF_C8 && format != GX_TF_C14X2) {
+    return &__GXData->TexRegions[__GXData->nextTexRgn++ & 7];
+  } else {
+    return &__GXData->TexRegionsCI[__GXData->nextTexRgnCI++ & 3];
+  }
+#else
     hid2 &= ~0x40000000;
     PPCMthid2(hid2);
+#endif
 }
 
+#ifdef PRIME1
+static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 tlut) {
+  if (tlut >= 20) {
+    return NULL;
+  }
+#else
 static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *t_obj, GXTexMapID id)
 {
     GXTexFmt fmt;
     u8 mm;
+#endif
 
+#ifdef PRIME1
+  return &__GXData->TlutRegions[tlut];
+#else
     fmt = GXGetTexObjFmt(t_obj);
     mm = GXGetTexObjMipMap(t_obj);
     id = (GXTexMapID)(id % GX_MAX_TEXMAP);
@@ -120,8 +205,75 @@ static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *t_obj, GXTexMap
         }
         return &__GXData->TexRegions0[id];
     }
+#endif
 }
 
+#ifdef PRIME1
+#if VERSION == VERSION_GM8E_02
+static BOOL __GXShutdown(BOOL final) {
+  static u32 peCount;
+  static OSTime time;
+  static u32 calledOnce = 0;
+  u32 peCountNew;
+  OSTime timeNew;
+
+  if (!final) {
+    if (!calledOnce) {
+      peCount = __GXReadMEMCounterU32(0x27, 0x28);
+      time = OSGetTime();
+      calledOnce = 1;
+      return FALSE;
+    }
+
+    timeNew = OSGetTime();
+    peCountNew = __GXReadMEMCounterU32(0x27, 0x28);
+
+    if (timeNew - time < 10) {
+      return FALSE;
+    }
+
+    if (peCountNew != peCount) {
+      peCount = peCountNew;
+      time = timeNew;
+      return FALSE;
+    }
+  } else {
+    GXSetBreakPtCallback(NULL);
+    GXSetDrawSyncCallback(NULL);
+    GXSetDrawDoneCallback(NULL);
+
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    GX_WRITE_U32(0);
+    PPCSync();
+
+    GX_SET_CP_REG(1, 0);
+    GX_SET_CP_REG(2, 3);
+
+    __GXData->abtWaitPECopy = GX_TRUE;
+
+    __GXAbort();
+  }
+
+  return TRUE;
+}
+
+static OSResetFunctionInfo GXResetFuncInfo = {__GXShutdown, OS_RESET_PRIO_GX};
+
+static inline void RegisterResetFunction(void) {
+  static u32 resetFuncRegistered = 0;
+  if (resetFuncRegistered == 0) {
+    OSRegisterResetFunction(&GXResetFuncInfo);
+    resetFuncRegistered = 1;
+  }
+}
+#endif
+#else
 static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 idx)
 {
     if (idx >= 0x14U) {
@@ -270,10 +422,29 @@ GXFifoObj *GXInit(void *base, u32 size)
 #endif
         resetFuncRegistered = 1;
     }
+#endif
 
+#ifdef PRIME1
+GXFifoObj *GXInit(void *base, u32 size) {
+  u32 i;
+  u32 freqBase;
+  u32 texRefresh;
+  u32 peRefresh;
+#else
     __GXPEInit();
     EnableWriteGatherPipe();
+#endif
 
+#ifdef PRIME1
+  OSRegisterVersion(__GXVersion);
+  __GXData->inDispList = GX_FALSE;
+  __GXData->dlSaveContext = GX_TRUE;
+#if VERSION == VERSION_GM8E_02
+  __GXData->abtWaitPECopy = GX_TRUE;
+#endif
+  __GXData->tcsManEnab = 0;
+  __GXData->tevTcEnab = 0;
+#else
     __GXData->genMode = 0;
     SET_REG_FIELD(0, __GXData->genMode, 8, 24, 0);
     __GXData->bpMask = 255;
@@ -305,7 +476,154 @@ GXFifoObj *GXInit(void *base, u32 size)
     SET_REG_FIELD(0, __GXData->zmode, 8, 24, 0x40);
     SET_REG_FIELD(0, __GXData->peCtrl, 8, 24, 0x43);
     SET_REG_FIELD(0, __GXData->cpTex, 2, 7, 0);
+#endif
 
+#ifdef PRIME1
+  GXSetMisc(GX_MT_XF_FLUSH, 0);
+
+  __piReg = OSPhysicalToUncached(0x0C003000);
+  __cpReg = OSPhysicalToUncached(0x0C000000);
+  __peReg = OSPhysicalToUncached(0x0C001000);
+  __memReg = OSPhysicalToUncached(0x0C004000);
+
+  __GXFifoInit();
+
+  GXInitFifoBase(&FifoObj, base, size);
+  GXSetCPUFifo(&FifoObj);
+  GXSetGPFifo(&FifoObj);
+
+#if VERSION == VERSION_GM8E_02
+  RegisterResetFunction();
+#endif
+
+  __GXPEInit();
+  EnableWriteGatherPipe();
+
+  __GXData->genMode = 0;
+  SET_REG_FIELD(__GXData->genMode, 8, 24, 0);
+  __GXData->bpMask = 255;
+  SET_REG_FIELD(__GXData->bpMask, 8, 24, 0x0F);
+  __GXData->lpSize = 0;
+  SET_REG_FIELD(__GXData->lpSize, 8, 24, 0x22);
+
+  for (i = 0; i < GX_MAX_TEVSTAGE; i++) {
+    __GXData->tevc[i] = 0;
+    __GXData->teva[i] = 0;
+    __GXData->tref[i / 2] = 0;
+    __GXData->texmapId[i] = GX_TEXMAP_NULL;
+
+    SET_REG_FIELD(__GXData->tevc[i], 8, 24, 0xC0 + i * 2);
+    SET_REG_FIELD(__GXData->teva[i], 8, 24, 0xC1 + i * 2);
+    SET_REG_FIELD(__GXData->tevKsel[i / 2], 8, 24, 0xF6 + i / 2);
+    SET_REG_FIELD(__GXData->tref[i / 2], 8, 24, 0x28 + i / 2);
+  }
+
+  __GXData->iref = 0;
+  SET_REG_FIELD(__GXData->iref, 8, 24, 0x27);
+
+  for (i = 0; i < GX_MAX_TEXCOORD; i++) {
+    __GXData->suTs0[i] = 0;
+    __GXData->suTs1[i] = 0;
+
+    SET_REG_FIELD(__GXData->suTs0[i], 8, 24, 0x30 + i * 2);
+    SET_REG_FIELD(__GXData->suTs1[i], 8, 24, 0x31 + i * 2);
+  }
+
+  SET_REG_FIELD(__GXData->suScis0, 8, 24, 0x20);
+  SET_REG_FIELD(__GXData->suScis1, 8, 24, 0x21);
+
+  SET_REG_FIELD(__GXData->cmode0, 8, 24, 0x41);
+  SET_REG_FIELD(__GXData->cmode1, 8, 24, 0x42);
+
+  SET_REG_FIELD(__GXData->zmode, 8, 24, 0x40);
+  SET_REG_FIELD(__GXData->peCtrl, 8, 24, 0x43);
+
+  SET_REG_FIELD(__GXData->cpTex, 2, 7, 0);
+
+  __GXData->dirtyState = 0;
+  __GXData->dirtyVAT = 0;
+
+  freqBase = OS_BUS_CLOCK / 500;
+
+  __GXFlushTextureState();
+  texRefresh = (freqBase / 2048) | 0x400 | 0x69000000;
+  GX_WRITE_RAS_REG(texRefresh);
+
+  __GXFlushTextureState();
+  peRefresh = (freqBase / 4224) | 0x200 | 0x46000000;
+  GX_WRITE_RAS_REG(peRefresh);
+
+  for (i = 0; i < 8; i++) {
+    SET_REG_FIELD(__GXData->vatA[i], 1, 30, 1);
+    SET_REG_FIELD(__GXData->vatB[i], 1, 31, 1);
+    do {
+      s32 regAddr;
+      GX_WRITE_U8(0x8);
+      GX_WRITE_U8(i | 0x80);
+      GX_WRITE_U32(__GXData->vatB[i]);
+      regAddr = i - 12;
+    } while (0);
+  }
+
+  {
+    u32 reg1 = 0;
+    u32 reg2 = 0;
+
+    SET_REG_FIELD(reg1, 1, 0, 1);
+    SET_REG_FIELD(reg1, 1, 1, 1);
+    SET_REG_FIELD(reg1, 1, 2, 1);
+    SET_REG_FIELD(reg1, 1, 3, 1);
+    SET_REG_FIELD(reg1, 1, 4, 1);
+    SET_REG_FIELD(reg1, 1, 5, 1);
+    GX_WRITE_XF_REG(0, reg1);
+
+    SET_REG_FIELD(reg2, 1, 0, 1);
+    GX_WRITE_XF_REG(0x12, reg2);
+  }
+
+  {
+    u32 reg = 0;
+    SET_REG_FIELD(reg, 1, 0, 1);
+    SET_REG_FIELD(reg, 1, 1, 1);
+    SET_REG_FIELD(reg, 1, 2, 1);
+    SET_REG_FIELD(reg, 1, 3, 1);
+    SET_REG_FIELD(reg, 8, 24, 0x58);
+
+    GX_WRITE_RAS_REG(reg);
+  }
+
+  for (i = 0; i < 8; i++) {
+    GXInitTexCacheRegion(&__GXData->TexRegions[i], 0, i * 0x8000, 0, 0x80000 + i * 0x8000, 0);
+  }
+
+  for (i = 0; i < 4; i++) {
+    GXInitTexCacheRegion(&__GXData->TexRegionsCI[i], 0, (i * 2 + 8) * 0x8000, 0,
+                         (i * 2 + 9) * 0x8000, 0);
+  }
+
+  for (i = 0; i < 16; i++) {
+    GXInitTlutRegion(&__GXData->TlutRegions[i], 0xC0000 + 0x2000 * i, GX_TLUT_256);
+  }
+
+  for (i = 0; i < 4; i++) {
+    GXInitTlutRegion(&__GXData->TlutRegions[i + 16], 0xE0000 + 0x8000 * i, GX_TLUT_1K);
+  }
+
+  {
+    u32 reg = 0;
+
+    GX_SET_CP_REG(3, reg);
+
+    SET_REG_FIELD(__GXData->perfSel, 4, 4, 0);
+    GX_WRITE_U8(0x8);
+    GX_WRITE_U8(0x20);
+    GX_WRITE_U32(__GXData->perfSel);
+
+    reg = 0;
+    GX_WRITE_XF_REG(6, reg);
+
+    reg = 0x23000000;
+#else
     __GXData->zScale = 1.6777216E7f;
     __GXData->zOffset = 0.0f;
     __GXData->dirtyState = 0;
@@ -313,14 +631,28 @@ GXFifoObj *GXInit(void *base, u32 size)
     freqBase = __OSBusClock / 500;
     __GXFlushTextureState();
     reg = (freqBase >> 11) | 0x400 | 0x69000000;
+#endif
     GX_WRITE_RAS_REG(reg);
 
+#ifdef PRIME1
+    reg = 0x24000000;
+#else
     __GXFlushTextureState();
     reg = (freqBase / 0x1080) | 0x200 | 0x46000000;
+#endif
     GX_WRITE_RAS_REG(reg);
 
+#ifdef PRIME1
+    reg = 0x67000000;
+    GX_WRITE_RAS_REG(reg);
+  }
+#else
     __GXInitRevisionBits();
+#endif
 
+#ifdef PRIME1
+  __GXSetTmemConfig(0);
+#else
     for (i = 0; i < 8; i++) {
         GXInitTexCacheRegion(&__GXData->TexRegions0[i], GX_FALSE, GXTexRegionAddrTable[i],
                              GX_TEXCACHE_32K, GXTexRegionAddrTable[i + 8], GX_TEXCACHE_32K);
@@ -329,11 +661,19 @@ GXFifoObj *GXInit(void *base, u32 size)
         GXInitTexCacheRegion(&__GXData->TexRegions2[i], GX_TRUE, GXTexRegionAddrTable[i + 32],
                              GX_TEXCACHE_32K, GXTexRegionAddrTable[i + 40], GX_TEXCACHE_32K);
     }
+#endif
 
+#ifdef PRIME1
+  __GXInitGX();
+#else
     for (i = 0; i < 16; i++) {
         GXInitTlutRegion(&__GXData->TlutRegions[i], 0xC0000 + 0x2000 * i, GX_TLUT_256);
     }
+#endif
 
+#ifdef PRIME1
+  return &FifoObj;
+#else
     for (i = 0; i < 4; i++) {
         GXInitTlutRegion(&__GXData->TlutRegions[i + 16], 0xE0000 + 0x8000 * i, GX_TLUT_1K);
     }
@@ -365,8 +705,13 @@ GXFifoObj *GXInit(void *base, u32 size)
     __GXInitGX();
 
     return &FifoObj;
+#endif
 }
 
+#ifdef PRIME1
+void __GXInitGX(void) {
+  GXRenderModeObj *renderObj;
+#else
 void __GXInitGX() {
     GXRenderModeObj* rmode;
     GXTexObj tex_obj;
@@ -375,7 +720,15 @@ void __GXInitGX() {
     GXColor black = {0, 0, 0, 0};
     GXColor white = {255, 255, 255, 255};
     u32 i;
+#endif
 
+#ifdef PRIME1
+  Mtx ident;
+  GXColor clearColor = {64, 64, 64, 255};
+  GXColor ambColor = {0, 0, 0, 0};
+  GXColor matColor = {255, 255, 255, 255};
+  u32 i;
+#else
     switch (VIGetTvFormat()) {
     case VI_NTSC:    rmode = &GXNtsc480IntDf; break;
     case VI_PAL:     rmode = &GXPal528IntDf;  break;
@@ -398,15 +751,34 @@ void __GXInitGX() {
     GXSetNumTexGens(1);
     GXClearVtxDesc();
     GXInvalidateVtxCache();
+#endif
 
+#ifdef PRIME1
+  switch (VIGetTvFormat()) {
+  case VI_NTSC:
+    renderObj = &GXNtsc480IntDf;
+    break;
+#else
     for (i = 9; i <= 0x18; i++) {
         GXSetArray(i, __GXData, 0);
     }
+#endif
 
+#ifdef PRIME1
+  case VI_PAL:
+    renderObj = &GXPal528IntDf;
+    break;
+#else
     for (i = 0; i < 8; i++) {
         GXSetVtxAttrFmtv(i, GXDefaultVATList);
     }
+#endif
 
+#ifdef PRIME1
+  case VI_EURGB60:
+    renderObj = &GXEurgb60Hz480IntDf;
+    break;
+#else
     GXSetLineWidth(6, 0);
     GXSetPointSize(6, 0);
     GXEnableTexOffsets(0, 0, 0);
@@ -451,7 +823,13 @@ void __GXInitGX() {
     GXInvalidateTexAll();
     GXSetTexRegionCallback((GXTexRegionCallback)__GXDefaultTexRegionCallback);
     GXSetTlutRegionCallback(__GXDefaultTlutRegionCallback);
+#endif
 
+#ifdef PRIME1
+  case VI_MPAL:
+    renderObj = &GXMpal480IntDf;
+    break;
+#else
     GXInitTexObj(&tex_obj, DefaultTexData, 4, 4, 3, 0, 0, 0);
     GXLoadTexObj(&tex_obj, 0);
     GXLoadTexObj(&tex_obj, 1);
@@ -461,7 +839,14 @@ void __GXInitGX() {
     GXLoadTexObj(&tex_obj, 5);
     GXLoadTexObj(&tex_obj, 6);
     GXLoadTexObj(&tex_obj, 7);
+#endif
 
+#ifdef PRIME1
+  default:
+    renderObj = &GXNtsc480IntDf;
+    break;
+  }
+#else
     GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
     GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR0A0);
     GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD2, GX_TEXMAP2, GX_COLOR0A0);
@@ -478,7 +863,11 @@ void __GXInitGX() {
     GXSetTevOrder(GX_TEVSTAGE13, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
     GXSetTevOrder(GX_TEVSTAGE14, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
     GXSetTevOrder(GX_TEVSTAGE15, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+#endif
 
+#ifdef PRIME1
+  GXSetCopyClear(clearColor, 0xFFFFFF);
+#else
     GXSetNumTevStages(1);
     GXSetTevOp(GX_TEVSTAGE0, GX_REPLACE);
     GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
@@ -493,7 +882,18 @@ void __GXInitGX() {
     GXSetTevSwapModeTable(GX_TEV_SWAP1, GX_CH_RED, GX_CH_RED, GX_CH_RED, GX_CH_ALPHA);
     GXSetTevSwapModeTable(GX_TEV_SWAP2, GX_CH_GREEN, GX_CH_GREEN, GX_CH_GREEN, GX_CH_ALPHA);
     GXSetTevSwapModeTable(GX_TEV_SWAP3, GX_CH_BLUE, GX_CH_BLUE, GX_CH_BLUE, GX_CH_ALPHA);
+#endif
 
+#ifdef PRIME1
+  GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+  GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+  GXSetTexCoordGen2(GX_TEXCOORD2, GX_TG_MTX2x4, GX_TG_TEX2, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+  GXSetTexCoordGen2(GX_TEXCOORD3, GX_TG_MTX2x4, GX_TG_TEX3, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+  GXSetTexCoordGen2(GX_TEXCOORD4, GX_TG_MTX2x4, GX_TG_TEX4, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+  GXSetTexCoordGen2(GX_TEXCOORD5, GX_TG_MTX2x4, GX_TG_TEX5, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+  GXSetTexCoordGen2(GX_TEXCOORD6, GX_TG_MTX2x4, GX_TG_TEX6, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+  GXSetTexCoordGen2(GX_TEXCOORD7, GX_TG_MTX2x4, GX_TG_TEX7, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
+#else
     for (i = GX_TEVSTAGE0; i < GX_MAX_TEVSTAGE; i++)
         GXSetTevDirect((GXTevStageID)i);
     GXSetNumIndStages(0);
@@ -501,7 +901,13 @@ void __GXInitGX() {
     GXSetIndTexCoordScale(GX_INDTEXSTAGE1, GX_ITS_1, GX_ITS_1);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE2, GX_ITS_1, GX_ITS_1);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE3, GX_ITS_1, GX_ITS_1);
+#endif
 
+#ifdef PRIME1
+  GXSetNumTexGens(1);
+  GXClearVtxDesc();
+  GXInvalidateVtxCache();
+#else
     GXSetFog(GX_FOG_NONE, 0.0f, 1.0f, 0.1f, 1.0f, black);
     GXSetFogRangeAdj(GX_DISABLE, 0, 0);
     GXSetBlendMode(GX_BM_NONE, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
@@ -515,7 +921,13 @@ void __GXInitGX() {
     GXSetFieldMask(GX_ENABLE, GX_ENABLE);
     GXSetFieldMode(rmode->field_rendering,
                    ((rmode->viHeight == 2 * rmode->xfbHeight) ? GX_ENABLE : GX_DISABLE));
+#endif
 
+#ifdef PRIME1
+  for (i = GX_VA_POS; i <= GX_LIGHT_ARRAY; i++) {
+    GXSetArray((GXAttr)i, __GXData, 0);
+  }
+#else
     GXSetDispCopySrc(0, 0, rmode->fbWidth, rmode->efbHeight);
     GXSetDispCopyDst(rmode->fbWidth, rmode->efbHeight);
     GXSetDispCopyYScale((f32)(rmode->xfbHeight) / (f32)(rmode->efbHeight));
@@ -524,7 +936,13 @@ void __GXInitGX() {
     GXSetDispCopyGamma(GX_GM_1_0);
     GXSetDispCopyFrame2Field(GX_COPY_PROGRESSIVE);
     GXClearBoundingBox();
+#endif
 
+#ifdef PRIME1
+  for (i = 0; i < GX_MAX_VTXFMT; i++) {
+    GXSetVtxAttrFmtv((GXVtxFmt)i, GXDefaultVATList);
+  }
+#else
     GXPokeColorUpdate(GX_TRUE);
     GXPokeAlphaUpdate(GX_TRUE);
     GXPokeDither(GX_FALSE);
@@ -533,7 +951,158 @@ void __GXInitGX() {
     GXPokeAlphaRead(GX_READ_FF);
     GXPokeDstAlpha(GX_DISABLE, 0);
     GXPokeZMode(GX_TRUE, GX_ALWAYS, GX_TRUE);
+#endif
 
+#ifdef PRIME1
+  GXSetLineWidth(6, GX_TO_ZERO);
+  GXSetPointSize(6, GX_TO_ZERO);
+  GXEnableTexOffsets(GX_TEXCOORD0, GX_FALSE, GX_FALSE);
+  GXEnableTexOffsets(GX_TEXCOORD1, GX_FALSE, GX_FALSE);
+  GXEnableTexOffsets(GX_TEXCOORD2, GX_FALSE, GX_FALSE);
+  GXEnableTexOffsets(GX_TEXCOORD3, GX_FALSE, GX_FALSE);
+  GXEnableTexOffsets(GX_TEXCOORD4, GX_FALSE, GX_FALSE);
+  GXEnableTexOffsets(GX_TEXCOORD5, GX_FALSE, GX_FALSE);
+  GXEnableTexOffsets(GX_TEXCOORD6, GX_FALSE, GX_FALSE);
+  GXEnableTexOffsets(GX_TEXCOORD7, GX_FALSE, GX_FALSE);
+
+  ident[0][0] = 1.0f;
+  ident[0][1] = 0.0f;
+  ident[0][2] = 0.0f;
+  ident[0][3] = 0.0f;
+
+  ident[1][0] = 0.0f;
+  ident[1][1] = 1.0f;
+  ident[1][2] = 0.0f;
+  ident[1][3] = 0.0f;
+
+  ident[2][0] = 0.0f;
+  ident[2][1] = 0.0f;
+  ident[2][2] = 1.0f;
+  ident[2][3] = 0.0f;
+
+  GXLoadPosMtxImm(ident, GX_PNMTX0);
+  GXLoadNrmMtxImm(ident, GX_PNMTX0);
+  GXSetCurrentMtx(GX_PNMTX0);
+
+  GXLoadTexMtxImm(ident, GX_IDENTITY, GX_MTX3x4);
+  GXLoadTexMtxImm(ident, GX_PTIDENTITY, GX_MTX3x4);
+
+  GXSetViewport(0.0f, 0.0f, renderObj->fbWidth, renderObj->xfbHeight, 0.0f, 1.0f);
+
+  GXSetProjectionv(GXDefaultProjData);
+
+  GXSetCoPlanar(GX_FALSE);
+  GXSetCullMode(GX_CULL_BACK);
+  GXSetClipMode(GX_CLIP_ENABLE);
+
+  GXSetScissor(0, 0, renderObj->fbWidth, renderObj->efbHeight);
+  GXSetScissorBoxOffset(0, 0);
+
+  GXSetNumChans(0);
+  GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_REG, GX_SRC_VTX, 0, GX_DF_NONE, GX_AF_NONE);
+  GXSetChanAmbColor(GX_COLOR0A0, ambColor);
+  GXSetChanMatColor(GX_COLOR0A0, matColor);
+
+  GXSetChanCtrl(GX_COLOR1A1, GX_FALSE, GX_SRC_REG, GX_SRC_VTX, 0, GX_DF_NONE, GX_AF_NONE);
+  GXSetChanAmbColor(GX_COLOR1A1, ambColor);
+  GXSetChanMatColor(GX_COLOR1A1, matColor);
+
+  GXInvalidateTexAll();
+
+  __GXData->nextTexRgn = 0;
+  __GXData->nextTexRgnCI = 0;
+
+  GXSetTexRegionCallback(__GXDefaultTexRegionCallback);
+  GXSetTlutRegionCallback(__GXDefaultTlutRegionCallback);
+
+  GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+  GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR0A0);
+  GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD2, GX_TEXMAP2, GX_COLOR0A0);
+  GXSetTevOrder(GX_TEVSTAGE3, GX_TEXCOORD3, GX_TEXMAP3, GX_COLOR0A0);
+  GXSetTevOrder(GX_TEVSTAGE4, GX_TEXCOORD4, GX_TEXMAP4, GX_COLOR0A0);
+  GXSetTevOrder(GX_TEVSTAGE5, GX_TEXCOORD5, GX_TEXMAP5, GX_COLOR0A0);
+  GXSetTevOrder(GX_TEVSTAGE6, GX_TEXCOORD6, GX_TEXMAP6, GX_COLOR0A0);
+  GXSetTevOrder(GX_TEVSTAGE7, GX_TEXCOORD7, GX_TEXMAP7, GX_COLOR0A0);
+
+  GXSetTevOrder(GX_TEVSTAGE8, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+  GXSetTevOrder(GX_TEVSTAGE9, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+  GXSetTevOrder(GX_TEVSTAGE10, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+  GXSetTevOrder(GX_TEVSTAGE11, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+  GXSetTevOrder(GX_TEVSTAGE12, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+  GXSetTevOrder(GX_TEVSTAGE13, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+  GXSetTevOrder(GX_TEVSTAGE14, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+  GXSetTevOrder(GX_TEVSTAGE15, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+
+  GXSetNumTevStages(1);
+  GXSetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+
+  GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+
+  GXSetZTexture(GX_ZT_DISABLE, GX_TF_Z8, 0);
+
+  for (i = 0; i < GX_MAX_TEVSTAGE; i++) {
+    GXSetTevKColorSel((GXTevStageID)i, GX_TEV_KCSEL_1_4);
+    GXSetTevKAlphaSel((GXTevStageID)i, GX_TEV_KASEL_1);
+    GXSetTevSwapMode((GXTevStageID)i, GX_TEV_SWAP0, GX_TEV_SWAP0);
+  }
+
+  GXSetTevSwapModeTable(GX_TEV_SWAP0, GX_CH_RED, GX_CH_GREEN, GX_CH_BLUE, GX_CH_ALPHA);
+  GXSetTevSwapModeTable(GX_TEV_SWAP1, GX_CH_RED, GX_CH_RED, GX_CH_RED, GX_CH_ALPHA);
+  GXSetTevSwapModeTable(GX_TEV_SWAP2, GX_CH_GREEN, GX_CH_GREEN, GX_CH_GREEN, GX_CH_ALPHA);
+  GXSetTevSwapModeTable(GX_TEV_SWAP3, GX_CH_BLUE, GX_CH_BLUE, GX_CH_BLUE, GX_CH_ALPHA);
+
+  for (i = 0; i < GX_MAX_TEVSTAGE; i++) {
+    GXSetTevDirect((GXTevStageID)i);
+  }
+
+  GXSetNumIndStages(0);
+  GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_1, GX_ITS_1);
+  GXSetIndTexCoordScale(GX_INDTEXSTAGE1, GX_ITS_1, GX_ITS_1);
+  GXSetIndTexCoordScale(GX_INDTEXSTAGE2, GX_ITS_1, GX_ITS_1);
+  GXSetIndTexCoordScale(GX_INDTEXSTAGE3, GX_ITS_1, GX_ITS_1);
+
+  GXSetFog(GX_FOG_NONE, 0.0f, 1.0f, 0.1f, 1.0f, ambColor);
+  GXSetFogRangeAdj(GX_FALSE, 0, NULL);
+
+  GXSetBlendMode(GX_BM_NONE, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
+
+  GXSetColorUpdate(GX_TRUE);
+  GXSetAlphaUpdate(GX_TRUE);
+
+  GXSetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+  GXSetZCompLoc(GX_TRUE);
+
+  GXSetDither(GX_TRUE);
+
+  GXSetDstAlpha(GX_FALSE, 0);
+  GXSetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
+
+  GXSetFieldMask(GX_TRUE, GX_TRUE);
+  GXSetFieldMode((GXBool)renderObj->field_rendering,
+                 (GXBool)((renderObj->viHeight == 2 * renderObj->xfbHeight) ? GX_TRUE : GX_FALSE));
+
+  GXSetDispCopySrc(0, 0, renderObj->fbWidth, renderObj->efbHeight);
+  GXSetDispCopyDst(renderObj->fbWidth, renderObj->efbHeight);
+  GXSetDispCopyYScale((f32)renderObj->xfbHeight / (f32)renderObj->efbHeight);
+  GXSetCopyClamp((GXFBClamp)(GX_CLAMP_TOP | GX_CLAMP_BOTTOM));
+
+  GXSetCopyFilter(renderObj->aa, renderObj->sample_pattern, GX_TRUE, renderObj->vfilter);
+  GXSetDispCopyGamma(GX_GM_1_0);
+  GXSetDispCopyFrame2Field(GX_COPY_PROGRESSIVE);
+  GXClearBoundingBox();
+
+  GXPokeColorUpdate(GX_TRUE);
+  GXPokeAlphaUpdate(GX_TRUE);
+  GXPokeDither(GX_FALSE);
+  GXPokeBlendMode(GX_BM_NONE, GX_BL_ZERO, GX_BL_ONE, GX_LO_SET);
+  GXPokeAlphaMode(GX_ALWAYS, 0);
+  GXPokeAlphaRead(GX_READ_FF);
+  GXPokeDstAlpha(GX_FALSE, 0);
+  GXPokeZMode(GX_TRUE, GX_ALWAYS, GX_TRUE);
+  GXSetGPMetric(GX_PERF0_NONE, GX_PERF1_NONE);
+  GXClearGPMetric();
+#else
     GXSetGPMetric(GX_PERF0_NONE, GX_PERF1_NONE);
     GXClearGPMetric();
+#endif
 }

@@ -1,5 +1,9 @@
 #include "string.h"
+#ifdef PRIME1
+#include "dolphin/base/PPCArch.h"
+#else
 #include "dolphin/PPCArch.h"
+#endif
 #include "dolphin/os.h"
 
 void __OSSystemCallVectorStart();

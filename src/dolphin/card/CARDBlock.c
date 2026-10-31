@@ -5,34 +5,64 @@
 
 #include <dolphin/CARDPriv.h>
 
+#ifdef PRIME1
+u16* __CARDGetFatBlock(CARDControl* card) { return card->currentFat; }
+#else
 #line 56
 u16* __CARDGetFatBlock(CARDControl* card) {
   ASSERT(card->currentFat);
   return card->currentFat;
 }
+#endif
 
+#ifndef PRIME1
 #line 72
+#endif
 static void WriteCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
+#ifdef PRIME1
+  u16* fat;
+  u16* fatBack;
+#else
   u16* fat0;
   u16* fat1;
+#endif
 
   card = &__CARDBlock[chan];
+#ifndef PRIME1
   if (result >= 0) {
     fat0 = (u16*)((u8*)card->workArea + 0x6000);
     fat1 = (u16*)((u8*)card->workArea + 0x8000);
     ASSERT(card->currentFat);
+#endif
 
+#ifdef PRIME1
+  if (result >= 0) {
+    fat = (u16*)((u8*)card->workArea + 0x6000);
+    fatBack = (u16*)((u8*)card->workArea + 0x8000);
+#else
     if (card->currentFat == fat0) {
+#endif
 
+#ifdef PRIME1
+    if (card->currentFat == fat) {
+      card->currentFat = fatBack;
+      memcpy(fatBack, fat, 0x2000);
+#else
       card->currentFat = fat1;
       memcpy(fat1, fat0, 0x2000);
+#endif
     } else {
+#ifdef PRIME1
+      card->currentFat = fat;
+      memcpy(fat, fatBack, 0x2000);
+#else
 
       ASSERT(card->currentFat == fat1);
       card->currentFat = fat0;
       memcpy(fat0, fat1, 0x2000);
+#endif
     }
   }
 
@@ -50,6 +80,9 @@ static void WriteCallback(s32 chan, s32 result) {
 static void EraseCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
+#ifdef PRIME1
+  u32 temp[2]; /* this compiler sucks */
+#endif
   u16* fat;
   u32 addr;
 
@@ -78,7 +111,9 @@ error:
   }
 }
 
+#ifndef PRIME1
 #line 174
+#endif
 s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback) {
   CARDControl* card;
   u16* fat;
@@ -87,8 +122,10 @@ s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback) {
   u16 prevBlock;
   u16 count;
 
+#ifndef PRIME1
   ASSERT(0 < cBlock);
   ASSERT(0 <= chan && chan < 2);
+#endif
   card = &__CARDBlock[chan];
   if (!card->attached) {
     return CARD_RESULT_NOCARD;
@@ -130,14 +167,20 @@ s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback) {
   return __CARDUpdateFatBlock(chan, fat, callback);
 }
 
+#ifndef PRIME1
 #line 248
+#endif
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback) {
   CARDControl* card;
   u16* fat;
   u16 nextBlock;
 
+#ifdef PRIME1
+  card = card = &__CARDBlock[chan];
+#else
   ASSERT(0 <= chan && chan < 2);
   card = &__CARDBlock[chan];
+#endif
   if (!card->attached) {
     return CARD_RESULT_NOCARD;
   }
@@ -157,18 +200,29 @@ s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback) {
   return __CARDUpdateFatBlock(chan, fat, callback);
 }
 
+#ifndef PRIME1
 #line 291
+#endif
 s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback) {
   CARDControl* card;
+#ifndef PRIME1
   u32 addr;
+#endif
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   card = &__CARDBlock[chan];
   ++fat[2];
   __CARDCheckSum(fat + 2, 0x1FFC, fat, fat + 1);
   DCStoreRange(fat, 0x2000);
   card->eraseCallback = callback;
 
+#ifdef PRIME1
+  return __CARDEraseSector(chan, (((u32)fat - (u32)card->workArea) / 8192u) * card->sectorSize,
+                           EraseCallback);
+#else
   addr = (((u32)fat - (u32)card->workArea) / 8192u) * card->sectorSize;
   return __CARDEraseSector(chan, addr, EraseCallback);
+#endif
 }

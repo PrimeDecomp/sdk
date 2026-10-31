@@ -1,10 +1,19 @@
+#ifdef PRIME1
+#include <dolphin/pad.h>
+#include <dolphin/si.h>
+#include <dolphin/sipriv.h>
+#else
 #include "dolphin/pad.h"
 #include "dolphin/os.h"
 #include "dolphin/sipriv.h"
 #include "dolphin/vifuncs.h"
 #include "stddef.h"
 #include "string.h"
+#endif
 
+#ifdef PRIME1
+const char* __PADVersion = "<< Dolphin SDK - PAD\trelease build: Sep  5 2002 05:34:02 (0x2301) >>";
+#else
 u8 __gUnknown800030E3 : (OS_BASE_CACHED | 0x30E3);
 u16 __OSWirelessPadFixMode : (OS_BASE_CACHED | 0x30E0);
 #if VERSION < VERSION_R32J01
@@ -14,26 +23,62 @@ const char* __PADVersion = "<< Dolphin SDK - PAD\tdebug build: Apr  5 2004 03:56
 const char* __PADVersion = "<< Dolphin SDK - PAD\trelease build: Apr  5 2004 04:14:49 (0x2301) >>";
 #endif
 #endif
+#endif
 
+#ifdef PRIME1
+u8 UnkVal : (OS_BASE_CACHED | 0x30e3);
+u16 __OSWirelessPadFixMode : (OS_BASE_CACHED | 0x30E0);
+#else
 #define PAD_ALL                                                                                    \
   (PAD_BUTTON_LEFT | PAD_BUTTON_RIGHT | PAD_BUTTON_DOWN | PAD_BUTTON_UP | PAD_TRIGGER_Z |          \
    PAD_TRIGGER_R | PAD_TRIGGER_L | PAD_BUTTON_A | PAD_BUTTON_B | PAD_BUTTON_X | PAD_BUTTON_Y |     \
    PAD_BUTTON_MENU | 0x2000 | 0x0080)
+#endif
 
+#ifdef PRIME1
+static void PADTypeAndStatusCallback(s32 chan, u32 type);
+static void PADOriginCallback(s32 chan, u32 error, OSContext* context);
+static void PADProbeCallback(s32 chan, u32 error, OSContext* context);
+static void SPEC0_MakeStatus(s32 chan, PADStatus* status, u32 data[2]);
+static void SPEC1_MakeStatus(s32 chan, PADStatus* status, u32 data[2]);
+static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]);
+static void PADTypeAndStatusCallback(s32 chan, u32 type);
+
+static void PADOriginCallback(s32 chan, u32 error, OSContext* context);
+static void PADProbeCallback(s32 chan, u32 error, OSContext* context);
+
+static void SPEC0_MakeStatus(s32 chan, PADStatus* status, u32 data[2]);
+static void SPEC1_MakeStatus(s32 chan, PADStatus* status, u32 data[2]);
+static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]);
+#else
 static s32 ResettingChan = 0x20;
 static u32 XPatchBits = PAD_CHAN0_BIT | PAD_CHAN1_BIT | PAD_CHAN2_BIT | PAD_CHAN3_BIT;
 static u32 AnalogMode = 0x300;
 static u32 Spec = PAD_SPEC_5;
+#endif
 
 static BOOL Initialized;
+#ifdef PRIME1
+
+#endif
 static u32 EnabledBits;
 static u32 ResettingBits;
+#ifdef PRIME1
+static s32 ResettingChan = 32;
+#endif
 static u32 RecalibrateBits;
 static u32 WaitingBits;
 static u32 CheckingBits;
 static u32 PendingBits;
+#ifndef PRIME1
 static u32 BarrelBits;
+#endif
 
+#ifdef PRIME1
+static u32 XPatchBits = PAD_CHAN0_BIT | PAD_CHAN1_BIT | PAD_CHAN2_BIT | PAD_CHAN3_BIT;
+
+static u32 AnalogMode = 0x00000300u;
+#else
 #if VERSION >= VERSION_R32J01
 static PADStatus Origin[4];
 static u32 Type[4];
@@ -41,9 +86,18 @@ static u32 Type[4];
 static u32 Type[4];
 static PADStatus Origin[4];
 #endif
+#endif
 
 u32 __PADSpec;
+#ifdef PRIME1
+static u32 Spec = 5;
+static void (*MakeStatus)(s32, PADStatus*, u32[2]) = SPEC2_MakeStatus;
+#endif
 
+#ifdef PRIME1
+static u32 Type[SI_MAX_CHAN];
+static PADStatus Origin[SI_MAX_CHAN];
+#else
 // prototypes
 static void PADTypeAndStatusCallback(s32 chan, u32 type);
 static u16 GetWirelessID(s32 chan);
@@ -66,10 +120,20 @@ static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]);
 static BOOL OnReset(BOOL f);
 void __PADDisableXPatch(void);
 BOOL __PADDisableRumble(BOOL disable);
+#endif
 
+#ifdef PRIME1
+static u32 CmdReadOrigin = 0x41 << 24;
+static u32 CmdCalibrate = 0x42 << 24;
+static u32 CmdProbeDevice[SI_MAX_CHAN];
+#else
 typedef void (*SPECCallback)(s32, PADStatus*, u32*);
 static SPECCallback MakeStatus = SPEC2_MakeStatus;
+#endif
 
+#ifdef PRIME1
+static BOOL OnReset(BOOL final);
+#else
 static u32 CmdTypeAndStatus;
 static u32 CmdReadOrigin = 0x41000000;
 static u32 CmdCalibrate = 0x42000000;
@@ -77,13 +141,20 @@ static u32 CmdProbeDevice[4];
 #if VERSION >= VERSION_R32J01
 static PADStatus Prev[4];
 #endif
+#endif
 
+#ifdef PRIME1
+static OSResetFunctionInfo ResetFunctionInfo = {OnReset, 127};
+
+static void (*SamplingCallback)(void);
+#else
 static OSResetFunctionInfo ResetFunctionInfo = {
     OnReset,
     127,
     NULL,
     NULL,
 };
+#endif
 
 static void PADEnable(s32 chan) {
   u32 cmd;
@@ -92,8 +163,13 @@ static void PADEnable(s32 chan) {
 
   chanBit = PAD_CHAN0_BIT >> chan;
   EnabledBits |= chanBit;
+#ifdef PRIME1
+  SIGetResponse(chan, data);
+  cmd = (0x40 << 16) | AnalogMode;
+#else
   SIGetResponse(chan, &data);
   cmd = (AnalogMode | 0x400000);
+#endif
   SISetCommand(chan, cmd);
   SIEnablePolling(EnabledBits);
 }
@@ -103,21 +179,37 @@ static void PADDisable(s32 chan) {
   u32 chanBit;
 
   enabled = OSDisableInterrupts();
+#ifdef PRIME1
+
+#endif
   chanBit = PAD_CHAN0_BIT >> chan;
   SIDisablePolling(chanBit);
   EnabledBits &= ~chanBit;
   WaitingBits &= ~chanBit;
   CheckingBits &= ~chanBit;
   PendingBits &= ~chanBit;
+#ifndef PRIME1
   BarrelBits &= ~chanBit;
+#endif
   OSSetWirelessID(chan, 0);
+#ifdef PRIME1
+
+#endif
   OSRestoreInterrupts(enabled);
 }
 
+#ifdef PRIME1
+static void DoReset(void) {
+#else
 static void DoReset() {
+#endif
   u32 chanBit;
 
   ResettingChan = __cntlzw(ResettingBits);
+#ifdef PRIME1
+  if (ResettingChan == 32) {
+    return;
+#else
   if (ResettingChan != 32) {
     ASSERT(0 <= ResettingChan && ResettingChan < SI_MAX_CHAN);
     chanBit = (PAD_CHAN0_BIT >> ResettingChan);
@@ -125,7 +217,16 @@ static void DoReset() {
 
     memset(&Origin[ResettingChan], 0, sizeof(PADStatus));
     SIGetTypeAsync(ResettingChan, PADTypeAndStatusCallback);
+#endif
   }
+#ifdef PRIME1
+
+  chanBit = PAD_CHAN0_BIT >> ResettingChan;
+  ResettingBits &= ~chanBit;
+
+  memset(&Origin[ResettingChan], 0, sizeof(PADStatus));
+  SIGetTypeAsync(ResettingChan, PADTypeAndStatusCallback);
+#endif
 }
 
 static void UpdateOrigin(s32 chan) {
@@ -167,50 +268,79 @@ static void UpdateOrigin(s32 chan) {
   origin->substickY -= 128;
 
   if (XPatchBits & chanBit) {
+#ifdef PRIME1
+    if (64 < origin->stickX && (SIGetType(chan) & 0xffff0000) == SI_GC_CONTROLLER) {
+#else
     if (64 < origin->stickX && (SIGetType(chan) & 0xFFFF0000) == SI_GC_CONTROLLER) {
+#endif
       origin->stickX = 0;
     }
   }
 }
 
 static void PADOriginCallback(s32 chan, u32 error, OSContext* context) {
+#ifndef PRIME1
   ASSERT(0 <= ResettingChan && ResettingChan < SI_MAX_CHAN);
   ASSERT(chan == ResettingChan);
 
+#endif
   if (!(error &
         (SI_ERROR_UNDER_RUN | SI_ERROR_OVER_RUN | SI_ERROR_NO_RESPONSE | SI_ERROR_COLLISION))) {
     UpdateOrigin(ResettingChan);
     PADEnable(ResettingChan);
   }
+#ifndef PRIME1
 
+#endif
   DoReset();
 }
 
 static void PADOriginUpdateCallback(s32 chan, u32 error, OSContext* context) {
+#ifdef PRIME1
+
+  if (!(EnabledBits & (PAD_CHAN0_BIT >> chan))) {
+#else
   ASSERT(0 <= chan && chan < SI_MAX_CHAN);
   if (!(EnabledBits & (PAD_CHAN0_BIT >> chan)))
+#endif
     return;
+#ifdef PRIME1
+  }
+
+#endif
   if (!(error &
+#ifdef PRIME1
+        (SI_ERROR_UNDER_RUN | SI_ERROR_OVER_RUN | SI_ERROR_NO_RESPONSE | SI_ERROR_COLLISION))) {
+#else
         (SI_ERROR_UNDER_RUN | SI_ERROR_OVER_RUN | SI_ERROR_NO_RESPONSE | SI_ERROR_COLLISION)))
+#endif
     UpdateOrigin(chan);
+#ifdef PRIME1
+  }
+
+#endif
   if (error & SI_ERROR_NO_RESPONSE) {
     PADDisable(chan);
   }
 }
 
 static void PADProbeCallback(s32 chan, u32 error, OSContext* context) {
+#ifndef PRIME1
   u32 type;
   ASSERT(0 <= ResettingChan && ResettingChan < SI_MAX_CHAN);
   ASSERT(chan == ResettingChan);
   ASSERT((Type[chan] & SI_WIRELESS_CONT_MASK) == SI_WIRELESS_CONT &&
          !(Type[chan] & SI_WIRELESS_LITE));
 
+#endif
   if (!(error &
         (SI_ERROR_UNDER_RUN | SI_ERROR_OVER_RUN | SI_ERROR_NO_RESPONSE | SI_ERROR_COLLISION))) {
     PADEnable(ResettingChan);
     WaitingBits |= PAD_CHAN0_BIT >> ResettingChan;
   }
+#ifndef PRIME1
 
+#endif
   DoReset();
 }
 
@@ -219,14 +349,18 @@ static void PADTypeAndStatusCallback(s32 chan, u32 type) {
   u32 recalibrate;
   BOOL rc = TRUE;
   u32 error;
+#ifndef PRIME1
 
   ASSERT(0 <= ResettingChan && ResettingChan < SI_MAX_CHAN);
   ASSERT(chan == ResettingChan);
 
+#endif
   chanBit = PAD_CHAN0_BIT >> ResettingChan;
   error = type & 0xFF;
+#ifndef PRIME1
   ASSERT(!(error & SI_ERROR_BUSY));
 
+#endif
   recalibrate = RecalibrateBits & chanBit;
   RecalibrateBits &= ~chanBit;
 
@@ -237,6 +371,9 @@ static void PADTypeAndStatusCallback(s32 chan, u32 type) {
   }
 
   type &= ~0xFF;
+#ifdef PRIME1
+
+#endif
   Type[ResettingChan] = type;
 
   if ((type & SI_TYPE_MASK) != SI_TYPE_GC || !(type & SI_GC_STANDARD)) {
@@ -268,7 +405,9 @@ static void PADTypeAndStatusCallback(s32 chan, u32 type) {
                       PADProbeCallback, 0);
     }
   }
+#ifndef PRIME1
 
+#endif
   if (!rc) {
     PendingBits |= chanBit;
     DoReset();
@@ -281,14 +420,39 @@ static void PADReceiveCheckCallback(s32 chan, u32 type) {
   u32 chanBit;
 
   chanBit = PAD_CHAN0_BIT >> chan;
+#ifdef PRIME1
+  if (!(EnabledBits & chanBit)) {
+    return;
+  }
+#endif
 
+#ifdef PRIME1
+  error = type & 0xFF;
+  type &= ~0xFF;
+#else
   if (EnabledBits & chanBit) {
     error = type & 0xFF;
     type &= ~0xFF;
+#endif
 
+#ifdef PRIME1
+  WaitingBits &= ~chanBit;
+  CheckingBits &= ~chanBit;
+#else
     WaitingBits &= ~chanBit;
     CheckingBits &= ~chanBit;
+#endif
 
+#ifdef PRIME1
+  if (!(error &
+        (SI_ERROR_UNDER_RUN | SI_ERROR_OVER_RUN | SI_ERROR_NO_RESPONSE | SI_ERROR_COLLISION)) &&
+      (type & SI_GC_WIRELESS) && (type & SI_WIRELESS_FIX_ID) && (type & SI_WIRELESS_RECEIVED) &&
+      !(type & SI_WIRELESS_IR) && (type & SI_WIRELESS_CONT_MASK) == SI_WIRELESS_CONT &&
+      !(type & SI_WIRELESS_LITE)) {
+    SITransfer(chan, &CmdReadOrigin, 1, &Origin[chan], 10, PADOriginUpdateCallback, 0);
+  } else {
+    PADDisable(chan);
+#else
     if (!(error &
           (SI_ERROR_UNDER_RUN | SI_ERROR_OVER_RUN | SI_ERROR_NO_RESPONSE | SI_ERROR_COLLISION)) &&
         (type & SI_GC_WIRELESS) && (type & SI_WIRELESS_FIX_ID) && (type & SI_WIRELESS_RECEIVED) &&
@@ -298,43 +462,81 @@ static void PADReceiveCheckCallback(s32 chan, u32 type) {
     } else {
       PADDisable(chan);
     }
+#endif
   }
 }
 
+#ifdef PRIME1
+BOOL PADReset(u32 mask) {
+#else
 int PADReset(u32 mask) {
+#endif
   BOOL enabled;
+#ifdef PRIME1
+  u32 diableBits;
+#else
   u32 disableBits;
 
   ASSERTMSG(!(mask & 0x0FFFFFFF), "PADReset(): invalid mask");
+#endif
 
   enabled = OSDisableInterrupts();
+#ifdef PRIME1
+
+#endif
   mask |= PendingBits;
   PendingBits = 0;
   mask &= ~(WaitingBits | CheckingBits);
   ResettingBits |= mask;
+#ifdef PRIME1
+  diableBits = ResettingBits & EnabledBits;
+#else
   disableBits = ResettingBits & EnabledBits;
+#endif
   EnabledBits &= ~mask;
+#ifndef PRIME1
   BarrelBits &= ~mask;
+#endif
 
+#ifdef PRIME1
+  if (Spec == PAD_SPEC_4) {
+#else
   if (Spec == 4) {
+#endif
     RecalibrateBits |= mask;
   }
 
+#ifdef PRIME1
+  SIDisablePolling(diableBits);
+#else
   SIDisablePolling(disableBits);
+#endif
 
+#ifdef PRIME1
+  if (ResettingChan == 32) {
+#else
   if (ResettingChan == 0x20) {
+#endif
     DoReset();
   }
+#ifndef PRIME1
 
+#endif
   OSRestoreInterrupts(enabled);
+#ifdef PRIME1
+  return TRUE;
+#else
   return 1;
+#endif
 }
 
 BOOL PADRecalibrate(u32 mask) {
   BOOL enabled;
   u32 disableBits;
 
+#ifndef PRIME1
   ASSERTMSG(!(mask & 0x0FFFFFFF), "PADReset(): invalid mask");
+#endif
   enabled = OSDisableInterrupts();
 
   mask |= PendingBits;
@@ -343,41 +545,80 @@ BOOL PADRecalibrate(u32 mask) {
   ResettingBits |= mask;
   disableBits = ResettingBits & EnabledBits;
   EnabledBits &= ~mask;
+#ifndef PRIME1
   BarrelBits &= ~mask;
+#endif
 
+#ifdef PRIME1
+  if (!(UnkVal & 0x40)) {
+#else
   if (!(__gUnknown800030E3 & 0x40)) {
+#endif
     RecalibrateBits |= mask;
   }
 
   SIDisablePolling(disableBits);
+#ifdef PRIME1
+  if (ResettingChan == 32) {
+#else
   if (ResettingChan == 32)
+#endif
     DoReset();
+#ifdef PRIME1
+  }
+#else
 
+#endif
   OSRestoreInterrupts(enabled);
+#ifdef PRIME1
+  return TRUE;
+#else
   return 1;
+#endif
 }
 
 BOOL PADInit() {
   s32 chan;
   if (Initialized) {
+#ifdef PRIME1
+    return TRUE;
+#else
     return 1;
+#endif
   }
 
+#ifdef PRIME1
+  OSRegisterVersion(__PADVersion);
+#else
 #if VERSION < VERSION_R32J01
   OSRegisterVersion(__PADVersion);
 #endif
+#endif
 
+#ifdef PRIME1
+  if (__PADSpec) {
+#else
   if (__PADSpec)
+#endif
     PADSetSpec(__PADSpec);
+#ifdef PRIME1
+  }
+#endif
 
   Initialized = TRUE;
 
   if (__PADFixBits != 0) {
     OSTime time = OSGetTime();
+#ifdef PRIME1
+    __OSWirelessPadFixMode = (u16)((((time)&0xffff) + ((time >> 16) & 0xffff) +
+#else
     __OSWirelessPadFixMode = (u16)((((time) & 0xffff) + ((time >> 16) & 0xffff) +
+#endif
                                     ((time >> 32) & 0xffff) + ((time >> 48) & 0xffff)) &
                                    0x3fffu);
+#ifndef PRIME1
 
+#endif
     RecalibrateBits = PAD_CHAN0_BIT | PAD_CHAN1_BIT | PAD_CHAN2_BIT | PAD_CHAN3_BIT;
   }
 
@@ -391,6 +632,10 @@ BOOL PADInit() {
   return PADReset(PAD_CHAN0_BIT | PAD_CHAN1_BIT | PAD_CHAN2_BIT | PAD_CHAN3_BIT);
 }
 
+#ifdef PRIME1
+#define offsetof(type, memb) ((u32) & ((type*)0)->memb)
+
+#endif
 u32 PADRead(PADStatus* status) {
   BOOL enabled;
   s32 chan;
@@ -401,9 +646,16 @@ u32 PADRead(PADStatus* status) {
   u32 motor;
 
   enabled = OSDisableInterrupts();
+#ifndef PRIME1
   motor = 0;
+#endif
 
+#ifdef PRIME1
+  motor = 0;
+  for (chan = 0; chan < SI_MAX_CHAN; chan++, status++) {
+#else
   for (chan = 0; chan < 4; chan++, status++) {
+#endif
     chanBit = PAD_CHAN0_BIT >> chan;
     chanShift = 8 * (SI_MAX_CHAN - 1 - chan);
 
@@ -411,15 +663,40 @@ u32 PADRead(PADStatus* status) {
       PADReset(0);
       status->err = PAD_ERR_NOT_READY;
       memset(status, 0, offsetof(PADStatus, err));
+#ifdef PRIME1
+      continue;
+    }
+
+    if ((ResettingBits & chanBit) || ResettingChan == chan) {
+#else
     } else if ((ResettingBits & chanBit) || ResettingChan == chan) {
+#endif
       status->err = PAD_ERR_NOT_READY;
       memset(status, 0, offsetof(PADStatus, err));
+#ifdef PRIME1
+      continue;
+    }
+
+    if (!(EnabledBits & chanBit)) {
+      status->err = (s8)PAD_ERR_NO_CONTROLLER;
+#else
     } else if (!(EnabledBits & chanBit)) {
       status->err = PAD_ERR_NO_CONTROLLER;
+#endif
       memset(status, 0, offsetof(PADStatus, err));
+#ifdef PRIME1
+      continue;
+    }
+
+    if (SIIsChanBusy(chan)) {
+#else
     } else if (SIIsChanBusy(chan)) {
+#endif
       status->err = PAD_ERR_TRANSFER;
       memset(status, 0, offsetof(PADStatus, err));
+#ifdef PRIME1
+      continue;
+#else
     } else {
       sr = SIGetStatus(chan);
       if (sr & SI_ERROR_NO_RESPONSE) {
@@ -494,12 +771,73 @@ u32 PADRead(PADStatus* status) {
           }
         }
       }
+#endif
     }
+#ifdef PRIME1
+
+    sr = SIGetStatus(chan);
+    if (sr & SI_ERROR_NO_RESPONSE) {
+      SIGetResponse(chan, data);
+
+      if (WaitingBits & chanBit) {
+        status->err = (s8)PAD_ERR_NONE;
+        memset(status, 0, offsetof(PADStatus, err));
+
+        if (!(CheckingBits & chanBit)) {
+          CheckingBits |= chanBit;
+          SIGetTypeAsync(chan, PADReceiveCheckCallback);
+        }
+        continue;
+      }
+
+      PADDisable(chan);
+
+      status->err = (s8)PAD_ERR_NO_CONTROLLER;
+      memset(status, 0, offsetof(PADStatus, err));
+      continue;
+    }
+
+    if (!(SIGetType(chan) & SI_GC_NOMOTOR)) {
+      motor |= chanBit;
+    }
+
+    if (!SIGetResponse(chan, data)) {
+      status->err = PAD_ERR_TRANSFER;
+      memset(status, 0, offsetof(PADStatus, err));
+      continue;
+    }
+
+    if (data[0] & 0x80000000) {
+      status->err = PAD_ERR_TRANSFER;
+      memset(status, 0, offsetof(PADStatus, err));
+      continue;
+    }
+
+    MakeStatus(chan, status, data);
+
+    // Check and clear PAD_ORIGIN bit
+    if (status->button & 0x2000) {
+      status->err = PAD_ERR_TRANSFER;
+      memset(status, 0, offsetof(PADStatus, err));
+
+      // Get origin. It is okay if the following transfer fails
+      // since the PAD_ORIGIN bit remains until the read origin
+      // command complete.
+      SITransfer(chan, &CmdReadOrigin, 1, &Origin[chan], 10, PADOriginUpdateCallback, 0);
+      continue;
+    }
+
+    status->err = PAD_ERR_NONE;
+
+    // Clear PAD_INTERFERE bit
+    status->button &= ~0x0080;
+#endif
   }
 
   OSRestoreInterrupts(enabled);
   return motor;
 }
+#ifndef PRIME1
 
 typedef struct XY {
   u8 line;
@@ -511,6 +849,7 @@ void PADSetSamplingRate(u32 msec) { SISetSamplingRate(msec); }
 #if DEBUG
 void __PADTestSamplingRate(u32 tvmode) { __SITestSamplingRate(tvmode); }
 #endif
+#endif
 
 void PADControlAllMotors(const u32* commandArray) {
   BOOL enabled;
@@ -521,24 +860,47 @@ void PADControlAllMotors(const u32* commandArray) {
 
   enabled = OSDisableInterrupts();
   commit = FALSE;
+#ifndef PRIME1
 
+#endif
   for (chan = 0; chan < SI_MAX_CHAN; chan++, commandArray++) {
     chanBit = PAD_CHAN0_BIT >> chan;
+#ifdef PRIME1
+    if ((EnabledBits & chanBit) && !(SIGetType(chan) & SI_GC_NOMOTOR)) {
+#else
     if ((EnabledBits & chanBit) && !(SIGetType(chan) & 0x20000000)) {
+#endif
       command = *commandArray;
+#ifdef PRIME1
+      if (Spec < PAD_SPEC_2 && command == PAD_MOTOR_STOP_HARD) {
+#else
       ASSERTMSG(!(command & 0xFFFFFFFC), "PADControlAllMotors(): invalid command");
       if (Spec < PAD_SPEC_2 && command == PAD_MOTOR_STOP_HARD)
+#endif
         command = PAD_MOTOR_STOP;
+#ifdef PRIME1
+      }
+
+#else
       if (__gUnknown800030E3 & 0x20)
         command = PAD_MOTOR_STOP;
+#endif
       SISetCommand(chan, (0x40 << 16) | AnalogMode | (command & (0x00000001 | 0x00000002)));
       commit = TRUE;
     }
   }
+#ifdef PRIME1
+  if (commit) {
+#else
 
   if (commit)
+#endif
     SITransferCommands();
+#ifdef PRIME1
+  }
+#else
 
+#endif
   OSRestoreInterrupts(enabled);
 }
 
@@ -546,26 +908,43 @@ void PADControlMotor(s32 chan, u32 command) {
   BOOL enabled;
   u32 chanBit;
 
+#ifndef PRIME1
   ASSERTMSG(!(command & 0xFFFFFFFC), "PADControlMotor(): invalid command");
 
+#endif
   enabled = OSDisableInterrupts();
   chanBit = PAD_CHAN0_BIT >> chan;
   if ((EnabledBits & chanBit) && !(SIGetType(chan) & SI_GC_NOMOTOR)) {
+#ifdef PRIME1
+    if (Spec < PAD_SPEC_2 && command == PAD_MOTOR_STOP_HARD) {
+#else
     if (Spec < PAD_SPEC_2 && command == PAD_MOTOR_STOP_HARD)
+#endif
       command = PAD_MOTOR_STOP;
+#ifdef PRIME1
+    }
+
+#else
     if (__gUnknown800030E3 & 0x20)
       command = PAD_MOTOR_STOP;
+#endif
     SISetCommand(chan, (0x40 << 16) | AnalogMode | (command & (0x00000001 | 0x00000002)));
     SITransferCommands();
   }
+#ifndef PRIME1
 
+#endif
   OSRestoreInterrupts(enabled);
 }
 
 void PADSetSpec(u32 spec) {
+#ifndef PRIME1
   ASSERT(!Initialized);
+#endif
   __PADSpec = 0;
+#ifndef PRIME1
 
+#endif
   switch (spec) {
   case PAD_SPEC_0:
     MakeStatus = SPEC0_MakeStatus;
@@ -600,10 +979,22 @@ static void SPEC0_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
   status->triggerRight = (u8)data[0];
   status->analogA = 0;
   status->analogB = 0;
+#ifdef PRIME1
+  if (170 <= status->triggerLeft) {
+#else
   if (170 <= status->triggerLeft)
+#endif
     status->button |= PAD_TRIGGER_L;
+#ifdef PRIME1
+  }
+  if (170 <= status->triggerRight) {
+#else
   if (170 <= status->triggerRight)
+#endif
     status->button |= PAD_TRIGGER_R;
+#ifdef PRIME1
+  }
+#endif
   status->stickX -= 128;
   status->stickY -= 128;
   status->substickX -= 128;
@@ -611,6 +1002,9 @@ static void SPEC0_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
 }
 
 static void SPEC1_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
+#ifdef PRIME1
+
+#endif
   status->button = 0;
   status->button |= ((data[0] >> 16) & 0x0080) ? PAD_BUTTON_A : 0;
   status->button |= ((data[0] >> 16) & 0x0100) ? PAD_BUTTON_B : 0;
@@ -629,10 +1023,22 @@ static void SPEC1_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
   status->analogA = 0;
   status->analogB = 0;
 
+#ifdef PRIME1
+  if (170 <= status->triggerLeft) {
+#else
   if (170 <= status->triggerLeft)
+#endif
     status->button |= PAD_TRIGGER_L;
+#ifdef PRIME1
+  }
+  if (170 <= status->triggerRight) {
+#else
   if (170 <= status->triggerRight)
+#endif
     status->button |= PAD_TRIGGER_R;
+#ifdef PRIME1
+  }
+#endif
 
   status->stickX -= 128;
   status->stickY -= 128;
@@ -643,21 +1049,49 @@ static void SPEC1_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
 static s8 ClampS8(s8 var, s8 org) {
   if (0 < org) {
     s8 min = (s8)(-128 + org);
+#ifdef PRIME1
+    if (var < min) {
+#else
     if (var < min)
+#endif
       var = min;
+#ifdef PRIME1
+    }
+#endif
   } else if (org < 0) {
     s8 max = (s8)(127 + org);
+#ifdef PRIME1
+    if (max < var) {
+#else
     if (max < var)
+#endif
       var = max;
+#ifdef PRIME1
+    }
+#endif
   }
   return var -= org;
 }
 
 static u8 ClampU8(u8 var, u8 org) {
+#ifdef PRIME1
+  if (var < org) {
+#else
   if (var < org)
+#endif
     var = org;
+#ifdef PRIME1
+  }
+#endif
   return var -= org;
 }
+#ifdef PRIME1
+
+#define PAD_ALL                                                                                    \
+  (PAD_BUTTON_LEFT | PAD_BUTTON_RIGHT | PAD_BUTTON_DOWN | PAD_BUTTON_UP | PAD_TRIGGER_Z |          \
+   PAD_TRIGGER_R | PAD_TRIGGER_L | PAD_BUTTON_A | PAD_BUTTON_B | PAD_BUTTON_X | PAD_BUTTON_Y |     \
+   PAD_BUTTON_MENU | 0x2000 | 0x0080)
+#endif
 
 static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
   PADStatus* origin;
@@ -717,6 +1151,7 @@ static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
   status->substickX -= 128;
   status->substickY -= 128;
 
+#ifndef PRIME1
   if (((Type[chan] & (0xFFFF0000)) == SI_GC_CONTROLLER) && ((status->button & 0x80) ^ 0x80)) {
     BarrelBits |= (PAD_CHAN0_BIT >> chan);
     status->stickX = 0;
@@ -728,6 +1163,7 @@ static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
     BarrelBits &= ~(PAD_CHAN0_BIT >> chan);
   }
 
+#endif
   origin = &Origin[chan];
   status->stickX = ClampS8(status->stickX, origin->stickX);
   status->stickY = ClampS8(status->stickY, origin->stickY);
@@ -737,24 +1173,43 @@ static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
   status->triggerRight = ClampU8(status->triggerRight, origin->triggerRight);
 }
 
+#ifdef PRIME1
+BOOL PADGetType(s32 chan, u32* type) {
+#else
 int PADGetType(s32 chan, u32* type) {
+#endif
   u32 chanBit;
 
   *type = SIGetType(chan);
   chanBit = PAD_CHAN0_BIT >> chan;
+#ifdef PRIME1
+  if ((ResettingBits & chanBit) || ResettingChan == chan || !(EnabledBits & chanBit)) {
+    return FALSE;
+#else
   if (ResettingBits & chanBit || ResettingChan == chan || !(EnabledBits & chanBit)) {
     return 0;
+#endif
   }
+#ifdef PRIME1
+  return TRUE;
+#else
   return 1;
+#endif
 }
 
+#ifdef PRIME1
+BOOL PADSync(void) { return ResettingBits == 0 && ResettingChan == 32 && !SIBusy(); }
+#else
 BOOL PADSync(void) { return ResettingBits == 0 && (s32)ResettingChan == 32 && !SIBusy(); }
+#endif
 
 void PADSetAnalogMode(u32 mode) {
   BOOL enabled;
   u32 mask;
+#ifndef PRIME1
 
   ASSERTMSG((mode < 8), "PADSetAnalogMode(): invalid mode");
+#endif
 
   enabled = OSDisableInterrupts();
   AnalogMode = mode << 8;
@@ -768,24 +1223,49 @@ void PADSetAnalogMode(u32 mode) {
   OSRestoreInterrupts(enabled);
 }
 
+#ifdef PRIME1
+static BOOL OnReset(BOOL f) {
+#else
 static void (*SamplingCallback)();
 
 static BOOL OnReset(BOOL final) {
   BOOL sync;
+#endif
   static BOOL recalibrated = FALSE;
+#ifdef PRIME1
+  BOOL sync;
+#endif
 
+#ifdef PRIME1
+  if (SamplingCallback) {
+#else
   if (SamplingCallback)
+#endif
     PADSetSamplingCallback(NULL);
+#ifdef PRIME1
+  }
+#endif
 
+#ifdef PRIME1
+  if (!f) {
+#else
   if (!final) {
+#endif
     sync = PADSync();
     if (!recalibrated && sync) {
       recalibrated = PADRecalibrate(PAD_CHAN0_BIT | PAD_CHAN1_BIT | PAD_CHAN2_BIT | PAD_CHAN3_BIT);
       return FALSE;
     }
     return sync;
+#ifdef PRIME1
+  } else {
+#else
   } else
+#endif
     recalibrated = FALSE;
+#ifdef PRIME1
+  }
+#endif
 
   return TRUE;
 }
@@ -814,7 +1294,9 @@ PADSamplingCallback PADSetSamplingCallback(PADSamplingCallback callback) {
   } else {
     SIUnregisterPollingHandler(SamplingHandler);
   }
+#ifndef PRIME1
 
+#endif
   return prev;
 }
 
@@ -823,9 +1305,17 @@ BOOL __PADDisableRecalibration(BOOL disable) {
   BOOL prev;
 
   enabled = OSDisableInterrupts();
+#ifdef PRIME1
+  prev = (UnkVal & 0x40) ? TRUE : FALSE;
+  UnkVal &= (u8)~0x40;
+#else
   prev = (__gUnknown800030E3 & 0x40) ? TRUE : FALSE;
   __gUnknown800030E3 &= ~0x40;
+#endif
   if (disable) {
+#ifdef PRIME1
+    UnkVal |= 0x40;
+#else
     __gUnknown800030E3 |= 0x40;
   }
 
@@ -842,11 +1332,13 @@ BOOL __PADDisableRumble(BOOL disable) {
   __gUnknown800030E3 &= ~0x20;
   if (disable) {
     __gUnknown800030E3 |= 0x20;
+#endif
   }
   OSRestoreInterrupts(enabled);
   return prev;
 }
 
+#ifndef PRIME1
 BOOL PADIsBarrel(s32 chan) {
   if (chan < 0 || chan >= 4) {
     return FALSE;
@@ -858,3 +1350,5 @@ BOOL PADIsBarrel(s32 chan) {
 
   return FALSE;
 }
+
+#endif

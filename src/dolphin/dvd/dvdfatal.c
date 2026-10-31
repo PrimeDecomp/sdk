@@ -20,36 +20,60 @@ const char* const Europe[] = {
     // English
     "\n\n\nAn error has occurred."
     "\nTurn the power off and refer to the"
+#ifdef PRIME1
+    "\nNintendo GameCube""\x99"" Instruction Booklet"
+#else
     "\nNintendo GameCube Instruction Booklet"
+#endif
     "\nfor further instructions.",
 
     // German
     "\n\n\nEin Fehler ist aufgetreten."
+#ifdef PRIME1
+    "\nBitte schalten Sie den NINTENDO GAMECUBE"
+#else
     "\nBitte schalten Sie den Nintendo GameCube"
+#endif
     "\naus und lesen Sie die Bedienungsanleitung,"
     "\num weitere Informationen zu erhalten.",
 
     // French
     "\n\n\nUne erreur est survenue."
     "\nEteignez la console et r" "\xe9" "f" "\xe9" "rez-vous au"
+#ifdef PRIME1
+    "\nmanuel d'instructions NINTENDO GAMECUBE"
+#else
     "\nmanuel d'instructions Nintendo GameCube"
+#endif
     "\npour de plus amples informations.",
 
     // Spanish
     "\n\n\nSe ha producido un error."
     "\nApaga la consola y consulta el manual"
+#ifdef PRIME1
+    "\nde instrucciones de NINTENDO GAMECUBE"
+#else
     "\nde instrucciones de Nintendo GameCube"
+#endif
     "\npara obtener m""\xe1""s informaci""\xf3""n.",
 
     // Italian
     "\n\n\nSi \xe8 verificato un errore."
     "\nSpegni (OFF) e controlla il manuale"
+#ifdef PRIME1
+    "\nd'istruzioni del NINTENDO GAMECUBE"
+#else
     "\nd'istruzioni del Nintendo GameCube"
+#endif
     "\nper ulteriori indicazioni.",
 
     // Dutch
     "\n\n\nEr is een fout opgetreden."
+#ifdef PRIME1
+    "\nZet de NINTENDO GAMECUBE uit en"
+#else
     "\nZet de Nintendo GameCube uit en"
+#endif
     "\nraadpleeg de handleiding van de"
     "\nNintendo GameCube voor nadere"
     "\ninstructies.",

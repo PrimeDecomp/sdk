@@ -22,7 +22,9 @@ static vu8 __DTKVolumeR;
 static volatile u32 __DTKShutdownFlag;
 static volatile u32 __DTKTrackEnded;
 static DTKFlushCallback __DTKFlushCallback;
+#ifndef PRIME1
 static BOOL __busy_for_ais_isr;
+#endif
 
 static void __DTKStartAi() {
   AISetStreamVolLeft(__DTKVolumeL);
@@ -95,7 +97,9 @@ static void __DTKPrepareCurrentTrack(DVDCallback callback) {
 }
 static void __DTKCallbackForPlaylist(s32 result, DVDCommandBlock* block) {
   __DTKPosition = result;
+#ifndef PRIME1
   __busy_for_ais_isr = FALSE;
+#endif
 
   if (__DTKTrackEnded != FALSE) {
     __DTKTrackEnded = FALSE;
@@ -151,8 +155,12 @@ static void __DTKCallbackForPlaylist(s32 result, DVDCommandBlock* block) {
 static void __DTKCallbackForAIInterrupt(u32 result) {
   AISetStreamTrigger(result + __DTKInterruptFrequency);
 
+#ifdef PRIME1
+  if (__DTKCurrentTrack != NULL) {
+#else
   if (__DTKCurrentTrack != NULL && !__busy_for_ais_isr) {
     __busy_for_ais_isr = TRUE;
+#endif
     DVDGetStreamPlayAddrAsync(&__block_for_ais_isr, __DTKCallbackForPlaylist);
   }
 }
@@ -255,11 +263,28 @@ u32 DTKQueueTrack(char* fileName, DTKTrack* track, u32 eventMask, DTKCallback ca
   return 0;
 }
 
+#ifdef PRIME1
+void DTKFlushTracks(DTKFlushCallback callback) {
+#else
 BOOL DTKFlushTracks(DTKFlushCallback callback) {
+#endif
   u32 oldState;
+#ifdef PRIME1
+  if (__DTKState != 3) {
+    oldState = __DTKState;
+    __DTKState = 3;
+    __DTKFlushCallback = callback;
+    if (oldState == 1) {
+      DVDCancelStreamAsync(&__block_for_flushtracks, __DTKCallbackForFlush);
+    } else {
+      __DTKCallbackForFlush(0, NULL);
+    }
+#else
   if (__DTKState == 3) {
     return FALSE;
+#endif
   }
+#ifndef PRIME1
 
   oldState = __DTKState;
   __DTKState = 3;
@@ -270,18 +295,25 @@ BOOL DTKFlushTracks(DTKFlushCallback callback) {
     __DTKCallbackForFlush(0, NULL);
   }
   return TRUE;
+#endif
 }
 
 void DTKSetSampleRate(u32 rate) {}
 
 void DTKSetRepeatMode(u32 repeat) { __DTKRepeatMode = repeat; }
 
+#ifdef PRIME1
+void DTKSetState(u32 state) {
+  if (__DTKState == state || __DTKState == 3) {
+    return;
+#else
 BOOL DTKSetState(u32 state) {
   if (__DTKState == state) {
     return TRUE;
   }
   if (__DTKState == 3) {
     return FALSE;
+#endif
   }
   switch (state) {
   case 0: {
@@ -336,28 +368,42 @@ BOOL DTKSetState(u32 state) {
     break;
   }
   }
+#ifndef PRIME1
   return TRUE;
+#endif
 }
 
+#ifdef PRIME1
+void DTKNextTrack() {
+  if (__DTKState != 3 && __DTKCurrentTrack != NULL) {
+#else
 BOOL DTKNextTrack() {
   if (__DTKState == 3) {
     return FALSE;
   }
 
   if (__DTKCurrentTrack != NULL) {
+#endif
     __DTKTempState = __DTKState;
     __DTKState = 3;
     if (__DTKTempState == 1) {
       AISetStreamVolLeft(0);
       AISetStreamVolRight(0);
       DVDCancelStreamAsync(&__block_for_next_track, __DTKCallbackForNextTrack);
+#ifdef PRIME1
+
+#endif
     } else {
       __DTKForward();
       __DTKState = __DTKTempState;
     }
+#ifndef PRIME1
     return TRUE;
+#endif
   }
+#ifndef PRIME1
   return FALSE;
+#endif
 }
 
 u32 DTKGetState() { return __DTKState; }
@@ -370,3 +416,8 @@ void DTKSetVolume(u8 left, u8 right) {
     AISetStreamVolRight(right);
   }
 }
+
+#ifdef PRIME1
+u16 DTKGetVolume(void) { return (__DTKVolumeL << 8) | __DTKVolumeR; }
+
+#endif

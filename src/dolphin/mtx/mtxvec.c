@@ -1,4 +1,5 @@
 #include "dolphin/mtx.h"
+#ifndef PRIME1
 #include "dolphin/os.h"
 
 void C_MTXMultVec(const Mtx m, const Vec *src, Vec *dst) {
@@ -16,6 +17,7 @@ void C_MTXMultVec(const Mtx m, const Vec *src, Vec *dst) {
   dst->y = vTmp.y;
   dst->z = vTmp.z;
 }
+#endif
 
 asm void PSMTXMultVec(const register Mtx m, const register Vec *in, register Vec *out) {
   // clang-format off

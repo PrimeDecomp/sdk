@@ -8,9 +8,16 @@ extern "C" {
 #endif
 
 void GXSetVtxDesc(GXAttr attr, GXAttrType type);
+#ifdef PRIME1
+void GXSetVtxDescv(GXVtxDescList* list);
+#else
 void GXSetVtxDescv(const GXVtxDescList* list);
+#endif
 void GXClearVtxDesc(void);
 void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType type, u8 frac);
+#ifdef PRIME1
+void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList* list);
+#endif
 void GXSetNumTexGens(u8 nTexGens);
 void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts);
 void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc src_param, u32 mtx,

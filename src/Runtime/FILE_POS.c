@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <critical_regions.h>
+#endif
 #include <ansi_files.h>
 #include <errno.h>
 
@@ -22,6 +24,7 @@ inline fpos_t _ftell(FILE* file) {
     position -= charsInUndoBuffer;
   }
 
+#ifndef PRIME1
   if (!file->mode.binary_io) {
     int n = file->buffer_ptr - file->buffer - charsInUndoBuffer;
     unsigned char* p = (unsigned char*)file->buffer;
@@ -31,15 +34,20 @@ inline fpos_t _ftell(FILE* file) {
         position++;
   }
 
+#endif
   return (position);
 }
 
 long ftell(FILE* file) {
   long retval;
 
+#ifndef PRIME1
   __begin_critical_region(files_access);
+#endif
   retval = (long)_ftell(file);
+#ifndef PRIME1
   __end_critical_region(files_access);
+#endif
 
   return retval;
 }
@@ -101,6 +109,19 @@ int _fseek(FILE* file, fpos_t offset, int mode) {
   return 0;
 }
 
+#ifdef PRIME1
+int fseek(FILE * file, long offset, int mode)
+{
+		fpos_t real_offset = (fpos_t)offset;
+		int retval;		
+		
+		
+		retval = _fseek(file, real_offset, mode);
+
+
+		return(retval);
+}
+#else
 #if VERSION < VERSION_R32J01
 int fseek(FILE * file, long offset, int mode)
 {
@@ -115,4 +136,5 @@ int fseek(FILE * file, long offset, int mode)
 
 		return(retval);
 }
+#endif
 #endif

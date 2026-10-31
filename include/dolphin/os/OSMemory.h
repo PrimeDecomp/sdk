@@ -19,11 +19,13 @@ extern "C" {
 
 void OSProtectRange(u32 chan, void* addr, u32 nBytes, u32 control);
 
+#ifndef PRIME1
 u32 OSGetPhysicalMem1Size(void);
 u32 OSGetPhysicalMem2Size(void);
 u32 OSGetConsoleSimulatedMem1Size(void);
 u32 OSGetConsoleSimulatedMem2Size(void);
 
+#endif
 #ifdef __cplusplus
 }
 #endif

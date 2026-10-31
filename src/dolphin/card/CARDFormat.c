@@ -5,8 +5,13 @@
 
 #include <dolphin/CARDPriv.h>
 #include <dolphin/OSRtcPriv.h>
+#ifndef PRIME1
 #include <dolphin/hw_regs.h>
+#endif
 #include <dolphin/vi.h>
+#ifdef PRIME1
+#include <dolphin/hw_regs.h>
+#endif
 
 static void FormatCallback(s32 chan, s32 result) {
   CARDControl* card;
@@ -43,8 +48,10 @@ error:
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
+#ifndef PRIME1
 #line 133
   ASSERT(callback);
+#endif
   callback(chan, result);
 }
 
@@ -60,9 +67,11 @@ s32 __CARDFormatRegionAsync(s32 chan, u16 encode, CARDCallback callback) {
   u16 viDTVStatus;
   OSTime time;
   OSTime rand;
+#ifndef PRIME1
 #line 167
   ASSERT(encode == CARD_ENCODE_ANSI || encode == CARD_ENCODE_SJIS);
   ASSERT(0 <= chan && chan < 2);
+#endif
 
   result = __CARDGetControlBlock(chan, &card);
   if (result < 0) {
@@ -128,6 +137,7 @@ s32 __CARDFormatRegionAsync(s32 chan, u16 encode, CARDCallback callback) {
   return result;
 }
 
+#ifndef PRIME1
 s32 __CARDFormatRegion(s32 chan, u16 encode) {
   s32 result;
   result = __CARDFormatRegionAsync(chan, encode, __CARDSyncCallback);
@@ -138,10 +148,12 @@ s32 __CARDFormatRegion(s32 chan, u16 encode) {
   return __CARDSync(chan);
 }
 
+#endif
 s32 CARDFormatAsync(s32 chan, CARDCallback callback) {
   return __CARDFormatRegionAsync(chan, __CARDGetFontEncode(), callback);
 }
 
+#ifndef PRIME1
 
 s32 CARDFormat(s32 chan) {
   s32 result = __CARDFormatRegionAsync(chan, __CARDGetFontEncode(), __CARDSyncCallback);;
@@ -151,3 +163,5 @@ s32 CARDFormat(s32 chan) {
 
   return __CARDSync(chan);
 }
+
+#endif

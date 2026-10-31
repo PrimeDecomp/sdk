@@ -1,8 +1,13 @@
 #ifndef _MWCPLUSLIB
 #define _MWCPLUSLIB
 
+#ifndef PRIME1
 #include <stddef.h>
+#endif
 #include <types.h>
+#ifdef PRIME1
+#include <stddef.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

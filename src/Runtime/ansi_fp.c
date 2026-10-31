@@ -3,6 +3,37 @@
 #include <float.h>
 #include <math.h>
 
+#ifdef PRIME1
+static int __count_trailing_zerol(unsigned long x) {
+  int result = 0;
+  int bits_not_checked = sizeof(unsigned long) * 8;
+  int n = bits_not_checked / 2;
+  int mask_size = n;
+  unsigned long mask = (~0UL) >> (bits_not_checked - n);
+  while (bits_not_checked) {
+    if (!(x & mask)) {
+      result += mask_size;
+      x >>= mask_size;
+      bits_not_checked -= mask_size;
+    } else if (mask == 1)
+      break;
+    if (n > 1)
+      n /= 2;
+    if (mask > 1) {
+      mask >>= n;
+      mask_size -= n;
+    }
+  }
+  return result;
+}
+
+static int __count_trailing_zero(double x) {
+  unsigned long* l = (unsigned long*)&x;
+  if (l[1] != 0)
+    return __count_trailing_zerol(l[1]);
+  return (int)(sizeof(unsigned long) * 8 + __count_trailing_zerol(l[0] | 0x00100000));
+}
+#else
 #if VERSION >= VERSION_R32J01
 static inline int __count_trailing_zero(double x) {
   return __builtin___count_trailing_zero64(*(unsigned long long *)&x | 0x0010000000000000ULL);
@@ -37,6 +68,7 @@ static int __count_trailing_zero(double x) {
     return __count_trailing_zerol(l[1]);
   return (int)(sizeof(unsigned long) * 8 + __count_trailing_zerol(l[0] | 0x00100000));
 }
+#endif
 #endif
 
 static int __must_round(const decimal* d, int pos) {
@@ -87,6 +119,18 @@ static void __rounddec(decimal* d, int digits) {
 
 static void __ull2dec(decimal* result, unsigned long long integer) {
   result->sgn = 0;
+#ifdef PRIME1
+  if (integer == 0) {
+    result->exp = 0;
+    result->sig.length = 1;
+    result->sig.text[0] = 0;
+    return;
+  }
+  if (integer < 0) {
+    integer = -integer;
+    result->sgn = 1;
+  }
+#else
 #if VERSION < VERSION_R32J01
   if (integer == 0) {
     result->exp = 0;
@@ -94,6 +138,7 @@ static void __ull2dec(decimal* result, unsigned long long integer) {
     result->sig.text[0] = 0;
     return;
   }
+#endif
 #endif
   result->sig.length = 0;
   for (; integer != 0; integer /= 10)
@@ -170,8 +215,10 @@ static void __str2dec(decimal* d, const char* s, short exp) {
   if (*s != 0) {
     if (*s < 5)
       return;
+#ifndef PRIME1
     if (*s > 5)
       goto round;
+#endif
     {
       const char* p = s + 1;
       for (; *p != 0; ++p)
@@ -185,7 +232,11 @@ static void __str2dec(decimal* d, const char* s, short exp) {
   }
 }
 
+#ifdef PRIME1
+static void __two_exp(decimal* result, short exp) {
+#else
 static void __two_exp(decimal* result, long exp) {
+#endif
   switch (exp) {
   case -64:
     __str2dec(result, "542101086242752217003726400434970855712890625", -20);
@@ -253,8 +304,25 @@ static void __two_exp(decimal* result, long exp) {
   }
   {
     decimal x2;
+#ifdef PRIME1
+    __two_exp(&x2, (short)(exp / 2));
+#else
     __two_exp(&x2, exp / 2);
+#endif
     __timesdec(result, &x2, &x2);
+#ifdef PRIME1
+  }
+  if (exp & 1) {
+    decimal temp = *result;
+    if (exp > 0) {
+      decimal two;
+      __str2dec(&two, "2", 0);
+      __timesdec(result, &temp, &two);
+    } else {
+      decimal one_half;
+      __str2dec(&one_half, "5", -1);
+      __timesdec(result, &temp, &one_half);
+#else
     if (exp & 1) {
       decimal temp = *result;
       if (exp > 0)
@@ -262,38 +330,79 @@ static void __two_exp(decimal* result, long exp) {
       else
         __str2dec(&x2, "5", -1);
       __timesdec(result, &temp, &x2);
+#endif
     }
   }
 }
 
+#ifdef PRIME1
+static int __equals_dec(const decimal* x, const decimal* y) {
+#else
 static int __equals_dec(const decimal *x, const decimal *y) {
+#endif
   if (x->sig.text[0] == 0) {
+#ifdef PRIME1
+    if (y->sig.text[0] == 0)
+#else
     if (y->sig.text[0] == 0) {
+#endif
       return 1;
+#ifndef PRIME1
     }
 
+#endif
     return 0;
   }
+#ifndef PRIME1
 
+#endif
   if (y->sig.text[0] == 0) {
+#ifdef PRIME1
+    if (x->sig.text[0] == 0)
+#else
     if (x->sig.text[0] == 0) {
+#endif
       return 1;
+#ifndef PRIME1
     }
 
+#endif
     return 0;
   }
+#ifndef PRIME1
 
+#endif
   if (x->exp == y->exp) {
     int i;
     int l = x->sig.length;
+#ifdef PRIME1
+    if (l > y->sig.length)
+#else
 
     if (l > y->sig.length) {
+#endif
       l = y->sig.length;
+#ifdef PRIME1
+    for (i = 0; i < l; ++i)
+      if (x->sig.text[i] != y->sig.text[i])
+#else
     }
 
     for (i = 0; i < l; ++i) {
       if (x->sig.text[i] != y->sig.text[i]) {
+#endif
         return 0;
+#ifdef PRIME1
+    if (l == x->sig.length) {
+      for (; i < y->sig.length; ++i)
+        if (y->sig.text[i] != 0)
+          return 0;
+    } else {
+      for (; i < x->sig.length; ++i)
+        if (x->sig.text[i] != 0)
+          return 0;
+    }
+#else
       }
     }
 
@@ -318,9 +427,12 @@ static int __equals_dec(const decimal *x, const decimal *y) {
           return 0;
     }
 #endif
+#endif
     return 1;
   }
+#ifndef PRIME1
 
+#endif
   return 0;
 }
 
@@ -437,10 +549,14 @@ done:
 }
 
 static void __num2dec_internal(decimal* d, double x) {
+#ifdef PRIME1
+  char sgn = signbit(x) != 0;
+#else
 #if VERSION >= VERSION_R32J01
   char sgn = __signbitd(x) != 0;
 #else
   char sgn = signbit(x) != 0;
+#endif
 #endif
   if (x == 0.0) {
     d->sgn = sgn;
@@ -462,9 +578,18 @@ static void __num2dec_internal(decimal* d, double x) {
   {
     int exp;
     double frac = frexp(x, &exp);
+#ifdef PRIME1
+    short num_bits_extract = (short)(DBL_MANT_DIG - __count_trailing_zero(frac));
+#else
     int num_bits_extract = DBL_MANT_DIG - __count_trailing_zero(frac);
+#endif
     double integer;
     decimal int_d, pow2_d;
+#ifdef PRIME1
+    __two_exp(&pow2_d, (short)(exp - num_bits_extract));
+    frac = modf(ldexp(frac, num_bits_extract), &integer);
+    __ull2dec(&int_d, (unsigned long long)integer);
+#else
     __two_exp(&pow2_d, exp - num_bits_extract);
 #if VERSION >= VERSION_R32J01
     __ull2dec(&int_d, (unsigned long long)ldexp(frac, num_bits_extract));
@@ -473,6 +598,7 @@ static void __num2dec_internal(decimal* d, double x) {
     __ull2dec(&int_d, (unsigned long long)integer);
 #endif
 
+#endif
     __timesdec(d, &int_d, &pow2_d);
     d->sgn = sgn;
   }
@@ -508,6 +634,35 @@ double __dec2num(const decimal* d) {
     *ll = 0x7FF0000000000000;
     if (d->sgn)
       *ll |= 0x8000000000000000;
+#ifdef PRIME1
+    if (d->sig.length == 1)
+      *ll |= 0x0008000000000000;
+    else {
+      unsigned char* p = (unsigned char*)&result + 1;
+      int placed_non_zero = 0;
+      int low = 1;
+      int i;
+      int e = d->sig.length;
+      if (e > 14)
+        e = 14;
+      for (i = 1; i < e; ++i) {
+        unsigned char c = d->sig.text[i];
+        if (isdigit(c))
+          c -= '0';
+        else
+          c = (unsigned char)(tolower(c) - 'a' + 10);
+        if (c != 0)
+          placed_non_zero = 1;
+        if (low)
+          *p++ |= c;
+        else
+          *p = (unsigned char)(c << 4);
+        low = !low;
+      }
+      if (!placed_non_zero)
+        *ll |= 0x0008000000000000;
+    }
+#else
 #if VERSION >= VERSION_R32J01
     *ll |= 0x0008000000000000;
 #else
@@ -539,6 +694,7 @@ double __dec2num(const decimal* d) {
         *ll |= 0x0008000000000000;
     }
 #endif
+#endif
     return result;
   }
   }
@@ -553,6 +709,7 @@ double __dec2num(const decimal* d) {
       *i -= '0';
     dec.exp += dec.sig.length - 1;
     exponent = dec.exp;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
     {
       decimal max;
@@ -560,6 +717,7 @@ double __dec2num(const decimal* d) {
       if (__less_dec(&max, &dec))
         return copysign((double)INFINITY, d->sgn == 0 ? 1.0 : -1.0);
     }
+#endif
 #endif
     i = dec.sig.text;
     first_guess = *i++;
@@ -585,6 +743,13 @@ double __dec2num(const decimal* d) {
       first_guess *= pow(5.0, exponent);
     first_guess = ldexp(first_guess, exponent);
     if (isinf(first_guess)) {
+#ifdef PRIME1
+      decimal max;
+      __str2dec(&max, "179769313486231580793729011405303420", 308);
+      if (__less_dec(&max, &dec))
+        goto done;
+      first_guess = DBL_MAX;
+#else
 #if VERSION >= VERSION_R32J01
       first_guess = 1.7976931348623157e308;
 #else
@@ -594,7 +759,60 @@ double __dec2num(const decimal* d) {
         goto done;
       first_guess = DBL_MAX;
 #endif
+#endif
     }
+#ifdef PRIME1
+    {
+      decimal feedback1;
+      __num2dec_internal(&feedback1, first_guess);
+      if (__equals_dec(&feedback1, &dec))
+        goto done;
+      if (__less_dec(&feedback1, &dec)) {
+
+        decimal feedback2, difflow, diffhigh;
+        double next_guess = nextafter(first_guess, (double)INFINITY);
+        if (isinf(next_guess)) {
+          first_guess = next_guess;
+          goto done;
+        }
+        __num2dec_internal(&feedback2, next_guess);
+        while (__less_dec(&feedback2, &dec)) {
+          feedback1 = feedback2;
+          first_guess = next_guess;
+          next_guess = nextafter(next_guess, (double)INFINITY);
+          if (isinf(next_guess)) {
+            first_guess = next_guess;
+            goto done;
+          }
+          __num2dec_internal(&feedback2, next_guess);
+        }
+        __minus_dec(&difflow, &dec, &feedback1);
+        __minus_dec(&diffhigh, &feedback2, &dec);
+        if (__equals_dec(&difflow, &diffhigh)) {
+          if (*(unsigned long long*)&first_guess & 1)
+            first_guess = next_guess;
+        } else if (!__less_dec(&difflow, &diffhigh))
+          first_guess = next_guess;
+      } else {
+        decimal feedback2, difflow, diffhigh;
+        double next_guess = nextafter(first_guess, (double)(-INFINITY));
+        __num2dec_internal(&feedback2, next_guess);
+        while (__less_dec(&dec, &feedback2)) {
+          feedback1 = feedback2;
+          first_guess = next_guess;
+          next_guess = nextafter(next_guess, (double)(-INFINITY));
+          __num2dec_internal(&feedback2, next_guess);
+        }
+        __minus_dec(&difflow, &dec, &feedback2);
+        __minus_dec(&diffhigh, &feedback1, &dec);
+        if (__equals_dec(&difflow, &diffhigh)) {
+          if (*(unsigned long long*)&first_guess & 1)
+            first_guess = next_guess;
+        } else if (__less_dec(&difflow, &diffhigh))
+          first_guess = next_guess;
+      }
+    }
+#else
 #if VERSION >= VERSION_R32J01
     {
       decimal feedback1, feedback2, difflow, diffhigh;
@@ -705,6 +923,7 @@ double __dec2num(const decimal* d) {
           first_guess = next_guess;
       }
     }
+#endif
 #endif
   done:
     if (dec.sgn)

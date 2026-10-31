@@ -1,18 +1,28 @@
+#ifdef PRIME1
+#include "dolphin/base/PPCArch.h"
+#else
 #include "GameVersions.h"
 #include "dolphin/PPCArch.h"
+#endif
 #include "dolphin/ai.h"
 #include "dolphin/os.h"
+#ifndef PRIME1
 #include "dolphin/hw_regs.h"
+#endif
 #include "dolphin/os/OSArena.h"
 #include "dolphin/os/OSBootInfo.h"
 #include "dolphin/vi.h"
 #include "string.h"
 #pragma fp_contract off
 extern void __OSStopAudioSystem();
+#ifdef PRIME1
+extern BOOL __OSCallResetFunctions(u32);
+#else
 #if VERSION >= VERSION_R32J01
 extern BOOL __OSCallShutdownFunctions(BOOL final, u32 event);
 #else
 extern BOOL __OSCallResetFunctions(u32);
+#endif
 #endif
 extern void OSDefaultExceptionHandler(__OSException exception, OSContext* context);
 extern void __OSSetExceptionHandler(__OSException exception, void* handler);
@@ -23,12 +33,17 @@ typedef struct OSFatalParam {
   const char* msg;
 } OSFatalParam;
 
+#ifdef PRIME1
+static OSFatalParam FatalParam;
+static OSContext FatalContext;
+#else
 #if VERSION >= VERSION_R32J01
 static OSContext FatalContext;
 static OSFatalParam FatalParam;
 #else
 static OSFatalParam FatalParam;
 static OSContext FatalContext;
+#endif
 #endif
 static void Halt();
 
@@ -173,32 +188,58 @@ static GXColor RGB2YUV(GXColor rgb) {
 }
 
 void OSFatal(GXColor fg, GXColor bg, const char* msg) {
+#ifdef PRIME1
+  u32 count = 0;
+  OSBootInfo* bootInfo = (OSBootInfo*)OSPhysicalToCached(0);
+#else
   OSBootInfo* bootInfo;
   u32 count;
   OSTime t;
 
   bootInfo = (OSBootInfo*)OSPhysicalToCached(0);
+#endif
   OSDisableInterrupts();
   OSDisableScheduler();
   OSClearContext(&FatalContext);
   OSSetCurrentContext(&FatalContext);
   __OSStopAudioSystem();
+#ifdef PRIME1
+  AISetStreamVolLeft(0);
+  AISetStreamVolRight(0);
+#else
 #if VERSION < VERSION_R32J01
   AISetStreamVolLeft(0);
   AISetStreamVolRight(0);
 #endif
+#endif
   VIInit();
+#ifndef PRIME1
   __OSUnmaskInterrupts(0x80);
+#endif
   VISetBlack(TRUE);
   VIFlush();
+#ifndef PRIME1
   VISetPreRetraceCallback(NULL);
   VISetPostRetraceCallback(NULL);
+#endif
   OSEnableInterrupts();
 
   count = VIGetRetraceCount();
+#ifdef PRIME1
+  while ((s32)(VIGetRetraceCount() - count) < 1)
+    ;
+#else
   do {
   } while ((s32)(VIGetRetraceCount() - count) < 1);
+#endif
 
+#ifdef PRIME1
+  while (!__OSCallResetFunctions(0))
+    ;
+
+  OSDisableInterrupts();
+  __OSCallResetFunctions(1);
+#else
   t = OSGetTime();
 #if VERSION >= VERSION_R32J01
   while (!__OSCallShutdownFunctions(FALSE, 0) && OSGetTime() - t < OSMillisecondsToTicks(1000)) {
@@ -226,8 +267,13 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   do {
   } while ((__EXIRegs[3] & 1) == 1);
 
+#endif
   __OSSetExceptionHandler(8, OSDefaultExceptionHandler);
   GXAbortFrame();
+#ifdef PRIME1
+  OSSetArenaLo((void*)0x81200000);
+  OSSetArenaHi(bootInfo->FSTLocation);
+#else
   OSSetArenaLo((void*)0x81400000);
 #if VERSION >= VERSION_R32J01
   if (bootInfo->FSTLocation == NULL) {
@@ -239,6 +285,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   OSSetArenaHi(bootInfo->FSTLocation);
 #endif
 
+#endif
   FatalParam.fg = fg;
   FatalParam.bg = bg;
   FatalParam.msg = msg;
@@ -257,7 +304,15 @@ static void Halt() {
   len = strlen(fp->msg) + 1;
   fp->msg = memmove(OSAllocFromArenaLo(len, 32), fp->msg, len);
 
+#ifdef PRIME1
+  if (OSGetFontEncode() == OS_FONT_ENCODE_SJIS) {
+    fontData = OSAllocFromArenaLo(0x90ee4, 32);
+  } else {
+    fontData = OSAllocFromArenaLo(0x10120, 32);
+  }
+#else
   fontData = OSAllocFromArenaLo(0xA1004, 32);
+#endif
   OSLoadFont(fontData, OSGetArenaLo());
 
   xfb = OSAllocFromArenaLo(0x96000, 32);

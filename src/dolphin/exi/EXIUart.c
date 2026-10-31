@@ -1,3 +1,7 @@
+#ifdef PRIME1
+#include "GameVersions.h"
+
+#endif
 #include "dolphin/os.h"
 
 #define EXI_TX 0x800400u
@@ -117,6 +121,11 @@ static int QueueLength(void) {
 
 u32 WriteUARTN(const void* buf, unsigned long len) {
   u32 cmd;
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
+  s32 enabled;
+#endif
+#endif
   int qLen;
   long xLen;
   char* ptr;
@@ -126,8 +135,18 @@ u32 WriteUARTN(const void* buf, unsigned long len) {
   if (Enabled != EXI_MAGIC)
     return 2;
 
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
+  enabled = OSDisableInterrupts();
+#endif
+#endif
   locked = EXILock(Chan, Dev, 0);
   if (!locked) {
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
+    OSRestoreInterrupts(enabled);
+#endif
+#endif
     return 0;
   }
 
@@ -170,5 +189,10 @@ u32 WriteUARTN(const void* buf, unsigned long len) {
   }
 
   EXIUnlock(Chan);
+#ifdef PRIME1
+#if VERSION >= VERSION_GM8E_02
+  OSRestoreInterrupts(enabled);
+#endif
+#endif
   return error;
 }

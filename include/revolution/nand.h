@@ -1,3 +1,21 @@
+#ifdef PRIME1
+#ifndef _REVOLUTION_NAND
+#define _REVOLUTION_NAND
+
+#include <dolphin/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+s32 NANDInit(void);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _REVOLUTION_NAND
+#else
 #ifndef NAND_H
 #define NAND_H
 
@@ -218,3 +236,4 @@ void NANDInitBanner(NANDBanner*, u32, const u16*, const u16*);
 #endif
 
 #endif // NAND_H
+#endif

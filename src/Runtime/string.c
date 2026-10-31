@@ -1,6 +1,18 @@
 #include "string.h"
+#ifndef PRIME1
 #include "GameVersions.h"
+#endif
 
+#ifdef PRIME1
+size_t strlen(const char* str) {
+  size_t len = -1;
+  unsigned char* p = (unsigned char*)str - 1;
+  do {
+    len++;
+  } while (*++p);
+  return len;
+}
+#else
 #if VERSION < VERSION_R32J01
 size_t strlen(const char* str) {
   size_t len = -1;
@@ -11,6 +23,7 @@ size_t strlen(const char* str) {
   return len;
 }
 
+#endif
 #endif
 
 char*(strcpy)(char* dst, const char* src) {
@@ -45,8 +58,10 @@ char*(strcpy)(char* dst, const char* src) {
 
   w = *((int*)(fromb));
   t = w + k2;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
   t &= ~w;
+#endif
 #endif
   t &= k1;
   if (t) {
@@ -60,8 +75,10 @@ char*(strcpy)(char* dst, const char* src) {
     w = *(++((int*)(fromb)));
 
     t = w + k2;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
     t &= ~w;
+#endif
 #endif
     t &= k1;
     if (t)
@@ -95,6 +112,7 @@ char* strncpy(char* dst, const char* src, size_t n) {
         *++q = 0;
       break;
     }
+#ifndef PRIME1
 
   return dst;
 }
@@ -110,6 +128,7 @@ char* strcat(char* dst, const char* src) {
 
   while (*++q = *++p)
     ;
+#endif
 
   return dst;
 }
@@ -152,8 +171,10 @@ int strcmp(const char* str1, const char* str2) {
   l1 = *(int*)left;
   r1 = *(int*)right;
   x = l1 + k2;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
   x &= ~l1;
+#endif
 #endif
   if (x & k1) {
     goto adjust;
@@ -167,12 +188,20 @@ int strcmp(const char* str1, const char* str2) {
     }
   }
 
+#ifdef PRIME1
+  if (l1 > r1) {
+    return 1;
+  }
+
+  return -1;
+#else
 #if VERSION < VERSION_R32J01
   if (l1 > r1) {
     return 1;
   }
 
   return -1;
+#endif
 #endif
 
 adjust:

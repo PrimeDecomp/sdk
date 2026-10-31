@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <GameVersions.h>
+#endif
 #include <dolphin/os.h>
 #include <dolphin/hw_regs.h>
 
@@ -16,8 +18,10 @@ static OSInterruptMask InterruptPrioTable[] = {
     OS_INTERRUPTMASK_MEM,
     OS_INTERRUPTMASK_PI_RSW,
     OS_INTERRUPTMASK_PI_VI,
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
     OS_INTERRUPTMASK_PI_ACR,
+#endif
 #endif
     OS_INTERRUPTMASK_PI_PE,
     OS_INTERRUPTMASK_PI_HSP,
@@ -35,8 +39,18 @@ entry    __RAS_OSDisableInterrupts_begin
     mfmsr   r3
     rlwinm  r4, r3, 0, 17, 15
     mtmsr   r4
+#ifdef PRIME1
+#if VERSION == VERSION_GM8EAB_00
+    rlwinm  r3, r3, 17, 31, 31
+entry    __RAS_OSDisableInterrupts_end
+#else
 entry    __RAS_OSDisableInterrupts_end
     rlwinm  r3, r3, 17, 31, 31
+#endif
+#else
+entry    __RAS_OSDisableInterrupts_end
+    rlwinm  r3, r3, 17, 31, 31
+#endif
     blr
   // clang-format on
 }
@@ -93,8 +107,10 @@ void __OSInterruptInit(void) {
   *(OSInterruptMask*)OSPhysicalToCached(0x00C8) = 0;
 
   __PIRegs[1] = 0xf0;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
   ((vu32*)0xCD000034)[0] = 0x40000000;
+#endif
 #endif
 
   __OSMaskInterrupts(OS_INTERRUPTMASK_MEM | OS_INTERRUPTMASK_DSP | OS_INTERRUPTMASK_AI |
@@ -199,8 +215,10 @@ u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current) {
   case __OS_INTERRUPT_PI_PE_TOKEN:
   case __OS_INTERRUPT_PI_PE_FINISH:
   case __OS_INTERRUPT_PI_HSP:
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
   case __OS_INTERRUPT_PI_ACR:
+#endif
 #endif
     reg = 0xF0;
 
@@ -234,10 +252,12 @@ u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current) {
     if (!(current & OS_INTERRUPTMASK_PI_HSP)) {
       reg |= 0x2000;
     }
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
     if (!(current & OS_INTERRUPTMASK_PI_ACR)) {
       reg |= 0x4000;
     }
+#endif
 #endif
     __PIRegs[1] = reg;
     mask &= ~OS_INTERRUPTMASK_PI;
@@ -313,8 +333,10 @@ volatile u32 __OSLastInterruptSrr0;
 void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
   u32 intsr;
   u32 reg;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
   u32 piMask;
+#endif
 #endif
   OSInterruptMask cause;
   OSInterruptMask unmasked;
@@ -322,15 +344,21 @@ void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
   __OSInterrupt interrupt;
   __OSInterruptHandler handler;
   intsr = __PIRegs[0];
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
   piMask = __PIRegs[1];
 #endif
+#endif
   intsr &= ~0x00010000;
 
+#ifdef PRIME1
+  if (intsr == 0 || (intsr & __PIRegs[1]) == 0) {
+#else
 #if VERSION >= VERSION_R32J01
   if (intsr == 0 || (intsr & piMask) == 0) {
 #else
   if (intsr == 0 || (intsr & __PIRegs[1]) == 0) {
+#endif
 #endif
     OSLoadContext(context);
   }
@@ -409,9 +437,11 @@ void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
     cause |= OS_INTERRUPTMASK_PI_CP;
   if (intsr & 0x00000001)
     cause |= OS_INTERRUPTMASK_PI_ERROR;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
   if (intsr & 0x00004000)
     cause |= OS_INTERRUPTMASK_PI_ACR;
+#endif
 #endif
 
   unmasked = cause & ~(*(OSInterruptMask*)OSPhysicalToCached(0x00C4) |

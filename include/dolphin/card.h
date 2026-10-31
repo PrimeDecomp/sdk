@@ -14,7 +14,11 @@ extern "C" {
 #define CARD_READ_SIZE 512
 #define CARD_MAX_FILE 127
 #define CARD_COMMENT_SIZE 64
+#ifdef PRIME1
+#define CARD_FILENAME_MAX 32
+#else
 #define CARD_FILENAME_MAX 32u
+#endif
 #define CARD_ICON_MAX 8
 #define CARD_ICON_WIDTH 32
 #define CARD_ICON_HEIGHT 32

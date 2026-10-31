@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <critical_regions.h>
+#endif
 #include <string.h>
 
 typedef struct Block {
@@ -433,7 +435,11 @@ static inline Block *__unlink(__mem_pool_obj *pool_obj, Block *bp) {
   return result;
 }
 
+#ifdef PRIME1
+static inline void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
+#else
 static void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
+#endif
   SubBlock *sb = SubBlock_from_pointer(ptr);
   SubBlock *_sb;
 
@@ -515,7 +521,11 @@ void deallocate_from_fixed_pools(__mem_pool_obj *pool_obj, void *ptr, unsigned l
   }
 }
 
+#ifdef PRIME1
+static inline void __pool_free(__mem_pool *pool, void *ptr) {
+#else
 void __pool_free(__mem_pool *pool, void *ptr) {
+#endif
   __mem_pool_obj *pool_obj;
   unsigned long size;
 
@@ -533,11 +543,15 @@ void __pool_free(__mem_pool *pool, void *ptr) {
   }
 }
 
+#ifdef PRIME1
+void free(void *ptr) { __pool_free(get_malloc_pool(), ptr); }
+#else
 void free(void *ptr) {
   __begin_critical_region(malloc_pool_access);
   __pool_free(get_malloc_pool(), ptr);
   __end_critical_region(malloc_pool_access);
 }
+#endif
 
 static inline void *__pool_alloc(__mem_pool *pool, unsigned long size) {
   void *ptr;

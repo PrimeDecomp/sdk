@@ -1,5 +1,9 @@
+#ifdef PRIME1
+#include "dolphin/base/PPCArch.h"
+#else
 #include "GameVersions.h"
 #include "dolphin/PPCArch.h"
+#endif
 #include "dolphin/os/OSPriv.h"
 
 static struct OSAlarmQueue {
@@ -8,6 +12,16 @@ static struct OSAlarmQueue {
 } AlarmQueue;
 
 static void DecrementerExceptionHandler(__OSException exception, OSContext* context);
+#ifdef PRIME1
+static BOOL OnReset(BOOL final);
+
+void OSInitAlarm(void) {
+  if (__OSGetExceptionHandler(8) != DecrementerExceptionHandler) {
+    AlarmQueue.head = AlarmQueue.tail = NULL;
+    __OSSetExceptionHandler(8, DecrementerExceptionHandler);
+  }
+}
+#else
 #if VERSION >= VERSION_R32J01
 static BOOL OnReset(BOOL final, u32 event);
 
@@ -32,6 +46,7 @@ void OSInitAlarm(void) {
     OSRegisterResetFunction(&ResetFunctionInfo);
   }
 }
+#endif
 #endif
 
 void OSCreateAlarm(OSAlarm* alarm) {
@@ -200,6 +215,7 @@ static asm void DecrementerExceptionHandler(register __OSException exception,
   b DecrementerExceptionCallback
 }
 
+#ifndef PRIME1
 BOOL __DVDTestAlarm(const OSAlarm* alarm);
 
 #if VERSION >= VERSION_R32J01
@@ -233,4 +249,6 @@ static BOOL OnReset(BOOL final) {
 void OSSetAlarmUserData(OSAlarm* alarm, void* userData) { alarm->userData = userData; }
 
 void* OSGetAlarmUserData(const OSAlarm* alarm) { return alarm->userData; }
+#endif
+
 #endif

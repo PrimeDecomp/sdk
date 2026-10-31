@@ -70,8 +70,13 @@ BOOL OSGetResetButtonState(void) {
 
   LastState = state;
 
+#ifdef PRIME1
+  if (GameChoice & 0x3f) {
+    OSTime fire = (GameChoice & 0x3f) * 60;
+#else
   if (GameChoice & 0x1f) {
     OSTime fire = (GameChoice & 0x1f) * 60;
+#endif
     fire = __OSStartTime + OSSecondsToTicks(fire);
     if (fire < now) {
       now -= fire;

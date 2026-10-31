@@ -773,6 +773,22 @@ typedef enum _GXTlut {
   GX_BIGTLUT3 = 19,
 } GXTlut;
 
+#ifdef PRIME1
+typedef enum _GXTlutSize {
+  GX_TLUT_16 = 1,
+  GX_TLUT_32 = 2,
+  GX_TLUT_64 = 4,
+  GX_TLUT_128 = 8,
+  GX_TLUT_256 = 16,
+  GX_TLUT_512 = 32,
+  GX_TLUT_1K = 64,
+  GX_TLUT_2K = 128,
+  GX_TLUT_4K = 256,
+  GX_TLUT_8K = 512,
+  GX_TLUT_16K = 1024,
+} GXTlutSize;
+
+#endif
 typedef enum _GXTlutFmt {
   GX_TL_IA8,
   GX_TL_RGB565,
@@ -896,6 +912,7 @@ typedef enum _GXCopyMode {
   GX_COPY_INTLC_ODD = 3,
 } GXCopyMode;
 
+#ifndef PRIME1
 typedef enum _GXTlutSize {
   GX_TLUT_16 = 1,
   GX_TLUT_32 = 2,
@@ -910,10 +927,18 @@ typedef enum _GXTlutSize {
   GX_TLUT_16K = 1024,
 } GXTlutSize;
 
+#endif
 typedef enum _GXAlphaReadMode {
+#ifdef PRIME1
+  GX_READ_00 = 0,
+  GX_READ_FF = 1,
+  GX_READ_NONE = 2,
+
+#else
   GX_READ_00,
   GX_READ_FF,
   GX_READ_NONE,
+#endif
 } GXAlphaReadMode;
 
 #ifdef __cplusplus

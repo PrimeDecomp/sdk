@@ -162,6 +162,10 @@ u32 OSSaveContext(OSContext* context);
 void OSClearContext(OSContext* context);
 OSContext* OSGetCurrentContext();
 void OSSetCurrentContext(OSContext* context);
+#ifdef PRIME1
+u32 OSGetStackPointer();
+int OSSwitchFiber(u32 pc, u32 newsp);
+#endif
 
 #ifdef __cplusplus
 }

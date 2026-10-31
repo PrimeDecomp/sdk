@@ -29,19 +29,31 @@ BOOL __CARDCompareFileName(CARDDir* ent, const char* fileName) {
 }
 
 s32 __CARDAccess(CARDControl* card, CARDDir* ent) {
+#ifndef PRIME1
   const DVDDiskID* diskID = card->diskID;
+#endif
   if (ent->gameName[0] == 0xFF) {
     return CARD_RESULT_NOFILE;
   }
 
+#ifdef PRIME1
+  if (card->diskID == &__CARDDiskNone || (memcmp(ent->gameName, card->diskID->gameName, 4) == 0 &&
+                                          memcmp(ent->company, card->diskID->company, 2) == 0)) {
+#else
   if (diskID == &__CARDDiskNone || (memcmp(ent->gameName, diskID->gameName, 4) == 0 &&
                                     memcmp(ent->company, diskID->company, 2) == 0)) {
+#endif
     return CARD_RESULT_READY;
   }
 
   return CARD_RESULT_NOPERM;
 }
 
+#ifdef PRIME1
+BOOL __CARDIsWritable(CARDDir* ent) {
+  if (ent->gameName[0] == 0xFF) {
+    return CARD_RESULT_NOFILE;
+#else
 s32 __CARDIsWritable(CARDControl* card, CARDDir* ent) {
   const DVDDiskID* diskID = card->diskID;
   s32 result;
@@ -62,10 +74,17 @@ s32 __CARDIsWritable(CARDControl* card, CARDDir* ent) {
         memcmp(ent->company, diskID->company, sizeof(ent->company)) == 0) {
       return CARD_RESULT_READY;
     }
+#endif
   }
+#ifndef PRIME1
   return result;
 }
+#endif
 
+#ifdef PRIME1
+  if ((ent->permission & CARD_ATTR_PUBLIC) != 0) {
+    return CARD_RESULT_READY;
+#else
 s32 __CARDIsReadable(CARDControl* card, CARDDir* ent) {
   s32 result;
 
@@ -74,8 +93,14 @@ s32 __CARDIsReadable(CARDControl* card, CARDDir* ent) {
     if (ent->permission & CARD_DIR_PERM_PUBLIC) {
       return CARD_RESULT_READY;
     }
+#endif
   }
+#ifdef PRIME1
+
+  return CARD_RESULT_NOPERM;
+#else
   return result;
+#endif
 }
 
 s32 __CARDGetFileNo(CARDControl* card, const char* fileName, s32* pfileNo) {
@@ -104,6 +129,7 @@ s32 __CARDGetFileNo(CARDControl* card, const char* fileName, s32* pfileNo) {
   return CARD_RESULT_NOFILE;
 }
 
+#ifndef PRIME1
 #line 272
 s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo* fileInfo) {
   CARDControl* card;
@@ -139,6 +165,7 @@ s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo* fileInfo) {
 }
 
 #line 329
+#endif
 s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
   CARDControl* card;
   CARDDir* dir;
@@ -146,7 +173,9 @@ s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
   s32 result;
   s32 fileNo;
 
+#ifndef PRIME1
   ASSERT(0 <= chan && chan < 2);
+#endif
   fileInfo->chan = -1;
   result = __CARDGetControlBlock(chan, &card);
   if (result < 0) {
@@ -168,13 +197,17 @@ s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
   return __CARDPutControlBlock(card, result);
 }
 
+#ifndef PRIME1
 #line 376
+#endif
 s32 CARDClose(CARDFileInfo* fileInfo) {
   CARDControl* card;
   s32 result;
 
+#ifndef PRIME1
   ASSERT(0 <= fileInfo->chan && fileInfo->chan < 2);
   ASSERT(0 <= fileInfo->fileNo && fileInfo->fileNo < CARD_MAX_FILE);
+#endif
   result = __CARDGetControlBlock(fileInfo->chan, &card);
   if (result < 0) {
     return result;

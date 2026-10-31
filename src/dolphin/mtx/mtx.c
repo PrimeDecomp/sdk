@@ -34,6 +34,11 @@ void PSMTXIdentity(register Mtx m) {
   // clang-format off
   asm {
     psq_st zero_c, 8(m), 0, 0
+#ifdef PRIME1
+    ps_merge01 c_01, zero_c, one_c
+    psq_st zero_c, 24(m), 0, 0
+    ps_merge10 c_10, one_c, zero_c
+#else
 #if VERSION >= VERSION_R32J01
     ps_merge10 c_10, one_c, zero_c
     ps_merge01 c_01, zero_c, one_c
@@ -42,6 +47,7 @@ void PSMTXIdentity(register Mtx m) {
     ps_merge01 c_01, zero_c, one_c
     psq_st zero_c, 24(m), 0, 0
     ps_merge10 c_10, one_c, zero_c
+#endif
 #endif
     psq_st zero_c, 32(m), 0, 0
     psq_st c_01, 16(m), 0, 0

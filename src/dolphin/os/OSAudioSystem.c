@@ -1,6 +1,10 @@
+#ifndef PRIME1
 #include "GameVersions.h"
+#endif
 #include "types.h"
+#ifndef PRIME1
 #include "dolphin/os.h"
+#endif
 #include "dolphin/hw_regs.h"
 
 #ifdef __cplusplus
@@ -22,6 +26,7 @@ static u8 DSPInitCode[128] = {
 
 #define __DSPWorkBuffer (void*)0x81000000
 
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 #define IPC_DIFLAGS (0x180 / 4)
 #define IPC_GPIO2DIR (0x1CC / 4)
@@ -78,16 +83,19 @@ static void __AIClockInit(BOOL arg0) {
 }
 #endif
 
+#endif
 void __OSInitAudioSystem(void) {
   u32 r28;
   u16 r3;
 
   u32 padding;
+#ifndef PRIME1
 
 #if VERSION >= VERSION_R32J01
   if (!__OSInIPL) {
     __AIClockInit(TRUE);
   }
+#endif
 #endif
 
   memcpy((void*)((u8*)OSGetArenaHi() - 128), __DSPWorkBuffer, 128);

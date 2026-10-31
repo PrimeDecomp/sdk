@@ -1,10 +1,45 @@
 #include "GameVersions.h"
+#ifdef PRIME1
+
+#endif
 #include "dolphin/os.h"
 #include "dolphin/DVDPriv.h"
 #include "dolphin/db.h"
 #include "dolphin/os/OSBootInfo.h"
 
 extern OSTime __OSGetSystemTime();
+#ifdef PRIME1
+#if VERSION < VERSION_GM8E_02
+static const char* __OSVersion =
+    "<< Dolphin SDK - OS\trelease build: Sep  5 2002 05:32:39 (0x2301) >>";
+#else
+static const char* __OSVersion =
+    "<< Dolphin SDK - OS\trelease build: Nov  5 2002 12:52:29 (0x2301) >>";
+#endif
+extern char _db_stack_end[];
+
+#define OS_BI2_DEBUG_ADDRESS 0x800000F4
+#define DEBUGFLAG_ADDR 0x800030E8
+#define OS_DEBUG_ADDRESS_2 0x800030E9
+#define OS_CURRENTCONTEXT_PADDR 0x00C0
+
+extern char* __OSResetSWInterruptHandler[];
+
+vu16 __OSDeviceCode : (OS_BASE_CACHED | 0x30E6);
+ATTRIBUTE_ALIGN_DECL(32, static DVDDriveInfo DriveInfo);
+static DVDCommandBlock DriveBlock;
+
+static OSBootInfo* BootInfo;
+static u32* BI2DebugFlag;
+static u32* BI2DebugFlagHolder;
+__declspec(weak) BOOL __OSIsGcam = FALSE;
+static f64 ZeroF;
+static f32 ZeroPS[2];
+static BOOL AreWeInitialized = FALSE;
+static __OSExceptionHandler* OSExceptionTable;
+OSTime __OSStartTime;
+BOOL __OSInIPL;
+#else
 #if VERSION >= VERSION_R32J01
 const char* __OSVersion = "<< RVL_SDK - OS \trelease build: Jan 30 2008 01:38:43 (0x4199_60831) >>";
 #else
@@ -60,6 +95,7 @@ BOOL __OSInIPL;
 OSExecParams __OSRebootParams;
 
 #endif
+#endif
 
 extern u8 __ArenaHi[];
 extern u8 __ArenaLo[];
@@ -83,6 +119,7 @@ extern u32 __PADSpec;
 void OSDefaultExceptionHandler(__OSException exception, OSContext* context);
 extern BOOL __DBIsExceptionMarked(__OSException);
 static void OSExceptionInit(void);
+#ifndef PRIME1
 void __OSGetExecParams(OSExecParams* params);
 void EnableMetroTRKInterrupts(void);
 extern char _stack_addr[];
@@ -110,6 +147,7 @@ static void DisableWriteGatherPipe(void) {
   hid2 &= ~0x40000000;
   PPCMthid2(hid2);
 }
+#endif
 
 /* clang-format off */
 asm void __OSFPRInit(void)
@@ -199,6 +237,46 @@ SkipPairedSingles:
 }
 /* clang-format on */
 
+#ifdef PRIME1
+u32 OSGetConsoleType() {
+  if (BootInfo == NULL || BootInfo->consoleType == 0) {
+    return OS_CONSOLE_ARTHUR;
+  }
+  return BootInfo->consoleType;
+}
+
+void* __OSSavedRegionStart;
+void* __OSSavedRegionEnd;
+
+extern u32 BOOT_REGION_START : 0x812FDFF0; //(*(u32 *)0x812fdff0)
+extern u32 BOOT_REGION_END : 0x812FDFEC;   //(*(u32 *)0x812fdfec)
+
+void ClearArena(void) {
+  if ((u32)(OSGetResetCode() + 0x80000000) != 0U) {
+    __OSSavedRegionStart = 0U;
+    __OSSavedRegionEnd = 0U;
+    memset(OSGetArenaLo(), 0U, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
+    return;
+  }
+  __OSSavedRegionStart = (void*)BOOT_REGION_START;
+  __OSSavedRegionEnd = (void*)BOOT_REGION_END;
+  if (BOOT_REGION_START == 0U) {
+    memset(OSGetArenaLo(), 0U, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
+    return;
+  }
+
+  if ((u32)OSGetArenaLo() < (u32)__OSSavedRegionStart) {
+    if ((u32)OSGetArenaHi() <= (u32)__OSSavedRegionStart) {
+      memset((u32)OSGetArenaLo(), 0U, (u32)OSGetArenaHi() - (u32)OSGetArenaLo());
+      return;
+    }
+    memset(OSGetArenaLo(), 0U, (u32)__OSSavedRegionStart - (u32)OSGetArenaLo());
+    if ((u32)OSGetArenaHi() > (u32)__OSSavedRegionEnd) {
+      memset((u32)__OSSavedRegionEnd, 0, (u32)OSGetArenaHi() - (u32)__OSSavedRegionEnd);
+    }
+  }
+}
+#else
 #if VERSION >= VERSION_R32J01
 #define OS_MEM1_BEGIN 0x80000000
 #define OSIsMEM1Region(addr) (((u32)(addr)&0x30000000) == 0)
@@ -389,6 +467,7 @@ static void ClearArena(void) {
   }
 }
 #endif
+#endif
 
 static void InquiryCallback(s32 result, DVDCommandBlock* block) {
   switch (block->state) {
@@ -401,6 +480,171 @@ static void InquiryCallback(s32 result, DVDCommandBlock* block) {
   }
 }
 
+#ifdef PRIME1
+void OSInit(void) {
+  /*
+  Initializes the Dolphin operating system.
+      - most of the main operations get farmed out to other functions
+      - loading debug info and setting up heap bounds largely happen here
+      - a lot of OS reporting also gets controlled here
+  */
+  // pretty sure this is the min(/max) amount of pointers etc for the stack to match
+  BI2Debug* DebugInfo;
+  void* debugArenaLo;
+  u32 inputConsoleType;
+  u32 tdev;
+
+  // check if we've already done all this or not
+  if ((BOOL)AreWeInitialized == FALSE) { // fantastic name
+    AreWeInitialized = TRUE;             // flag to make sure we don't have to do this again
+
+    // SYSTEM //
+    __OSStartTime = __OSGetSystemTime();
+    OSDisableInterrupts();
+
+    // set some PPC things
+    PPCDisableSpeculation();
+    PPCSetFpNonIEEEMode();
+
+    // DEBUG //
+    // load some DVD stuff
+    BI2DebugFlag = 0;                       // debug flag from the DVD BI2 header
+    BootInfo = (OSBootInfo*)OS_BASE_CACHED; // set pointer to BootInfo
+
+    __DVDLongFileNameFlag = (u32)0; // flag to tell us whether we make it through the debug loading
+
+    // time to grab a bunch of debug info from the DVD
+    // the address for where the BI2 debug info is, is stored at OS_BI2_DEBUG_ADDRESS
+    DebugInfo = (BI2Debug*)*((u32*)OS_BI2_DEBUG_ADDRESS);
+
+    // if the debug info address exists, grab some debug info
+    if (DebugInfo != NULL) {
+      BI2DebugFlag = &DebugInfo->debugFlag;              // debug flag from DVD BI2
+      __PADSpec = (u32)DebugInfo->padSpec;               // some other info from DVD BI2
+      *((u8*)DEBUGFLAG_ADDR) = (u8)*BI2DebugFlag;        // store flag in mem
+      *((u8*)OS_DEBUG_ADDRESS_2) = (u8)__PADSpec;        // store other info in mem
+    } else if (BootInfo->arenaHi) {                      // if the top of the heap is already set
+      BI2DebugFlagHolder = (u32*)*((u8*)DEBUGFLAG_ADDR); // grab whatever's stored at 0x800030E8
+      BI2DebugFlag = (u32*)&BI2DebugFlagHolder;          // flag is then address of flag holder
+      __PADSpec = (u32) * ((u8*)OS_DEBUG_ADDRESS_2);     // pad spec is whatever's at 0x800030E9
+    }
+
+    __DVDLongFileNameFlag = 1; // we made it through debug!
+
+    // HEAP //
+    // set up bottom of heap (ArenaLo)
+    // grab address from BootInfo if it exists, otherwise use default __ArenaLo
+    OSSetArenaLo((BootInfo->arenaLo == NULL) ? __ArenaLo : BootInfo->arenaLo);
+
+    // if the input arenaLo is null, and debug flag location exists (and flag is < 2),
+    //     set arenaLo to just past the end of the db stack
+    if ((BootInfo->arenaLo == NULL) && (BI2DebugFlag != 0) && (*BI2DebugFlag < 2)) {
+      debugArenaLo = (char*)(((u32)_db_stack_end + 0x1f) & ~0x1f);
+      OSSetArenaLo(debugArenaLo);
+    }
+
+    // set up top of heap (ArenaHi)
+    // grab address from BootInfo if it exists, otherwise use default __ArenaHi
+    OSSetArenaHi((BootInfo->arenaHi == NULL) ? __ArenaHi : BootInfo->arenaHi);
+
+    // OS INIT AND REPORT //
+    // initialise a whole bunch of OS stuff
+    OSExceptionInit();
+    __OSInitSystemCall();
+    OSInitAlarm();
+    __OSModuleInit();
+    __OSInterruptInit();
+    __OSSetInterruptHandler(__OS_INTERRUPT_PI_RSW, (void*)__OSResetSWInterruptHandler);
+    __OSContextInit();
+    __OSCacheInit();
+    EXIInit();
+    SIInit();
+    __OSInitSram();
+    __OSThreadInit();
+    __OSInitAudioSystem();
+    PPCMthid2(PPCMfhid2() & 0xBFFFFFFF);
+    if ((BOOL)__OSInIPL == FALSE) {
+      __OSInitMemoryProtection();
+    }
+
+    // begin OS reporting
+#if VERSION < VERSION_GM8E_02
+    OSReport("\nDolphin OS $Revision: 58 $.\n");
+    OSReport("Kernel built : %s %s\n", "Sep  5 2002", "05:32:39");
+#else 
+    OSReport("\nDolphin OS $Revision: 60 $.\n");
+    OSReport("Kernel built : %s %s\n", "Nov  5 2002", "12:52:29");
+#endif
+    OSReport("Console Type : ");
+
+    // this is a function in the same file, but it doesn't seem to match
+    // inputConsoleType = OSGetConsoleType();
+
+    // inputConsoleType = (BootInfo == NULL || (inputConsoleType = BootInfo->consoleType) == 0) ?
+    // 0x10000002 : BootInfo->consoleType;
+    if (BootInfo == NULL || (inputConsoleType = BootInfo->consoleType) == 0) {
+      inputConsoleType = OS_CONSOLE_ARTHUR; // default console type
+    } else {
+      inputConsoleType = BootInfo->consoleType;
+    }
+
+    // work out what console type this corresponds to and report it
+    // consoleTypeSwitchHi = inputConsoleType & 0xF0000000;
+    switch (inputConsoleType & 0xffff0000) { // check "first" byte
+    case OS_CONSOLE_RETAIL:
+      OSReport("Retail %d\n", inputConsoleType);
+      break;
+    default:
+      switch (inputConsoleType & 0x0000ffff) { // if "first" byte is 2, check "the rest"
+      case OS_CONSOLE_EMULATOR:
+        OSReport("Mac Emulator\n");
+        break;
+      case OS_CONSOLE_PC_EMULATOR:
+        OSReport("PC Emulator\n");
+        break;
+      case OS_CONSOLE_ARTHUR:
+        OSReport("EPPC Arthur\n");
+        break;
+      case OS_CONSOLE_MINNOW:
+        OSReport("EPPC Minnow\n");
+        break;
+      default:
+        tdev = ((u32)inputConsoleType & 0x0000ffff);
+        OSReport("Development HW%d (%08x)\n", tdev - 3, inputConsoleType);
+        break;
+      }
+      break;
+    }
+
+    // report memory size
+    OSReport("Memory %d MB\n", (u32)BootInfo->memorySize >> 0x14U);
+    // report heap bounds
+    OSReport("Arena : 0x%x - 0x%x\n", OSGetArenaLo(), OSGetArenaHi());
+    // report OS version
+    OSRegisterVersion(__OSVersion);
+
+    // if location of debug flag exists, and flag is >= 2, enable MetroTRKInterrupts
+    if (BI2DebugFlag && ((*BI2DebugFlag) >= 2)) {
+      EnableMetroTRKInterrupts();
+    }
+
+    // free up memory and re-enable things
+    ClearArena();
+    OSEnableInterrupts();
+
+    // check if we can load OS from IPL; if not, grab it from DVD (?)
+    if ((BOOL)__OSInIPL == FALSE) {
+      DVDInit();
+      if ((BOOL)__OSIsGcam) {
+        __OSDeviceCode = 0x9000;
+        return;
+      }
+      DCInvalidateRange(&DriveInfo, sizeof(DriveInfo));
+      DVDInquiryAsync((char*)&DriveBlock, &DriveInfo, InquiryCallback);
+    }
+  }
+}
+#else
 #if VERSION >= VERSION_R32J01
 
 static void ReportOSInfo(void) {
@@ -778,6 +1022,7 @@ void OSInit(void) {
 }
 #endif
 
+#endif
 static u32 __OSExceptionLocations[] = {
     0x00000100, 0x00000200, 0x00000300, 0x00000400, 0x00000500, 0x00000600, 0x00000700, 0x00000800,
     0x00000900, 0x00000C00, 0x00000D00, 0x00000F00, 0x00001300, 0x00001400, 0x00001700,
@@ -794,7 +1039,9 @@ void __OSDBINTSTART(void);
 void __OSDBINTEND(void);
 void __OSDBJUMPSTART(void);
 void __OSDBJUMPEND(void);
+#ifndef PRIME1
 void __OSDBJUMPDEST(void);
+#endif
 
 #define NOP 0x60000000
 
@@ -906,10 +1153,14 @@ static asm void __OSDBJump(void){
 
     nofralloc
 entry __OSDBJUMPSTART
+#ifdef PRIME1
+    bla     OS_DBJUMPPOINT_ADDR
+#else
 #if VERSION >= VERSION_R32J01
     bl      __OSDBJUMPDEST
 #else
     bla     OS_DBJUMPPOINT_ADDR
+#endif
 #endif
 entry __OSDBJUMPEND
     /* clang-format on */
@@ -955,8 +1206,10 @@ entry __OSEVStart
     mflr    r3
     stw     r3, OS_CONTEXT_LR(r4)
     mfctr   r3
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 entry __OSDBJUMPDEST
+#endif
 #endif
     stw     r3, OS_CONTEXT_CTR(r4)
     mfxer   r3
@@ -1038,6 +1291,7 @@ void __OSPSInit(void)
     {
         li      r3, 0
         mtspr   GQR0, r3
+#ifndef PRIME1
         mtspr   GQR1, r3
         mtspr   GQR2, r3
         mtspr   GQR3, r3
@@ -1045,6 +1299,7 @@ void __OSPSInit(void)
         mtspr   GQR5, r3
         mtspr   GQR6, r3
         mtspr   GQR7, r3
+#endif
     }
   // clang-format on
 }
@@ -1055,6 +1310,7 @@ u32 __OSGetDIConfig(void) { return (__DIRegs[DI_CONFIG_IDX] & DI_CONFIG_CONFIG_M
 
 void OSRegisterVersion(const char* id) { OSReport("%s\n", id); }
 
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 // Must be defined down here because of data pooling
 static const char* AppGameNameForSysMenu = "HAEA";
@@ -1087,4 +1343,6 @@ u8 OSGetAppType(void) {
 
   return *(u8*)OSPhysicalToCached(0x3184);
 }
+#endif
+
 #endif

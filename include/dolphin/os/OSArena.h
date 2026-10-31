@@ -12,6 +12,9 @@ void* OSGetArenaLo(void);
 void OSSetArenaHi(void* addr);
 void OSSetArenaLo(void* addr);
 void* OSAllocFromArenaLo(u32 size, u32 align);
+#ifdef PRIME1
+void* OSAllocFromArenaLo(u32 size, u32 align);
+#else
 
 void* OSGetMEM1ArenaHi(void);
 void* OSGetMEM2ArenaHi(void);
@@ -22,6 +25,7 @@ void OSSetMEM2ArenaHi(void* addr);
 void OSSetMEM1ArenaLo(void* addr);
 void OSSetMEM2ArenaLo(void* addr);
 void* OSAllocFromMEM2ArenaLo(u32 size, u32 align);
+#endif
 
 #ifdef __cplusplus
 }

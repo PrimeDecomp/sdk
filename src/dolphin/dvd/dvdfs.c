@@ -117,7 +117,11 @@ s32 DVDConvertPathToEntrynum(char* pathPtr) {
         illegal = TRUE;
 
       if (illegal)
+#ifdef PRIME1
+        OSPanic(__FILE__, 379,
+#else
         OSPanic(__FILE__, 387,
+#endif
                 "DVDConvertEntrynumToPath(possibly DVDOpen or DVDChangeDir or DVDOpenDir): "
                 "specified directory or file (%s) doesn't match standard 8.3 format. This is a "
                 "temporary restriction and will be removed soon\n",
@@ -274,12 +278,21 @@ BOOL DVDChangeDir(char* dirName) {
 BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
                       DVDCallback callback, s32 prio) {
 
+#ifdef PRIME1
+  if (!((0 <= offset) && (offset < fileInfo->length))) {
+    OSPanic(__FILE__, 742, "DVDReadAsync(): specified area is out of the file  ");
+#else
   if (!((0 <= offset) && (offset <= fileInfo->length))) {
     OSPanic(__FILE__, 750, "DVDReadAsync(): specified area is out of the file  ");
+#endif
   }
 
   if (!((0 <= offset + length) && (offset + length < fileInfo->length + DVD_MIN_TRANSFER_SIZE))) {
+#ifdef PRIME1
+    OSPanic(__FILE__, 748, "DVDReadAsync(): specified area is out of the file  ");
+#else
     OSPanic(__FILE__, 756, "DVDReadAsync(): specified area is out of the file  ");
+#endif
   }
 
   fileInfo->callback = callback;
@@ -493,7 +506,11 @@ BOOL DVDPrepareStreamAsync(DVDFileInfo* fileInfo, u32 length, u32 offset, DVDCal
   start = fileInfo->startAddr + offset;
 
   if (!Is32KBAligned(start)) {
+#ifdef PRIME1
+    OSPanic(__FILE__, 1189,
+#else
     OSPanic(__FILE__, 1211,
+#endif
             "DVDPrepareStreamAsync(): Specified start address (filestart(0x%x) + offset(0x%x)) is "
             "not 32KB aligned",
             fileInfo->startAddr, offset);
@@ -503,13 +520,22 @@ BOOL DVDPrepareStreamAsync(DVDFileInfo* fileInfo, u32 length, u32 offset, DVDCal
     length = fileInfo->length - offset;
 
   if (!Is32KBAligned(length)) {
+#ifdef PRIME1
+    OSPanic(__FILE__, 1199,
+#else
     OSPanic(__FILE__, 1221,
+#endif
             "DVDPrepareStreamAsync(): Specified length (0x%x) is not a multiple of 32768(32*1024)",
             length);
   }
 
+#ifdef PRIME1
+  if (!((offset < fileInfo->length) && (offset + length <= fileInfo->length))) {
+    OSPanic(__FILE__, 1207,
+#else
   if (!((offset <= fileInfo->length) && (offset + length <= fileInfo->length))) {
     OSPanic(__FILE__, 1229,
+#endif
             "DVDPrepareStreamAsync(): The area specified (offset(0x%x), length(0x%x)) is out of "
             "the file",
             offset, length);

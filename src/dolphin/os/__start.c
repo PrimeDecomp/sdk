@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include "GameVersions.h"
+#endif
 #include "dolphin/__start.h"
 #include "__ppc_eabi_linker.h"
 
@@ -8,6 +10,7 @@ void __check_pad3(void) {
   }
   return;
 }
+#ifndef PRIME1
 
 static void __set_debug_bba(void) { 
   Debug_BBA = 1;
@@ -18,6 +21,7 @@ static u8 __get_debug_bba(void) {
 }
 
 __declspec(weak) void InitMetroTRK_BBA() {}
+#endif
 
 __declspec(weak) asm void __start(void) {
   // clang-format off
@@ -58,14 +62,20 @@ _check_debug_flag:
 	cmplwi r7, 2
 	beq _goto_inittrk
 	cmplwi r7, 3
+#ifndef PRIME1
 
 	li r5, 1
 	beq _goto_inittrk
 	cmplwi r7, 4
+#endif
 	bne _goto_main
+#ifdef PRIME1
+	li r5, 1
+#else
 	li r5, 2
 	bl __set_debug_bba
 	b _goto_main
+#endif
 
 _goto_inittrk:
 	lis r6, InitMetroTRK@ha
@@ -99,11 +109,13 @@ _loop:
 	addi r5, r5, ARENAHI_ADDR@l
 	rlwinm r7, r15, 0, 0, 0x1a
 	stw r7, 0(r5)
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 	lis r5, OS_USABLE_MEM1_END@ha
 	addi r5, r5, OS_USABLE_MEM1_END@l
 	rlwinm r7, r15, 0, 0, 0x1a
 	stw r7, 0(r5)
+#endif
 #endif
 	b _end_of_parseargs
 
@@ -121,16 +133,22 @@ _end_of_parseargs:
 	beq _check_pad3
 	andi. r3, r3, 0x7fff
 	cmplwi r3, 1
+#ifdef PRIME1
+	bne _goto_skip_init_bba
+#else
 	bne _skip_crc
+#endif
 
 _check_pad3:
 	bl __check_pad3
+#ifndef PRIME1
 
 _skip_crc:
 	bl __get_debug_bba
 	cmplwi r3, 1
 	bne _goto_skip_init_bba
 	bl InitMetroTRK_BBA
+#endif
 
 _goto_skip_init_bba:
 	bl __init_user
@@ -144,6 +162,7 @@ _goto_skip_init_bba:
 asm static void __init_registers(void) {
   // clang-format off
 	nofralloc
+#ifndef PRIME1
 	li r0, 0
 	li r3, 0
 	li r4, 0
@@ -173,6 +192,7 @@ asm static void __init_registers(void) {
 	li r29, 0
 	li r30, 0
 	li r31, 0
+#endif
 	lis r1,  _stack_addr@h
 	ori r1, r1,  _stack_addr@l
 	lis r2, _SDA2_BASE_@h
@@ -196,8 +216,12 @@ inline static void __init_bss_section(void* dst, unsigned long size) {
   }
 }
 
+#ifdef PRIME1
+#pragma scheduling off
+#else
 #if VERSION < VERSION_R32J01
 #pragma scheduling off
+#endif
 #endif
 void __init_data(void) {
   __rom_copy_info* dci;

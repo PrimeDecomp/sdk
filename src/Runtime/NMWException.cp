@@ -1,7 +1,10 @@
 #include "NMWException.h"
+#ifndef PRIME1
 #include <stdlib.h>
 
+#endif
 #pragma exceptions on
+#ifndef PRIME1
 
 namespace std {
 typedef void (*terminate_handler)();
@@ -105,6 +108,7 @@ extern "C" char __throw_catch_compare(const char* throwtype, const char* catchty
 
   return false;
 }
+#endif
 
 class __partial_array_destructor {
 private:

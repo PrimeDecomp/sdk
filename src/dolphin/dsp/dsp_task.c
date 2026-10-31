@@ -1,4 +1,6 @@
+#ifndef PRIME1
 #include <GameVersions.h>
+#endif
 #include "dolphin/dsp.h"
 #include "dolphin/hw_regs.h"
 
@@ -114,8 +116,12 @@ void __DSPHandler(__OSInterrupt, OSContext* context) {
     break;
   case 0xDCD10003:
     if (__DSP_rude_task_pending) {
+#ifdef PRIME1
+
+#else
 #if VERSION >= VERSION_R32J01
       if (__DSP_curr_task != __DSP_rude_task) {
+#endif
 #endif
       if (__DSP_curr_task->done_cb) {
         (*(__DSP_curr_task->done_cb))((void*)(__DSP_curr_task));
@@ -134,11 +140,13 @@ void __DSPHandler(__OSInterrupt, OSContext* context) {
       __DSP_rude_task_pending = FALSE;
 
       break;
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
       }
 
       __DSP_rude_task = NULL;
       __DSP_rude_task_pending = FALSE;
+#endif
 #endif
     }
 

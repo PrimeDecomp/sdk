@@ -1,8 +1,28 @@
+#ifdef PRIME1
+#include "dolphin/gx.h"
+#include "dolphin/gx/GXPriv.h"
+#else
 #include <string.h>
+#endif
 
+#ifdef PRIME1
+void GXCallDisplayList(const void *list, u32 nbytes) {
+  if (__GXData->dirtyState != 0) {
+    __GXSetDirtyState();
+  }
+  if (*(u32 *)&__GXData->vNumNot == 0) {
+    __GXSendFlushPrim();
+  }
+#else
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
+#endif
 
+#ifdef PRIME1
+  GX_WRITE_U8(0x40);
+  GX_WRITE_U32((u32)list);
+  GX_WRITE_U32(nbytes);
+#else
 #include <dolphin/gx/__gx.h>
 
 static struct __GXFifoObj DisplayListFifo;
@@ -34,8 +54,10 @@ void GXBeginDisplayList(void *list, u32 size)
     OldCPUFifo = CPUFifo;
     GXSetCPUFifo((GXFifoObj *)&DisplayListFifo);
     GXResetWriteGatherPipe();
+#endif
 }
 
+#ifndef PRIME1
 unsigned long GXEndDisplayList(void)
 {
     u32 ov;
@@ -80,3 +102,5 @@ void GXCallDisplayList(const void *list, u32 nbytes)
     GX_WRITE_U32(list);
     GX_WRITE_U32(nbytes);
 }
+
+#endif

@@ -2,6 +2,22 @@
 
 #define table_ptr(i) (((char*)table_base) + (member_size * ((i)-1)))
 
+#ifdef PRIME1
+#define swap(dst, src, cnt)                                                                        \
+  do {                                                                                             \
+    char* p;                                                                                       \
+    char* q;                                                                                       \
+    size_t n = cnt;                                                                                \
+                                                                                                   \
+    unsigned long tmp;                                                                             \
+                                                                                                   \
+    for (p = (char*)src - 1, q = (char*)dst - 1, n++; --n;) {                                      \
+      tmp = *++q;                                                                                  \
+      *q = *++p;                                                                                   \
+      *p = tmp;                                                                                    \
+    }                                                                                              \
+  } while (0)
+#else
 #define swap(dst, src, cnt)                                                                        \
   do {                                                                                             \
     char* p;                                                                                       \
@@ -16,6 +32,7 @@
       *p = tmp;                                                                                    \
     }                                                                                              \
   } while (0)
+#endif
 
 void qsort(void* table_base, size_t num_members, size_t member_size,
            _compare_function compare_members) {
@@ -53,10 +70,15 @@ void qsort(void* table_base, size_t num_members, size_t member_size,
     jp = table_ptr(j);
 
     while (j * 2 <= r) {
+#ifndef PRIME1
       ip = jp;
 
+#endif
       j *= 2;
 
+#ifdef PRIME1
+      ip = jp;
+#endif
       jp = table_ptr(j);
 
       if (j < r) {

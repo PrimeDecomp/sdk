@@ -111,6 +111,14 @@ typedef struct DVDErrorInfo {
 
 void __DVDStoreErrorCode(u32 error, DVDCBCallback callback);
 
+#ifdef PRIME1
+BOOL DVDOpenDir(char* path, DVDDir* dir);
+BOOL DVDReadDir(DVDDir* dir, DVDDirEntry* entry);
+BOOL DVDCloseDir(DVDDir* dir);
+BOOL DVDCheckDisk(void);
+BOOL DVDSetAutoInvalidation(BOOL autoInval);
+
+#endif
 void DVDInit();
 BOOL DVDClose(DVDFileInfo* f);
 BOOL DVDSetAutoFatalMessaging(BOOL);
@@ -144,7 +152,11 @@ s32 DVDConvertPathToEntrynum(const char* pathPtr);
 
 BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
                       DVDCallback callback, s32 prio);
+#ifdef PRIME1
+
+#else
                       
+#endif
 #define DVDReadAsync(fileInfo, addr, length, offset, callback)                                     \
   DVDReadAsyncPrio((fileInfo), (addr), (length), (offset), (callback), 2)
 #define DVDSeekAsync(fileInfo, offset, callback)                                                   \
