@@ -27,9 +27,10 @@ VERSIONS = [
 def modules_for(
     version: str,
     cflags_base: list[str],
-    src_dir: str = "extern/sdk",
+    sdk_dir: str = "extern/sdk",
     non_matching: bool = False,
 ) -> list[dict]:
+    src_dir = f"{sdk_dir}/src"
     version_num = VERSIONS.index(version)
     is_wii = version_num >= VERSIONS.index("R3IJ01_00")
 
@@ -161,7 +162,17 @@ def modules_for(
 
     GC_VERSIONS = ["G2ME01", "G2MP01", "G2MJ01"]
 
-    return [
+    return [    
+        {
+            "lib": "MetroTRK",
+            "src_dir": src_dir,
+            "cflags": cflags_runtime,
+            "progress_category": "sdk",
+            "host": False,
+            "objects": [
+                Object(MatchingFor("G2ME01", "G2MP01", "G2MJ01"), "MetroTRK/mslsupp.c"),
+            ],
+        },
         {
             "lib": "TRK",
             "src_dir": src_dir,
