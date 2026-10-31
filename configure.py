@@ -14,11 +14,11 @@ VERSIONS = [
     "GM8P01_00",  # mp-v1.110 PAL
     "GM8J01_DD",  # mp-v1.111 NTSC-J DEMO
     "GM8J01_00",  # mp-v1.111 NTSC-J
-    "G2ME01",  # mp2-v1.028 NTSC-U
-    "G2MP01",  # mp2-v1.035 PAL
-    "G2MJ01",  # mp2-v1.036 NTSC-J
+    "G2ME01_00",  # mp2-v1.028 NTSC-U
+    "G2MP01_00",  # mp2-v1.035 PAL
+    "G2MJ01_00",  # mp2-v1.036 NTSC-J
     "R3IJ01_00",  # mp-v3.570 New Play Controls
-    "R32J01",  # mp2-v3.561 New Play Controls
+    "R32J01_00",  # mp2-v3.561 New Play Controls
     "R3ME01_00",  # mp-v3.593 Trilogy NTSC
     "R3MP01_00",  # mp-v3.629 Trilogy PAL
 ]
@@ -162,7 +162,7 @@ def modules_for(
 
     GC_VERSIONS = ["G2ME01", "G2MP01", "G2MJ01"]
 
-    return [    
+    return [
         {
             "lib": "MetroTRK",
             "src_dir": src_dir,
@@ -900,9 +900,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01", "G2MP01", "R3ME01"),
                     "dolphin/exi/EXIBios.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(MatchingFor(*GC_VERSIONS), "dolphin/exi/EXIUart.c"),
                 Object(MatchingFor("R3ME01"), "revolution/exi/EXIUart.c"),
@@ -915,25 +913,19 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01", "G2MP01", "R3ME01"),
                     "dolphin/gx/GXInit.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS),
                     "dolphin/gx/GXFifo.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(MatchingFor("G2ME01", "G2MP01"), "dolphin/gx/GXAttr.c"),
                 Object(MatchingFor(*GC_VERSIONS), "dolphin/gx/GXMisc.c"),
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
                     "dolphin/gx/GXGeometry.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(MatchingFor("G2ME01", "G2MP01"), "dolphin/gx/GXFrameBuf.c"),
                 Object(
@@ -950,9 +942,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01", "G2MP01", "R3ME01"),
                     "dolphin/gx/GXTransform.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
@@ -994,16 +984,12 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01", "G2MP01", "R3ME01"),
                     "dolphin/vi/vi.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(
                     MatchingFor("R3ME01"),
                     "dolphin/vi/i2c.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(MatchingFor("R3ME01"), "dolphin/vi/vi3in1.c"),
             ],
@@ -1105,9 +1091,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01", "G2MP01", "R3ME01"),
                     "dolphin/os/OS.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
@@ -1144,9 +1128,7 @@ def modules_for(
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
                     "dolphin/os/OSInterrupt.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(MatchingFor("G2ME01", "G2MP01"), "dolphin/os/OSLink.c"),
                 Object(
@@ -1166,9 +1148,7 @@ def modules_for(
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
                     "dolphin/os/OSRtc.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
@@ -1177,9 +1157,7 @@ def modules_for(
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
                     "dolphin/os/OSThread.c",
-                    extra_cflags=["-ipa file"]
-                    if version_num >= VERSIONS.index("R32J01")
-                    else [],
+                    extra_cflags=["-ipa file"] if is_wii else [],
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01"),
