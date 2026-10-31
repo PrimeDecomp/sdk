@@ -37,7 +37,6 @@ def modules_for(
     # Dolphin flags
     cflags_dolphin = [
         *cflags_base,
-        "-multibyte",
         "-fp_contract off",
     ]
 
@@ -62,8 +61,6 @@ def modules_for(
     mw_version = "GC/2.7"
     if is_wii:
         mw_version = "Wii/1.0RC1"
-        cflags_runtime.remove("-multibyte")
-        cflags_runtime.append("-enc SJIS")
         cflags_runtime.append("-inline auto")
     else:
         cflags_runtime.append("-inline deferred,auto")
@@ -111,7 +108,7 @@ def modules_for(
 
     # The Bluetooth stack keeps its own headers next to the public ones.
     BTE_CFLAGS = [
-        f"-i {src_dir}/include/revolution/bte/internal",
+        f"-i {sdk_dir}/include/revolution/bte/internal",
         "-inline auto,level=3",
     ]
 
@@ -183,7 +180,7 @@ def modules_for(
                 "-use_lmw_stmw on",
                 "-str reuse,pool",
                 "-func_align 4",
-                f"-i {src_dir}/include/MetroTRK",
+                f"-i {sdk_dir}/include/MetroTRK",
                 "-DMETRO_TRK",
                 "-D__REGISTER=register",
             ],
