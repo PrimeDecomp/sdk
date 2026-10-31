@@ -5,9 +5,7 @@
 
 #include <dolphin/CARDPriv.h>
 
-#ifndef PRIME1
 #line 91
-#endif
 s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pcard) {
   CARDControl* card;
   CARDDir* dir;
@@ -21,9 +19,6 @@ s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pca
 #endif
   result = __CARDGetControlBlock(fileInfo->chan, &card);
   if (result < 0) {
-#ifndef PRIME1
-
-#endif
     return result;
   }
 
@@ -37,9 +32,6 @@ s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pca
   }
 
   dir = __CARDGetDirBlock(card);
-#ifndef PRIME1
-
-#endif
   ent = &dir[fileInfo->fileNo];
 #ifndef PRIME1
 
@@ -74,9 +66,7 @@ s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pca
   return CARD_RESULT_READY;
 }
 
-#ifndef PRIME1
 #line 163
-#endif
 static void ReadCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
@@ -86,17 +76,11 @@ static void ReadCallback(s32 chan, s32 result) {
 
   card = &__CARDBlock[chan];
   if (result < 0) {
-#ifndef PRIME1
-
-#endif
     goto error;
   }
 
   fileInfo = card->fileInfo;
   if (fileInfo->length < 0) {
-#ifndef PRIME1
-
-#endif
     result = CARD_RESULT_CANCELED;
     goto error;
   }
@@ -104,9 +88,6 @@ static void ReadCallback(s32 chan, s32 result) {
   length = (s32)TRUNC(fileInfo->offset + card->sectorSize, card->sectorSize) - fileInfo->offset;
   fileInfo->length -= length;
   if (fileInfo->length <= 0) {
-#ifndef PRIME1
-
-#endif
     goto error;
   }
 
@@ -114,9 +95,6 @@ static void ReadCallback(s32 chan, s32 result) {
   fileInfo->offset += length;
   fileInfo->iBlock = fat[fileInfo->iBlock];
   if (!CARDIsValidBlockNo(card, fileInfo->iBlock)) {
-#ifndef PRIME1
-
-#endif
     result = CARD_RESULT_BROKEN;
     goto error;
   }
@@ -135,14 +113,8 @@ static void ReadCallback(s32 chan, s32 result) {
   return;
 
 error:
-#ifndef PRIME1
-
-#endif
   callback = card->apiCallback;
   card->apiCallback = 0;
-#ifndef PRIME1
-
-#endif
   __CARDPutControlBlock(card, result);
 #ifndef PRIME1
 
@@ -151,9 +123,7 @@ error:
   callback(chan, result);
 }
 
-#ifndef PRIME1
 #line 243
-#endif
 s32 CARDReadAsync(CARDFileInfo* fileInfo, void* buf, s32 length, s32 offset,
                   CARDCallback callback) {
   CARDControl* card;

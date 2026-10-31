@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include "dolphin/OSRtcPriv.h"
 #include "dolphin/os.h"
 

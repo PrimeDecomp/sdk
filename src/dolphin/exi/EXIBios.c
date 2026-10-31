@@ -1,7 +1,4 @@
 #include "GameVersions.h"
-#ifdef PRIME1
-
-#endif
 #include "dolphin/os.h"
 #include "dolphin/hw_regs.h"
 
@@ -88,11 +85,9 @@ static EXIControl Ecb[MAX_CHAN];
 static u32 IDSerialPort1 = 0;
 
 s32 __EXIProbeStartTime[2] : (OS_BASE_CACHED | 0x30C0);
-#ifndef PRIME1
 
 #if VERSION >= VERSION_R32J01
 static u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
-#endif
 #endif
 
 static void SetExiInterruptMask(s32 chan, EXIControl* exi) {
@@ -322,10 +317,8 @@ EXICallback EXISetExiCallback(s32 chan, EXICallback exiCallback) {
   OSRestoreInterrupts(enabled);
   return prev;
 }
-#ifndef PRIME1
 
 static BOOL __EXIProbe(s32 chan);
-#endif
 
 void EXIProbeReset(void) {
   __EXIProbeStartTime[0] = __EXIProbeStartTime[1] = 0;
@@ -593,11 +586,9 @@ static void EXTIntrruptHandler(__OSInterrupt interrupt, OSContext* context) {
   }
 }
 
-#ifndef PRIME1
 extern BOOL __OSInIPL;
 void __OSEnableBarnacle(s32 chan, u32 dev);
 
-#endif
 void EXIInit(void) {
 #ifdef PRIME1
   

@@ -5,13 +5,9 @@
 
 #include <dolphin/CARDPriv.h>
 #include <dolphin/OSRtcPriv.h>
-#ifndef PRIME1
 #include <dolphin/hw_regs.h>
-#endif
 #include <dolphin/vi.h>
-#ifdef PRIME1
 #include <dolphin/hw_regs.h>
-#endif
 
 static void FormatCallback(s32 chan, s32 result) {
   CARDControl* card;

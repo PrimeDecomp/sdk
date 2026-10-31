@@ -390,9 +390,6 @@ BOOL DTKNextTrack() {
       AISetStreamVolLeft(0);
       AISetStreamVolRight(0);
       DVDCancelStreamAsync(&__block_for_next_track, __DTKCallbackForNextTrack);
-#ifdef PRIME1
-
-#endif
     } else {
       __DTKForward();
       __DTKState = __DTKTempState;

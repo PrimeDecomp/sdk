@@ -61,18 +61,13 @@ error:
   callback(chan, result);
 }
 
-#ifndef PRIME1
 #line 149
-#endif
 static void EraseCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
   CARDFileInfo* fileInfo;
 
   card = &__CARDBlock[chan];
-#ifndef PRIME1
-
-#endif
   if (result < 0) {
     goto error;
   }
@@ -91,9 +86,6 @@ static void EraseCallback(s32 chan, s32 result) {
 error:
   callback = card->apiCallback;
   card->apiCallback = 0;
-#ifndef PRIME1
-
-#endif
   __CARDPutControlBlock(card, result);
 #ifndef PRIME1
 
@@ -102,9 +94,7 @@ error:
   callback(chan, result);
 }
 
-#ifndef PRIME1
 #line 203
-#endif
 s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offset,
                    CARDCallback callback) {
   CARDControl* card;

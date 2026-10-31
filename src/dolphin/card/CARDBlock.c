@@ -15,9 +15,7 @@ u16* __CARDGetFatBlock(CARDControl* card) {
 }
 #endif
 
-#ifndef PRIME1
 #line 72
-#endif
 static void WriteCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
@@ -111,9 +109,7 @@ error:
   }
 }
 
-#ifndef PRIME1
 #line 174
-#endif
 s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback) {
   CARDControl* card;
   u16* fat;
@@ -167,9 +163,7 @@ s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback) {
   return __CARDUpdateFatBlock(chan, fat, callback);
 }
 
-#ifndef PRIME1
 #line 248
-#endif
 s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback) {
   CARDControl* card;
   u16* fat;
@@ -200,9 +194,7 @@ s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback) {
   return __CARDUpdateFatBlock(chan, fat, callback);
 }
 
-#ifndef PRIME1
 #line 291
-#endif
 s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback) {
   CARDControl* card;
 #ifndef PRIME1

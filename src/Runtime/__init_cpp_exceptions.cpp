@@ -16,9 +16,7 @@ extern "C" {
 
 extern void __init_cpp_exceptions(void);
 extern void __fini_cpp_exceptions(void);
-#ifdef PRIME1
 extern void suspend(void);
-#endif
 
 #ifdef __cplusplus
 }
@@ -44,9 +42,7 @@ void __exception_info_constants(void** info, char** R2) {
   *info = _eti_init_info;
 #endif
 }
-#ifdef PRIME1
 /* clang-format on */
-#endif
 
 #ifdef PRIME1
 extern void __init_cpp_exceptions(void) {

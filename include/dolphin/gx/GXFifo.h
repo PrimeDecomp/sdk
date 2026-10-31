@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_GXFIFO
 #define _DOLPHIN_GXFIFO
 
-#ifndef PRIME1
 #include <GameVersions.h>
-#endif
 #include <dolphin/gx/GXEnum.h>
 
 #ifdef __cplusplus
@@ -18,10 +16,8 @@ typedef void (*GXBreakPtCallback)(void);
 
 void GXInitFifoBase(GXFifoObj* fifo, void* base, u32 size);
 void GXInitFifoPtrs(GXFifoObj* fifo, void* readPtr, void* writePtr);
-#ifdef PRIME1
 void* GXGetFifoBase(const GXFifoObj* fifo);
 u32 GXGetFifoSize(const GXFifoObj* fifo);
-#endif
 void GXGetFifoPtrs(GXFifoObj* fifo, void** readPtr, void** writePtr);
 GXFifoObj* GXGetCPUFifo(void);
 #ifdef PRIME1
@@ -47,10 +43,8 @@ void GXInitFifoLimits(GXFifoObj* fifo, u32 hiWaterMark, u32 loWaterMark);
 GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb);
 void GXEnableBreakPt(void* breakPt);
 void GXDisableBreakPt(void);
-#ifdef PRIME1
 volatile void* GXRedirectWriteGatherPipe(void* buf);
 void GXRestoreWriteGatherPipe(void);
-#endif
 
 #ifdef __cplusplus
 }

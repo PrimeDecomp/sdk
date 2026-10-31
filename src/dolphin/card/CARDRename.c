@@ -5,9 +5,7 @@
 
 #include <dolphin/CARDPriv.h>
 
-#ifndef PRIME1
 #line 77
-#endif
 s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir;

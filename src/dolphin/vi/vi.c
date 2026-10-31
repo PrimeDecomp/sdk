@@ -7,10 +7,8 @@
 #endif
 #include "dolphin/hw_regs.h"
 #include "dolphin/os.h"
-#ifndef PRIME1
 #include "dolphin/OSRtcPriv.h"
 #include "dolphin/vi.h"
-#endif
 
 #ifdef PRIME1
 // Useful macros.
@@ -2358,17 +2356,10 @@ void VIFlush(void) {
     s32 regIndex;
 #endif
 
-#ifdef PRIME1
-  enabled = OSDisableInterrupts();
-  shdwChangeMode |= changeMode;
-  changeMode = 0;
-  shdwChanged |= changed;
-#else
     enabled = OSDisableInterrupts();
     shdwChangeMode |= changeMode;
     changeMode = 0;
     shdwChanged |= changed;
-#endif
 
 #ifdef PRIME1
   while (changed) {
@@ -2493,13 +2484,9 @@ void VISet3D(BOOL threeD) {
 #endif
 }
 
-#ifdef PRIME1
-u32 VIGetRetraceCount(void) { return retraceCount; }
-#else
 u32 VIGetRetraceCount(void) {
     return retraceCount;
 }
-#endif
 
 #ifdef PRIME1
 static u32 getCurrentHalfLine(void)

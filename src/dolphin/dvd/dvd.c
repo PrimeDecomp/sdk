@@ -1,7 +1,5 @@
-#ifdef PRIME1
 #include "GameVersions.h"
 
-#endif
 #include <dolphin/DVDPriv.h>
 #include <dolphin/dvd.h>
 #include <dolphin/hw_regs.h>
@@ -96,9 +94,7 @@ static void defaultOptionalCommandChecker(DVDCommandBlock* block, DVDLowCallback
 static DVDOptionalCommandChecker checkOptionalCommand = defaultOptionalCommandChecker;
 
 extern void __DVDInterruptHandler(__OSInterrupt interrupt, OSContext* context);
-#ifndef PRIME1
 extern BOOL __DVDLowTestAlarm(const OSAlarm* alarm);
-#endif
 
 static void defaultOptionalCommandChecker(DVDCommandBlock* block, DVDLowCallback cb) {}
 

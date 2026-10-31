@@ -1,7 +1,4 @@
 #include "GameVersions.h"
-#ifdef PRIME1
-
-#endif
 #include "dolphin/os.h"
 #include "dolphin/DVDPriv.h"
 #include "dolphin/db.h"
@@ -1039,9 +1036,7 @@ void __OSDBINTSTART(void);
 void __OSDBINTEND(void);
 void __OSDBJUMPSTART(void);
 void __OSDBJUMPEND(void);
-#ifndef PRIME1
 void __OSDBJUMPDEST(void);
-#endif
 
 #define NOP 0x60000000
 

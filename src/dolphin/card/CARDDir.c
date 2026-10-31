@@ -15,9 +15,7 @@ CARDDir* __CARDGetDirBlock(CARDControl* card) {
 }
 #endif
 
-#ifndef PRIME1
 #line 69
-#endif
 static void WriteCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
@@ -38,9 +36,6 @@ static void WriteCallback(s32 chan, s32 result) {
 #endif
 
     if (card->currentDir == dir0) {
-#ifndef PRIME1
-    
-#endif
       card->currentDir = dir1;
       memcpy(dir1, dir0, 0x2000);
     } else {
@@ -98,9 +93,7 @@ error:
   }
 }
 
-#ifndef PRIME1
 #line 167
-#endif
 s32 __CARDUpdateDir(s32 chan, CARDCallback callback) {
   CARDControl* card;
   CARDDirCheck* check;

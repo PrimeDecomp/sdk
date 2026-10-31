@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_VITYPES
 #define _DOLPHIN_VITYPES
-#ifndef PRIME1
 
 #include "GameVersions.h"
-#endif
 
 #include <dolphin/types.h>
 

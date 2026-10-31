@@ -335,11 +335,7 @@ static void __two_exp(decimal* result, long exp) {
   }
 }
 
-#ifdef PRIME1
-static int __equals_dec(const decimal* x, const decimal* y) {
-#else
 static int __equals_dec(const decimal *x, const decimal *y) {
-#endif
   if (x->sig.text[0] == 0) {
 #ifdef PRIME1
     if (y->sig.text[0] == 0)
@@ -353,9 +349,6 @@ static int __equals_dec(const decimal *x, const decimal *y) {
 #endif
     return 0;
   }
-#ifndef PRIME1
-
-#endif
   if (y->sig.text[0] == 0) {
 #ifdef PRIME1
     if (x->sig.text[0] == 0)
@@ -369,9 +362,6 @@ static int __equals_dec(const decimal *x, const decimal *y) {
 #endif
     return 0;
   }
-#ifndef PRIME1
-
-#endif
   if (x->exp == y->exp) {
     int i;
     int l = x->sig.length;
@@ -430,9 +420,6 @@ static int __equals_dec(const decimal *x, const decimal *y) {
 #endif
     return 1;
   }
-#ifndef PRIME1
-
-#endif
   return 0;
 }
 

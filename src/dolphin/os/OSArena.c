@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include <dolphin/os/OSArena.h>
 
 #define ROUND(n, a) (((u32)(n) + (a)-1) & ~((a)-1))

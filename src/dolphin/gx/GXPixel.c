@@ -372,18 +372,11 @@ void GXInitFogAdjTable(GXFogAdjTable *table, u16 width, const f32 projmtx[4][4])
 #endif
 }
 
-#ifdef PRIME1
-void GXSetFogRangeAdj(GXBool enable, u16 center, const GXFogAdjTable *table) {
-  u32 i;
-  u32 range_adj;
-  u32 range_c;
-#else
 void GXSetFogRangeAdj(GXBool enable, u16 center, const GXFogAdjTable *table)
 {
     u32 i;
     u32 range_adj;
     u32 range_c;
-#endif
 
 #ifdef PRIME1
   if (enable) {
@@ -428,17 +421,10 @@ void GXSetFogRangeAdj(GXBool enable, u16 center, const GXFogAdjTable *table)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor dst_factor,
-                    GXLogicOp op) {
-  u32 reg;
-  u32 blend_en;
-#else
 void GXSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor dst_factor, GXLogicOp op)
 {
     u32 reg;
     u32 blend_en;
-#endif
 
 #ifdef PRIME1
   reg = __GXData->cmode0;
@@ -486,11 +472,7 @@ void GXSetColorUpdate(GXBool update_enable)
     CHECK_GXBEGIN(0x1A3, "GXSetColorUpdate");
 #endif
 
-#ifdef PRIME1
-  reg = __GXData->cmode0;
-#else
     reg = __GXData->cmode0;
-#endif
 
 #ifdef PRIME1
   __SET_REG_FIELD(reg, 1, 3, update_enable);
@@ -500,13 +482,8 @@ void GXSetColorUpdate(GXBool update_enable)
     GX_WRITE_RAS_REG(reg);
 #endif
 
-#ifdef PRIME1
-  __GXData->cmode0 = reg;
-  __GXData->bpSentNot = 0;
-#else
     __GXData->cmode0 = reg;
     __GXData->bpSentNot = 0;
-#endif
 }
 
 #ifdef PRIME1
@@ -519,11 +496,7 @@ void GXSetAlphaUpdate(GXBool update_enable)
     CHECK_GXBEGIN(0x1B0, "GXSetAlphaUpdate");
 #endif
 
-#ifdef PRIME1
-  reg = __GXData->cmode0;
-#else
     reg = __GXData->cmode0;
-#endif
 
 #ifdef PRIME1
   __SET_REG_FIELD(reg, 1, 4, update_enable);
@@ -533,13 +506,8 @@ void GXSetAlphaUpdate(GXBool update_enable)
     GX_WRITE_RAS_REG(reg);
 #endif
 
-#ifdef PRIME1
-  __GXData->cmode0 = reg;
-  __GXData->bpSentNot = 0;
-#else
     __GXData->cmode0 = reg;
     __GXData->bpSentNot = 0;
-#endif
 }
 
 #ifdef PRIME1
@@ -552,11 +520,7 @@ void GXSetZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
     CHECK_GXBEGIN(0x1CB, "GXSetZMode");
 #endif
 
-#ifdef PRIME1
-  reg = __GXData->zmode;
-#else
     reg = __GXData->zmode;
-#endif
 
 #ifdef PRIME1
   __SET_REG_FIELD(reg, 1, 0, compare_enable);
@@ -570,13 +534,8 @@ void GXSetZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
     GX_WRITE_RAS_REG(reg);
 #endif
 
-#ifdef PRIME1
-  __GXData->zmode = reg;
-  __GXData->bpSentNot = 0;
-#else
     __GXData->zmode = reg;
     __GXData->bpSentNot = 0;
-#endif
 }
 
 #ifdef PRIME1
@@ -595,18 +554,11 @@ void GXSetZCompLoc(GXBool before_tex)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetPixelFmt(GXPixelFmt pix_fmt, GXZFmt16 z_fmt) {
-  u32 oldPeCtrl;
-  u8 aa;
-  static u32 p2f[8] = {0, 1, 2, 3, 4, 4, 4, 5};
-#else
 void GXSetPixelFmt(GXPixelFmt pix_fmt, GXZFmt16 z_fmt)
 {
     u32 oldPeCtrl;
     u8 aa;
     static u32 p2f[8] = { 0, 1, 2, 3, 4, 4, 4, 5 };
-#endif
 
 #ifdef PRIME1
   oldPeCtrl = __GXData->peCtrl;
@@ -665,11 +617,7 @@ void GXSetDither(GXBool dither)
     CHECK_GXBEGIN(0x22C, "GXSetDither");
 #endif
 
-#ifdef PRIME1
-  reg = __GXData->cmode0;
-#else
     reg = __GXData->cmode0;
-#endif
 
 #ifdef PRIME1
 #if VERSION == VERSION_GM8E_02 || VERSION == VERSION_GM8P_00 || VERSION == VERSION_GM8J_00
@@ -683,13 +631,8 @@ void GXSetDither(GXBool dither)
     GX_WRITE_RAS_REG(reg);
 #endif
 
-#ifdef PRIME1
-  __GXData->cmode0 = reg;
-  __GXData->bpSentNot = 0;
-#else
     __GXData->cmode0 = reg;
     __GXData->bpSentNot = 0;
-#endif
 }
 
 #ifdef PRIME1
@@ -702,11 +645,7 @@ void GXSetDstAlpha(GXBool enable, u8 alpha)
     CHECK_GXBEGIN(0x245, "GXSetDstAlpha");
 #endif
 
-#ifdef PRIME1
-  reg = __GXData->cmode1;
-#else
     reg = __GXData->cmode1;
-#endif
 
 #ifdef PRIME1
   __SET_REG_FIELD(reg, 8, 0, alpha);
@@ -718,23 +657,13 @@ void GXSetDstAlpha(GXBool enable, u8 alpha)
     GX_WRITE_RAS_REG(reg);
 #endif
 
-#ifdef PRIME1
-  __GXData->cmode1 = reg;
-  __GXData->bpSentNot = 0;
-#else
     __GXData->cmode1 = reg;
     __GXData->bpSentNot = 0;
-#endif
 }
 
-#ifdef PRIME1
-void GXSetFieldMask(GXBool odd_mask, GXBool even_mask) {
-  u32 reg;
-#else
 void GXSetFieldMask(GXBool odd_mask, GXBool even_mask)
 {
     u32 reg;
-#endif
 
 #ifdef PRIME1
   reg = 0;
@@ -754,14 +683,9 @@ void GXSetFieldMask(GXBool odd_mask, GXBool even_mask)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetFieldMode(GXBool field_mode, GXBool half_aspect_ratio) {
-  u32 reg;
-#else
 void GXSetFieldMode(GXBool field_mode, GXBool half_aspect_ratio)
 {
     u32 reg;
-#endif
 
 #ifdef PRIME1
   SET_REG_FIELD(__GXData->lpSize, 1, 22, half_aspect_ratio);

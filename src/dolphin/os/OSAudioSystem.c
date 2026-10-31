@@ -1,10 +1,6 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include "types.h"
-#ifndef PRIME1
 #include "dolphin/os.h"
-#endif
 #include "dolphin/hw_regs.h"
 
 #ifdef __cplusplus

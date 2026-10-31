@@ -7,19 +7,11 @@
 #include <dolphin/gx/__gx.h>
 #endif
 
-#ifdef PRIME1
-#define GX_WRITE_SOME_REG5(a, b)                                                                   \
-  do {                                                                                             \
-    GX_WRITE_U8(a);                                                                                \
-    GX_WRITE_U32(b);                                                                               \
-  } while (0)
-#else
 #define GX_WRITE_SOME_REG5(a, b) \
 do { \
     GX_WRITE_U8(a); \
     GX_WRITE_U32(b); \
 } while (0)
-#endif
 
 #ifdef PRIME1
 void GXSetTevIndirect(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXIndTexFormat format,
@@ -628,14 +620,8 @@ void __GXSetIndirectMask(u32 mask) {
 #endif
 }
 
-#ifdef PRIME1
-void __GXFlushTextureState(void) {
-  GX_WRITE_SOME_REG5(0x61, __GXData->bpMask);
-  __GXData->bpSentNot = 0;
-#else
 void __GXFlushTextureState(void)
 {
     GX_WRITE_SOME_REG5(0x61, __GXData->bpMask);
     __GXData->bpSentNot = 0;
-#endif
 }

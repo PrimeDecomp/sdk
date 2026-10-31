@@ -4,9 +4,7 @@
 #include <dolphin/os.h>
 
 #include <dolphin/CARDPriv.h>
-#ifndef PRIME1
 #include <dolphin/OSRtcPriv.h>
-#endif
 
 u16 __CARDVendorID = 0xffff;
 #ifndef PRIME1

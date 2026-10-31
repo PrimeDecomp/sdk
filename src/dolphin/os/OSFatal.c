@@ -6,9 +6,7 @@
 #endif
 #include "dolphin/ai.h"
 #include "dolphin/os.h"
-#ifndef PRIME1
 #include "dolphin/hw_regs.h"
-#endif
 #include "dolphin/os/OSArena.h"
 #include "dolphin/os/OSBootInfo.h"
 #include "dolphin/vi.h"

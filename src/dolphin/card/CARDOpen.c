@@ -197,9 +197,7 @@ s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
   return __CARDPutControlBlock(card, result);
 }
 
-#ifndef PRIME1
 #line 376
-#endif
 s32 CARDClose(CARDFileInfo* fileInfo) {
   CARDControl* card;
   s32 result;

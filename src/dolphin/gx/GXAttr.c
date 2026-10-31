@@ -633,18 +633,11 @@ static inline void SETVAT(u32 *va, u32 *vb, u32 *vc, GXAttr attr, GXCompCnt cnt,
 #endif
 }
 
-#ifdef PRIME1
-void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType type, u8 frac) {
-  u32 *va;
-  u32 *vb;
-  u32 *vc;
-#else
 void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType type, u8 frac)
 {
     u32 *va;
     u32 *vb;
     u32 *vc;
-#endif
 
 #ifdef PRIME1
   va = &__GXData->vatA[vtxfmt];
@@ -673,18 +666,11 @@ void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType typ
 #endif
 }
 
-#ifdef PRIME1
-void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList *list) {
-  u32 *va;
-  u32 *vb;
-  u32 *vc;
-#else
 void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList *list)
 {
     u32 *va;
     u32 *vb;
     u32 *vc;
-#endif
 
 #ifdef PRIME1
   va = &__GXData->vatA[vtxfmt];

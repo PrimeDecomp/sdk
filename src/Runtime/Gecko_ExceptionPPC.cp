@@ -8,11 +8,7 @@
 #endif
 
 #if __MWERKS__
-#ifdef PRIME1
-#pragma exceptions on 
-#else
 #pragma exceptions on
-#endif
 #endif
 #ifndef PRIME1
 
@@ -122,20 +118,11 @@ int __register_fragment(struct __eti_init_info* info, char* TOC) {
       f->exception_info = info;
       f->TOC = TOC;
       f->active = 1;
-#ifdef PRIME1
-      return (i);
-#else
       return i;
-#endif
     }
   }
-#ifdef PRIME1
-  
-  return (-1);
-#else
 
   return -1;
-#endif
 }
 
 #ifdef PRIME1

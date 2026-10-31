@@ -198,15 +198,9 @@ void GXSetTevOp(GXTevStageID id, GXTevMode mode)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTevColorArg c,
-                     GXTevColorArg d) {
-  u32 tevReg;
-#else
 void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTevColorArg c, GXTevColorArg d)
 {
     u32 tevReg;
-#endif
 
 #ifdef PRIME1
   tevReg = __GXData->tevc[stage];
@@ -240,15 +234,9 @@ void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTev
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevAlphaIn(GXTevStageID stage, GXTevAlphaArg a, GXTevAlphaArg b, GXTevAlphaArg c,
-                     GXTevAlphaArg d) {
-  u32 tevReg;
-#else
 void GXSetTevAlphaIn(GXTevStageID stage, GXTevAlphaArg a, GXTevAlphaArg b, GXTevAlphaArg c, GXTevAlphaArg d)
 {
     u32 tevReg;
-#endif
 
 #ifdef PRIME1
   tevReg = __GXData->teva[stage];
@@ -282,15 +270,9 @@ void GXSetTevAlphaIn(GXTevStageID stage, GXTevAlphaArg a, GXTevAlphaArg b, GXTev
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevColorOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp,
-                     GXTevRegID out_reg) {
-  u32 tevReg;
-#else
 void GXSetTevColorOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID out_reg)
 {
     u32 tevReg;
-#endif
 
 #ifdef PRIME1
   tevReg = __GXData->tevc[stage];
@@ -332,15 +314,9 @@ void GXSetTevColorOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevAlphaOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp,
-                     GXTevRegID out_reg) {
-  u32 tevReg;
-#else
 void GXSetTevAlphaOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID out_reg)
 {
     u32 tevReg;
-#endif
 
 #ifdef PRIME1
   tevReg = __GXData->teva[stage];
@@ -438,20 +414,12 @@ void GXSetTevColor(GXTevRegID id, GXColor color)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevColorS10(GXTevRegID id, GXColorS10 color) {
-  u32 sRG;
-  u32 sBA;
-  u32 regRA;
-  u32 regBG;
-#else
 void GXSetTevColorS10(GXTevRegID id, GXColorS10 color)
 {
     u32 sRG;
     u32 sBA;
     u32 regRA;
     u32 regBG;
-#endif
 
 #ifdef PRIME1
   regRA = 0;
@@ -556,14 +524,9 @@ void GXSetTevKColor(GXTevKColorID id, GXColor color)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevKColorSel(GXTevStageID stage, GXTevKColorSel sel) {
-  u32 *Kreg;
-#else
 void GXSetTevKColorSel(GXTevStageID stage, GXTevKColorSel sel)
 {
     u32 *Kreg;
-#endif
 
 #ifdef PRIME1
   Kreg = &__GXData->tevKsel[stage >> 1];
@@ -593,14 +556,9 @@ void GXSetTevKColorSel(GXTevStageID stage, GXTevKColorSel sel)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevKAlphaSel(GXTevStageID stage, GXTevKAlphaSel sel) {
-  u32 *Kreg;
-#else
 void GXSetTevKAlphaSel(GXTevStageID stage, GXTevKAlphaSel sel)
 {
     u32 *Kreg;
-#endif
 
 #ifdef PRIME1
   Kreg = &__GXData->tevKsel[stage >> 1];
@@ -630,14 +588,9 @@ void GXSetTevKAlphaSel(GXTevStageID stage, GXTevKAlphaSel sel)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTevSwapMode(GXTevStageID stage, GXTevSwapSel ras_sel, GXTevSwapSel tex_sel) {
-  u32 *pTevReg;
-#else
 void GXSetTevSwapMode(GXTevStageID stage, GXTevSwapSel ras_sel, GXTevSwapSel tex_sel)
 {
     u32 *pTevReg;
-#endif
 
 #ifdef PRIME1
   pTevReg = &__GXData->teva[stage];

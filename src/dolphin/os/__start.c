@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include "dolphin/__start.h"
 #include "__ppc_eabi_linker.h"
 

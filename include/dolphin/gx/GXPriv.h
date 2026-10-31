@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_GXPRIV
 #define _DOLPHIN_GXPRIV
 
-#ifdef PRIME1
 #include "GameVersions.h"
-#endif
 #include "dolphin/gx/GXVert.h"
 
 #ifdef PRIME1

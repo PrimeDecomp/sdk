@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_OSFASTCAST
 #define _DOLPHIN_OSFASTCAST
-#ifdef PRIME1
 
 #include <dolphin/types.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {

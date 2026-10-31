@@ -61,9 +61,7 @@ static void UpdateIconOffsets(CARDDir* ent, CARDStat* stat) {
   stat->offsetData = offset;
 }
 
-#ifndef PRIME1
 #line 166
-#endif
 s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   CARDControl* card;
   CARDDir* dir;
@@ -112,9 +110,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   return __CARDPutControlBlock(card, result);
 }
 
-#ifndef PRIME1
 #line 225
-#endif
 s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir;

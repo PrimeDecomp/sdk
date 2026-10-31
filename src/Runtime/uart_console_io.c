@@ -1,7 +1,5 @@
 #include "console_io.h"
-#ifndef PRIME1
 #include <dolphin/os.h>
-#endif
 
 int __TRK_write_console(__file_handle handle, unsigned char* buffer, size_t* count,
                         __idle_proc idle_proc);
@@ -19,9 +17,6 @@ static inline int __init_uart_console(void) {
 
   return (err);
 }
-#ifndef PRIME1
-
-#endif
 int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
                     __idle_proc idle_proc) {
 #ifdef PRIME1

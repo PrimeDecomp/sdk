@@ -23,9 +23,6 @@ u32 __CARDFreq = EXI_FREQ_16M;
 
 CARDControl __CARDBlock[2];
 DVDDiskID __CARDDiskNone;
-#ifdef PRIME1
-
-#endif
 static u16 __CARDEncode;
 #ifndef PRIME1
 static u16 __CARDFastMode;
@@ -60,10 +57,8 @@ void __CARDSyncCallback(s32 chan, s32 result) {
 #endif
   OSWakeupThread(&card->threadQueue);
 }
-#ifndef PRIME1
 
 #line 228
-#endif
 void __CARDExtHandler(s32 chan, OSContext* context) {
   CARDControl* card;
   CARDCallback callback;
@@ -128,9 +123,7 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
   }
 }
 
-#ifndef PRIME1
 #line 277
-#endif
 void __CARDExiHandler(s32 chan, OSContext* context) {
   CARDControl* card;
   CARDCallback callback;
@@ -178,15 +171,10 @@ fatal:
   }
 }
 
-#ifndef PRIME1
 #line 359
-#endif
 void __CARDTxHandler(s32 chan, OSContext* context) {
   CARDControl* card;
   CARDCallback callback;
-#ifndef PRIME1
-
-#endif
   BOOL err;
 #ifndef PRIME1
 
@@ -203,14 +191,9 @@ void __CARDTxHandler(s32 chan, OSContext* context) {
   }
 }
 
-#ifndef PRIME1
 #line 407
-#endif
 void __CARDUnlockedHandler(s32 chan, OSContext* context) {
   CARDControl* card;
-#ifndef PRIME1
-
-#endif
   CARDCallback callback;
 
 #ifndef PRIME1
@@ -224,9 +207,7 @@ void __CARDUnlockedHandler(s32 chan, OSContext* context) {
   }
 }
 
-#ifndef PRIME1
 #line 427
-#endif
 s32 __CARDEnableInterrupt(s32 chan, BOOL enable) {
   BOOL err;
   u32 cmd;
@@ -243,9 +224,6 @@ s32 __CARDEnableInterrupt(s32 chan, BOOL enable) {
 #endif
     return CARD_RESULT_NOCARD;
   }
-#ifdef PRIME1
-
-#endif
   cmd = enable ? 0x81010000 : 0x81000000;
   err = FALSE;
   err |= !EXIImm(chan, &cmd, 2, 1, NULL);
@@ -254,9 +232,7 @@ s32 __CARDEnableInterrupt(s32 chan, BOOL enable) {
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
 }
 
-#ifndef PRIME1
 #line 446
-#endif
 s32 __CARDReadStatus(s32 chan, u8* status) {
   BOOL err;
   u32 cmd;
@@ -387,9 +363,6 @@ static void TimeoutHandler(OSAlarm* alarm, OSContext* context) {
   s32 chan;
   CARDControl* card;
   CARDCallback callback;
-#ifndef PRIME1
-
-#endif
   for (chan = 0; chan < 2; ++chan) {
     card = &__CARDBlock[chan];
     if (alarm == &card->alarm) {
@@ -504,9 +477,7 @@ static s32 Retry(s32 chan) {
   return CARD_RESULT_READY;
 }
 
-#ifndef PRIME1
 #line 714
-#endif
 static void UnlockedCallback(s32 chan, s32 result) {
   CARDCallback callback;
   CARDControl* card;
@@ -548,9 +519,7 @@ static void UnlockedCallback(s32 chan, s32 result) {
   }
 }
 
-#ifndef PRIME1
 #line 777
-#endif
 static s32 __CARDStart(s32 chan, CARDCallback txCallback, CARDCallback exiCallback) {
   BOOL enabled;
   CARDControl* card;
@@ -604,15 +573,9 @@ static s32 __CARDStart(s32 chan, CARDCallback txCallback, CARDCallback exiCallba
 #define AD1EX(x) ((u8)(AD1(x) | 0x80));
 #define AD2(x) ((u8)(((x) >> 9) & 0xff))
 #define AD3(x) ((u8)(((x) >> 7) & 0x03))
-#ifdef PRIME1
-#define BA(x) ((u8)((x) & 0x7f))
-#else
 #define BA(x) ((u8)((x)&0x7f))
-#endif
 
-#ifndef PRIME1
 #line 842
-#endif
 s32 __CARDReadSegment(s32 chan, CARDCallback callback) {
   CARDControl* card;
   s32 result;
@@ -656,9 +619,7 @@ s32 __CARDReadSegment(s32 chan, CARDCallback callback) {
   return result;
 }
 
-#ifndef PRIME1
 #line 899
-#endif
 s32 __CARDWritePage(s32 chan, CARDCallback callback) {
   CARDControl* card;
   s32 result;
@@ -894,9 +855,7 @@ s32 __CARDGetControlBlock(s32 chan, CARDControl** pcard) {
   return result;
 }
 
-#ifndef PRIME1
 #line 1256
-#endif
 s32 __CARDPutControlBlock(CARDControl* card, s32 result) {
   BOOL enabled;
 
@@ -913,9 +872,7 @@ s32 __CARDPutControlBlock(CARDControl* card, s32 result) {
   return result;
 }
 
-#ifndef PRIME1
 #line 1289
-#endif
 s32 CARDGetResultCode(s32 chan) {
   CARDControl* card;
 #ifndef PRIME1
@@ -965,15 +922,9 @@ s32 CARDFreeBlocks(s32 chan, s32* byteNotUsed, s32* filesNotUsed) {
   return __CARDPutControlBlock(card, CARD_RESULT_READY);
 }
 
-#ifdef PRIME1
-s32 CARDGetEncoding(s32 chan, u16 * encode) {
-  CARDControl * card;
-  CARDID * id;
-#else
 s32 CARDGetEncoding(s32 chan, u16* encode) {
   CARDControl* card;
   CARDID* id;
-#endif
   s32 result;
 
   result = __CARDGetControlBlock(chan, &card);
@@ -1003,9 +954,6 @@ s32 CARDGetMemSize(s32 chan, u16* size) {
   if (result < 0) {
     return result;
   }
-#ifndef PRIME1
-
-#endif
   *size = card->size;
 #ifdef PRIME1
   return __CARDPutControlBlock(card, 0);

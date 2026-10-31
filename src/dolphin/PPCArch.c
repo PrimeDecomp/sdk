@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include "types.h"
 #include "asm_types.h"
 // clang-format off
@@ -16,10 +14,8 @@ union FpscrUnion
 };
 
 #define HID0_SPD 0x00000200  // Speculative cache access enable (0 enable)
-#ifdef PRIME1
 
 void PPCMthid0 ( u32 newHID0 );
-#endif
 
 /*
  * --INFO--

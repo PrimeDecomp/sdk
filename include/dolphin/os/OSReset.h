@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_OSRESET
 #define _DOLPHIN_OSRESET
-#ifndef PRIME1
 
 #include "GameVersions.h"
-#endif
 
 #include <types.h>
 
@@ -31,9 +29,7 @@ extern "C" {
 #define OS_RESET_PRIO_ALARM 4294967295
 
 typedef BOOL (*OSResetFunction)(BOOL final);
-#ifdef PRIME1
 void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu);
-#endif
 typedef struct OSResetFunctionInfo OSResetFunctionInfo;
 
 struct OSResetFunctionInfo {

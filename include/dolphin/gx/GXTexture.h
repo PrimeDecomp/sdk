@@ -27,11 +27,9 @@ void GXInitTexObjData(GXTexObj* obj, const void* data);
 void GXInitTexObjLOD(GXTexObj* obj, GXTexFilter min_filt, GXTexFilter mag_filt, f32 min_lod,
                      f32 max_lod, f32 lod_bias, GXBool bias_clamp, GXBool do_edge_lod,
                      GXAnisotropy max_aniso);
-#ifdef PRIME1
 GXTexFmt GXGetTexObjFmt(const GXTexObj* obj);
 GXBool GXGetTexObjMipMap(const GXTexObj* obj);
 void GXLoadTexObjPreLoaded(GXTexObj* obj, GXTexRegion* region, GXTexMapID id);
-#endif
 void GXLoadTexObj(GXTexObj* obj, GXTexMapID id);
 u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, GXBool mipmap, u8 max_lod);
 void GXInvalidateTexAll();
@@ -49,9 +47,7 @@ void GXInitTexCacheRegion(GXTexRegion* region, GXBool is_32b_mipmap, u32 tmem_ev
                           GXTexCacheSize size_even, u32 tmem_odd, GXTexCacheSize size_odd);
 GXTexRegionCallback GXSetTexRegionCallback(GXTexRegionCallback callback);
 GXTlutRegionCallback GXSetTlutRegionCallback(GXTlutRegionCallback callback);
-#ifdef PRIME1
 void GXInitTlutRegion(GXTlutRegion* region, u32 tmem_addr, GXTlutSize tlut_size);
-#endif
 void GXInvalidateTexRegion(const GXTexRegion* region);
 
 #ifdef __cplusplus

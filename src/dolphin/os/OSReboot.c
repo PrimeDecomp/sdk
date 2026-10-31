@@ -1,16 +1,12 @@
-#ifdef PRIME1
 #include "GameVersions.h"
 
 #include "dolphin/ai.h"
-#endif
 #include "dolphin/dvd.h"
 #include "dolphin/os.h"
 #include "dolphin/os/OSBootInfo.h"
-#ifdef PRIME1
 #include "dolphin/os/OSContext.h"
 #include "dolphin/os/OSInterrupt.h"
 #include "dolphin/types.h"
-#endif
 
 #ifdef PRIME1
 typedef struct ApploaderHeader {
@@ -257,11 +253,7 @@ void OSSetSaveRegion(void* start, void* end) {
   SaveEnd = end;
 }
 
-#ifdef PRIME1
-void OSGetSaveRegion(void **start, void **end) {
-#else
 void OSGetSaveRegion(void** start, void** end) {
-#endif
   *start = SaveStart;
   *end = SaveEnd;
 }

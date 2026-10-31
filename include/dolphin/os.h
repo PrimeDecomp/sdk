@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_OS
 #define _DOLPHIN_OS
 
-#ifndef PRIME1
 #include <GameVersions.h>
-#endif
 #include <dolphin/gx.h>
 #include <dolphin/types.h>
 
@@ -30,11 +28,7 @@ typedef s64 OSTime;
 typedef u32 OSTick;
 u32 __OSBusClock AT_ADDRESS(OS_BASE_CACHED | 0x00F8);  // sync with OSLoMem.h
 u32 __OSCoreClock AT_ADDRESS(OS_BASE_CACHED | 0x00FC); // sync with OSLoMem.h
-#ifdef PRIME1
-#define OS_BUS_CLOCK (u32)__OSBusClock
-#else
 #define OS_BUS_CLOCK (u32) __OSBusClock
-#endif
 #define OS_CORE_CLOCK __OSCoreClock
 #define OS_TIMER_CLOCK (OS_BUS_CLOCK / 4)
 
@@ -59,11 +53,7 @@ u32 OSUncachedToCached(void* ucaddr);
 #define OSTicksToMilliseconds(ticks) ((ticks) / (OS_TIMER_CLOCK / 1000))
 #define OSTicksToMicroseconds(ticks) (((ticks)*8) / (OS_TIMER_CLOCK / 125000))
 #define OSTicksToNanoseconds(ticks) (((ticks)*8000) / (OS_TIMER_CLOCK / 125000))
-#ifdef PRIME1
-#define OSSecondsToTicks(sec) ((sec)*OS_TIMER_CLOCK) 
-#else
 #define OSSecondsToTicks(sec) ((sec)*OS_TIMER_CLOCK)
-#endif
 #define OSMillisecondsToTicks(msec) ((msec) * (OS_TIMER_CLOCK / 1000))
 #define OSMicrosecondsToTicks(usec) (((usec) * (OS_TIMER_CLOCK / 125000)) / 8)
 #define OSNanosecondsToTicks(nsec) (((nsec) * (OS_TIMER_CLOCK / 125000)) / 8000)
@@ -236,10 +226,8 @@ BOOL OSRestoreInterrupts(BOOL level);
 #endif // _DEBUG
 
 void OSReport(const char* msg, ...);
-#ifndef PRIME1
 const char* OSGetAppGamename(void);
 u8 OSGetAppType(void);
-#endif
 void OSPanic(const char* file, int line, const char* msg, ...);
 void OSFatal(GXColor fg, GXColor bg, const char* msg);
 #ifndef PRIME1
@@ -284,7 +272,4 @@ u32 OSGetStackPointer(void);
 #include <dolphin/os/OSResetSW.h>
 #include <dolphin/os/OSSerial.h>
 #include <dolphin/os/OSThread.h>
-#ifndef PRIME1
-
-#endif
 #endif // _DOLPHIN_OS

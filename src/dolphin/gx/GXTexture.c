@@ -24,18 +24,6 @@
 
 // GXTexObj internal data
 typedef struct __GXTexObjInt_struct {
-#ifdef PRIME1
-  u32 mode0;
-  u32 mode1;
-  u32 image0;
-  u32 image3;
-  void *userData;
-  GXTexFmt fmt;
-  u32 tlutName;
-  u16 loadCnt;
-  u8 loadFmt;
-  u8 flags;
-#else
     u32 mode0;
     u32 mode1;
     u32 image0;
@@ -46,50 +34,29 @@ typedef struct __GXTexObjInt_struct {
     u16 loadCnt;
     u8 loadFmt;
     u8 flags;
-#endif
 } __GXTexObjInt;
 
 // GXTexRegion internal data
 typedef struct __GXTexRegionInt_struct {
-#ifdef PRIME1
-  u32 image1;
-  u32 image2;
-  u16 sizeEven;
-  u16 sizeOdd;
-  u8 is32bMipmap;
-  u8 isCached;
-#else
     u32 image1;
     u32 image2;
     u16 sizeEven;
     u16 sizeOdd;
     u8 is32bMipmap;
     u8 isCached;
-#endif
 } __GXTexRegionInt;
 
 // GXTlutObj internal data
 typedef struct __GXTlutObjInt_struct {
-#ifdef PRIME1
-  u32 tlut;
-  u32 loadTlut0;
-  u16 numEntries;
-#else
     u32 tlut;
     u32 loadTlut0;
     u16 numEntries;
-#endif
 } __GXTlutObjInt;
 
 // GXTlutRegion internal data
 typedef struct __GXTlutRegionInt_struct {
-#ifdef PRIME1
-  u32 loadTlut1;
-  __GXTlutObjInt tlutObj;
-#else
     u32 loadTlut1;
     __GXTlutObjInt tlutObj;
-#endif
 } __GXTlutRegionInt;
 
 #ifdef PRIME1
@@ -207,16 +174,6 @@ static void __GXGetTexTileShift(GXTexFmt fmt, u32 *rowTileS, u32 *colTileS)
 #endif
 }
 
-#ifdef PRIME1
-u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, u8 mipmap, u8 max_lod) {
-  u32 tileShiftX;
-  u32 tileShiftY;
-  u32 tileBytes;
-  u32 bufferSize;
-  u32 nx;
-  u32 ny;
-  u32 level;
-#else
 u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, u8 mipmap, u8 max_lod)
 {
     u32 tileShiftX;
@@ -226,7 +183,6 @@ u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, u8 mipmap, u8 max_lod)
     u32 nx;
     u32 ny;
     u32 level;
-#endif
 
 #ifdef PRIME1
   __GXGetTexTileShift(format, &tileShiftX, &tileShiftY);
@@ -296,30 +252,11 @@ u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, u8 mipmap, u8 max_lod)
 #endif
 }
 
-#ifdef PRIME1
-void __GetImageTileCount(GXTexFmt fmt, u16 wd, u16 ht, u32 *rowTiles, u32 *colTiles,
-                         u32 *cmpTiles) {
-  u32 texRowShift;
-  u32 texColShift;
-#else
 void __GetImageTileCount(GXTexFmt fmt, u16 wd, u16 ht, u32 *rowTiles, u32 *colTiles, u32 *cmpTiles)
 {
     u32 texRowShift;
     u32 texColShift;
-#endif
 
-#ifdef PRIME1
-  __GXGetTexTileShift(fmt, &texRowShift, &texColShift);
-  if (wd == 0) {
-    wd = 1;
-  }
-  if (ht == 0) {
-    ht = 1;
-  }
-  *rowTiles = (wd + (1 << texRowShift) - 1) >> texRowShift;
-  *colTiles = (ht + (1 << texColShift) - 1) >> texColShift;
-  *cmpTiles = (fmt == GX_TF_RGBA8 || fmt == GX_TF_Z24X8) ? 2 : 1;
-#else
     __GXGetTexTileShift(fmt, &texRowShift, &texColShift);
     if (wd == 0) {
         wd = 1;
@@ -330,7 +267,6 @@ void __GetImageTileCount(GXTexFmt fmt, u16 wd, u16 ht, u32 *rowTiles, u32 *colTi
     *rowTiles = (wd + (1 << texRowShift) - 1) >> texRowShift;
     *colTiles = (ht + (1 << texColShift) - 1) >> texColShift;
     *cmpTiles = (fmt == GX_TF_RGBA8 || fmt == GX_TF_Z24X8) ? 2 : 1;
-#endif
 }
 
 #ifdef PRIME1
@@ -559,22 +495,12 @@ void GXInitTexObjCI(GXTexObj *obj, const void *image_ptr, u16 width, u16 height,
 #endif
 }
 
-#ifdef PRIME1
-void GXInitTexObjLOD(GXTexObj *obj, GXTexFilter min_filt, GXTexFilter mag_filt, f32 min_lod,
-                     f32 max_lod, f32 lod_bias, u8 bias_clamp, u8 do_edge_lod,
-                     GXAnisotropy max_aniso) {
-  u8 lbias;
-  u8 lmin;
-  u8 lmax;
-  __GXTexObjInt *t = (__GXTexObjInt *)obj;
-#else
 void GXInitTexObjLOD(GXTexObj *obj, GXTexFilter min_filt, GXTexFilter mag_filt, f32 min_lod, f32 max_lod, f32 lod_bias, u8 bias_clamp, u8 do_edge_lod, GXAnisotropy max_aniso)
 {
     u8 lbias;
     u8 lmin;
     u8 lmax;
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
-#endif
 
 #ifdef PRIME1
   if (lod_bias < -4.0f) {
@@ -649,16 +575,10 @@ void GXInitTexObjLOD(GXTexObj *obj, GXTexFilter min_filt, GXTexFilter mag_filt, 
 #endif
 }
 
-#ifdef PRIME1
-void GXInitTexObjData(GXTexObj *obj, const void *image_ptr) {
-  u32 imageBase;
-  __GXTexObjInt *t = (__GXTexObjInt *)obj;
-#else
 void GXInitTexObjData(GXTexObj *obj, const void *image_ptr)
 {
     u32 imageBase;
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
-#endif
 
 #ifdef PRIME1
   imageBase = ((u32)image_ptr >> 5) & 0x01FFFFFF;
@@ -672,14 +592,9 @@ void GXInitTexObjData(GXTexObj *obj, const void *image_ptr)
 #endif
 }
 
-#ifdef PRIME1
-void GXInitTexObjWrapMode(GXTexObj *obj, GXTexWrapMode sm, GXTexWrapMode tm) {
-  __GXTexObjInt *t = (__GXTexObjInt *)obj;
-#else
 void GXInitTexObjWrapMode(GXTexObj *obj, GXTexWrapMode sm, GXTexWrapMode tm)
 {
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
-#endif
 
 #ifdef PRIME1
   SET_REG_FIELD(t->mode0, 2, 0, sm);
@@ -1954,29 +1869,14 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0x900dc000);
 #endif
 
-#ifdef PRIME1
-    GX_WRITE_RAS_REG(0x8d0d8800);
-    GX_WRITE_RAS_REG(0x910dc800);
-#else
         GX_WRITE_RAS_REG(0x8d0d8800);
         GX_WRITE_RAS_REG(0x910dc800);
-#endif
 
-#ifdef PRIME1
-    GX_WRITE_RAS_REG(0x8e0d9000);
-    GX_WRITE_RAS_REG(0x920dd000);
-#else
         GX_WRITE_RAS_REG(0x8e0d9000);
         GX_WRITE_RAS_REG(0x920dd000);
-#endif
 
-#ifdef PRIME1
-    GX_WRITE_RAS_REG(0x8f0d9800);
-    GX_WRITE_RAS_REG(0x930dd800);
-#else
         GX_WRITE_RAS_REG(0x8f0d9800);
         GX_WRITE_RAS_REG(0x930dd800);
-#endif
 
 #ifdef PRIME1
     GX_WRITE_RAS_REG(0xac0da000);

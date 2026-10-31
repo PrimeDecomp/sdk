@@ -256,14 +256,9 @@ void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetDispCopyDst(u16 wd, u16 ht) {
-  u16 stride;
-#else
 void GXSetDispCopyDst(u16 wd, u16 ht)
 {
     u16 stride;
-#endif
 
 #ifdef PRIME1
   stride = (int)wd * 2;
@@ -281,14 +276,6 @@ void GXSetDispCopyDst(u16 wd, u16 ht)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap) {
-  u32 rowTiles;
-  u32 colTiles;
-  u32 cmpTiles;
-  u32 peTexFmt;
-  u32 peTexFmtH;
-#else
 void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap)
 {
     u32 rowTiles;
@@ -296,7 +283,6 @@ void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap)
     u32 cmpTiles;
     u32 peTexFmt;
     u32 peTexFmtH;
-#endif
 
 #ifdef PRIME1
   __GXData->cpTexZ = 0;
@@ -390,16 +376,10 @@ void GXSetDispCopyFrame2Field(GXCopyMode mode)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetCopyClamp(GXFBClamp clamp) {
-  u8 clmpB;
-  u8 clmpT;
-#else
 void GXSetCopyClamp(GXFBClamp clamp)
 {
     u8 clmpB;
     u8 clmpT;
-#endif
 
 #ifdef PRIME1
   clmpT = (clamp & GX_CLAMP_TOP) == 1;
@@ -429,29 +409,14 @@ void GXSetCopyClamp(GXFBClamp clamp)
 }
 
 static u32 __GXGetNumXfbLines(u32 efbHt, u32 iScale) {
-#ifdef PRIME1
-  u32 count;
-  u32 realHt;
-  u32 iScaleD;
-#else
     u32 count;
     u32 realHt;
     u32 iScaleD;
-#endif
 
-#ifdef PRIME1
-  count = (efbHt - 1) * 0x100;
-  realHt = (count / iScale) + 1;
-#else
     count = (efbHt - 1) * 0x100;
     realHt = (count / iScale) + 1;
-#endif
 
-#ifdef PRIME1
-  iScaleD = iScale;
-#else
     iScaleD = iScale;
-#endif
 
 #ifdef PRIME1
   if (iScaleD > 0x80 && iScaleD < 0x100) {
@@ -500,29 +465,16 @@ u16 GXGetNumXfbLines(u16 efbHeight, f32 yScale) {
     ASSERTMSGLINE(0x5CE, yScale >= 1.0f, "GXGetNumXfbLines: Vertical scale must be >= 1.0");
 #endif
 
-#ifdef PRIME1
-  iScale = (u32)(256.0f / yScale) & 0x1FF;
-  return __GXGetNumXfbLines(efbHeight, iScale);
-#else
     iScale = (u32)(256.0f / yScale) & 0x1FF;
     return __GXGetNumXfbLines(efbHeight, iScale);
-#endif
 }
 
 f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) {
-#ifdef PRIME1
-  f32 fScale;
-  f32 yScale;
-  u32 iScale;
-  u32 tgtHt;
-  u32 realHt;
-#else
     f32 fScale;
     f32 yScale;
     u32 iScale;
     u32 tgtHt;
     u32 realHt;
-#endif
 
 #ifdef PRIME1
   tgtHt = xfbHeight;
@@ -577,27 +529,15 @@ f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) {
     }
 #endif
 
-#ifdef PRIME1
-  return fScale;
-#else
     return fScale;
-#endif
 }
 
-#ifdef PRIME1
-u32 GXSetDispCopyYScale(f32 vscale) {
-  u8 enable;
-  u32 iScale;
-  u32 ht;
-  u32 reg;
-#else
 u32 GXSetDispCopyYScale(f32 vscale)
 {
     u8 enable;
     u32 iScale;
     u32 ht;
     u32 reg;
-#endif
 
 #ifdef PRIME1
   iScale = (u32)(256.0f / vscale) & 0x1FF;
@@ -632,14 +572,9 @@ u32 GXSetDispCopyYScale(f32 vscale)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetCopyClear(GXColor clear_clr, u32 clear_z) {
-  u32 reg;
-#else
 void GXSetCopyClear(GXColor clear_clr, u32 clear_z)
 {
     u32 reg;
-#endif
 
 #ifdef PRIME1
   reg = 0;
@@ -688,15 +623,9 @@ void GXSetCopyClear(GXColor clear_clr, u32 clear_z)
 }
 
 void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const u8 vfilter[7]) {
-#ifdef PRIME1
-  u32 msLoc[4];
-  u32 coeff0;
-  u32 coeff1;
-#else
     u32 msLoc[4];
     u32 coeff0;
     u32 coeff1;
-#endif
 
 #ifdef PRIME1
   if (aa != 0) {
@@ -984,20 +913,12 @@ void GXCopyDisp(void *dest, GXBool clear)
 #endif
 }
 
-#ifdef PRIME1
-void GXCopyTex(void *dest, GXBool clear) {
-  u32 reg;
-  u32 tempPeCtrl;
-  u32 phyAddr;
-  u8 changePeCtrl;
-#else
 void GXCopyTex(void *dest, GXBool clear)
 {
     u32 reg;
     u32 tempPeCtrl;
     u32 phyAddr;
     u8 changePeCtrl;
-#endif
 
 #ifdef PRIME1
   if (clear) {
@@ -1110,14 +1031,9 @@ void GXCopyTex(void *dest, GXBool clear)
 #endif
 }
 
-#ifdef PRIME1
-void GXClearBoundingBox(void) {
-  u32 reg;
-#else
 void GXClearBoundingBox(void)
 {
     u32 reg;
-#endif
 
 #ifdef PRIME1
   reg = 0x550003FF;

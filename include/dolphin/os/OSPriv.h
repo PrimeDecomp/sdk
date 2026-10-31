@@ -8,9 +8,7 @@ extern "C" {
 #endif
 
 __OSExceptionHandler __OSGetExceptionHandler(__OSException exception);
-#ifndef PRIME1
 extern OSTime __OSStartTime;
-#endif
 OSTime __OSGetSystemTime();
 OSTime __OSTimeToSystemTime(OSTime);
 

@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include "errno.h"
 #include "stdio.h"
 #include "string.h"

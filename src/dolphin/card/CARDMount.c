@@ -5,10 +5,8 @@
 
 #include <dolphin/CARDPriv.h>
 #include <dolphin/OSRtcPriv.h>
-#ifdef PRIME1
 
 void __CARDSyncCallback(s32 chan, s32 result);
-#endif
 
 u8 GameChoice : (OS_BASE_CACHED | 0x000030E3);
 
@@ -134,9 +132,7 @@ s32 CARDProbeEx(s32 chan, s32* memSize, s32* sectorSize) {
   return result;
 }
 
-#ifndef PRIME1
 #line 389
-#endif
 static s32 DoMount(s32 chan) {
   CARDControl* card;
   u32 id;
@@ -154,32 +150,14 @@ static s32 DoMount(s32 chan) {
   card = &__CARDBlock[chan];
 
   if (card->mountStep == 0) {
-#ifndef PRIME1
-
-#endif
     if (EXIGetID(chan, 0, &id) == 0) {
-#ifndef PRIME1
-
-#endif
       result = CARD_RESULT_NOCARD;
     } else if (IsCard(id)) {
-#ifndef PRIME1
-
-#endif
       result = CARD_RESULT_READY;
     } else {
-#ifndef PRIME1
-
-#endif
       result = CARD_RESULT_WRONGDEVICE;
     }
-#ifndef PRIME1
-
-#endif
     if (result < 0) {
-#ifndef PRIME1
-
-#endif
       goto error;
     }
 
@@ -299,9 +277,7 @@ error:
   return result;
 }
 
-#ifndef PRIME1
 #line 566
-#endif
 void __CARDMountCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
@@ -341,13 +317,7 @@ void __CARDMountCallback(s32 chan, s32 result) {
   }
 
   callback = card->apiCallback;
-#ifndef PRIME1
-
-#endif
   card->apiCallback = 0;
-#ifndef PRIME1
-
-#endif
   __CARDPutControlBlock(card, result);
 #ifndef PRIME1
 #line 620
@@ -357,9 +327,7 @@ void __CARDMountCallback(s32 chan, s32 result) {
   callback(chan, result);
 }
 
-#ifndef PRIME1
 #line 647
-#endif
 s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback,
                    CARDCallback attachCallback) {
   CARDControl* card;
@@ -443,9 +411,7 @@ s32 CARDMount(s32 chan, void* workArea, CARDCallback detachCallback) {
 #endif
 }
 
-#ifndef PRIME1
 #line 754
-#endif
 static void DoUnmount(s32 chan, s32 result) {
   CARDControl* card;
   BOOL enabled;
@@ -466,9 +432,7 @@ static void DoUnmount(s32 chan, s32 result) {
   OSRestoreInterrupts(enabled);
 }
 
-#ifndef PRIME1
 #line 789
-#endif
 s32 CARDUnmount(s32 chan) {
   CARDControl* card;
   s32 result;

@@ -5,9 +5,7 @@
 
 #include <dolphin/CARDPriv.h>
 
-#ifndef PRIME1
 #line 90
-#endif
 static void CreateCallbackFat(s32 chan, s32 result) {
   CARDControl* card;
   CARDDir* dir;
@@ -23,9 +21,6 @@ static void CreateCallbackFat(s32 chan, s32 result) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[card->freeNo];
-#ifndef PRIME1
-
-#endif
   memcpy(ent->gameName, card->diskID->gameName, sizeof(ent->gameName));
   memcpy(ent->company, card->diskID->company, sizeof(ent->company));
   ent->permission = CARD_ATTR_PUBLIC;
@@ -61,9 +56,7 @@ error:
   }
 }
 
-#ifndef PRIME1
 #line 165
-#endif
 s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* fileInfo,
                     CARDCallback callback) {
   CARDControl* card;
@@ -88,13 +81,7 @@ s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* file
   }
 
   result = __CARDGetControlBlock(chan, &card);
-#ifndef PRIME1
-
-#endif
   if (result < 0) {
-#ifndef PRIME1
-  
-#endif
     return result;
   }
 

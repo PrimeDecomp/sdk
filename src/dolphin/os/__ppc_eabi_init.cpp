@@ -11,9 +11,7 @@
 extern "C" {
 #endif
 void __OSPSInit();
-#ifndef PRIME1
 void __OSFPRInit();
-#endif
 void __OSCacheInit();
 
 asm void __init_hardware(void) {

@@ -102,10 +102,8 @@ typedef struct CARDID {
   u16 checkSumInv;
 } CARDID;
 
-#ifdef PRIME1
 void __CARDDefaultApiCallback(s32 chan, s32 result);
 
-#endif
 #define CARDIsValidBlockNo(card, iBlock)                                                           \
   (CARD_NUM_SYSTEM_BLOCK <= (iBlock) && (iBlock) < (card)->cBlock)
 #define __CARDGetDirCheck(dir) ((CARDDirCheck*)&(dir)[CARD_MAX_FILE])
@@ -133,11 +131,9 @@ void __CARDSyncCallback(s32 chan, s32 result);
 extern CARDControl __CARDBlock[2];
 extern DVDDiskID __CARDDiskNone;
 extern u16 __CARDVendorID;
-#ifndef PRIME1
 extern u8 __CARDPermMask;
 #ifdef _DEBUG
 extern u32 __CARDFreq;
-#endif
 #endif
 
 #ifndef PRIME1

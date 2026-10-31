@@ -814,11 +814,7 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
   }
 #endif
 
-#ifdef PRIME1
-  return size;
-#else
     return size;
-#endif
 }
 
 #ifdef PRIME1

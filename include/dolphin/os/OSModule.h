@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_OSMODULE
 #define _DOLPHIN_OSMODULE
-#ifdef PRIME1
 
 #include "GameVersions.h"
-#endif
 
 #include <dolphin/types.h>
 

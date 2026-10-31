@@ -3,9 +3,7 @@
 
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/types.h>
-#ifdef PRIME1
 #include <dolphin/vitypes.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -119,18 +117,10 @@ typedef struct _GXFogAdjTable {
 
 #endif
 typedef struct _GXVtxAttrFmtList {
-#ifdef PRIME1
-  // total size: 0x10
-  GXAttr attr;     // offset 0x0, size 0x4
-  GXCompCnt cnt;   // offset 0x4, size 0x4
-  GXCompType type; // offset 0x8, size 0x4
-  u8 frac;         // offset 0xC, size 0x1
-#else
   GXAttr attr;
   GXCompCnt cnt;
   GXCompType type;
   u8 frac;
-#endif
 } GXVtxAttrFmtList;
 
 #ifdef __cplusplus

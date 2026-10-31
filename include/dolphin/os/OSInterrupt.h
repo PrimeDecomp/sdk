@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_OSINTERRUPT
 #define _DOLPHIN_OSINTERRUPT
 
-#ifndef PRIME1
 #include <GameVersions.h>
-#endif
 #include <dolphin/os/OSContext.h>
 #include <dolphin/types.h>
 

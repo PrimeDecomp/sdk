@@ -39,9 +39,7 @@ error:
   }
 }
 
-#ifndef PRIME1
 #line 88
-#endif
 s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
 #ifndef PRIME1
@@ -106,14 +104,9 @@ error:
   }
 }
 
-#ifndef PRIME1
 #line 149
-#endif
 s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
-#ifndef PRIME1
-
-#endif
   card = &__CARDBlock[chan];
 #ifndef PRIME1
   ASSERT(0 < length && length % card->pageSize == 0);

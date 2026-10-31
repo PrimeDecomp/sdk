@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include <dolphin/os.h>
 
 #define TRUNC(n, a) (((u32)(n)) & ~((a)-1))

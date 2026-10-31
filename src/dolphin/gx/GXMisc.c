@@ -217,16 +217,10 @@ void GXAbortFrame(void)
 #endif
 }
 
-#ifdef PRIME1
-void GXSetDrawSync(u16 token) {
-  BOOL enabled;
-  u32 reg;
-#else
 void GXSetDrawSync(u16 token)
 {
     BOOL enabled;
     u32 reg;
-#endif
 
 #ifdef PRIME1
   enabled = OSDisableInterrupts();
@@ -253,28 +247,16 @@ void GXSetDrawSync(u16 token)
 #endif
 }
 
-#ifdef PRIME1
-u16 GXReadDrawSync(void) {
-  u16 token = GX_GET_PE_REG(7);
-  return token;
-#else
 u16 GXReadDrawSync(void)
 {
     u16 token = GX_GET_PE_REG(7);
     return token;
-#endif
 }
 
-#ifdef PRIME1
-void GXSetDrawDone(void) {
-  u32 reg;
-  BOOL enabled;
-#else
 void GXSetDrawDone(void)
 {
     u32 reg;
     BOOL enabled;
-#endif
 
 #ifdef PRIME1
   enabled = OSDisableInterrupts();

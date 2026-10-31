@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_OSEXPANSION
 #define _DOLPHIN_OSEXPANSION
 
-#ifndef PRIME1
 #include <GameVersions.h>
-#endif
 #include <dolphin/os.h>
 #include <dolphin/types.h>
 

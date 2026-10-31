@@ -58,9 +58,6 @@ static u32 Spec = PAD_SPEC_5;
 #endif
 
 static BOOL Initialized;
-#ifdef PRIME1
-
-#endif
 static u32 EnabledBits;
 static u32 ResettingBits;
 #ifdef PRIME1
@@ -179,9 +176,6 @@ static void PADDisable(s32 chan) {
   u32 chanBit;
 
   enabled = OSDisableInterrupts();
-#ifdef PRIME1
-
-#endif
   chanBit = PAD_CHAN0_BIT >> chan;
   SIDisablePolling(chanBit);
   EnabledBits &= ~chanBit;
@@ -192,9 +186,6 @@ static void PADDisable(s32 chan) {
   BarrelBits &= ~chanBit;
 #endif
   OSSetWirelessID(chan, 0);
-#ifdef PRIME1
-
-#endif
   OSRestoreInterrupts(enabled);
 }
 
@@ -289,9 +280,6 @@ static void PADOriginCallback(s32 chan, u32 error, OSContext* context) {
     UpdateOrigin(ResettingChan);
     PADEnable(ResettingChan);
   }
-#ifndef PRIME1
-
-#endif
   DoReset();
 }
 
@@ -338,9 +326,6 @@ static void PADProbeCallback(s32 chan, u32 error, OSContext* context) {
     PADEnable(ResettingChan);
     WaitingBits |= PAD_CHAN0_BIT >> ResettingChan;
   }
-#ifndef PRIME1
-
-#endif
   DoReset();
 }
 
@@ -371,9 +356,6 @@ static void PADTypeAndStatusCallback(s32 chan, u32 type) {
   }
 
   type &= ~0xFF;
-#ifdef PRIME1
-
-#endif
   Type[ResettingChan] = type;
 
   if ((type & SI_TYPE_MASK) != SI_TYPE_GC || !(type & SI_GC_STANDARD)) {
@@ -405,9 +387,6 @@ static void PADTypeAndStatusCallback(s32 chan, u32 type) {
                       PADProbeCallback, 0);
     }
   }
-#ifndef PRIME1
-
-#endif
   if (!rc) {
     PendingBits |= chanBit;
     DoReset();
@@ -435,13 +414,8 @@ static void PADReceiveCheckCallback(s32 chan, u32 type) {
     type &= ~0xFF;
 #endif
 
-#ifdef PRIME1
-  WaitingBits &= ~chanBit;
-  CheckingBits &= ~chanBit;
-#else
     WaitingBits &= ~chanBit;
     CheckingBits &= ~chanBit;
-#endif
 
 #ifdef PRIME1
   if (!(error &
@@ -481,9 +455,6 @@ int PADReset(u32 mask) {
 #endif
 
   enabled = OSDisableInterrupts();
-#ifdef PRIME1
-
-#endif
   mask |= PendingBits;
   PendingBits = 0;
   mask &= ~(WaitingBits | CheckingBits);
@@ -519,9 +490,6 @@ int PADReset(u32 mask) {
 #endif
     DoReset();
   }
-#ifndef PRIME1
-
-#endif
   OSRestoreInterrupts(enabled);
 #ifdef PRIME1
   return TRUE;
@@ -609,16 +577,9 @@ BOOL PADInit() {
 
   if (__PADFixBits != 0) {
     OSTime time = OSGetTime();
-#ifdef PRIME1
-    __OSWirelessPadFixMode = (u16)((((time)&0xffff) + ((time >> 16) & 0xffff) +
-#else
     __OSWirelessPadFixMode = (u16)((((time) & 0xffff) + ((time >> 16) & 0xffff) +
-#endif
                                     ((time >> 32) & 0xffff) + ((time >> 48) & 0xffff)) &
                                    0x3fffu);
-#ifndef PRIME1
-
-#endif
     RecalibrateBits = PAD_CHAN0_BIT | PAD_CHAN1_BIT | PAD_CHAN2_BIT | PAD_CHAN3_BIT;
   }
 
@@ -860,9 +821,6 @@ void PADControlAllMotors(const u32* commandArray) {
 
   enabled = OSDisableInterrupts();
   commit = FALSE;
-#ifndef PRIME1
-
-#endif
   for (chan = 0; chan < SI_MAX_CHAN; chan++, commandArray++) {
     chanBit = PAD_CHAN0_BIT >> chan;
 #ifdef PRIME1
@@ -931,9 +889,6 @@ void PADControlMotor(s32 chan, u32 command) {
     SISetCommand(chan, (0x40 << 16) | AnalogMode | (command & (0x00000001 | 0x00000002)));
     SITransferCommands();
   }
-#ifndef PRIME1
-
-#endif
   OSRestoreInterrupts(enabled);
 }
 
@@ -942,9 +897,6 @@ void PADSetSpec(u32 spec) {
   ASSERT(!Initialized);
 #endif
   __PADSpec = 0;
-#ifndef PRIME1
-
-#endif
   switch (spec) {
   case PAD_SPEC_0:
     MakeStatus = SPEC0_MakeStatus;
@@ -1002,9 +954,6 @@ static void SPEC0_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
 }
 
 static void SPEC1_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
-#ifdef PRIME1
-
-#endif
   status->button = 0;
   status->button |= ((data[0] >> 16) & 0x0080) ? PAD_BUTTON_A : 0;
   status->button |= ((data[0] >> 16) & 0x0100) ? PAD_BUTTON_B : 0;
@@ -1294,9 +1243,6 @@ PADSamplingCallback PADSetSamplingCallback(PADSamplingCallback callback) {
   } else {
     SIUnregisterPollingHandler(SamplingHandler);
   }
-#ifndef PRIME1
-
-#endif
   return prev;
 }
 

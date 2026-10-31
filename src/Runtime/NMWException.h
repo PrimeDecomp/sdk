@@ -35,6 +35,9 @@ typedef struct CatchInfo {
   long pointercopy;
   void* stacktop;
 } CatchInfo;
+
+void __end__catch(CatchInfo* catchinfo);
+void __unexpected(CatchInfo* catchinfo);
 #endif
 
 typedef struct DestructorChain {
@@ -42,13 +45,9 @@ typedef struct DestructorChain {
   void* destructor;
   void* object;
 } DestructorChain;
-#ifndef PRIME1
 
-void __end__catch(CatchInfo* catchinfo);
 void __throw(char* throwtype, void* location, void* dtor);
 char __throw_catch_compare(const char* throwtype, const char* catchtype, long* offset_result);
-void __unexpected(CatchInfo* catchinfo);
-#endif
 
 void __unregister_fragment(int fragmentID);
 int __register_fragment(struct __eti_init_info* info, char* TOC);

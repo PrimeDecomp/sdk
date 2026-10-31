@@ -1,8 +1,6 @@
 #include <dolphin/OSRtcPriv.h>
 #include <dolphin/os.h>
-#ifdef PRIME1
 #include <dolphin/si.h>
-#endif
 #include <dolphin/sipriv.h>
 #ifndef PRIME1
 

@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include <ansi_files.h>
 #ifndef PRIME1
 #include <critical_regions.h>
@@ -90,13 +88,7 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
         file->buffer_ptr += num_bytes;
         file->buffer_len -= num_bytes;
       }
-#ifdef PRIME1
-      if (!file->buffer_len || newline != NULL ||
-          (file->mode.buffer_mode == _IONBF))
-      {
-#else
       if (!file->buffer_len || newline != NULL || (file->mode.buffer_mode == _IONBF)) {
-#endif
         ioresult = __flush_buffer(file, NULL);
 
         if (ioresult) {

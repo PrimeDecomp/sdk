@@ -10,9 +10,7 @@
 
 #define __CARDGetDirCheck(dir) ((CARDDirCheck*)&(dir)[CARD_MAX_FILE])
 
-#ifndef PRIME1
 #line 78
-#endif
 void __CARDCheckSum(void* ptr, int length, u16* checksum, u16* checksumInv) {
   u16* p;
   int i;
@@ -170,26 +168,18 @@ static s32 VerifyFAT(CARDControl* card, int* outCurrent) {
   return errors;
 }
 
-#ifndef PRIME1
 #line 286
-#endif
 s32 __CARDVerify(CARDControl* card) {
   s32 result;
   int errors;
 
   result = VerifyID(card);
   if (result < 0) {
-#ifndef PRIME1
-
-#endif
     return result;
   }
 
   errors = VerifyDir(card, NULL);
   errors += VerifyFAT(card, NULL);
-#ifndef PRIME1
-
-#endif
   switch (errors) {
   case 0:
 #ifndef PRIME1
@@ -204,9 +194,7 @@ s32 __CARDVerify(CARDControl* card) {
   }
 }
 
-#ifndef PRIME1
 #line 329
-#endif
 s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir[2];
@@ -233,24 +221,12 @@ s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
   }
 
   result = __CARDGetControlBlock(chan, &card);
-#ifndef PRIME1
-
-#endif
   if (result < 0) {
-#ifndef PRIME1
-
-#endif
     return result;
   }
 
   result = VerifyID(card);
-#ifndef PRIME1
-
-#endif
   if (result < 0) {
-#ifndef PRIME1
-
-#endif
     return __CARDPutControlBlock(card, result);
   }
 

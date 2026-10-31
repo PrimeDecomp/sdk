@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include <GameVersions.h>
-#endif
 #include "dolphin/dsp.h"
 #include "dolphin/hw_regs.h"
 

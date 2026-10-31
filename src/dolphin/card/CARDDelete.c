@@ -30,9 +30,7 @@ error:
   }
 }
 
-#ifndef PRIME1
 #line 127
-#endif
 s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
   CARDControl* card;
   CARDDir* dir;
@@ -47,9 +45,6 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
   if (fileNo < 0 || CARD_MAX_FILE <= fileNo) {
     return CARD_RESULT_FATAL_ERROR;
   }
-#ifndef PRIME1
-  
-#endif
   result = __CARDGetControlBlock(chan, &card);
   if (result < 0) {
     return result;

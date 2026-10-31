@@ -1,7 +1,5 @@
 #include "string.h"
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 
 #ifdef PRIME1
 size_t strlen(const char* str) {

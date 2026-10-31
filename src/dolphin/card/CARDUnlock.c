@@ -123,9 +123,7 @@ static u32 bitrev(u32 data) {
 #define SEC_AD3(x) ((u8)(((x) >> 19) & 0x03))
 #define SEC_BA(x) ((u8)(((x) >> 12) & 0x7f))
 
-#ifndef PRIME1
 #line 235
-#endif
 static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 rlen, s32 mode) {
   CARDControl* card;
   BOOL err;
@@ -341,9 +339,7 @@ s32 __CARDUnlock(s32 chan, u8 flashID[12]) {
   return CARD_RESULT_READY;
 }
 
-#ifndef PRIME1
 #line 495
-#endif
 static void InitCallback(void* _task) {
   s32 chan;
   CARDControl* card;
@@ -351,16 +347,11 @@ static void InitCallback(void* _task) {
   DecodeParameters* param;
 
   task = _task;
-#ifndef PRIME1
-  
-#endif
   for (chan = 0; chan < 2; ++chan) {
-#ifndef PRIME1
     /*
     
     
     */
-#endif
     card = &__CARDBlock[chan];
     if ((DSPTaskInfo*)&card->task == task) {
       break;
@@ -381,9 +372,7 @@ static void InitCallback(void* _task) {
     ;
 }
 
-#ifndef PRIME1
 #line 531
-#endif
 static void DoneCallback(void* _task) {
   u8 rbuf[64];
   u32 data;
@@ -405,13 +394,11 @@ static void DoneCallback(void* _task) {
   u8* output;
   task = _task;
   for (chan = 0; chan < 2; ++chan) {
-#ifndef PRIME1
     /*
     
     
     
     */
-#endif
     card = &__CARDBlock[chan];
     if ((DSPTaskInfo*)&card->task == task) {
       break;

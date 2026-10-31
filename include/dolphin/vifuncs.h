@@ -1,9 +1,7 @@
 #ifndef _DOLPHIN_VIFUNCS
 #define _DOLPHIN_VIFUNCS
-#ifndef PRIME1
 
 #include "GameVersions.h"
-#endif
 
 #include <dolphin/types.h>
 
@@ -16,12 +14,11 @@ extern "C" {
 u32 VIGetNextField(void);
 VIRetraceCallback VISetPreRetraceCallback(VIRetraceCallback callback);
 VIRetraceCallback VISetPostRetraceCallback(VIRetraceCallback callback);
-#ifdef PRIME1
 void __VIGetCurrentPosition(s16* x, s16* y);
-#endif
 u32 VIGetDTVStatus(void);
-#ifndef PRIME1
 
+// These use types that only the SDK vitypes.h defines
+#ifndef PRIME1
 #if VERSION >= VERSION_R32J01
 BOOL VIEnableDimming(BOOL enable);
 VITimeToDIM VISetTimeToDimming(VITimeToDIM time);

@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include <GameVersions.h>
-#endif
 #include "dolphin/dsp.h"
 #include "dolphin/os.h"
 
@@ -31,10 +29,8 @@ extern DSPTaskInfo* __DSP_tmp_task;
 extern DSPTaskInfo* __DSP_last_task;
 extern DSPTaskInfo* __DSP_first_task;
 extern DSPTaskInfo* __DSP_curr_task;
-#ifndef PRIME1
 extern DSPTaskInfo* __DSP_rude_task;
 extern BOOL __DSP_rude_task_pending;
-#endif
 
 extern void __DSPHandler(__OSInterrupt, OSContext*);
 extern void __DSP_debug_printf(const char* fmt, ...);

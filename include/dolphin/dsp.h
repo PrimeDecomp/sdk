@@ -2,9 +2,7 @@
 #define _DOLPHIN_DSP
 
 #include "types.h"
-#ifndef PRIME1
 #include <GameVersions.h>
-#endif
 #include <dolphin/os.h>
 
 #ifdef __cplusplus
@@ -59,12 +57,10 @@ u32 DSPCheckMailFromDSP();
 u32 DSPGetDMAStatus();
 
 DSPTaskInfo* DSPAddTask(DSPTaskInfo* task);
-#ifndef PRIME1
 DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task);
 #if VERSION >= VERSION_R32J01
 BOOL DSPCheckInit(void);
 DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task);
-#endif
 #endif
 
 void __DSP_exec_task(DSPTaskInfo* curr, DSPTaskInfo* next);

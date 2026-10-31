@@ -1,8 +1,4 @@
 #include "NMWException.h"
-#ifdef PRIME1
-
-
-#endif
 
 DestructorChain* __global_destructor_chain;
 
@@ -15,27 +11,16 @@ void* __register_global_object(void* object, void* destructor, void* regmem) {
   ((DestructorChain*)regmem)->destructor = destructor;
   ((DestructorChain*)regmem)->object = object;
   __global_destructor_chain = (DestructorChain*)regmem;
-#ifdef PRIME1
-
-#endif
   return object;
 }
 
 void __destroy_global_chain(void) {
   DestructorChain* iter;
 
-#ifdef PRIME1
-  while ((iter=__global_destructor_chain) !=  0) {
-#else
   while ((iter = __global_destructor_chain) != 0) {
-#endif
     __global_destructor_chain = iter->next;
     DTORCALL_COMPLETE(iter->destructor, iter->object);
-#ifdef PRIME1
-  } 
-#else
   }
-#endif
 }
 
 #ifdef PRIME1

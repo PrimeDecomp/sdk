@@ -2,9 +2,7 @@
 #define _DOLPHIN_GXPIXEL
 
 #include <dolphin/gx/GXEnum.h>
-#ifdef PRIME1
 #include <dolphin/gx/GXStruct.h>
-#endif
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,7 +1,5 @@
-#ifdef PRIME1
 #include "GameVersions.h"
 
-#endif
 #include "dolphin/os.h"
 
 #define EXI_TX 0x800400u

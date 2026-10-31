@@ -1,6 +1,4 @@
-#ifndef PRIME1
 #include "GameVersions.h"
-#endif
 #include "dolphin/os/OSPriv.h"
 
 static vu32 RunQueueBits;
@@ -21,11 +19,9 @@ volatile OSContext* __OSFPUContext : OS_BASE_CACHED + 0x00D8;
 
 static void DefaultSwitchThreadCallback(OSThread* from, OSThread* to) {}
 
-#ifndef PRIME1
 extern void __OSUnlockAllMutex(OSThread* thread);
 extern OSErrorHandler __OSErrorTable[];
 extern u32 __OSFpscrEnableBits;
-#endif
 extern u8 _stack_addr[];
 extern u8 _stack_end[];
 

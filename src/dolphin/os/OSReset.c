@@ -1,8 +1,6 @@
 #include "dolphin/OSRtcPriv.h"
-#ifndef PRIME1
 #include "dolphin/dvd.h"
 #include "dolphin/os/OSBootInfo.h"
-#endif
 #include "dolphin/os.h"
 #include "dolphin/vi.h"
 #include "dolphin/hw_regs.h"

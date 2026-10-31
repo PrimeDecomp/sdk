@@ -11,14 +11,9 @@
 #include <dolphin/gx/__gx.h>
 #endif
 
-#ifdef PRIME1
-void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1) {
-  u32 reg;
-#else
 void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
 {
     u32 reg;
-#endif
 
 #ifdef PRIME1
   switch (__GXData->perf0) {
