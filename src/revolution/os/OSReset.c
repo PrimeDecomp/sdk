@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/OSRtcPriv.h>
 #include <dolphin/hw_regs.h>
 #include <dolphin/pad.h>
@@ -131,7 +132,7 @@ void __OSShutdownDevices(u32 event) {
     KillThreads();
 }
 
-#if (VERSION == RMGJ01 || VERSION == RMGE01 || VERSION == RMGP01)
+#if (SDK_VERSION == SDK_VERSION_RMGJ01 || SDK_VERSION == SDK_VERSION_RMGE01 || SDK_VERSION == SDK_VERSION_RMGP01)
 u8 __OSGetDiscState(u8 last) {
     u32 flags;
 
@@ -227,7 +228,7 @@ void OSRestart(u32 resetCode) {
     if (type == 0x81) {
         OSDisableScheduler();
         __OSShutdownDevices(4);
-#if (VERSION == RMGJ01)
+#if (SDK_VERSION == SDK_VERSION_RMGJ01)
         resetCode = OSEnableScheduler();
 #else
         OSEnableScheduler();

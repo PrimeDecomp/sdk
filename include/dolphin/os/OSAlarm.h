@@ -1,7 +1,8 @@
 #ifndef _DOLPHIN_OSALARM
 #define _DOLPHIN_OSALARM
 
-#include <GameVersions.h>
+#include <SDKVersion.h>
+
 #include <dolphin/os/OSContext.h>
 #include <types.h>
 
@@ -20,7 +21,7 @@ struct OSAlarm {
   OSAlarm* next;
   OSTime period;
   OSTime start;
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   void* userData;
 #endif
 };
@@ -33,7 +34,7 @@ void OSSetPeriodicAlarm(OSAlarm* alarm, OSTime start, OSTime period, OSAlarmHand
 void OSCreateAlarm(OSAlarm* alarm);
 void OSCancelAlarm(OSAlarm* alarm);
 void OSCancelAlarms(u32 tag);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 void OSSetAlarmUserData(OSAlarm* alarm, void* userData);
 void* OSGetAlarmUserData(const OSAlarm* alarm);
 #endif

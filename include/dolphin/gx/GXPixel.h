@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_GXPIXEL
 #define _DOLPHIN_GXPIXEL
 
+#include <SDKVersion.h>
+
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/gx/GXStruct.h>
 
@@ -10,7 +12,7 @@ extern "C" {
 
 void GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color);
 void GXSetFogColor(GXColor color);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetFogRangeAdj(GXBool enable, u16 center, const GXFogAdjTable* table);
 #else
 // ? GXSetFogRangeAdj();
@@ -25,7 +27,7 @@ void GXSetPixelFmt(GXPixelFmt pix_fmt, GXZFmt16 z_fmt);
 void GXSetDither(GXBool dither);
 void GXSetDstAlpha(GXBool enable, u8 alpha);
 void GXSetFieldMask(GXBool odd_mask, GXBool even_mask);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetFieldMode(u8 field_mode, u8 half_aspect_ratio);
 #else
 void GXSetFieldMode(GXBool field_mode, GXBool half_aspect_ratio);

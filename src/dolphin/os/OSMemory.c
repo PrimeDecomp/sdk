@@ -1,4 +1,4 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include <dolphin/os.h>
 
 #define TRUNC(n, a) (((u32)(n)) & ~((a)-1))
@@ -7,7 +7,7 @@
 vu16 __MEMRegs[64] : 0xCC004000;
 extern OSErrorHandler __OSErrorTable[16];
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static BOOL OnReset(BOOL final);
 
 static OSResetFunctionInfo ResetFunctionInfo = {
@@ -27,7 +27,7 @@ u32 OSGetPhysicalMemSize() { return *(u32*)(OSPhysicalToCached(0x0028)); }
 
 u32 OSGetConsoleSimulatedMemSize() { return *(u32*)(OSPhysicalToCached(0x00F0)); }
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static BOOL OnShutdown(BOOL final, u32 event);
 
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {
@@ -220,8 +220,8 @@ static asm void Config48MB() {
   // clang-format on
 }
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static asm void ConfigMEM2_52MB() {
     // clang-format off
     nofralloc
@@ -553,7 +553,7 @@ static asm void RealMode(register u32 addr) {
   // clang-format on
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __OSInitMemoryProtection() {
   u32 padding[8];
   u32 simulatedSize;
@@ -587,7 +587,7 @@ void __OSInitMemoryProtection() {
   OSRestoreInterrupts(enabled);
 }
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static void BATConfig(void) {
   u32 mem1sim;
   u32 mem1phys;

@@ -1,7 +1,8 @@
 #ifndef _DOLPHIN_VITYPES
 #define _DOLPHIN_VITYPES
 
-#include "GameVersions.h"
+#include <SDKVersion.h>
+
 
 #include <dolphin/types.h>
 
@@ -9,7 +10,7 @@
 extern "C" {
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #define VI_INTERLACE 0
 #define VI_NON_INTERLACE 1
 #define VI_PROGRESSIVE 2
@@ -18,7 +19,7 @@ extern "C" {
 typedef void (*VIRetraceCallback)(u32 retraceCount);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #define VI_NTSC 0
 #define VI_PAL 1
 #define VI_MPAL 2
@@ -130,7 +131,7 @@ typedef struct VIPositionInfo {
   VITimingInfo* timing; // _54
 } VIPositionInfo;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 #define VI_TVMODE_PAL_PROG ((VITVMode)6)
 
 typedef u8 VIBool;

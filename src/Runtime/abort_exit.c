@@ -1,4 +1,5 @@
-#ifndef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <critical_regions.h>
 #include <signal.h>
 #endif
@@ -16,7 +17,7 @@ int __aborting;
 
 static void (*__atexit_funcs[64])(void);
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 void abort(void) {
   raise(SIGABRT);
   __aborting = 1;
@@ -38,7 +39,7 @@ void exit(int status) {
   void (**dtor)(void);
 
   if (!__aborting) {
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
     __begin_critical_region(atexit_funcs_access);
     __end_critical_region(atexit_funcs_access);
 #endif
@@ -53,12 +54,12 @@ void exit(int status) {
       __stdio_exit = NULL;
     }
   }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __begin_critical_region(atexit_funcs_access);
 #endif
   while (__atexit_curr_func > 0)
     __atexit_funcs[--__atexit_curr_func]();
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __end_critical_region(atexit_funcs_access);
   __kill_critical_regions();
 #endif

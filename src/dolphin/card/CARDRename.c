@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/card.h>
 #include <dolphin/dsp.h>
 #include <dolphin/dvd.h>
@@ -14,7 +15,7 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   int fileNo;
   int newNo;
   int oldNo;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
   ASSERT(0 <= chan && chan < 2);
   ASSERT(*old != 0xff && *new != 0xff);
@@ -61,7 +62,7 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   }
 
   ent = &dir[oldNo];
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   result = __CARDAccess(card, ent);
 #else
   result = __CARDIsWritable(card, ent);
@@ -80,7 +81,7 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   return result;
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 s32 CARDRename(s32 chan, const char* old, const char* new) {
   s32 result;
   result = CARDRenameAsync(chan,  old, new, __CARDSyncCallback);

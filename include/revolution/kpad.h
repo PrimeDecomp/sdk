@@ -1,8 +1,9 @@
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifndef _REVOLUTION_KPAD
 #define _REVOLUTION_KPAD
 
-#include "GameVersions.h"
+#include <SDKVersion.h>
+
 
 #include <dolphin/mtx/GeoTypes.h>
 #include <revolution/wpad.h>
@@ -34,14 +35,6 @@ typedef union KPADEXStatus {
     f32 ltrigger;
     f32 rtrigger;
   } cl;
-#if VERSION >= VERSION_R3MP_00
-  struct {
-    f64 tgc_weight;
-    f64 weight[4];
-    f64 weight_ave[4];
-    s32 weight_err;
-  } bl;
-#endif
 } KPADEXStatus;
 
 // PAL's balance-board extension grows the US/Japanese 0x84-byte status to 0xb0.

@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include "dolphin/DVDPriv.h"
 #include "dolphin/gx/GXStruct.h"
 #include "dolphin/os.h"
@@ -20,7 +21,7 @@ const char* const Europe[] = {
     // English
     "\n\n\nAn error has occurred."
     "\nTurn the power off and refer to the"
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     "\nNintendo GameCube""\x99"" Instruction Booklet"
 #else
     "\nNintendo GameCube Instruction Booklet"
@@ -29,7 +30,7 @@ const char* const Europe[] = {
 
     // German
     "\n\n\nEin Fehler ist aufgetreten."
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     "\nBitte schalten Sie den NINTENDO GAMECUBE"
 #else
     "\nBitte schalten Sie den Nintendo GameCube"
@@ -40,7 +41,7 @@ const char* const Europe[] = {
     // French
     "\n\n\nUne erreur est survenue."
     "\nEteignez la console et r" "\xe9" "f" "\xe9" "rez-vous au"
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     "\nmanuel d'instructions NINTENDO GAMECUBE"
 #else
     "\nmanuel d'instructions Nintendo GameCube"
@@ -50,7 +51,7 @@ const char* const Europe[] = {
     // Spanish
     "\n\n\nSe ha producido un error."
     "\nApaga la consola y consulta el manual"
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     "\nde instrucciones de NINTENDO GAMECUBE"
 #else
     "\nde instrucciones de Nintendo GameCube"
@@ -60,7 +61,7 @@ const char* const Europe[] = {
     // Italian
     "\n\n\nSi \xe8 verificato un errore."
     "\nSpegni (OFF) e controlla il manuale"
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     "\nd'istruzioni del NINTENDO GAMECUBE"
 #else
     "\nd'istruzioni del Nintendo GameCube"
@@ -69,7 +70,7 @@ const char* const Europe[] = {
 
     // Dutch
     "\n\n\nEr is een fout opgetreden."
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     "\nZet de NINTENDO GAMECUBE uit en"
 #else
     "\nZet de Nintendo GameCube uit en"

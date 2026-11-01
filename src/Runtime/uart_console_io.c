@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include "console_io.h"
 #include <dolphin/os.h>
 
@@ -19,7 +20,7 @@ static inline int __init_uart_console(void) {
 }
 int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
                     __idle_proc idle_proc) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (__init_uart_console() != 0) {
     return 1;
   }
@@ -30,7 +31,7 @@ int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (WriteUARTN(buffer, *count) != 0) {
     *count = 0;
     return 1;
@@ -46,7 +47,7 @@ int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
   return 0;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 int __close_console() { return 0; }
 #else
 int __close_console(__file_handle handle) { return 0; }

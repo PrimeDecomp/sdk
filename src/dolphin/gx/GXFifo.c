@@ -1,4 +1,5 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/base/PPCArch.h"
 #include "dolphin/gx.h"
 #include "dolphin/os.h"
@@ -6,19 +7,18 @@
 #else
 #include <stddef.h>
 #include <string.h>
-#include <GameVersions.h>
 #include <dolphin/PPCArch.h>
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static __GXFifoObj *CPUFifo;
 static __GXFifoObj *GPFifo;
 static OSThread *__GXCurrentThread;
@@ -29,7 +29,7 @@ static u32 __GXOverflowCount;
 
 void *__GXCurrentBP;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static struct __GXFifoObj CPUFifo;
 static struct __GXFifoObj GPFifo;
 static GXBool CPGPLinked;
@@ -55,7 +55,7 @@ void *__GXCurrentBP;
 
 static void __GXFifoReadEnable(void);
 static void __GXFifoReadDisable(void);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void __GXFifoLink(u8 en);
 static void __GXWriteFifoIntEnable(u8 hiWatermarkEn, u8 loWatermarkEn);
 static void __GXWriteFifoIntReset(u8 hiWatermarkClr, u8 loWatermarkClr);
@@ -65,7 +65,7 @@ static void __GXWriteFifoIntEnable(u8 arg0, u8 arg1);
 static void __GXWriteFifoIntReset(u8 arg0, u8 arg1);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void GXOverflowHandler(s16 interrupt, OSContext *context) {
   __GXOverflowCount++;
   __GXWriteFifoIntEnable(0, 1);
@@ -86,7 +86,7 @@ static void GXOverflowHandler(s16 interrupt, OSContext *context)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void GXUnderflowHandler(s16 interrupt, OSContext *context) {
   OSResumeThread(__GXCurrentThread);
   GXOverflowSuspendInProgress = FALSE;
@@ -104,7 +104,7 @@ static void GXUnderflowHandler(s16 interrupt, OSContext *context)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void GXBreakPointHandler(__OSInterrupt interrupt, OSContext *context) {
   OSContext exceptionContext;
 #else
@@ -114,7 +114,7 @@ static void GXBreakPointHandler(__OSInterrupt interrupt, OSContext *context) {
 	} while (0);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(__GXData->cpEnable, 1, 5, 0);
 #else
 static void GXBreakPointHandler(s16 interrupt, OSContext *context)
@@ -122,7 +122,7 @@ static void GXBreakPointHandler(s16 interrupt, OSContext *context)
     OSContext exceptionContext;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GX_SET_CP_REG(1, __GXData->cpEnable);
   if (BreakPointCB != NULL) {
     OSClearContext(&exceptionContext);
@@ -144,7 +144,7 @@ static void GXBreakPointHandler(s16 interrupt, OSContext *context)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void GXCPInterruptHandler(__OSInterrupt interrupt, OSContext *context) {
   __GXData->cpStatus = GX_GET_CP_REG(0);
 
@@ -173,7 +173,7 @@ static void GXCPInterruptHandler(s16 interrupt, OSContext *context)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitFifoBase(GXFifoObj *fifo, void *base, u32 size) {
   __GXFifoObj *realFifo = (__GXFifoObj *)fifo;
 #else
@@ -182,7 +182,7 @@ void GXInitFifoBase(GXFifoObj *fifo, void *base, u32 size)
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   realFifo->base = base;
   realFifo->top = (u8 *)base + size - 4;
   realFifo->size = size;
@@ -206,7 +206,7 @@ void GXInitFifoBase(GXFifoObj *fifo, void *base, u32 size)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitFifoPtrs(GXFifoObj *fifo, void *readPtr, void *writePtr) {
   __GXFifoObj *realFifo = (__GXFifoObj *)fifo;
   BOOL enabled;
@@ -217,7 +217,7 @@ void GXInitFifoPtrs(GXFifoObj *fifo, void *readPtr, void *writePtr)
     BOOL enabled;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   enabled = OSDisableInterrupts();
   realFifo->rdPtr = readPtr;
   realFifo->wrPtr = writePtr;
@@ -245,7 +245,7 @@ void GXInitFifoPtrs(GXFifoObj *fifo, void *readPtr, void *writePtr)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitFifoLimits(GXFifoObj *fifo, u32 hiWatermark, u32 loWatermark) {
   __GXFifoObj *realFifo = (__GXFifoObj *)fifo;
 #else
@@ -254,7 +254,7 @@ void GXInitFifoLimits(GXFifoObj *fifo, u32 hiWatermark, u32 loWatermark)
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   realFifo->hiWatermark = hiWatermark;
   realFifo->loWatermark = loWatermark;
 #else
@@ -269,7 +269,7 @@ void GXInitFifoLimits(GXFifoObj *fifo, u32 hiWatermark, u32 loWatermark)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetCPUFifo(GXFifoObj *fifo) {
   __GXFifoObj *realFifo = (__GXFifoObj *)fifo;
   BOOL interrupts;
@@ -351,7 +351,7 @@ void GXSetGPFifo(GXFifoObj *fifo) {
   OSRestoreInterrupts(interrupts);
 }
 
-#if VERSION == VERSION_GM8J_00
+#if SDK_VERSION == SDK_VERSION_GM8J01_00
 void GXGetGPStatus(GXBool *overhi, GXBool *underlow, GXBool *readIdle, GXBool *cmdIdle,
                    GXBool *brkpt) {
   __GXData->cpStatus = GX_GET_CP_REG(0);
@@ -366,7 +366,7 @@ void GXGetGPStatus(GXBool *overhi, GXBool *underlow, GXBool *readIdle, GXBool *c
 void GXGetFifoPtrs(GXFifoObj *fifo, void **readPtr, void **writePtr) {
   struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static GXBool CPGPLinkCheck(void)
 {
     u32 sharedEnds = 0;
@@ -404,7 +404,7 @@ static GXBool CPGPLinkCheck(void)
 #define GX_SET_PI_REG(offset, val) (*(volatile u32*)((volatile u32*)(__piReg) + (offset)) = val)
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (realFifo == CPUFifo) {
     realFifo->wrPtr = OSPhysicalToCached(GX_GET_PI_REG(5) & 0xFBFFFFFF);
   }
@@ -429,7 +429,7 @@ static GXBool CPGPLinkCheck(void)
   *writePtr = realFifo->wrPtr;
 }
 
-#if VERSION != VERSION_GM8J_00
+#if SDK_VERSION != SDK_VERSION_GM8J01_00
 void GXGetGPStatus(GXBool *overhi, GXBool *underlow, GXBool *readIdle, GXBool *cmdIdle,
                    GXBool *brkpt) {
   __GXData->cpStatus = GX_GET_CP_REG(0);
@@ -459,7 +459,7 @@ GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb) {
   return oldCallback;
 #else
 // NONMATCHING
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void GXSetCPUFifo(GXFifoObj *fifo)
 {
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
@@ -656,7 +656,7 @@ void GXSetGPFifo(GXFifoObj *fifo)
 }
 #endif
 
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void GXSaveCPUFifo(GXFifoObj *fifo)
 {
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
@@ -680,7 +680,7 @@ do { \
     fifo->count = temp; \
 } while (0)
 
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void __GXSaveCPUFifoAux(struct __GXFifoObj *realFifo)
 {
     BOOL enabled = OSDisableInterrupts();
@@ -760,7 +760,7 @@ void GXGetGPStatus(GXBool *overhi, GXBool *underlow, GXBool *readIdle, GXBool *c
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXEnableBreakPt(void *break_pt) {
   BOOL enabled = OSDisableInterrupts();
 
@@ -808,7 +808,7 @@ static void __GXFifoLink(u8 en) {
   SET_REG_FIELD(__GXData->cpEnable, 1, 4, (en != 0) ? 1 : 0);
   GX_SET_CP_REG(1, __GXData->cpEnable);
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void GXGetFifoStatus(GXFifoObj *fifo, GXBool *overhi, GXBool *underflow, u32 *fifoCount, GXBool *cpuWrite, GXBool *gpRead, GXBool *fifowrap)
 {
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
@@ -907,7 +907,7 @@ GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void __GXWriteFifoIntEnable(u8 hiWatermarkEn, u8 loWatermarkEn) {
   SET_REG_FIELD(__GXData->cpEnable, 1, 2, hiWatermarkEn);
   SET_REG_FIELD(__GXData->cpEnable, 1, 3, loWatermarkEn);
@@ -922,7 +922,7 @@ void GXEnableBreakPt(void *break_pt)
     __GXFifoReadDisable();
     GX_SET_CP_REG(30, (u32)break_pt);
     GX_SET_CP_REG(31, ((u32)break_pt >> 16) & 0x3FFF);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     SOME_SET_REG_MACRO(__GXData->cpEnable, 1, 1, 0);
     SOME_SET_REG_MACRO(__GXData->cpEnable, 1, 5, 0);
     GX_SET_CP_REG(1, __GXData->cpEnable);
@@ -936,7 +936,7 @@ void GXEnableBreakPt(void *break_pt)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void __GXWriteFifoIntReset(u8 hiWatermarkClr, u8 loWatermarkClr) {
   SET_REG_FIELD(__GXData->cpClr, 1, 0, hiWatermarkClr);
   SET_REG_FIELD(__GXData->cpClr, 1, 1, loWatermarkClr);
@@ -954,14 +954,14 @@ void GXDisableBreakPt(void)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __GXCleanGPFifo(void) {
   GXFifoObj dummyFifo;
   GXFifoObj *gpFifo;
   GXFifoObj *cpuFifo;
   void *base;
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void __GXFifoInit(void)
 {
     __OSSetInterruptHandler(0x11, GXCPInterruptHandler);
@@ -986,7 +986,7 @@ void __GXFifoInit(void)
 #endif
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   gpFifo = GXGetGPFifo();
   if (gpFifo == (GXFifoObj *)NULL)
     return;
@@ -1013,8 +1013,8 @@ static void __GXFifoReadEnable(void)
 #endif
 }
 
-#ifdef PRIME1
-#if VERSION == VERSION_GM8J_00
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION == SDK_VERSION_GM8J01_00
 OSThread *GXGetCurrentGXThread(void) { return __GXCurrentThread; }
 #endif
 
@@ -1046,7 +1046,7 @@ static void __GXWriteFifoIntReset(u8 hiWatermarkClr, u8 loWatermarkClr)
     GX_SET_CP_REG(2, __GXData->cpClr);
 }
 
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void __GXInsaneWatermark(void)
 {
     struct __GXFifoObj *realFifo = GPFifo;
@@ -1150,10 +1150,10 @@ OSThread *GXGetCurrentGXThread(void)
 }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXFifoObj *GXGetGPFifo(void) { return (GXFifoObj *)GPFifo; }
 
-#if VERSION == VERSION_GM8J_00
+#if SDK_VERSION == SDK_VERSION_GM8J01_00
 u32 GXGetOverflowCount(void) { return __GXOverflowCount; }
 #endif
 
@@ -1179,7 +1179,7 @@ volatile void *GXRedirectWriteGatherPipe(void *ptr) {
   OSRestoreInterrupts(enabled);
   return (volatile void *)GX_FIFO_ADDR;
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 GXFifoObj *GXGetCPUFifo(void)
 {
     return (GXFifoObj *)CPUFifo;
@@ -1197,7 +1197,7 @@ u32 GXGetOverflowCount(void)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXRestoreWriteGatherPipe(void) {
   u32 reg = 0;  // r31
   u32 i;        // r29
@@ -1226,7 +1226,7 @@ void GXRestoreWriteGatherPipe(void) {
 }
 
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 u32 GXResetOverflowCount(void)
 {
     u32 oldcount;

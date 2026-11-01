@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include "dolphin/sipriv.h"
 #include "dolphin/vi.h"
 #include "dolphin/hw_regs.h"
@@ -11,7 +12,7 @@ typedef struct XY {
 } XY;
 
 static XY XYNTSC[12] = {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     {263 - 17, 2}, {15, 18}, {30, 9}, {44, 6},  {52, 5},  {65, 4},
 #else
     {263 - 17, 2}, {14, 19}, {30, 9}, {44, 6},  {52, 5},  {65, 4},

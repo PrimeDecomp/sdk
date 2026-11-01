@@ -1,13 +1,15 @@
 #ifndef _DOLPHIN_OSSERIAL
 #define _DOLPHIN_OSSERIAL
 
-#ifdef PRIME1
+#include <SDKVersion.h>
+
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include <dolphin/hw_regs.h>
 #else
 #include <types.h>
 #endif
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #ifdef __cplusplus
 extern "C" {
 #endif

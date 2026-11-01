@@ -1,4 +1,4 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include "dolphin/os/OSPriv.h"
 
 static vu32 RunQueueBits;
@@ -223,8 +223,8 @@ static void UpdatePriority(OSThread* thread) {
   } while (thread);
 }
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 void __OSPromoteThread(OSThread* thread, OSPriority priority) {
   do {
     if (0 < thread->suspend) {
@@ -280,11 +280,11 @@ static OSThread* SelectThread(BOOL yield) {
     }
   }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   OSSetCurrentThread(NULL);
 #endif
   if (RunQueueBits == 0) {
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
     OSSetCurrentThread(NULL);
 #endif
     OSSetCurrentContext(&IdleContext);
@@ -327,9 +327,9 @@ void OSYieldThread(void) {
   SelectThread(TRUE);
   OSRestoreInterrupts(enabled);
 }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack,
                     u32 stackSize, OSPriority priority, u16 attr) {
   BOOL enabled;
@@ -546,8 +546,8 @@ void OSWakeupThread(OSThreadQueue* queue) {
   OSRestoreInterrupts(enabled);
 }
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static void SleepAlarmHandler(OSAlarm* alarm, OSContext* context) {
   OSResumeThread((OSThread*)OSGetAlarmUserData(alarm));
 }
@@ -587,8 +587,8 @@ void OSClearStack(u8 val) {
   }
 }
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 // IdleThread has no users but lives on in the retail binary
 extern void fake_function(...);
 void FORCEACTIVE_OSThread_c(void);

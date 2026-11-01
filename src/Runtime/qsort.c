@@ -1,8 +1,9 @@
+#include <SDKVersion.h>
 #include <stdlib.h>
 
 #define table_ptr(i) (((char*)table_base) + (member_size * ((i)-1)))
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #define swap(dst, src, cnt)                                                                        \
   do {                                                                                             \
     char* p;                                                                                       \
@@ -70,13 +71,13 @@ void qsort(void* table_base, size_t num_members, size_t member_size,
     jp = table_ptr(j);
 
     while (j * 2 <= r) {
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
       ip = jp;
 
 #endif
       j *= 2;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       ip = jp;
 #endif
       jp = table_ptr(j);

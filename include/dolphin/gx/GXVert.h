@@ -1,10 +1,11 @@
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifndef _DOLPHIN_GXVERT
 #define _DOLPHIN_GXVERT
 
+#include <SDKVersion.h>
+
 #include <dolphin/types.h>
 
-#include "GameVersions.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,11 +27,7 @@ typedef union {
 } PPCWGPipe;
 
 #if defined(__MWERKS__) || defined(__SN__)
-#if VERSION >= VERSION_R3IJ_00
-volatile PPCWGPipe GXWGFifo AT_ADDRESS(GXFIFO_ADDR);
-#else
 PPCWGPipe GXWGFifo AT_ADDRESS(GXFIFO_ADDR);
-#endif
 #else
 #define GXWGFifo (*(volatile PPCWGPipe*)GXFIFO_ADDR)
 #endif

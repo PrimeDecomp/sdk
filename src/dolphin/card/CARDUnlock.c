@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/card.h>
 #include <dolphin/dsp.h>
 #include <dolphin/dvd.h>
@@ -8,7 +9,7 @@
 static void InitCallback(void* task);
 static void DoneCallback(void* task);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 ATTRIBUTE_ALIGN_DECL(32, static u8 CardData[]) = {
 #else
 static u8 CardData[] ATTRIBUTE_ALIGN(32) = {
@@ -52,7 +53,7 @@ static int CARDRand(void) {
 }
 
 static void CARDSrand(unsigned int seed) { next = seed; }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 
 static u32 GetInitVal(void) {
   u32 tmp;
@@ -129,11 +130,11 @@ static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 rlen, s32 mode) {
   BOOL err;
   u8 cmd[5];
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (!EXISelect(chan, 0, 4)) {
 #else
 #ifdef _DEBUG
@@ -165,7 +166,7 @@ static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 rlen, s32 mode) {
   err |= !EXIDeselect(chan);
 
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 }
 
 static u32 GetInitVal(void) {
@@ -317,7 +318,7 @@ s32 __CARDUnlock(s32 chan, u8 flashID[12]) {
   DCFlushRange(param, sizeof(DecodeParameters));
 
   task->priority = 255;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   task->iram_mmem_addr = (u16*)OSPhysicalToCached(CardData);
 #else
   task->iram_mmem_addr = (u16*)OSCachedToPhysical(CardData);
@@ -357,7 +358,7 @@ static void InitCallback(void* _task) {
       break;
     }
   }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -405,7 +406,7 @@ static void DoneCallback(void* _task) {
     }
   }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(0 <= chan && chan < 2);
 #endif
   param = (DecodeParameters*)card->workArea;

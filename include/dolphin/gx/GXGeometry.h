@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_GXGEOMETRY
 #define _DOLPHIN_GXGEOMETRY
 
+#include <SDKVersion.h>
+
 #include <dolphin/gx/GXEnum.h>
 
 #ifdef __cplusplus
@@ -8,7 +10,7 @@ extern "C" {
 #endif
 
 void GXSetVtxDesc(GXAttr attr, GXAttrType type);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetVtxDescv(GXVtxDescList* list);
 #else
 void GXSetVtxDescv(const GXVtxDescList* list);

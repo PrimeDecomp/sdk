@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_CARD
 #define _DOLPHIN_CARD
 
+#include <SDKVersion.h>
+
 #include "types.h"
 
 #ifdef __cplusplus
@@ -14,7 +16,7 @@ extern "C" {
 #define CARD_READ_SIZE 512
 #define CARD_MAX_FILE 127
 #define CARD_COMMENT_SIZE 64
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #define CARD_FILENAME_MAX 32
 #else
 #define CARD_FILENAME_MAX 32u

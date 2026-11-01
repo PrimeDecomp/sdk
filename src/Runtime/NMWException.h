@@ -1,8 +1,10 @@
 #ifndef _NMWEXCEPTION
 #define _NMWEXCEPTION
 
+#include <SDKVersion.h>
+
 #include <stddef.h>
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
 #include "__ppc_eabi_linker.h"
 #endif
@@ -21,7 +23,7 @@ extern "C" {
 #define DTORARG_TYPE int
 
 #define DTORCALL_COMPLETE(dtor, objptr) (((void (*)(void*, DTORARG_TYPE))dtor)(objptr, -1))
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #define DTORCALL_PARTIAL(dtor, objptr) (((void (*)(void*, DTORARG_TYPE))dtor)(objptr, 0))
 
 typedef short vbase_ctor_arg_type;

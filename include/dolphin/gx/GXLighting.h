@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_GXLIGHTING
 #define _DOLPHIN_GXLIGHTING
 
+#include <SDKVersion.h>
+
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/gx/GXStruct.h>
 
@@ -23,7 +25,7 @@ void GXInitLightColor(GXLightObj* lt_obj, GXColor color);
 void GXInitLightAttn(GXLightObj* lt_obj, f32 a0, f32 a1, f32 a2, f32 k0, f32 k1, f32 k2);
 void GXInitLightAttnA(GXLightObj* lt_obj, f32 a0, f32 a1, f32 a2);
 void GXInitLightAttnK(GXLightObj* lt_obj, f32 k0, f32 k1, f32 k2);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXLoadLightObjImm(GXLightObj* lt_obj, GXLightID light);
 #else
 void GXLoadLightObjImm(const GXLightObj* lt_obj, GXLightID light);

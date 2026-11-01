@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 /* @(#)e_asin.c 1.2 95/01/04 */
 /*
  * ====================================================
@@ -78,8 +79,8 @@ double x;
     if (((ix - 0x3ff00000) | __LO(x)) == 0)
       /* asin(1)=+-pi/2 with inexact */
       return x * pio2_hi + x * pio2_lo;
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     errno = EDOM;
 #endif
 #endif

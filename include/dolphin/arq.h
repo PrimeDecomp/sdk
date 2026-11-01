@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_ARQ
 #define _DOLPHIN_ARQ
 
+#include <SDKVersion.h>
+
 #include "types.h"
 
 #include "dolphin/ar.h"
@@ -20,7 +22,7 @@ extern "C" {
 #define ARQ_PRIORITY_LOW 0
 #define ARQ_PRIORITY_HIGH 1
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 typedef void (*ARQCallback)(uintptr_t pointerToARQRequest);
 #else
 typedef void (*ARQCallback)(u32 pointerToARQRequest);

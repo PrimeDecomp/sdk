@@ -1,7 +1,8 @@
 #ifndef _DOLPHIN_GXFIFO
 #define _DOLPHIN_GXFIFO
 
-#include <GameVersions.h>
+#include <SDKVersion.h>
+
 #include <dolphin/gx/GXEnum.h>
 
 #ifdef __cplusplus
@@ -20,10 +21,10 @@ void* GXGetFifoBase(const GXFifoObj* fifo);
 u32 GXGetFifoSize(const GXFifoObj* fifo);
 void GXGetFifoPtrs(GXFifoObj* fifo, void** readPtr, void** writePtr);
 GXFifoObj* GXGetCPUFifo(void);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXFifoObj* GXGetGPFifo(void);
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 BOOL GXGetGPFifo(GXFifoObj* fifo);
 GXBool __GXIsGPFifoReady(void);
 #else

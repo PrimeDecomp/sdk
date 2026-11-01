@@ -1,5 +1,6 @@
+#include <SDKVersion.h>
 #include "stdio.h"
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
 #include <ctype.h>
 #include <math.h>
@@ -805,7 +806,7 @@ int __StringRead(void* isc, int ch, int Action) {
   return 0; 
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 static inline int vsscanf(const char *s, const char *format, va_list arg) {
   __InStrCtrl isc;
   isc.NextChar = (char *)s;

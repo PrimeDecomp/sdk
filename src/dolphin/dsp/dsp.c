@@ -1,4 +1,4 @@
-#include <GameVersions.h>
+#include <SDKVersion.h>
 #include "dolphin/dsp.h"
 #include "dolphin/os.h"
 
@@ -8,11 +8,11 @@
 extern "C" {
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static const char* __DSPVersion =
     "<< Dolphin SDK - DSP\trelease build: Sep  5 2002 05:35:13 (0x2301) >>";
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 const char* __DSPVersion = "<< RVL_SDK - DSP \trelease build: Aug  8 2007 01:59:06 (0x4199_60831) >>";
 #define DSP_BUILD_DATE "Aug  8 2007"
 #define DSP_BUILD_TIME "01:59:06"
@@ -56,7 +56,7 @@ void DSPSendMailToDSP(u32 mail) {
 void DSPInit(void) {
   u32 oldInt;
   u16 reg;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", "Sep  5 2002", "05:35:13");
 #else
   __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", DSP_BUILD_DATE, DSP_BUILD_TIME);
@@ -104,8 +104,8 @@ void DSPHalt(void) {
 
 u32 DSPGetDMAStatus(void) { return __DSPRegs[5] & 0x200; }
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 BOOL DSPCheckInit(void) { return __DSP_init_flag; }
 #endif
 
@@ -124,7 +124,7 @@ DSPTaskInfo* DSPAddTask(DSPTaskInfo* task) {
   return task;
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task) {
   u32 oldInt;
   oldInt = OSDisableInterrupts();
@@ -133,7 +133,7 @@ DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task) {
   return task;
 }
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task) {
   u32 oldInt;
   u16 reg;

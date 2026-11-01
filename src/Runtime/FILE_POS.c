@@ -1,4 +1,5 @@
-#ifndef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <critical_regions.h>
 #endif
 #include <ansi_files.h>
@@ -24,7 +25,7 @@ inline fpos_t _ftell(FILE* file) {
     position -= charsInUndoBuffer;
   }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   if (!file->mode.binary_io) {
     int n = file->buffer_ptr - file->buffer - charsInUndoBuffer;
     unsigned char* p = (unsigned char*)file->buffer;
@@ -41,11 +42,11 @@ inline fpos_t _ftell(FILE* file) {
 long ftell(FILE* file) {
   long retval;
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __begin_critical_region(files_access);
 #endif
   retval = (long)_ftell(file);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __end_critical_region(files_access);
 #endif
 
@@ -109,7 +110,7 @@ int _fseek(FILE* file, fpos_t offset, int mode) {
   return 0;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 int fseek(FILE * file, long offset, int mode)
 {
 		fpos_t real_offset = (fpos_t)offset;
@@ -122,7 +123,7 @@ int fseek(FILE * file, long offset, int mode)
 		return(retval);
 }
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 int fseek(FILE * file, long offset, int mode)
 {
 		fpos_t real_offset = (fpos_t)offset;

@@ -1,20 +1,20 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx.h"
 #include "dolphin/os.h"
 #include "string.h"
 #else
-#include "GameVersions.h"
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 
 // The Wii SDK widens the texture and TLUT address fields.
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 #define GX_TEX_ADDR_BITS 24
 #else
 #define GX_TEX_ADDR_BITS 21
@@ -59,7 +59,7 @@ typedef struct __GXTlutRegionInt_struct {
     __GXTlutObjInt tlutObj;
 } __GXTlutRegionInt;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 u8 GXTexMode0Ids[8] = {0x80, 0x81, 0x82, 0x83, 0xA0, 0xA1, 0xA2, 0xA3};
 u8 GXTexMode1Ids[8] = {0x84, 0x85, 0x86, 0x87, 0xA4, 0xA5, 0xA6, 0xA7};
 u8 GXTexImage0Ids[8] = {0x88, 0x89, 0x8A, 0x8B, 0xA8, 0xA9, 0xAA, 0xAB};
@@ -79,7 +79,7 @@ static u8 GX2HWFiltConv[6] = { 0x00, 0x04, 0x01, 0x05, 0x02, 0x06 };
 static u8 HW2GXFiltConv[8] = { 0x00, 0x02, 0x04, 0x00, 0x01, 0x03, 0x05, 0x00 };
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static u8 GX2HWFiltConv[8] = {0x00, 0x04, 0x01, 0x05, 0x02, 0x06, 0x00, 0x00};
 
 #define GET_TILE_COUNT(a, b) (((a) + (1 << (b)) - 1) >> (b))
@@ -184,7 +184,7 @@ u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, u8 mipmap, u8 max_lod)
     u32 ny;
     u32 level;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXGetTexTileShift(format, &tileShiftX, &tileShiftY);
   if (format == GX_TF_RGBA8 || format == GX_TF_Z24X8) {
     tileBytes = 64;
@@ -199,7 +199,7 @@ u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, u8 mipmap, u8 max_lod)
     ASSERTMSGLINEV(0x1CD, height <= 1024, "%s: height too large", "GXGetTexBufferSize");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     bufferSize = 0;
     for (level = 0; level < max_lod; level++) {
       nx = (width + (1 << tileShiftX) - 1) >> tileShiftX;
@@ -218,7 +218,7 @@ u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, u8 mipmap, u8 max_lod)
         tileBytes = 32;
 #endif
     }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   } else {
     nx = (width + (1 << tileShiftX) - 1) >> tileShiftX;
     ny = (height + (1 << tileShiftY) - 1) >> tileShiftY;
@@ -269,7 +269,7 @@ void __GetImageTileCount(GXTexFmt fmt, u16 wd, u16 ht, u32 *rowTiles, u32 *colTi
     *cmpTiles = (fmt == GX_TF_RGBA8 || fmt == GX_TF_Z24X8) ? 2 : 1;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, u32 format,
                   GXTexWrapMode wrap_s, GXTexWrapMode wrap_t, GXBool mipmap) {
   u32 imageBase;
@@ -286,7 +286,7 @@ void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, u
 	} while (0);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   memset(t, 0, 0x20);
   SET_REG_FIELD(t->mode0, 2, 0, wrap_s);
   SET_REG_FIELD(t->mode0, 2, 2, wrap_t);
@@ -303,7 +303,7 @@ void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, G
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (mipmap) {
     u8 lmax;
     t->flags |= 1;
@@ -322,11 +322,11 @@ void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, G
         t->flags |= 1;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     if (format == 8 || format == 9 || format == 10) {
       SET_REG_FIELD(t->mode0, 3, 5, 5);
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
         if ((u32)format - GX_TF_C4 <= GX_TF_C14X2 - GX_TF_C4) {
 #else
         if (format == 8 || format == 9 || format == 10) {
@@ -346,13 +346,13 @@ void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, G
         SET_REG_FIELD(0x278, t->mode1, 8, 8, lmax);
 #endif
     } else {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       SET_REG_FIELD(t->mode0, 3, 5, 6);
 #else
         SOME_SET_REG_MACRO(t->mode0, 3, 5, 4);
 #endif
     }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 
     if (width > height) {
       maxLOD = 31 - __cntlzw(width);
@@ -406,7 +406,7 @@ void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, G
         break;
 #endif
     }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 
     lmax = 16.0f * maxLOD;
     SET_REG_FIELD(t->mode1, 8, 8, lmax);
@@ -472,7 +472,7 @@ void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, G
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitTexObjCI(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, GXCITexFmt format,
                     GXTexWrapMode wrap_s, GXTexWrapMode wrap_t, GXBool mipmap, u32 tlut_name) {
   __GXTexObjInt *t = (__GXTexObjInt *)obj;
@@ -482,7 +482,7 @@ void GXInitTexObjCI(GXTexObj *obj, const void *image_ptr, u16 width, u16 height,
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GXInitTexObj(obj, image_ptr, width, height, format, wrap_s, wrap_t, mipmap);
   t->flags &= 0xFFFFFFFD;
   t->tlutName = tlut_name;
@@ -502,7 +502,7 @@ void GXInitTexObjLOD(GXTexObj *obj, GXTexFilter min_filt, GXTexFilter mag_filt, 
     u8 lmax;
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (lod_bias < -4.0f) {
     lod_bias = -4.0f;
   } else if (lod_bias >= 4.0f) {
@@ -513,7 +513,7 @@ void GXInitTexObjLOD(GXTexObj *obj, GXTexFilter min_filt, GXTexFilter mag_filt, 
     CHECK_GXBEGIN(0x30A, "GXInitTexObjLOD");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   lbias = 32.0f * lod_bias;
   SET_REG_FIELD(t->mode0, 8, 9, lbias);
   SET_REG_FIELD(t->mode0, 1, 4, (mag_filt == GX_LINEAR) ? 1 : 0);
@@ -542,7 +542,7 @@ void GXInitTexObjLOD(GXTexObj *obj, GXTexFilter min_filt, GXTexFilter mag_filt, 
     SET_REG_FIELD(0x322, t->mode0, 1, 21, bias_clamp);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (min_lod < 0.0f) {
     min_lod = 0.0f;
   } else if (min_lod > 10.0f) {
@@ -580,7 +580,7 @@ void GXInitTexObjData(GXTexObj *obj, const void *image_ptr)
     u32 imageBase;
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   imageBase = ((u32)image_ptr >> 5) & 0x01FFFFFF;
   SET_REG_FIELD(t->image3, 21, 0, imageBase);
 #else
@@ -596,7 +596,7 @@ void GXInitTexObjWrapMode(GXTexObj *obj, GXTexWrapMode sm, GXTexWrapMode tm)
 {
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(t->mode0, 2, 0, sm);
   SET_REG_FIELD(t->mode0, 2, 2, tm);
 #else
@@ -607,7 +607,7 @@ void GXInitTexObjWrapMode(GXTexObj *obj, GXTexWrapMode sm, GXTexWrapMode tm)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void *GXGetTexObjData(const GXTexObj *to) {
   const __GXTexObjInt *t = (const __GXTexObjInt *)to;
 #else
@@ -616,7 +616,7 @@ void GXInitTexObjTlut(GXTexObj *obj, u32 tlut_name)
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   return (void *)(GET_REG_FIELD(t->image3, 21, 0) << 5);
 #else
     ASSERTMSGLINE(0x371, obj, "Texture Object Pointer is null");
@@ -625,7 +625,7 @@ void GXInitTexObjTlut(GXTexObj *obj, u32 tlut_name)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXTexFmt GXGetTexObjFmt(const GXTexObj *to) {
   const __GXTexObjInt *t = (const __GXTexObjInt *)to;
 #else
@@ -633,7 +633,7 @@ void GXInitTexObjFilter(GXTexObj* obj, GXTexFilter min_filt, GXTexFilter mag_fil
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   return t->fmt;
 #else
     ASSERTMSGLINE(0x386, obj, "Texture Object Pointer is null");
@@ -647,7 +647,7 @@ void GXInitTexObjFilter(GXTexObj* obj, GXTexFilter min_filt, GXTexFilter mag_fil
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXBool GXGetTexObjMipMap(const GXTexObj *to) {
   const __GXTexObjInt *t = (const __GXTexObjInt *)to;
 #else
@@ -656,7 +656,7 @@ void GXInitTexObjMaxLOD(GXTexObj* obj, f32 max_lod) {
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   return (t->flags & 1) == 1;
 #else
     ASSERTMSGLINE(0x3A2, obj, "Texture Object Pointer is null");
@@ -672,7 +672,7 @@ void GXInitTexObjMaxLOD(GXTexObj* obj, f32 max_lod) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXLoadTexObjPreLoaded(GXTexObj *obj, GXTexRegion *region, GXTexMapID id) {
   __GXTlutRegionInt *tlr;
   __GXTexObjInt *t = (__GXTexObjInt *)obj;
@@ -683,7 +683,7 @@ void GXInitTexObjMinLOD(GXTexObj* obj, f32 min_lod) {
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(t->mode0, 8, 24, GXTexMode0Ids[id]);
   SET_REG_FIELD(t->mode1, 8, 24, GXTexMode1Ids[id]);
   SET_REG_FIELD(t->image0, 8, 24, GXTexImage0Ids[id]);
@@ -695,7 +695,7 @@ void GXInitTexObjMinLOD(GXTexObj* obj, f32 min_lod) {
     CHECK_GXBEGIN(0x3BE, "GXInitTexObjMinLOD");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GX_WRITE_RAS_REG(t->mode0);
   GX_WRITE_RAS_REG(t->mode1);
   GX_WRITE_RAS_REG(t->image0);
@@ -724,7 +724,7 @@ void GXInitTexObjMinLOD(GXTexObj* obj, f32 min_lod) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXLoadTexObj(GXTexObj *obj, GXTexMapID id) {
   GXTexRegion *r;
 #else
@@ -733,7 +733,7 @@ void GXInitTexObjLODBias(GXTexObj* obj, f32 lod_bias) {
     __GXTexObjInt *t = (__GXTexObjInt *)obj; // r29
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   r = __GXData->texRegionCallback(obj, id);
   GXLoadTexObjPreLoaded(obj, r, id);
 #else
@@ -750,7 +750,7 @@ void GXInitTexObjLODBias(GXTexObj* obj, f32 lod_bias) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitTlutObj(GXTlutObj *tlut_obj, void *lut, GXTlutFmt fmt, u16 n_entries) {
   __GXTlutObjInt *t = (__GXTlutObjInt *)tlut_obj;
 #else
@@ -758,7 +758,7 @@ void GXInitTexObjBiasClamp(GXTexObj* obj, u8 bias_clamp) {
     __GXTexObjInt *t = (__GXTexObjInt *)obj; // r30
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   t->tlut = 0;
   SET_REG_FIELD(t->tlut, 2, 10, fmt);
   SET_REG_FIELD(t->loadTlut0, 21, 0, ((u32)lut & 0x3FFFFFFF) >> 5);
@@ -772,7 +772,7 @@ void GXInitTexObjBiasClamp(GXTexObj* obj, u8 bias_clamp) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXLoadTlut(const GXTlutObj *tlut_obj, GXTlut tlut_name) {
   __GXTlutRegionInt *r;
   u32 tlut_offset;
@@ -782,14 +782,14 @@ void GXInitTexObjEdgeLOD(GXTexObj* obj, u8 do_edge_lod) {
     __GXTexObjInt *t = (__GXTexObjInt *)obj; // r30
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   r = (__GXTlutRegionInt *)__GXData->tlutRegionCallback(tlut_name);
 #else
     ASSERTMSGLINE(0x403, obj, "Texture Object Pointer is null");
     CHECK_GXBEGIN(0x405, "GXInitTexObjEdgeLOD");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXFlushTextureState();
   GX_WRITE_RAS_REG(t->loadTlut0);
   GX_WRITE_RAS_REG(r->loadTlut1);
@@ -802,7 +802,7 @@ void GXInitTexObjEdgeLOD(GXTexObj* obj, u8 do_edge_lod) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitTexCacheRegion(GXTexRegion *region, u8 is_32b_mipmap, u32 tmem_even,
                           GXTexCacheSize size_even, u32 tmem_odd, GXTexCacheSize size_odd) {
   u32 WidthExp2;
@@ -812,7 +812,7 @@ void GXInitTexObjMaxAniso(GXTexObj* obj, GXAnisotropy max_aniso) {
     __GXTexObjInt *t = (__GXTexObjInt *)obj; // r30
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   switch (size_even) {
   case GX_TEXCACHE_32K:
     WidthExp2 = 3;
@@ -830,7 +830,7 @@ void GXInitTexObjMaxAniso(GXTexObj* obj, GXAnisotropy max_aniso) {
     CHECK_GXBEGIN(0x419, "GXInitTexObjMaxAniso");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   t->image1 = 0;
   SET_REG_FIELD(t->image1, 15, 0, tmem_even >> 5);
   SET_REG_FIELD(t->image1, 3, 15, WidthExp2);
@@ -864,7 +864,7 @@ void GXInitTexObjMaxAniso(GXTexObj* obj, GXAnisotropy max_aniso) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInitTlutRegion(GXTlutRegion *region, u32 tmem_addr, GXTlutSize tlut_size) {
   __GXTlutRegionInt *t = (__GXTlutRegionInt *)region;
 #else
@@ -873,7 +873,7 @@ void GXInitTexObjUserData(GXTexObj *obj, void *user_data)
     __GXTexObjInt *t = (__GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   t->loadTlut1 = 0;
   tmem_addr -= 0x80000;
   SET_REG_FIELD(t->loadTlut1, 10, 0, tmem_addr >> 9);
@@ -886,7 +886,7 @@ void GXInitTexObjUserData(GXTexObj *obj, void *user_data)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInvalidateTexRegion(const GXTexRegion *region) {
   s32 wle;
   s32 hle;
@@ -902,7 +902,7 @@ void *GXGetTexObjUserData(const GXTexObj *obj)
     const __GXTexObjInt *t = (const __GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   wle = GET_REG_FIELD(r->image1, 3, 15) - 1;
   hle = GET_REG_FIELD(r->image1, 3, 18) - 1;
   wlo = GET_REG_FIELD(r->image2, 3, 15) - 1;
@@ -949,7 +949,7 @@ void *GXGetTexObjUserData(const GXTexObj *obj)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXInvalidateTexAll(void) {
   u32 reg0;
   u32 reg1;
@@ -959,7 +959,7 @@ void GXGetTexObjAll(const GXTexObj *obj, void **image_ptr, u16 *width, u16 *heig
     const __GXTexObjInt *t = (const __GXTexObjInt *)obj;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   reg0 = 0x66001000;
   reg1 = 0x66001100;
   __GXFlushTextureState();
@@ -978,7 +978,7 @@ void GXGetTexObjAll(const GXTexObj *obj, void **image_ptr, u16 *width, u16 *heig
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXTexRegionCallback GXSetTexRegionCallback(GXTexRegionCallback f) {
   GXTexRegionCallback oldcb = __GXData->texRegionCallback;
 #else
@@ -987,7 +987,7 @@ void *GXGetTexObjData(const GXTexObj *to)
     const __GXTexObjInt *t = (const __GXTexObjInt *)to;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->texRegionCallback = f;
   return oldcb;
 #else
@@ -996,7 +996,7 @@ void *GXGetTexObjData(const GXTexObj *to)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXTlutRegionCallback GXSetTlutRegionCallback(GXTlutRegionCallback f) {
   GXTlutRegionCallback oldcb = __GXData->tlutRegionCallback;
 #else
@@ -1005,7 +1005,7 @@ u16 GXGetTexObjWidth(const GXTexObj *to)
     const __GXTexObjInt *t = (const __GXTexObjInt *)to;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->tlutRegionCallback = f;
   return oldcb;
 #else
@@ -1014,7 +1014,7 @@ u16 GXGetTexObjWidth(const GXTexObj *to)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetTexCoordScaleManually(GXTexCoordID coord, u8 enable, u16 ss, u16 ts) {
   __GXData->tcsManEnab = (__GXData->tcsManEnab & ~(1 << coord)) | (enable << coord);
   if (enable != 0) {
@@ -1034,7 +1034,7 @@ u16 GXGetTexObjHeight(const GXTexObj *to)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetTexCoordBias(GXTexCoordID coord, u8 s_enable, u8 t_enable) {
   SET_REG_FIELD(__GXData->suTs0[coord], 1, 16, s_enable);
   SET_REG_FIELD(__GXData->suTs1[coord], 1, 16, t_enable);
@@ -1053,7 +1053,7 @@ GXTexFmt GXGetTexObjFmt(const GXTexObj *to)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void __SetSURegs(u32 tmap, u32 tcoord) {
   u32 field;
   u32 w;
@@ -1066,7 +1066,7 @@ GXTexWrapMode GXGetTexObjWrapS(const GXTexObj *to)
     const __GXTexObjInt *t = (const __GXTexObjInt *)to;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   w = GET_REG_FIELD(__GXData->tImage0[tmap], 10, 0);
   h = GET_REG_FIELD(__GXData->tImage0[tmap], 10, 10);
   field = w;
@@ -1088,7 +1088,7 @@ GXTexWrapMode GXGetTexObjWrapS(const GXTexObj *to)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __GXSetSUTexRegs(void) {
   u32 nStages;
   u32 nIndStages;
@@ -1103,7 +1103,7 @@ GXTexWrapMode GXGetTexObjWrapT(const GXTexObj *to)
     const __GXTexObjInt *t = (const __GXTexObjInt *)to;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (__GXData->tcsManEnab != 0xFF) {
     nStages = GET_REG_FIELD(__GXData->genMode, 4, 10) + 1;
     nIndStages = GET_REG_FIELD(__GXData->genMode, 3, 16);
@@ -1363,7 +1363,7 @@ void GXInitTexCacheRegion(GXTexRegion *region, u8 is_32b_mipmap, u32 tmem_even, 
         WidthExp2 = 3;
 #endif
         break;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       case 1:
         tmap = GET_REG_FIELD(__GXData->iref, 3, 6);
         coord = GET_REG_FIELD(__GXData->iref, 3, 9);
@@ -1372,7 +1372,7 @@ void GXInitTexCacheRegion(GXTexRegion *region, u8 is_32b_mipmap, u32 tmem_even, 
         WidthExp2 = 4;
 #endif
         break;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       case 2:
         tmap = GET_REG_FIELD(__GXData->iref, 3, 12);
         coord = GET_REG_FIELD(__GXData->iref, 3, 15);
@@ -1381,7 +1381,7 @@ void GXInitTexCacheRegion(GXTexRegion *region, u8 is_32b_mipmap, u32 tmem_even, 
         WidthExp2 = 5;
 #endif
         break;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       case 3:
         tmap = GET_REG_FIELD(__GXData->iref, 3, 18);
         coord = GET_REG_FIELD(__GXData->iref, 3, 21);
@@ -1390,14 +1390,14 @@ void GXInitTexCacheRegion(GXTexRegion *region, u8 is_32b_mipmap, u32 tmem_even, 
         ASSERTMSGLINEV(0x5DA, 0, "%s: Invalid %s size", "GXInitTexCacheRegion", "tmem even");
 #endif
         break;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       }
       if (!(__GXData->tcsManEnab & (1 << coord))) {
         __SetSURegs(tmap, coord);
       }
 #endif
     }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
     t->image1 = 0;
     SET_REG_FIELD(0x5DF, t->image1, 15, 0, tmem_even >> 5);
     SET_REG_FIELD(0x5E0, t->image1, 3, 15, WidthExp2);
@@ -1405,7 +1405,7 @@ void GXInitTexCacheRegion(GXTexRegion *region, u8 is_32b_mipmap, u32 tmem_even, 
     SET_REG_FIELD(0x5E2, t->image1, 1, 21, 0);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     i = 0;
     for (i = 0; i < nStages; i++) {
       ptref = &__GXData->tref[i / 2];
@@ -1439,7 +1439,7 @@ void GXInitTexCacheRegion(GXTexRegion *region, u8 is_32b_mipmap, u32 tmem_even, 
         break;
 #endif
     }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   }
 #else
     t->image2 = 0;
@@ -1857,7 +1857,7 @@ void __GXGetSUTexSize(GXTexCoordID coord, u16 *width, u16 *height)
 }
 
 void __GXSetTmemConfig(u32 config) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   switch (config) {
   case 1:
     GX_WRITE_RAS_REG(0x8c0d8000);
@@ -1878,7 +1878,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0x8f0d9800);
         GX_WRITE_RAS_REG(0x930dd800);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xac0da000);
     GX_WRITE_RAS_REG(0xb00de000);
 #else
@@ -1886,7 +1886,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0xb00dc400);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xad0da800);
     GX_WRITE_RAS_REG(0xb10de800);
 #else
@@ -1894,7 +1894,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0xb10dcc00);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xae0db000);
     GX_WRITE_RAS_REG(0xb20df000);
 #else
@@ -1902,7 +1902,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0xb20dd400);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xaf0db800);
     GX_WRITE_RAS_REG(0xb30df800);
 #else
@@ -1914,7 +1914,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0x900dc000);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     break;
   case 0:
   default:
@@ -1925,7 +1925,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0x910dc800);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0x8d0d8400);
     GX_WRITE_RAS_REG(0x910dc400);
 #else
@@ -1933,7 +1933,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0x920dd000);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0x8e0d8800);
     GX_WRITE_RAS_REG(0x920dc800);
 #else
@@ -1941,7 +1941,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0x930dd800);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0x8f0d8c00);
     GX_WRITE_RAS_REG(0x930dcc00);
 #else
@@ -1949,7 +1949,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0xb00de000);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xac0d9000);
     GX_WRITE_RAS_REG(0xb00dd000);
 #else
@@ -1957,7 +1957,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0xb10de800);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xad0d9400);
     GX_WRITE_RAS_REG(0xb10dd400);
 #else
@@ -1965,7 +1965,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0xb20df000);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xae0d9800);
     GX_WRITE_RAS_REG(0xb20dd800);
 #else
@@ -1973,7 +1973,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0xb30df800);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     GX_WRITE_RAS_REG(0xaf0d9c00);
     GX_WRITE_RAS_REG(0xb30ddc00);
 #else
@@ -1984,7 +1984,7 @@ void __GXSetTmemConfig(u32 config) {
         GX_WRITE_RAS_REG(0x900dc000);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     break;
   }
 #else

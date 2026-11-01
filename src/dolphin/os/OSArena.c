@@ -1,10 +1,10 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include <dolphin/os/OSArena.h>
 
 #define ROUND(n, a) (((u32)(n) + (a)-1) & ~((a)-1))
 #define TRUNC(n, a) (((u32)(n)) & ~((a)-1))
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void* __OSArenaHi;
 void* __OSArenaLo = (void*)-1;
 
@@ -16,7 +16,7 @@ void OSSetArenaHi(void* addr) { __OSArenaHi = addr; }
 
 void OSSetArenaLo(void* addr) { __OSArenaLo = addr; }
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static void* __OSArenaLo = (void*)-1;
 static void* s_mem2ArenaLo = (void*)-1;
 static void* __OSArenaHi = NULL;
@@ -71,7 +71,7 @@ void* OSAllocFromArenaLo(u32 size, u32 align) {
   return ptr;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void* OSAllocFromArenaHi(u32 size, u32 align) {
   void* ptr;
   u8* arenaHi;
@@ -84,7 +84,7 @@ void* OSAllocFromArenaHi(u32 size, u32 align) {
   return ptr;
 }
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 void* OSAllocFromMEM2ArenaLo(u32 size, u32 align) {
   void* ptr;
   u8* arenaLo;
@@ -98,7 +98,7 @@ void* OSAllocFromMEM2ArenaLo(u32 size, u32 align) {
 }
 #endif
 
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void* OSAllocFromArenaHi(u32 size, u32 align) {
   void* ptr;
   u8* arenaHi;

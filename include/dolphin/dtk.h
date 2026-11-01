@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_DTK
 #define _DOLPHIN_DTK
 
+#include <SDKVersion.h>
+
 #include <dolphin/dvd.h>
 #include <dolphin/types.h>
 
@@ -24,7 +26,7 @@ void DTKInit(void);
 void DTKShutdown(void);
 u32 DTKQueueTrack(char* fileName, DTKTrack* track, u32 eventMask, DTKCallback callback);
 u32 DTKRemoveTrack(DTKTrack* track);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void DTKFlushTracks(DTKFlushCallback callback);
 #else
 BOOL DTKFlushTracks(DTKFlushCallback callback);
@@ -35,13 +37,13 @@ void DTKSetInterruptFrequency(u32 samples);
 u32 DTKGetInterruptFrequency(void);
 void DTKSetRepeatMode(u32 repeat);
 u32 DTKGetRepeatMode(void);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void DTKSetState(u32 state);
 #else
 BOOL DTKSetState(u32 state);
 #endif
 u32 DTKGetState(void);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void DTKNextTrack(void);
 #else
 BOOL DTKNextTrack(void);

@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/card.h>
 #include <dolphin/dsp.h>
 #include <dolphin/dvd.h>
@@ -7,11 +8,11 @@
 #include <dolphin/OSRtcPriv.h>
 
 u16 __CARDVendorID = 0xffff;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 u8 __CARDPermMask = CARD_DIR_PERM_PUBLIC | CARD_DIR_PERM_NO_COPY | CARD_DIR_PERM_NO_MOVE;
 #endif
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 u16 CARDSetVendorID(u16 vendorID) {
   u16 prevID;
   prevID = __CARDVendorID;
@@ -25,15 +26,15 @@ u16 CARDGetVendorID() { return __CARDVendorID; }
 #endif
 s32 CARDGetSerialNo(s32 chan, u64* serialNo) {
   CARDControl* card;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   s32 result;
 #endif
   CARDID* id;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   u64 code;
 #endif
   int i;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u64 code;
   s32 result;
 #else
@@ -59,7 +60,7 @@ s32 CARDGetSerialNo(s32 chan, u64* serialNo) {
   return __CARDPutControlBlock(card, CARD_RESULT_READY);
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #line 141
 s32 CARDGetUniqueCode(s32 chan, u64* uniqueCode) {
   CARDControl* card;

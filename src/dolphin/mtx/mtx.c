@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include "dolphin/mtx.h"
 #include "dolphin/os.h"
 #include <math.h>
@@ -34,12 +35,12 @@ void PSMTXIdentity(register Mtx m) {
   // clang-format off
   asm {
     psq_st zero_c, 8(m), 0, 0
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     ps_merge01 c_01, zero_c, one_c
     psq_st zero_c, 24(m), 0, 0
     ps_merge10 c_10, one_c, zero_c
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     ps_merge10 c_10, one_c, zero_c
     ps_merge01 c_01, zero_c, one_c
     psq_st zero_c, 24(m), 0, 0

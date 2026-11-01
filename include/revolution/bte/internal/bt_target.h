@@ -215,17 +215,7 @@ void bte_hcisu_send(BT_HDR* p_msg, UINT16 event);
 /* L2CAP */
 
 // TODO: could this be resolved by configuring MAX_ACL_CONNECTIONS?
-#if 0
-#define MAX_ACL_CONNECTIONS 4
-
-#ifndef MAX_ACL_CONNECTIONS
-#define MAX_L2CAP_LINKS 7
-#else
-#define MAX_L2CAP_LINKS MAX_ACL_CONNECTIONS
-#endif
-#else
 #define MAX_L2CAP_LINKS 4
-#endif
 
 #define MAX_L2CAP_CHANNELS 10
 
@@ -341,17 +331,7 @@ void bte_hcisu_send(BT_HDR* p_msg, UINT16 event);
 #endif
 
 // Well I guess not since this is different than MAX_L2CAP_LINKS
-#if 0
-#define MAX_ACL_CONNECTIONS 4
-
-#ifndef MAX_ACL_CONNECTIONS
-#define MAX_BD_CONNECTIONS 7
-#else
-#define MAX_BD_CONNECTIONS MAX_ACL_CONNECTIONS
-#endif
-#else
 #define MAX_BD_CONNECTIONS 1
-#endif
 
 #define PORT_RX_LOW_WM 5000
 

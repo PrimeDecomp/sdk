@@ -1,7 +1,8 @@
 #ifndef _DOLPHIN_VIFUNCS
 #define _DOLPHIN_VIFUNCS
 
-#include "GameVersions.h"
+#include <SDKVersion.h>
+
 
 #include <dolphin/types.h>
 
@@ -18,8 +19,8 @@ void __VIGetCurrentPosition(s16* x, s16* y);
 u32 VIGetDTVStatus(void);
 
 // These use types that only the SDK vitypes.h defines
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 BOOL VIEnableDimming(BOOL enable);
 VITimeToDIM VISetTimeToDimming(VITimeToDIM time);
 BOOL VIResetDimmingCount(void);

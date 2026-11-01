@@ -1,11 +1,11 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include "dolphin/os.h"
 #include "dolphin/hw_regs.h"
 
 #pragma scheduling off
 
-#ifdef PRIME1
-#if VERSION < VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_GM8E01_02
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Sep  5 2002 05:33:04 (0x2301) >>";
 #else
@@ -30,7 +30,7 @@ static const char* __EXIVersion =
 #define EXI_0CR(tstart, dma, rw, tlen)                                                             \
   ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:22 (0x4199_60831) >>";
 #else
 static const char* __EXIVersion =
@@ -54,7 +54,7 @@ static const char* __EXIVersion =
 #define EXI_0CR(tstart, dma, rw, tlen)                                                             \
   ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 #define DMA_ADDR_MASK 0xffffffe0
 #else
 #define DMA_ADDR_MASK 0x3ffffe0
@@ -86,7 +86,7 @@ static u32 IDSerialPort1 = 0;
 
 s32 __EXIProbeStartTime[2] : (OS_BASE_CACHED | 0x30C0);
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
 #endif
 
@@ -121,13 +121,13 @@ static void SetExiInterruptMask(s32 chan, EXIControl* exi) {
 
 static void CompleteTransfer(s32 chan) {
   EXIControl* exi = &Ecb[chan];
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u8* buf;
   u32 data;
   int i;
   int len;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   int len;
   u8* buf;
   u32 data;
@@ -228,7 +228,7 @@ BOOL EXIDma(s32 chan, void* buf, s32 len, u32 type, EXICallback callback) {
 
   exi->state |= STATE_DMA;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   REG(chan, 1) = (u32)buf & 0x3ffffe0;
 #else
   REG(chan, 1) = (u32)buf & DMA_ADDR_MASK;
@@ -256,8 +256,8 @@ BOOL EXISync(s32 chan) {
       if (exi->state & STATE_SELECTED) {
         CompleteTransfer(chan);
         if (__OSGetDIConfig() != 0xff
-#ifdef PRIME1
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
           || (OSGetConsoleType() & OS_CONSOLE_MASK) == OS_CONSOLE_TDEV
 #endif
 #else
@@ -278,8 +278,8 @@ BOOL EXISync(s32 chan) {
   return rc;
 }
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static
 #endif
 #endif
@@ -590,9 +590,9 @@ extern BOOL __OSInIPL;
 void __OSEnableBarnacle(s32 chan, u32 dev);
 
 void EXIInit(void) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   
-#if VERSION < VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_GM8E01_02
   OSRegisterVersion(__EXIVersion);
 #else
   while (((REG(0, 3) & 1) == 1) || ((REG(1, 3) & 1) == 1) || ((REG(2, 3) & 1) == 1)) {}
@@ -623,7 +623,7 @@ void EXIInit(void) {
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_EXI, EXIIntrruptHandler);
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_TC, TCIntrruptHandler);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if ((OSGetConsoleType() & 0x10000000) != 0) {
     __EXIProbeStartTime[0] = __EXIProbeStartTime[1] = 0;
     Ecb[0].idTime = Ecb[1].idTime = 0;
@@ -640,9 +640,9 @@ void EXIInit(void) {
     __OSEnableBarnacle(0, 2);
 #endif
   }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
   EXIGetID(0, 2, &IDSerialPort1);
   OSRegisterVersion(__EXIVersion);
 #endif
@@ -726,8 +726,8 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
   s32 startTime;
   BOOL enabled;
   
-#ifdef PRIME1
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
   if (chan == 0 && dev == 2 && IDSerialPort1 != 0) {
     *id = IDSerialPort1;
     return 1;
@@ -757,8 +757,8 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
     startTime = __EXIProbeStartTime[chan];
   }
 
-#ifdef PRIME1
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
   enabled = OSDisableInterrupts();
 #endif
 #else
@@ -777,8 +777,8 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
     }
     EXIUnlock(chan);
   }
-#ifdef PRIME1
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
   OSRestoreInterrupts(enabled);
 #endif
 #else
@@ -811,8 +811,8 @@ char* EXIGetTypeString(u32 type) {
     return "Memory Card 251";
   case EXI_MEMORY_CARD_507:
     return "Memory Card 507";
-#ifdef PRIME1
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
   case EXI_MEMORY_CARD_1019:
     return "Memory Card 1019";
   case EXI_MEMORY_CARD_2043:
@@ -833,8 +833,8 @@ char* EXIGetTypeString(u32 type) {
     return "Net Card";
   case EXI_ETHER_VIEWER:
     return "Artist Ether";
-#ifdef PRIME1
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
   case 0x4220000:
     return "Broadband Adapter";
 #endif
@@ -845,8 +845,8 @@ char* EXIGetTypeString(u32 type) {
   case EXI_STREAM_HANGER:
     return "Stream Hanger";
   case EXI_IS_VIEWER:
-#ifdef PRIME1
-#if VERSION < VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_GM8E01_02
     return "IS Viewer";
 #else
     return "IS-DOL-VIEWER";

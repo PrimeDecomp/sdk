@@ -1,4 +1,4 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include "types.h"
 #include "asm_types.h"
 // clang-format off
@@ -100,13 +100,13 @@ asm void PPCMthid0 (register u32 newHID0)
  * Address:	........
  * Size:	000008
  */
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void PPCMfhid1(void)
 #else
 asm void PPCMfhid1(void)
 #endif
 {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 	// UNUSED FUNCTION
 #else
     nofralloc
@@ -156,13 +156,13 @@ __declspec ( weak ) asm void PPCMtdec ( register u32 newDec )
  * Address:	........
  * Size:	000008
  */
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void PPCMfdec(void)
 #else
 asm void PPCMfdec(void)
 #endif
 {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 	// UNUSED FUNCTION
 #else
     nofralloc
@@ -429,11 +429,11 @@ void PPCMtfpscr(register u32 newFPSCR)
     asm
     {
         li    r4, 0
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
         stw   r4, m.u.fpscr_pad;
         stw   newFPSCR, m.u.fpscr
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
         stw   newFPSCR, m.u.fpscr
         stw   r4, m.u.fpscr_pad;
 #else
@@ -593,8 +593,8 @@ asm void PPCSetFpNonIEEEMode (void)
 }
 // clang-format on
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 #include "dolphin/os.h"
 
 #define HID4 1011

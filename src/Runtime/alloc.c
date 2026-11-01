@@ -1,4 +1,5 @@
-#ifndef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <critical_regions.h>
 #endif
 #include <string.h>
@@ -435,7 +436,7 @@ static inline Block *__unlink(__mem_pool_obj *pool_obj, Block *bp) {
   return result;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static inline void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
 #else
 static void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
@@ -521,7 +522,7 @@ void deallocate_from_fixed_pools(__mem_pool_obj *pool_obj, void *ptr, unsigned l
   }
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static inline void __pool_free(__mem_pool *pool, void *ptr) {
 #else
 void __pool_free(__mem_pool *pool, void *ptr) {
@@ -543,7 +544,7 @@ void __pool_free(__mem_pool *pool, void *ptr) {
   }
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void free(void *ptr) { __pool_free(get_malloc_pool(), ptr); }
 #else
 void free(void *ptr) {

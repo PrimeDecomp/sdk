@@ -1,16 +1,17 @@
-#ifndef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include "Gecko_ExceptionPPC.h"
 #include "NMWException.h"
 #endif
 #include "__ppc_eabi_linker.h"
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "NMWException.h"
 #endif
 
 #if __MWERKS__
 #pragma exceptions on
 #endif
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
 #define RETURN_ADDRESS 4
 
@@ -89,7 +90,7 @@ typedef struct ProcessInfo {
   int active;
 } ProcessInfo;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static ProcessInfo fragmentinfo[1];
 #else
 typedef struct ActionIterator {
@@ -109,7 +110,7 @@ int __register_fragment(struct __eti_init_info* info, char* TOC) {
   ProcessInfo* f;
   int i;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   for (i = 0, f = fragmentinfo; i < 1; ++i, ++f) {
 #else
   for (i = 0, f = fragmentinfo; i < MAXFRAGMENTS; ++i, ++f) {
@@ -125,13 +126,13 @@ int __register_fragment(struct __eti_init_info* info, char* TOC) {
   return -1;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __unregister_fragment(int fragmentId) {
 #else
 void __unregister_fragment(int fragmentID) {
 #endif
   ProcessInfo* f;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (fragmentId >= 0 && fragmentId < 1) {
     f = &fragmentinfo[fragmentId];
 #else
@@ -144,7 +145,7 @@ void __unregister_fragment(int fragmentID) {
   }
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 static inline int ExPPC_FindExceptionFragment(char* returnaddr, FragmentInfo* frag) {
   ProcessInfo* f;
   int i;

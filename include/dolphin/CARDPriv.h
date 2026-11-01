@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_CARDPRIV
 #define _DOLPHIN_CARDPRIV
 
+#include <SDKVersion.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -117,7 +119,7 @@ void __CARDExiHandler(s32 chan, OSContext* context);
 void __CARDExtHandler(s32 chan, OSContext* context);
 void __CARDUnlockedHandler(s32 chan, OSContext* context);
 s32 __CARDAccess(CARDControl* card, CARDDir* ent);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 BOOL __CARDIsWritable(CARDDir* ent);
 #else
 s32 __CARDIsWritable(CARDControl* card, CARDDir* ent);
@@ -136,7 +138,7 @@ extern u8 __CARDPermMask;
 extern u32 __CARDFreq;
 #endif
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #define CARD_DIR_PERM_PUBLIC 0x04u
 #define CARD_DIR_PERM_NO_COPY 0x08u
 #define CARD_DIR_PERM_NO_MOVE 0x10u

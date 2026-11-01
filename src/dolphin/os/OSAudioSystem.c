@@ -1,4 +1,4 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include "types.h"
 #include "dolphin/os.h"
 #include "dolphin/hw_regs.h"
@@ -22,8 +22,8 @@ static u8 DSPInitCode[128] = {
 
 #define __DSPWorkBuffer (void*)0x81000000
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 #define IPC_DIFLAGS (0x180 / 4)
 #define IPC_GPIO2DIR (0x1CC / 4)
 #define IPC_GPIO2IN (0x1D0 / 4)
@@ -85,9 +85,9 @@ void __OSInitAudioSystem(void) {
   u16 r3;
 
   u32 padding;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   if (!__OSInIPL) {
     __AIClockInit(TRUE);
   }

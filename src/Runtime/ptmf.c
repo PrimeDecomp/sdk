@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 
 typedef struct PTMF {
   long this_delta;  // delta to this pointer
@@ -28,7 +29,7 @@ asm void __ptmf_test(register PTMF* ptmf) {
   blr
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 asm long __ptmf_cmpr(void) {
   nofralloc
 
@@ -64,7 +65,7 @@ asm void __ptmf_scall(...) {
   mtctr r12
   bctr
 }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 asm void __ptmf_scall4(...) {
   nofralloc
   lwz r0, PTMF.this_delta(r12)

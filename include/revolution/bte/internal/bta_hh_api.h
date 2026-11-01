@@ -108,12 +108,6 @@ enum {
 };
 
 typedef UINT16 tBTA_HH_ATTR_MASK;
-#if 0
-enum
-{
-	/* ... */
-};
-#endif
 
 typedef UINT8 tBTA_HH_RPT_TYPE;
 enum {

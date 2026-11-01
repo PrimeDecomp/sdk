@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_OSFASTCAST
 #define _DOLPHIN_OSFASTCAST
 
+#include <SDKVersion.h>
+
 #include <dolphin/types.h>
 
 #ifdef __cplusplus
@@ -17,7 +19,7 @@ extern "C" {
 #define OS_FASTCAST_U16 3
 #define OS_FASTCAST_S8 4
 #define OS_FASTCAST_S16 5
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 // SDK conversion helpers used when the GQR fast-cast registers are initialized.
 static inline float __OSs16tof32(register const s16* value) {
 #ifdef __MWERKS__

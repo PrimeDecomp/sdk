@@ -1,20 +1,20 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx.h"
 #include "dolphin/mtx.h"
 #else
-#include <GameVersions.h>
 #include <dolphin/gx.h>
 #include <dolphin/mtx.h>
 #include <dolphin/os.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 inline void WriteProjPS(const register f32 src[6], register volatile void *dst) {
   register f32 ps_0, ps_1, ps_2;
 #else
@@ -27,7 +27,7 @@ void GXProject(f32 x, f32 y, f32 z, const f32 mtx[3][4], const f32 *pm, const f3
     f32 wc;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   asm {
         psq_l  ps_0,  0(src), 0, 0
         psq_l  ps_1,  8(src), 0, 0
@@ -59,7 +59,7 @@ void GXProject(f32 x, f32 y, f32 z, const f32 mtx[3][4], const f32 *pm, const f3
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 inline void Copy6Floats(const register f32 src[6], register f32 dst[6]) {
   register f32 ps_0, ps_1, ps_2;
 #else
@@ -67,7 +67,7 @@ static void WriteProjPS(const register f32 proj[6], register volatile void* dest
     register f32 p01, p23, p45;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   asm {
         psq_l  ps_0,  0(src), 0, 0
         psq_l  ps_1,  8(src), 0, 0
@@ -88,7 +88,7 @@ static void WriteProjPS(const register f32 proj[6], register volatile void* dest
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 inline void __GXSetProjection(void) {
   u32 reg = 0x00061020;
 #else
@@ -96,7 +96,7 @@ static void Copy6Floats(const register f32 src[6], register volatile f32* dest) 
     register f32 ps01, ps23, ps45;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GX_WRITE_U8(0x10);
   GX_WRITE_U32(reg);
   GX_WRITE_F32(__GXData->projMtx[0]);
@@ -118,7 +118,7 @@ static void Copy6Floats(const register f32 src[6], register volatile f32* dest) 
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetProjection(const Mtx44 proj, GXProjectionType type) {
   __GXData->projType = type;
 
@@ -148,7 +148,7 @@ void __GXSetProjection(void) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetProjectionv(const f32 *proj) {
   __GXData->projType = proj[0];
   __GXData->projMtx[0] = proj[1];
@@ -163,7 +163,7 @@ void GXSetProjection(const f32 mtx[4][4], GXProjectionType type)
     CHECK_GXBEGIN(0x127, "GXSetProjection");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXSetProjection();
   __GXData->bpSentNot = GX_TRUE;
 #else
@@ -180,7 +180,7 @@ void GXSetProjection(const f32 mtx[4][4], GXProjectionType type)
         __GXData->projMtx[3] = mtx[1][2];
     }
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     __GXData->dirtyState |= 0x8000000;
 #else
     __GXSetProjection();
@@ -189,7 +189,7 @@ void GXSetProjection(const f32 mtx[4][4], GXProjectionType type)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 inline void WriteMTXPS4x3(register volatile void *dst, register const Mtx src) {
   register f32 ps_0, ps_1, ps_2, ps_3, ps_4, ps_5;
 #else
@@ -198,7 +198,7 @@ void GXSetProjectionv(const f32 *ptr)
     CHECK_GXBEGIN(0x153, "GXSetProjectionv");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   asm {
         psq_l  ps_0,  0(src), 0, 0
         psq_l  ps_1,  8(src), 0, 0
@@ -210,7 +210,7 @@ void GXSetProjectionv(const f32 *ptr)
     __GXData->projType = ptr[0] == 0.0f ? GX_PERSPECTIVE : GX_ORTHOGRAPHIC;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
         psq_st ps_0, 0(dst),  0, 0
         psq_st ps_1, 0(dst),  0, 0
         psq_st ps_2, 0(dst),  0, 0
@@ -221,7 +221,7 @@ void GXSetProjectionv(const f32 *ptr)
 #else
     Copy6Floats(&ptr[1], __GXData->projMtx);
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     __GXData->dirtyState |= 0x8000000;
 #else
     __GXSetProjection();
@@ -230,14 +230,14 @@ void GXSetProjectionv(const f32 *ptr)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 inline void WriteMTXPS3x3from3x4(register volatile void *dst, register const Mtx src) {
   register f32 ps_0, ps_1, ps_2, ps_3, ps_4, ps_5;
 #else
 #define qr0 0
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   asm {
         psq_l  ps_0,  0(src), 0, 0
         lfs    ps_1,  8(src)
@@ -251,7 +251,7 @@ void GXGetProjectionv(f32 *ptr)
     ASSERTMSGLINE(0x172, ptr, "GXGet*: invalid null pointer");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
         psq_st ps_0, 0(dst),  0, 0
         stfs   ps_1, 0(dst)
         psq_st ps_2, 0(dst),  0, 0
@@ -266,7 +266,7 @@ void GXGetProjectionv(f32 *ptr)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 inline void WriteMTXPS4x2(register volatile void *dst, register const Mtx src) {
   register f32 ps_0, ps_1, ps_2, ps_3;
 #else
@@ -280,7 +280,7 @@ static void WriteMTXPS4x3(const register f32 mtx[3][4], register volatile f32 *d
     register f32 a22_a23;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   asm {
         psq_l  ps_0,  0(src), 0, 0
         psq_l  ps_1,  8(src), 0, 0
@@ -310,7 +310,7 @@ static void WriteMTXPS4x3(const register f32 mtx[3][4], register volatile f32 *d
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXLoadPosMtxImm(const Mtx mtx, u32 id) {
   u32 reg;
   u32 addr;
@@ -325,7 +325,7 @@ static void WriteMTXPS3x3from3x4(register f32 mtx[3][4], register volatile f32 *
     register f32 a22_a23;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   addr = id * 4;
   reg = addr | 0xB0000;
 
@@ -350,7 +350,7 @@ static void WriteMTXPS3x3from3x4(register f32 mtx[3][4], register volatile f32 *
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXLoadNrmMtxImm(const Mtx mtx, u32 id) {
   u32 reg;
   u32 addr;
@@ -364,7 +364,7 @@ static void WriteMTXPS3x3(register f32 mtx[3][3], register volatile f32 *dest)
     register f32 a22_nnn;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   addr = id * 3 + 0x400;
   reg = addr | 0x80000;
 
@@ -387,7 +387,7 @@ static void WriteMTXPS3x3(register f32 mtx[3][3], register volatile f32 *dest)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetCurrentMtx(u32 id) {
 #else
 static void WriteMTXPS4x2(const register f32 mtx[2][4], register volatile f32 *dest)
@@ -398,7 +398,7 @@ static void WriteMTXPS4x2(const register f32 mtx[2][4], register volatile f32 *d
     register f32 a12_a13;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(__GXData->matIdxA, 6, 0, id);
   __GXSetMatrixIndex(GX_VA_PNMTXIDX);
 #else
@@ -415,7 +415,7 @@ static void WriteMTXPS4x2(const register f32 mtx[2][4], register volatile f32 *d
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXLoadTexMtxImm(const f32 mtx[][4], u32 id, GXTexMtxType type) {
   u32 reg;
   u32 addr;
@@ -429,7 +429,7 @@ do { \
 } while (0)
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (id >= GX_PTTEXMTX0) {
     addr = (id - GX_PTTEXMTX0) * 4 + 0x500;
   } else {
@@ -443,7 +443,7 @@ void GXLoadPosMtxImm(const f32 mtx[3][4], u32 id)
 
 #endif
     addr = id * 4;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   }
   count = (type == GX_MTX2x4) ? 8 : 12;
   reg = addr | ((count - 1) << 16);
@@ -451,7 +451,7 @@ void GXLoadPosMtxImm(const f32 mtx[3][4], u32 id)
     reg = addr | 0xB0000;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GX_WRITE_U8(0x10);
   GX_WRITE_U32(reg);
 
@@ -467,7 +467,7 @@ void GXLoadPosMtxImm(const f32 mtx[3][4], u32 id)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetViewportJitter(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz, u32 field) {
   f32 sx;
   f32 sy;
@@ -485,7 +485,7 @@ void GXLoadPosMtxIndx(u16 mtx_indx, u32 id)
     u32 reg;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (field == 0) {
     top -= 0.5f;
   }
@@ -533,7 +533,7 @@ void GXLoadPosMtxIndx(u16 mtx_indx, u32 id)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetViewport(f32 left, f32 top, f32 width, f32 height, f32 nearZ, f32 farZ) {
   GXSetViewportJitter(left, top, width, height, nearZ, farZ, 1);
 #else
@@ -553,7 +553,7 @@ void GXLoadNrmMtxImm(const f32 mtx[3][4], u32 id)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetScissor(u32 left, u32 top, u32 wd, u32 ht) {
   u32 tp;
   u32 lf;
@@ -566,7 +566,7 @@ void GXLoadNrmMtxImm3x3(const f32 mtx[3][3], u32 id)
     u32 addr;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   tp = top + 342;
   lf = left + 342;
   bm = tp + ht - 1;
@@ -575,7 +575,7 @@ void GXLoadNrmMtxImm3x3(const f32 mtx[3][3], u32 id)
     CHECK_GXBEGIN(0x279, "GXLoadNrmMtxImm3x3");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(__GXData->suScis0, 11, 0, tp);
   SET_REG_FIELD(__GXData->suScis0, 11, 12, lf);
   SET_REG_FIELD(__GXData->suScis1, 11, 0, bm);
@@ -585,7 +585,7 @@ void GXLoadNrmMtxImm3x3(const f32 mtx[3][3], u32 id)
     reg = addr | 0x80000;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GX_WRITE_RAS_REG(__GXData->suScis0);
   GX_WRITE_RAS_REG(__GXData->suScis1);
   __GXData->bpSentNot = 0;
@@ -596,7 +596,7 @@ void GXLoadNrmMtxImm3x3(const f32 mtx[3][3], u32 id)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXGetScissor(u32 *left, u32 *top, u32 *width, u32 *height) {
   u32 y1 = (__GXData->suScis0 & 0x0007FF) >> 0;
   u32 x1 = (__GXData->suScis0 & 0x7FF000) >> 12;
@@ -609,7 +609,7 @@ void GXLoadNrmMtxIndx3x3(u16 mtx_indx, u32 id)
     u32 reg;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   *left = x1 - 0x156;
   *top = y1 - 0x156;
   *width = (x2 - x1) + 1;
@@ -626,7 +626,7 @@ void GXLoadNrmMtxIndx3x3(u16 mtx_indx, u32 id)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetScissorBoxOffset(s32 x_off, s32 y_off) {
   u32 reg = 0;
   u32 hx;
@@ -645,7 +645,7 @@ void GXSetCurrentMtx(u32 id)
 {
     CHECK_GXBEGIN(0x2C4, "GXSetCurrentMtx");
     SET_REG_FIELD(0x2C8, __GXData->matIdxA, 6, 0, id);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     __GXData->dirtyState |= 0x4000000;
 #else
     __GXSetMatrixIndex(GX_VA_PNMTXIDX);
@@ -653,7 +653,7 @@ void GXSetCurrentMtx(u32 id)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetClipMode(GXClipMode mode) {
 #else
 void GXLoadTexMtxImm(const f32 mtx[][4], u32 id, GXTexMtxType type)
@@ -663,7 +663,7 @@ void GXLoadTexMtxImm(const f32 mtx[][4], u32 id, GXTexMtxType type)
     u32 count;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GX_WRITE_XF_REG(5, mode);
   __GXData->bpSentNot = 1;
 #else
@@ -688,7 +688,7 @@ void GXLoadTexMtxImm(const f32 mtx[][4], u32 id, GXTexMtxType type)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __GXSetMatrixIndex(GXAttr matIdxAttr) {
   if (matIdxAttr < GX_VA_TEX4MTXIDX) {
     GX_WRITE_SOME_REG4(8, 0x30, __GXData->matIdxA, -12);
@@ -724,7 +724,7 @@ void GXLoadTexMtxIndx(u16 mtx_indx, u32 id, GXTexMtxType type)
 #endif
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 void __GXSetViewport() {
     f32 sx;
     f32 sy;
@@ -773,7 +773,7 @@ void GXSetViewportJitter(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz,
     __GXData->vpNearz = nearz;
     __GXData->vpFarz = farz;
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     __GXData->dirtyState |= 0x10000000;
 #else
     __GXSetViewport();

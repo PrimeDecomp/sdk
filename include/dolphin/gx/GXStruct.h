@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_GXSTRUCT
 #define _DOLPHIN_GXSTRUCT
 
+#include <SDKVersion.h>
+
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/types.h>
 #include <dolphin/vitypes.h>
@@ -8,7 +10,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
 #define VI_TVMODE(format, interlace) (((format) << 2) + (interlace))
 
@@ -63,7 +65,7 @@ typedef struct _GXColor {
   u8 b;
   u8 a;
 } GXColor;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 
 typedef struct _GXFogAdjTable {
   u16 r[10];
@@ -110,7 +112,7 @@ typedef struct _GXTlutRegion {
   u32 dummy[4];
 } GXTlutRegion;
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 typedef struct _GXFogAdjTable {
   u16 r[10];
 } GXFogAdjTable;

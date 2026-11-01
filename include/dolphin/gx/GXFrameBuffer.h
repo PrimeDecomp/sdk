@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_GXFRAMEBUFFER
 #define _DOLPHIN_GXFRAMEBUFFER
 
+#include <SDKVersion.h>
+
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/gx/GXStruct.h>
 
@@ -15,7 +17,7 @@ extern "C" {
 extern GXRenderModeObj GXNtsc480IntDf;
 // extern GXRenderModeObj GXNtsc480Int;
 // extern GXRenderModeObj GXNtsc480IntAa;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 // extern GXRenderModeObj GXNtsc480Prog;
 #else
 extern GXRenderModeObj GXNtsc480Prog;

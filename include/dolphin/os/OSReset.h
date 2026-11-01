@@ -1,7 +1,8 @@
 #ifndef _DOLPHIN_OSRESET
 #define _DOLPHIN_OSRESET
 
-#include "GameVersions.h"
+#include <SDKVersion.h>
+
 
 #include <types.h>
 
@@ -42,8 +43,8 @@ struct OSResetFunctionInfo {
   OSResetFunctionInfo* prev;
 };
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 typedef BOOL (*OSShutdownFunction)(BOOL final, u32 event);
 typedef struct OSShutdownFunctionInfo OSShutdownFunctionInfo;
 

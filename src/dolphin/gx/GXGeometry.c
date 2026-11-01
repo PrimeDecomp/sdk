@@ -1,19 +1,19 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx.h"
 #else
-#include <GameVersions.h>
 #include <stddef.h>
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __GXSetDirtyState(void) {
 #define dState __GXData->dirtyState
 
@@ -71,7 +71,7 @@ void GXSetLineWidth(u8 width, GXTexOffset texOffsets) {
   GX_WRITE_RAS_REG(__GXData->lpSize);
   __GXData->bpSentNot = 0;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static inline void __GXSetAmbMat(u32 dirty)
 {
     if (dirty & 0x100) {
@@ -245,7 +245,7 @@ void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets) {
 #else
 void __GXSendFlushPrim(void)
@@ -254,7 +254,7 @@ void __GXSendFlushPrim(void)
     u32 numD = __GXData->vNum * __GXData->vLim;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(__GXData->lpSize, 8, 8, pointSize);
   SET_REG_FIELD(__GXData->lpSize, 3, 19, texOffsets);
   GX_WRITE_RAS_REG(__GXData->lpSize);
@@ -269,7 +269,7 @@ void __GXSendFlushPrim(void)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXEnableTexOffsets(GXTexCoordID coord, u8 line_enable, u8 point_enable) {
 
   SET_REG_FIELD(__GXData->suTs0[coord], 1, 18, line_enable);
@@ -287,7 +287,7 @@ void GXSetLineWidth(u8 width, GXTexOffset texOffsets)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetCullMode(GXCullMode mode) {
   GXCullMode hwMode;
 #else
@@ -296,7 +296,7 @@ void GXGetLineWidth(u8 *width, GXTexOffset *texOffsets)
     ASSERTMSGLINE(0x1CF, width != NULL && texOffsets != NULL, "GXGet*: invalid null pointer");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   switch (mode) {
   case GX_CULL_FRONT:
     hwMode = GX_CULL_BACK;
@@ -317,7 +317,7 @@ void GXGetLineWidth(u8 *width, GXTexOffset *texOffsets)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetCoPlanar(GXBool enable) {
   u32 reg;
 
@@ -336,7 +336,7 @@ void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __GXSetGenMode(void) {
   GX_WRITE_RAS_REG(__GXData->genMode);
   __GXData->bpSentNot = 0;
@@ -350,7 +350,7 @@ void GXGetPointSize(u8 *pointSize, GXTexOffset *texOffsets)
 #endif
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 void GXEnableTexOffsets(GXTexCoordID coord, u8 line_enable, u8 point_enable)
 {
     CHECK_GXBEGIN(0x211, "GXEnableTexOffsets");
@@ -368,7 +368,7 @@ void GXSetCullMode(GXCullMode mode)
     GXCullMode hwMode;
 
     CHECK_GXBEGIN(0x22D, "GXSetCullMode");
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     hwMode = ((mode << 1) & 2) | ((mode >> 1) & 1);
 #else
     hwMode = (mode >> 1) & 1;

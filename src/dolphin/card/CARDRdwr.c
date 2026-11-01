@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/card.h>
 #include <dolphin/dsp.h>
 #include <dolphin/dvd.h>
@@ -42,7 +43,7 @@ error:
 #line 88
 s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
   ASSERT(0 < length && length % CARD_SEG_SIZE == 0);
   ASSERT(0 <= chan && chan < 2);
@@ -70,13 +71,13 @@ static void BlockWriteCallback(s32 chan, s32 result) {
     goto error;
   }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   card->xferred += CARD_PAGE_SIZE;
 #else
   card->xferred += card->pageSize;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   card->addr += CARD_PAGE_SIZE;
   (u8*)card->buffer += CARD_PAGE_SIZE;
 #else
@@ -108,7 +109,7 @@ error:
 s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
   card = &__CARDBlock[chan];
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(0 < length && length % card->pageSize == 0);
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -117,7 +118,7 @@ s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback
   }
 
   card->xferCallback = callback;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   card->repeat = (int)(length / CARD_PAGE_SIZE);
 #else
   card->repeat = (int)(length / card->pageSize);
@@ -128,7 +129,7 @@ s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback
   return __CARDWritePage(chan, BlockWriteCallback);
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #line 182
 s32 CARDGetXferredBytes(s32 chan) {
   ASSERT(0 <= chan && chan < 2);

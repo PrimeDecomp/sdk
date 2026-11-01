@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include "dolphin/OSRtcPriv.h"
 #include "dolphin/dvd.h"
 #include "dolphin/os/OSBootInfo.h"
@@ -24,7 +25,7 @@ typedef struct OSResetQueue {
   OSResetFunctionInfo* last;
 } OSResetQueue;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 OSResetQueue ResetFunctionQueue;
 #else
 static OSResetQueue ResetFunctionQueue;
@@ -63,7 +64,7 @@ void OSRegisterResetFunction(OSResetFunctionInfo* func) {
   tmp->next = func;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 BOOL __OSCallResetFunctions(u32 arg0) {
   OSResetFunctionInfo* iter;
   s32 retCode = 0;
@@ -74,7 +75,7 @@ BOOL __OSCallResetFunctions(BOOL final) {
   u32 priority;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   for (iter = ResetFunctionQueue.first; iter != NULL; iter = iter->next) {
     retCode |= !iter->func(arg0);
 #else
@@ -89,7 +90,7 @@ BOOL __OSCallResetFunctions(BOOL final) {
     info = info->next;
 #endif
   }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   retCode |= !__OSSyncSram();
   if (retCode) {
 #else
@@ -157,13 +158,13 @@ static void KillThreads(void) {
     case 1:
     case 4:
       OSCancelThread(thread);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       break;
 #else
       continue;
 #endif
     default:
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
       break;
 #else
       continue;
@@ -179,14 +180,14 @@ void __OSDoHotReset(s32 arg0) {
   Reset(arg0 * 8);
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
 #else
 static void __OSShutdownDevices(BOOL doRecal) {
 #endif
   BOOL rc;
   BOOL disableRecalibration;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u32 unk[3];
   OSDisableScheduler();
 #else
@@ -194,7 +195,7 @@ static void __OSShutdownDevices(BOOL doRecal) {
 #endif
   __OSStopAudioSystem();
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (reset == OS_RESET_SHUTDOWN) {
 #else
   if (!doRecal) {
@@ -204,7 +205,7 @@ static void __OSShutdownDevices(BOOL doRecal) {
 
   while (!__OSCallResetFunctions(FALSE))
     ;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   while (!__OSSyncSram())
     ;
 
@@ -227,7 +228,7 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
 #endif
 
   if (reset == OS_RESET_HOTRESET && forceMenu) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     OSSram* sram;
 
 #endif
@@ -235,14 +236,14 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
     sram->flags |= 0x40;
     __OSUnlockSram(TRUE);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     while (!__OSSyncSram())
       ;
 #else
     resetCode = 0;
 #endif
   }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   OSDisableInterrupts();
   __OSCallResetFunctions(TRUE);
   LCDisable();
@@ -259,7 +260,7 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
   if (reset == OS_RESET_HOTRESET) {
     __OSDoHotReset(resetCode);
   } else if (reset == OS_RESET_RESTART) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     KillThreads();
 #else
     if (forceMenu == TRUE) {
@@ -267,13 +268,13 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
     }
 #endif
     OSEnableScheduler();
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     __OSReboot(resetCode, forceMenu);
 #else
     __OSReboot(resetCode, bootThisDol);
 #endif
   }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   KillThreads();
 #else
 
@@ -284,14 +285,14 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
   memset(OSPhysicalToCached(0x3000), 0, 0xc0);
   memset(OSPhysicalToCached(0x30c8), 0, 0xd4 - 0xc8);
   memset(OSPhysicalToCached(0x30e2), 0, 1);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 
   __PADDisableRecalibration(disableRecalibration);
 #endif
 }
 
 u32 OSGetResetCode(void) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (DAT_800030e2 != 0) {
     return 0x80000000;
   }
@@ -307,7 +308,7 @@ u32 OSGetResetCode(void) {
 #endif
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 u32 OSSetBootDol(u32 dolOffset) {
   u32 oldDol;
 

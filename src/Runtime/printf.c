@@ -1,4 +1,5 @@
-#ifndef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <critical_regions.h>
 #endif
 // #include <cctype>
@@ -1226,13 +1227,13 @@ int printf(const char* format, ...) {
     return -1;
   }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __begin_critical_region(files_access);
 #endif
   va_start(l, format);
   ret = __pformatter(&__FileWrite, (void*)stdout, format, l);
   va_end(l);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __end_critical_region(files_access);
 #endif
   return ret;
@@ -1250,13 +1251,13 @@ int fprintf(FILE* file, const char* format, ...) {
     return -1;
   }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __begin_critical_region(files_access);
 #endif
   va_start(l, format);
   ret = __pformatter(&__FileWrite, file, format, l);
   va_end(l);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __end_critical_region(files_access);
 #endif
   return ret;
@@ -1273,11 +1274,11 @@ int vprintf(const char* pFormat, va_list arg) {
     return -1;
   }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __begin_critical_region(files_access);
 #endif
   ret = __pformatter(&__FileWrite, (void*)stdout, pFormat, arg);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __end_critical_region(files_access);
 #endif
   return ret;

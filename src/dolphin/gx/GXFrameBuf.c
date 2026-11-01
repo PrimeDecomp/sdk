@@ -1,17 +1,18 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx.h"
 #else
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 // clang-format off
 #else
 GXRenderModeObj GXNtsc240Ds = {
@@ -40,7 +41,7 @@ GXRenderModeObj GXNtsc240IntAa = {
 
 #endif
 GXRenderModeObj GXNtsc480IntDf = {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     VI_TVMODE_NTSC_INT, 640, 480, 480, 40, 0, 640, 480, VI_XFBMODE_DF, GX_FALSE, GX_FALSE,
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
     8, 8, 10, 12, 10, 8, 8,
@@ -58,7 +59,7 @@ GXRenderModeObj GXNtsc480IntAa = {
 };
 
 GXRenderModeObj GXNtsc480Prog = {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     VI_TVMODE_NTSC_PROG, 640, 480, 480, 40, 0, 640, 480, VI_XFBMODE_SF, GX_FALSE, GX_FALSE,
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
     0, 0, 21, 22, 21, 0, 0,
@@ -67,7 +68,7 @@ GXRenderModeObj GXNtsc480Prog = {
 #endif
 };
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXRenderModeObj GXMpal480IntDf = {
     VI_TVMODE_MPAL_INT, 640, 480, 480, 40, 0, 640, 480, VI_XFBMODE_DF, GX_FALSE, GX_FALSE,
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -78,7 +79,7 @@ GXRenderModeObj GXNtsc480ProgSoft = {
 #endif
 };
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXRenderModeObj GXPal528IntDf = {
     VI_TVMODE_PAL_INT, 640, 528, 528, 40, 23, 640, 528, VI_XFBMODE_DF, GX_FALSE, GX_FALSE,
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -89,7 +90,7 @@ GXRenderModeObj GXNtsc480ProgAa = {
 #endif
 };
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXRenderModeObj GXEurgb60Hz480IntDf = {
     VI_TVMODE_EURGB60_INT, 640, 480, 480, 40, 0, 640, 480, VI_XFBMODE_DF, GX_FALSE, GX_FALSE,
     6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -121,7 +122,7 @@ GXRenderModeObj GXEurgb60Hz480IntAa = {20, 640, 242, 480, 40, 0, 640, 480, 1, 0,
 GXRenderModeObj GXRmHW = {1, 320, 240, 240, 40, 0, 640, 480, 0, 0, 0, { 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6 }, { 0, 0, 21, 22, 21, 0, 0 } };
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXAdjustForOverscan(const GXRenderModeObj *rIn, GXRenderModeObj *rOut, u16 horiz, u16 vert) {
   u16 hor2 = horiz * 2;
   u16 ver2 = vert * 2;
@@ -135,7 +136,7 @@ void GXAdjustForOverscan(const GXRenderModeObj *rmin, GXRenderModeObj *rmout, u1
     u32 mode;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (rIn != rOut) {
     *rOut = *rIn;
   }
@@ -145,7 +146,7 @@ void GXAdjustForOverscan(const GXRenderModeObj *rmin, GXRenderModeObj *rmout, u1
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   rOut->fbWidth = rIn->fbWidth - hor2;
   verf = rIn->efbHeight;
   rOut->efbHeight = verf - ((ver2 * verf) / rIn->xfbHeight);
@@ -161,7 +162,7 @@ void GXAdjustForOverscan(const GXRenderModeObj *rmin, GXRenderModeObj *rmout, u1
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (rIn->xFBmode == VI_XFBMODE_SF && (rIn->viTVmode & 2) != 2) {
     rOut->xfbHeight = rIn->xfbHeight - vert;
   } else {
@@ -171,7 +172,7 @@ void GXAdjustForOverscan(const GXRenderModeObj *rmin, GXRenderModeObj *rmout, u1
     rmout->viWidth = rmin->viWidth - hor2;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   rOut->viWidth = rIn->viWidth - hor2;
 
   rOut->viHeight = rIn->viHeight - ver2;
@@ -190,7 +191,7 @@ void GXAdjustForOverscan(const GXRenderModeObj *rmin, GXRenderModeObj *rmout, u1
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht) {
 #else
 void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht)
@@ -198,7 +199,7 @@ void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht)
     CHECK_GXBEGIN(0x4D3, "GXSetDispCopySrc");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->cpDispSrc = 0;
   SET_REG_FIELD(__GXData->cpDispSrc, 10, 0, left);
   SET_REG_FIELD(__GXData->cpDispSrc, 10, 10, top);
@@ -210,7 +211,7 @@ void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht)
     SET_REG_FIELD(0x4D7, __GXData->cpDispSrc,  8, 24, 0x49);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->cpDispSize = 0;
   SET_REG_FIELD(__GXData->cpDispSize, 10, 0, wd - 1);
   SET_REG_FIELD(__GXData->cpDispSize, 10, 10, ht - 1);
@@ -223,11 +224,11 @@ void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht) {
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->cpTexSrc = 0;
   SET_REG_FIELD(__GXData->cpTexSrc, 10, 0, left);
   SET_REG_FIELD(__GXData->cpTexSrc, 10, 10, top);
@@ -238,7 +239,7 @@ void GXSetTexCopySrc(u16 left, u16 top, u16 wd, u16 ht)
     CHECK_GXBEGIN(0x4EF, "GXSetTexCopySrc");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->cpTexSize = 0;
   SET_REG_FIELD(__GXData->cpTexSize, 10, 0, wd - 1);
   SET_REG_FIELD(__GXData->cpTexSize, 10, 10, ht - 1);
@@ -260,7 +261,7 @@ void GXSetDispCopyDst(u16 wd, u16 ht)
 {
     u16 stride;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   stride = (int)wd * 2;
   __GXData->cpDispStride = 0;
   SET_REG_FIELD(__GXData->cpDispStride, 10, 0, (stride >> 5));
@@ -284,14 +285,14 @@ void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap)
     u32 peTexFmt;
     u32 peTexFmtH;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->cpTexZ = 0;
   peTexFmt = fmt & 0xF;
 #else
     CHECK_GXBEGIN(0x52F, "GXSetTexCopyDst");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (fmt == GX_TF_Z16) {
     peTexFmt = 0xB;
   }
@@ -301,7 +302,7 @@ void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap)
     ASSERTMSGLINEV(0x54E, peTexFmt < 13, "%s: invalid texture format", "GXSetTexCopyDst");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   switch (fmt) {
   case GX_TF_I4:
   case GX_TF_I8:
@@ -332,7 +333,7 @@ void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap)
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->cpTexZ = (fmt & _GX_TF_ZTF) == _GX_TF_ZTF;
   peTexFmtH = (peTexFmt & 8) >> 3;
   SET_REG_FIELD(__GXData->cpTex, 1, 3, peTexFmtH);
@@ -347,7 +348,7 @@ void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap)
     __GetImageTileCount(fmt, wd, ht, &rowTiles, &colTiles, &cmpTiles);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXData->cpTexStride = 0;
   SET_REG_FIELD(__GXData->cpTexStride, 10, 0, rowTiles * cmpTiles);
   SET_REG_FIELD(__GXData->cpTexStride, 8, 24, 0x4D);
@@ -362,7 +363,7 @@ void GXSetTexCopyDst(u16 wd, u16 ht, GXTexFmt fmt, GXBool mipmap)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetDispCopyFrame2Field(GXCopyMode mode) {
 
   SET_REG_FIELD(__GXData->cpDisp, 2, 12, mode);
@@ -381,14 +382,14 @@ void GXSetCopyClamp(GXFBClamp clamp)
     u8 clmpB;
     u8 clmpT;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   clmpT = (clamp & GX_CLAMP_TOP) == 1;
   clmpB = (clamp & GX_CLAMP_BOTTOM) == 2;
 #else
     CHECK_GXBEGIN(0x597, "GXSetCopyClamp");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(__GXData->cpDisp, 1, 0, clmpT);
   SET_REG_FIELD(__GXData->cpDisp, 1, 1, clmpB);
 #else
@@ -396,7 +397,7 @@ void GXSetCopyClamp(GXFBClamp clamp)
     clmpB = (clamp & 2) == 2;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   SET_REG_FIELD(__GXData->cpTex, 1, 0, clmpT);
   SET_REG_FIELD(__GXData->cpTex, 1, 1, clmpB);
 #else
@@ -418,7 +419,7 @@ static u32 __GXGetNumXfbLines(u32 efbHt, u32 iScale) {
 
     iScaleD = iScale;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (iScaleD > 0x80 && iScaleD < 0x100) {
     while (iScaleD % 2 == 0) {
       iScaleD /= 2;
@@ -434,7 +435,7 @@ static u32 __GXGetNumXfbLines(u32 efbHt, u32 iScale) {
 #endif
     }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     if (efbHt % iScaleD == 0) {
       realHt++;
 #else
@@ -442,11 +443,11 @@ static u32 __GXGetNumXfbLines(u32 efbHt, u32 iScale) {
         realHt = 0x400;
 #endif
     }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (realHt > 0x400) {
     realHt = 0x400;
   }
@@ -458,7 +459,7 @@ static u32 __GXGetNumXfbLines(u32 efbHt, u32 iScale) {
 }
 
 u16 GXGetNumXfbLines(u16 efbHeight, f32 yScale) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u32 iScale;
 #else
     u32 iScale;
@@ -476,7 +477,7 @@ f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) {
     u32 tgtHt;
     u32 realHt;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   tgtHt = xfbHeight;
   yScale = (f32)xfbHeight / (f32)efbHeight;
   iScale = (u32)(256.0f / yScale) & 0x1FF;
@@ -486,7 +487,7 @@ f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) {
     ASSERTMSGLINE(0x5E8, efbHeight <= xfbHeight, "GXGetYScaleFactor: EFB height should not be greater than XFB height.\n");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   while (realHt > xfbHeight) {
     tgtHt--;
     yScale = (f32)tgtHt / (f32)efbHeight;
@@ -496,11 +497,11 @@ f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) {
 #endif
     iScale = (u32)(256.0f / yScale) & 0x1FF;
     realHt = __GXGetNumXfbLines(efbHeight, iScale);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   fScale = yScale;
   while (realHt < xfbHeight) {
 #else
@@ -513,7 +514,7 @@ f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight) {
 
 #endif
     fScale = yScale;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     tgtHt++;
     yScale = (f32)tgtHt / (f32)efbHeight;
     iScale = (u32)(256.0f / yScale) & 0x1FF;
@@ -539,14 +540,14 @@ u32 GXSetDispCopyYScale(f32 vscale)
     u32 ht;
     u32 reg;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   iScale = (u32)(256.0f / vscale) & 0x1FF;
   enable = (iScale != 256);
 #else
     CHECK_GXBEGIN(0x615, "GXSetDispCopyYScale");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   reg = 0;
   SET_REG_FIELD(reg, 9, 0, iScale);
   SET_REG_FIELD(reg, 8, 24, 0x4E);
@@ -576,7 +577,7 @@ void GXSetCopyClear(GXColor clear_clr, u32 clear_z)
 {
     u32 reg;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   reg = 0;
   SET_REG_FIELD(reg, 8, 0, clear_clr.r);
   SET_REG_FIELD(reg, 8, 8, clear_clr.a);
@@ -587,7 +588,7 @@ void GXSetCopyClear(GXColor clear_clr, u32 clear_z)
     ASSERTMSGLINE(0x63E, clear_z <= 0xFFFFFF, "GXSetCopyClear: Z clear value is out of range");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   reg = 0;
   SET_REG_FIELD(reg, 8, 0, clear_clr.b);
   SET_REG_FIELD(reg, 8, 8, clear_clr.g);
@@ -601,7 +602,7 @@ void GXSetCopyClear(GXColor clear_clr, u32 clear_z)
     GX_WRITE_RAS_REG(reg);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   reg = 0;
   SET_REG_FIELD(reg, 24, 0, clear_z);
   SET_REG_FIELD(reg, 8, 24, 0x51);
@@ -627,7 +628,7 @@ void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const
     u32 coeff0;
     u32 coeff1;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (aa != 0) {
     msLoc[0] = 0;
     SET_REG_FIELD(msLoc[0], 4, 0, sample_pattern[0][0]);
@@ -641,7 +642,7 @@ void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const
     CHECK_GXBEGIN(0x669, "GXSetCopyFilter");
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     msLoc[1] = 0;
     SET_REG_FIELD(msLoc[1], 4, 0, sample_pattern[3][0]);
     SET_REG_FIELD(msLoc[1], 4, 4, sample_pattern[3][1]);
@@ -662,7 +663,7 @@ void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const
         SET_REG_FIELD(0x673, msLoc[0], 8, 24, 1);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     msLoc[2] = 0;
     SET_REG_FIELD(msLoc[2], 4, 0, sample_pattern[6][0]);
     SET_REG_FIELD(msLoc[2], 4, 4, sample_pattern[6][1]);
@@ -682,7 +683,7 @@ void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const
         SET_REG_FIELD(0x67C, msLoc[1], 8, 24, 2);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     msLoc[3] = 0;
     SET_REG_FIELD(msLoc[3], 4, 0, sample_pattern[9][0]);
     SET_REG_FIELD(msLoc[3], 4, 4, sample_pattern[9][1]);
@@ -708,7 +709,7 @@ void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const
         SET_REG_FIELD(0x685, msLoc[2], 8, 24, 3);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GX_WRITE_RAS_REG(msLoc[0]);
   GX_WRITE_RAS_REG(msLoc[1]);
   GX_WRITE_RAS_REG(msLoc[2]);
@@ -734,7 +735,7 @@ void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const
     GX_WRITE_RAS_REG(msLoc[3]);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   coeff0 = 0;
   SET_REG_FIELD(coeff0, 8, 24, 0x53);
   coeff1 = 0;
@@ -789,7 +790,7 @@ void GXSetCopyFilter(GXBool aa, const u8 sample_pattern[12][2], GXBool vf, const
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXSetDispCopyGamma(GXGamma gamma) { SET_REG_FIELD(__GXData->cpDisp, 2, 7, gamma); }
 #else
 void GXSetDispCopyGamma(GXGamma gamma)
@@ -799,7 +800,7 @@ void GXSetDispCopyGamma(GXGamma gamma)
 }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void GXCopyDisp(void *dest, GXBool clear) {
   u32 reg;
   u32 tempPeCtrl;
@@ -807,7 +808,7 @@ void GXCopyDisp(void *dest, GXBool clear) {
   u8 changePeCtrl;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (clear) {
     reg = __GXData->zmode;
     SET_REG_FIELD(reg, 1, 0, 1);
@@ -852,7 +853,7 @@ void GXCopyDisp(void *dest, GXBool clear)
 #endif
     GX_WRITE_RAS_REG(reg);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     reg = __GXData->cmode0;
     SET_REG_FIELD(reg, 1, 0, 0);
     SET_REG_FIELD(reg, 1, 1, 0);
@@ -865,7 +866,7 @@ void GXCopyDisp(void *dest, GXBool clear)
     GX_WRITE_RAS_REG(__GXData->cpDisp);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   changePeCtrl = FALSE;
 
   if ((clear || (u32)GET_REG_FIELD(__GXData->peCtrl, 3, 0) == 3) &&
@@ -920,7 +921,7 @@ void GXCopyTex(void *dest, GXBool clear)
     u32 phyAddr;
     u8 changePeCtrl;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (clear) {
     reg = __GXData->zmode;
     SET_REG_FIELD(reg, 1, 0, 1);
@@ -963,7 +964,7 @@ void GXCopyTex(void *dest, GXBool clear)
 #endif
     GX_WRITE_RAS_REG(reg);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     reg = __GXData->cmode0;
     SET_REG_FIELD(reg, 1, 0, 0);
     SET_REG_FIELD(reg, 1, 1, 0);
@@ -976,7 +977,7 @@ void GXCopyTex(void *dest, GXBool clear)
     GX_WRITE_RAS_REG(__GXData->cpTex);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   changePeCtrl = 0;
   tempPeCtrl = __GXData->peCtrl;
 
@@ -1035,7 +1036,7 @@ void GXClearBoundingBox(void)
 {
     u32 reg;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   reg = 0x550003FF;
   GX_WRITE_RAS_REG(reg);
   reg = 0x560003FF;
@@ -1051,7 +1052,7 @@ void GXClearBoundingBox(void)
 #endif
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 void GXReadBoundingBox(u16 *left, u16 *top, u16 *right, u16 *bottom)
 {
     *left = GX_GET_PE_REG(8);

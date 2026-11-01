@@ -1,7 +1,9 @@
 #ifndef _DOLPHIN_SI
 #define _DOLPHIN_SI
 
-#ifdef PRIME1
+#include <SDKVersion.h>
+
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include <types.h>
 
 #define SI_CHAN0 0

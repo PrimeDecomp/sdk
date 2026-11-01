@@ -1,8 +1,8 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/vi.h"
 #include "dolphin/OSRtcPriv.h"
 #else
-#include "GameVersions.h"
 #include "dolphin/gx.h"
 #endif
 #include "dolphin/hw_regs.h"
@@ -10,7 +10,7 @@
 #include "dolphin/OSRtcPriv.h"
 #include "dolphin/vi.h"
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 // Useful macros.
 #define CLAMP(x, l, h) (((x) > (h)) ? (h) : (((x) < (l)) ? (l) : (x)))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -45,7 +45,7 @@ static u32 CurrTvMode;
 static u32 NextBufAddr;
 static u32 CurrBufAddr;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 #include "dolphin/dvd.h"
 
 extern volatile u32 Vdac_Flag_Changed;
@@ -68,7 +68,7 @@ void __VIGetCurrentPosition(s16* x, s16* y);
     (reg) = ((u32)__rlwimi((u32)(reg), (val), (shift), 32 - (shift) - (size), 31 - (shift)));    \
   } while (0)
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 const char* __VIVersion = "<< RVL_SDK - VI 	release build: Aug  8 2007 02:07:17 (0x4199_60831) >>";
 #else
 const char* __VIVersion = "<< Dolphin SDK - VI	release build: Apr  7 2004 04:13:59 (0x2301) >>";
@@ -134,7 +134,7 @@ typedef struct {
     VITiming* timing;
 } SomeVIStruct;
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static BOOL IsInitialized = FALSE;
 static volatile u32 retraceCount;
 static volatile u32 flushFlag;
@@ -200,7 +200,7 @@ static u16 shdwRegs[59];
 #endif
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static u32 FBSet;
 #else
 #define MARK_CHANGED(index) (changed |= 1LL << (63 - (index)))
@@ -216,7 +216,7 @@ static VITiming timing[] = {
     { 12, 480, 44, 44, 10, 10, 24, 24, 24, 24, 1038, 1038, 1038, 1038, 1050, 429, 64, 71, 105, 168, 379, 122, 412 },
     { 6, 241, 24, 25, 1, 0, 12, 13, 12, 13, 520, 519, 520, 519, 525, 429, 64, 71, 105, 159, 370, 122, 412 },
     { 12, 480, 48, 48, 6, 6, 24, 24, 24, 24, 1038, 1038, 1038, 1038, 1050, 429, 64, 71, 105, 180, 391, 122, 412 },
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     { 10, 576, 62, 62, 6, 6, 20, 20, 20, 20, 1240, 1240, 1240, 1240, 1250, 432, 64, 75, 106, 172, 380, 122, 412 }
 #endif
 };
@@ -237,7 +237,7 @@ static u16 taps[25] = {
     0x0001
 };
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static VITiming* timingExtra = NULL;
 #else
 static SomeVIStruct HorVer;
@@ -246,7 +246,7 @@ static VITiming* timingExtra;
 #endif
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static vu16 regs[59];
 static vu16 shdwRegs[59];
 
@@ -295,7 +295,7 @@ static u32 getCurrentFieldEvenOdd();
 static void getEncoderType(void) {
   // UNUSED FUNCTION
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 GXRenderModeObj GXPal528Prog = {
     VI_TVMODE_PAL_PROG,
     640,
@@ -389,7 +389,7 @@ static BOOL OnShutdown(BOOL final, u32 event) {
 
 // prototypes
 static u32 getCurrentFieldEvenOdd(void);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static void GetCurrentDisplayPosition(u32* hct, u32* vct);
 #endif
 VITiming* __VISetExtraTiming(VITiming* t);
@@ -402,7 +402,7 @@ int __VIGetLatch1Position(s16* px, s16* py);
 int __VIGetLatchPosition(u32 port, s16* px, s16* py);
 
 
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 static u32 getEncoderType(void) {
     return 1;
 }
@@ -423,7 +423,7 @@ static s32 cntlzd(u64 bit) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static int cntlzd(u64 bit) {
   u32 hi, lo;
   int value;
@@ -432,7 +432,7 @@ static int VISetRegs(void) {
     s32 regIndex;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   hi = (u32)(bit >> 32);
   lo = (u32)(bit & 0xFFFFFFFF);
   value = __cntlzw(hi);
@@ -445,7 +445,7 @@ static int VISetRegs(void) {
         }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (value < 32) {
     return value;
   }
@@ -458,14 +458,14 @@ static int VISetRegs(void) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   return (32 + __cntlzw(lo));
 #else
     return 0;
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static BOOL VISetRegs(void) {
   int regIndex;
 #else
@@ -473,7 +473,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
     OSContext exceptionContext;
     u16 reg;
     u32 inter;
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     u32 regIndex;
     static u32 old_dtvStatus = 999;
     static u32 old_tvtype = 999;
@@ -487,7 +487,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
 #endif
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (!((shdwChangeMode == 1) && (getCurrentFieldEvenOdd() == 0))) {
     while (shdwChanged) {
       regIndex = cntlzd(shdwChanged);
@@ -533,8 +533,8 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
 #endif
     }
 
-#ifndef PRIME1
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_R32J01_00
     if (inter == 0) {
     }
 #endif
@@ -547,7 +547,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
         PreCB(retraceCount);
     }
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     if (vsync_timing_test_flag) {
         u32 hcount, vcount;
 
@@ -566,7 +566,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
         }
     }
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     now_dtvStatus = VIGetDTVStatus();
     if (now_dtvStatus != old_dtvStatus) {
         __VISetYUVSEL((VIBool)now_dtvStatus);
@@ -667,7 +667,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
     OSClearContext(&exceptionContext);
     OSSetCurrentContext(context);
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     if (__VIDimming_All_Clear == TRUE) {
         if (__OSSetVIForceDimming(FALSE, 0, 0) == TRUE) {
             __VIDimming_All_Clear = FALSE;
@@ -801,7 +801,7 @@ static VITiming* getTiming(VITVMode mode) {
     case VI_TVMODE_EURGB60_DS:      return &timing[1];
     case VI_TVMODE_MPAL_INT:        return &timing[4];
     case VI_TVMODE_MPAL_DS:         return &timing[5];
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     case VI_TVMODE_NTSC_PROG:
     case 10:
     case 22:
@@ -814,7 +814,7 @@ static VITiming* getTiming(VITVMode mode) {
     case VI_TVMODE_DEBUG_PAL_DS:    return &timing[3];
     case 24:                        return &timing[8];
     case 26:                        return &timing[9];
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     case 6:                         return &timing[10];
     case 28:
     case 29:
@@ -841,7 +841,7 @@ void __VIInit(VITVMode mode) {
     volatile u32 a;
     u16 hct;
     u16 vct;
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
     u32 encoderType;
 
     encoderType = getEncoderType();
@@ -853,7 +853,7 @@ void __VIInit(VITVMode mode) {
     nonInter = mode & 3;
     tv = (u32)mode >> 2;
     *(u32*)OSPhysicalToCached(0xCC) = tv;
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
     if (encoderType == 0) {
         tv = 3;
     }
@@ -933,7 +933,7 @@ static void AdjustPosition(u16 acv) {
 }
 
 static void ImportAdjustingValues(void) {
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     displayOffsetH = SCGetDisplayOffsetH();
     displayOffsetV = 0;
 #else
@@ -958,7 +958,7 @@ void VIInit(void) {
     OSRegisterVersion(__VIVersion);
     IsInitialized = TRUE;
 
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
     encoderType = getEncoderType();
 #endif
     if (!(__VIRegs[1] & 1)) {
@@ -971,9 +971,9 @@ void VIInit(void) {
     changeMode = 0;
 #endif
     shdwChangeMode = 0;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
     flushFlag = 0;
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     flushFlag3in1 = 0;
 #endif
 
@@ -996,14 +996,14 @@ void VIInit(void) {
 
     tvInBootrom = *(u32*)OSPhysicalToCached(0xCC);
     dspCfg = __VIRegs[1];
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     HorVer.nonInter = VIGetScanMode();
 #else
     HorVer.nonInter = (s32) ((dspCfg >> 2U) & 1);
 #endif
     HorVer.tv = ((u32)(dspCfg) & 0x300) >> 8;
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     if (tvInBootrom == VI_EURGB60 || (tvInBootrom == VI_PAL && HorVer.tv == VI_NTSC)) {
 #else
     if (tvInBootrom == VI_PAL && HorVer.tv == VI_NTSC) {
@@ -1018,11 +1018,11 @@ void VIInit(void) {
 #endif
     CurrTiming = HorVer.timing;
     CurrTvMode = HorVer.tv;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     CurrBufAddr = NextBufAddr;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     return TRUE;
   }
   return FALSE;
@@ -1059,7 +1059,7 @@ void VIInit(void) {
     PostCB = NULL;
     __OSSetInterruptHandler(0x18, __VIRetraceHandler);
     __OSUnmaskInterrupts(0x80);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     OSRegisterShutdownFunction(&ShutdownFunctionInfo);
 
     switch (VIGetTvFormat()) {
@@ -1087,7 +1087,7 @@ void VIInit(void) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void __VIRetraceHandler(__OSInterrupt interrupt, OSContext* context) {
   OSContext exceptionContext;
   u16 viReg;
@@ -1098,7 +1098,7 @@ void VIWaitForRetrace(void) {
     u32 count;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   viReg = __VIRegs[VI_DISP_INT_0];
   if (viReg & 0x8000) {
     __VIRegs[VI_DISP_INT_0] = (u16)(viReg & ~0x8000);
@@ -1161,7 +1161,7 @@ void VIWaitForRetrace(void) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	800D0A5C
@@ -1176,7 +1176,7 @@ static void setInterruptRegs(VITiming* tm) {
     u16 borrow;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   oldCallback = PreCB;
 #else
     vct = tm->nhlines / 2;
@@ -1194,7 +1194,7 @@ static void setInterruptRegs(VITiming* tm) {
     MARK_CHANGED(24);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   interrupt = OSDisableInterrupts();
   PreCB = callback;
   OSRestoreInterrupts(interrupt);
@@ -1205,7 +1205,7 @@ static void setInterruptRegs(VITiming* tm) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	800D0AA0
@@ -1233,7 +1233,7 @@ static void setPicConfig(u16 fbSizeX, VIXFBMode xfbMode, u16 panPosX, u16 panSiz
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	800D0AE4
@@ -1250,7 +1250,7 @@ static void setBBIntervalRegs(VITiming* tm) {
     u16 val;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   case VI_TVMODE_PAL_INT:
     return &timing[2];
   case VI_TVMODE_PAL_DS:
@@ -1261,7 +1261,7 @@ static void setBBIntervalRegs(VITiming* tm) {
     changed |= 0x10000000000000;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   case VI_TVMODE_EURGB60_INT:
     return &timing[0];
   case VI_TVMODE_EURGB60_DS:
@@ -1272,7 +1272,7 @@ static void setBBIntervalRegs(VITiming* tm) {
     changed |= 0x20000000000000;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   case VI_TVMODE_MPAL_INT:
     return &timing[4];
   case VI_TVMODE_MPAL_DS:
@@ -1283,7 +1283,7 @@ static void setBBIntervalRegs(VITiming* tm) {
     changed |= 0x4000000000000;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   case VI_TVMODE_NTSC_PROG:
     return &timing[6];
   case VI_TVMODE_NTSC_3D:
@@ -1308,7 +1308,7 @@ static void setBBIntervalRegs(VITiming* tm) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	800D0B84
@@ -1324,7 +1324,7 @@ static void setScalingRegs(u16 panSizeX, u16 dispSizeX, BOOL threeD) {
     u32 scale;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u16 hct, vct;
 
   nonInter = mode & 2;
@@ -1396,7 +1396,7 @@ static void setScalingRegs(u16 panSizeX, u16 dispSizeX, BOOL threeD) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	........
@@ -1411,7 +1411,7 @@ static void calcFbbs(u32 bufAddr, u16 panPosX, u16 panPosY, u8 wordPerLine, VIXF
     u32 tmp;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   HorVer.adjDispPosX = (u16)CLAMP((s16)HorVer.dispPosX + displayOffsetH, 0, 720 - HorVer.dispSizeX);
 
   coeff = (HorVer.xfbMode == VI_XFBMODE_SF) ? 2 : 1;
@@ -1449,7 +1449,7 @@ static void calcFbbs(u32 bufAddr, u16 panPosX, u16 panPosY, u8 wordPerLine, VIXF
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	........
@@ -1503,7 +1503,7 @@ static void setFbbRegs(SomeVIStruct* HorVer, u32* tfbb, u32* bfbb, u32* rtfbb, u
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	800D0D84
@@ -1520,7 +1520,7 @@ static void setHorizontalRegs(VITiming* tm, u16 dispPosX, u16 dispSizeX) {
     u32 hbeHi;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (IsInitialized) {
     return;
   }
@@ -1615,7 +1615,7 @@ static void setHorizontalRegs(VITiming* tm, u16 dispPosX, u16 dispSizeX) {
     MARK_CHANGED(3);
     regs[2] = tm->hce | (tm->hcs << 8);
     MARK_CHANGED(2);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     if (HorVer.tv == 8) {
         hbe = tm->hbe640 + 172;
         hbs = tm->hbs640;
@@ -1636,7 +1636,7 @@ static void setHorizontalRegs(VITiming* tm, u16 dispPosX, u16 dispSizeX) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	800D1234
@@ -1656,7 +1656,7 @@ static void setVerticalRegs(u16 dispPosY, u16 dispSizeY, u8 equ, u16 acv, u16 pr
     u16 d;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   interrupt = OSDisableInterrupts();
   startCount = retraceCount;
   do {
@@ -1664,7 +1664,7 @@ static void setVerticalRegs(u16 dispPosY, u16 dispSizeY, u8 equ, u16 acv, u16 pr
   } while (startCount == retraceCount);
   OSRestoreInterrupts(interrupt);
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     if (HorVer.nonInter == 2 || HorVer.nonInter == 3) {
 #else
     if (regs[54] & 1) {
@@ -1711,7 +1711,7 @@ static void setVerticalRegs(u16 dispPosY, u16 dispSizeY, u8 equ, u16 acv, u16 pr
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	........
@@ -1724,7 +1724,7 @@ static void PrintDebugPalCaution(void) {
     static u32 message;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   vct = (u16)(tm->numHalfLines / 2);
   borrow = (u16)(tm->numHalfLines % 2);
   hct = (u16)((borrow) ? tm->hlw : (u16)0);
@@ -1751,7 +1751,7 @@ static void PrintDebugPalCaution(void) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	........
@@ -1774,7 +1774,7 @@ void VIConfigure(const GXRenderModeObj* rm) {
     u32 tvInGame;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   regs[VI_HSW] = (u16)((((u32)(*std))) | (((u32)(*wpl)) << 8));
   changed |= VI_BITMASK(VI_HSW);
 }
@@ -1783,7 +1783,7 @@ void VIConfigure(const GXRenderModeObj* rm) {
     newNonInter = rm->viTVmode & 3;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	........
@@ -1798,13 +1798,13 @@ static void setBBIntervalRegs(VITimingInfo* tm) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   val = (u16)((((u32)(tm->bs1))) | (((u32)(tm->be1)) << 5));
   regs[VI_BBI_ODD_U] = val;
   changed |= VI_BITMASK(VI_BBI_ODD_U);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   val = (u16)((((u32)(tm->bs3))) | (((u32)(tm->be3)) << 5));
   regs[VI_BBI_ODD] = val;
   changed |= VI_BITMASK(VI_BBI_ODD);
@@ -1817,12 +1817,12 @@ static void setBBIntervalRegs(VITimingInfo* tm) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   val = (u16)((((u32)(tm->bs2))) | (((u32)(tm->be2)) << 5));
   regs[VI_BBI_EVEN_U] = val;
   changed |= VI_BITMASK(VI_BBI_EVEN_U);
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     if ((tvInBootrom != VI_PAL && tvInBootrom != VI_EURGB60 &&
          (tvInGame == VI_PAL || tvInGame == VI_EURGB60)) ||
         ((tvInBootrom == VI_PAL || tvInBootrom == VI_EURGB60) &&
@@ -1855,7 +1855,7 @@ static void setBBIntervalRegs(VITimingInfo* tm) {
 #endif
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   val = (u16)((((u32)(tm->bs4))) | (((u32)(tm->be4)) << 5));
   regs[VI_BBI_EVEN] = val;
   changed |= VI_BITMASK(VI_BBI_EVEN);
@@ -1868,7 +1868,7 @@ static void setBBIntervalRegs(VITimingInfo* tm) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	........
@@ -1894,25 +1894,25 @@ static void setScalingRegs(u16 panSizeX, u16 dispSizeX, BOOL is3D) {
     HorVer.threeD = (HorVer.nonInter == 3) ? TRUE : FALSE;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   panSizeX = (u16)(is3D ? panSizeX * 2 : panSizeX);
 #else
     tm = getTiming((HorVer.tv << 2) + HorVer.nonInter);
     HorVer.timing = tm;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (panSizeX < dispSizeX) {
     scale = (256 * (u32)panSizeX + (u32)dispSizeX - 1) / (u32)dispSizeX;
 #else
     AdjustPosition(tm->acv);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     regs[VI_HSR] = (u16)((((u32)(scale))) | (((u32)(1)) << 12));
     changed |= VI_BITMASK(VI_HSR);
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
     if (encoderType == 0) {
         HorVer.tv = 3;
     }
@@ -1920,7 +1920,7 @@ static void setScalingRegs(u16 panSizeX, u16 dispSizeX, BOOL is3D) {
     setInterruptRegs(tm);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     regs[VI_WIDTH] = (u16)((((u32)(panSizeX))));
     changed |= VI_BITMASK(VI_WIDTH);
   } else {
@@ -1933,7 +1933,7 @@ static void setScalingRegs(u16 panSizeX, u16 dispSizeX, BOOL is3D) {
     regClksel = regs[54];
     if (HorVer.nonInter == VI_PROGRESSIVE || HorVer.nonInter == 3) {
         regDspCfg = (((u32)(regDspCfg)) & ~0x00000004) | (((u32)(1)) << 2);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
         if (HorVer.tv == 8) {
             regClksel = (((u32)(regClksel)) & ~0x00000001) | (((u32)(0)) << 0);
         } else {
@@ -1948,7 +1948,7 @@ static void setScalingRegs(u16 panSizeX, u16 dispSizeX, BOOL is3D) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	........
@@ -1963,7 +1963,7 @@ static void calcFbbs(u32 bufAddr, u16 panPosX, u16 panPosY, u8 wordPerLine, VIXF
     regDspCfg = (((u32)(regDspCfg)) & ~0x00000008) | (((u32)(HorVer.threeD)) << 3);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   *tfbb = bufAddr + xoffInWords * 32 + bytesPerLine * panPosY;
   *bfbb = (xfbMode == VI_XFBMODE_SF) ? *tfbb : (*tfbb + bytesPerLine);
 #else
@@ -1974,7 +1974,7 @@ static void calcFbbs(u32 bufAddr, u16 panPosX, u16 panPosY, u8 wordPerLine, VIXF
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (dispPosY % 2 == 1) {
     u32 tmp = *tfbb;
     *tfbb = *bfbb;
@@ -1985,7 +1985,7 @@ static void calcFbbs(u32 bufAddr, u16 panPosX, u16 panPosY, u8 wordPerLine, VIXF
     regs[54] = (u16)regClksel;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   *tfbb = ToPhysical(*tfbb);
   *bfbb = ToPhysical(*bfbb);
 }
@@ -1994,7 +1994,7 @@ static void calcFbbs(u32 bufAddr, u16 panPosX, u16 panPosY, u8 wordPerLine, VIXF
     MARK_CHANGED(54);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 /*
  * --INFO--
  * Address:	800D1288
@@ -2314,7 +2314,7 @@ void VIConfigurePan(u16 xOrg, u16 yOrg, u16 width, u16 height)
     if (FBSet != 0) {
         setFbbRegs(&HorVer, &HorVer.tfbb, &HorVer.bfbb, &HorVer.rtfbb, &HorVer.rbfbb);
     }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     setVerticalRegs(HorVer.adjDispPosY, HorVer.dispSizeY, tm->equ, tm->acv, tm->prbOdd, tm->prbEven, tm->psbOdd, tm->psbEven, HorVer.isBlack);
 #else
     setVerticalRegs(HorVer.AdjustedDispPosY, HorVer.AdjustedDispSizeY, tm->equ, tm->acv, tm->prbOdd, tm->prbEven, tm->psbOdd, tm->psbEven, HorVer.black);
@@ -2347,7 +2347,7 @@ void VIConfigurePan(u16 xOrg, u16 yOrg, u16 width, u16 height) {
 }
 
 void VIFlush(void) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   BOOL enabled;
   s32 regIndex;
   u32 val; // for stack.
@@ -2361,7 +2361,7 @@ void VIFlush(void) {
     changeMode = 0;
     shdwChanged |= changed;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   while (changed) {
     regIndex = cntlzd(changed);
     shdwRegs[regIndex] = regs[regIndex];
@@ -2375,13 +2375,13 @@ void VIFlush(void) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   flushFlag = 1;
   NextBufAddr = HorVer.bufAddr;
   OSRestoreInterrupts(enabled);
 #else
     flushFlag = 1;
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     flushFlag3in1 = 1;
 #endif
     NextBufAddr = HorVer.bufAddr;
@@ -2390,7 +2390,7 @@ void VIFlush(void) {
 }
 
 void VISetNextFrameBuffer(void* fb) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   BOOL enabled = OSDisableInterrupts();
   HorVer.bufAddr = (u32)fb;
   FBSet = 1;
@@ -2407,7 +2407,7 @@ void VISetNextFrameBuffer(void* fb) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void* VIGetNextFrameBuffer() {
   // UNUSED FUNCTION
 #else
@@ -2416,7 +2416,7 @@ void* VIGetNextFrameBuffer(void) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void* VIGetCurrentFrameBuffer(void) { return (void*)CurrBufAddr; }
 #else
 void* VIGetCurrentFrameBuffer(void) {
@@ -2425,7 +2425,7 @@ void* VIGetCurrentFrameBuffer(void) {
 #endif
 
 void VISetNextRightFrameBuffer(void* fb) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   // UNUSED FUNCTION
 #else
     BOOL enabled;
@@ -2438,7 +2438,7 @@ void VISetNextRightFrameBuffer(void* fb) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void VISetBlack(BOOL isBlack) {
   int interrupt;
   VITimingInfo* tm;
@@ -2448,7 +2448,7 @@ void VISetBlack(BOOL black) {
     VITiming* tm;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   interrupt = OSDisableInterrupts();
   HorVer.isBlack = isBlack;
   tm = HorVer.timing;
@@ -2464,7 +2464,7 @@ void VISetBlack(BOOL black) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void VISet3D(void) {
   // UNUSED FUNCTION
 #else
@@ -2488,7 +2488,7 @@ u32 VIGetRetraceCount(void) {
     return retraceCount;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static u32 getCurrentHalfLine(void)
 {
     u32 hcount;
@@ -2500,12 +2500,12 @@ static void GetCurrentDisplayPosition(u32* hct, u32* vct) {
     vcount = __VIRegs[VI_VERT_COUNT] & 0x7FF;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     vcount = __VIRegs[22] & 0x7FF;
 #endif
     do {
         vcount0 = vcount;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
         hcount = __VIRegs[23] & 0x7FF;
         vcount = __VIRegs[22] & 0x7FF;
 #else
@@ -2513,7 +2513,7 @@ static void GetCurrentDisplayPosition(u32* hct, u32* vct) {
         vcount = __VIRegs[VI_VERT_COUNT] & 0x7FF;
 #endif
     } while (vcount0 != vcount);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     return ((vcount - 1) * 2) + ((hcount - 1) / CurrTiming->hlw);
 #else
 
@@ -2522,7 +2522,7 @@ static void GetCurrentDisplayPosition(u32* hct, u32* vct) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static u32 getCurrentFieldEvenOdd() {
   return (getCurrentHalfLine() < CurrTiming->numHalfLines) ? 1 : 0;
 #else
@@ -2539,7 +2539,7 @@ static u32 getCurrentFieldEvenOdd(void) {
 }
 
 u32 VIGetNextField(void) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u32 nextField;
   int interrupt;
 #else
@@ -2548,7 +2548,7 @@ u32 VIGetNextField(void) {
     u8 unused[4];
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   interrupt = OSDisableInterrupts();
   nextField = getCurrentFieldEvenOdd() ^ 1;
   OSRestoreInterrupts(interrupt);
@@ -2562,7 +2562,7 @@ u32 VIGetNextField(void) {
 }
 
 u32 VIGetCurrentLine(void) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u32 line;
   VITimingInfo* tm;
   int interrupt;
@@ -2572,7 +2572,7 @@ u32 VIGetCurrentLine(void) {
     BOOL enabled;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   tm = CurrTiming;
   interrupt = OSDisableInterrupts();
   line = getCurrentHalfLine();
@@ -2596,7 +2596,7 @@ u32 VIGetCurrentLine(void) {
 }
 
 u32 VIGetTvFormat(void) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u32 fmt;
   int interrupt;
 #else
@@ -2604,13 +2604,13 @@ u32 VIGetTvFormat(void) {
     BOOL enabled;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   interrupt = OSDisableInterrupts();
 #else
     enabled = OSDisableInterrupts();
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   switch (CurrTvMode) {
   case VI_NTSC:
   case VI_DEBUG:
@@ -2635,7 +2635,7 @@ u32 VIGetTvFormat(void) {
     case VI_DEBUG:
     case 6:
     case 7:
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     case 8:
 #endif
         format = VI_NTSC;
@@ -2657,8 +2657,8 @@ u32 VIGetTvFormat(void) {
 #endif
 }
 
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 u32 VIGetScanMode(void) {
     u32 scanMode;
     BOOL enabled;
@@ -2697,7 +2697,7 @@ u32 VIGetScanMode(void) {
 
 #endif
 u32 VIGetDTVStatus(void) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u32 stat;
   int interrupt;
 #else
@@ -2705,7 +2705,7 @@ u32 VIGetDTVStatus(void) {
     BOOL enabled = OSDisableInterrupts();
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   interrupt = OSDisableInterrupts();
   stat = (__VIRegs[VI_DTV_STAT] & 3);
   OSRestoreInterrupts(interrupt);
@@ -2717,7 +2717,7 @@ u32 VIGetDTVStatus(void) {
 #endif
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 void __VISetAdjustingValues(s16 x, s16 y) {
     BOOL enabled;
     VITiming* tm;
@@ -2913,7 +2913,7 @@ int __VIGetLatchPosition(u32 port, s16* px, s16* py) {
     }
 }
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 BOOL __VIResetDev0Idle(void) {
     __VIDimmingFlag_DEV_IDLE[0] = 0;
     return TRUE;

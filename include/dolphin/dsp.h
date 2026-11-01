@@ -1,8 +1,9 @@
 #ifndef _DOLPHIN_DSP
 #define _DOLPHIN_DSP
 
+#include <SDKVersion.h>
+
 #include "types.h"
-#include <GameVersions.h>
 #include <dolphin/os.h>
 
 #ifdef __cplusplus
@@ -58,7 +59,7 @@ u32 DSPGetDMAStatus();
 
 DSPTaskInfo* DSPAddTask(DSPTaskInfo* task);
 DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 BOOL DSPCheckInit(void);
 DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task);
 #endif

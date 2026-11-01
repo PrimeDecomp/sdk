@@ -1,8 +1,8 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/__ppc_eabi_init.h"
 #include "dolphin/base/PPCArch.h"
 #else
-#include "GameVersions.h"
 #include <dolphin/__ppc_eabi_init.h>
 #include <dolphin/PPCArch.h>
 #endif
@@ -23,7 +23,7 @@ asm void __init_hardware(void) {
 
   mflr r31
   bl __OSPSInit
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   bl __OSFPRInit
 #endif
   bl __OSCacheInit
@@ -53,12 +53,12 @@ loop:
   // clang-format on
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __init_user() { __init_cpp(); }
 #else
 __declspec(weak) void InitMetroTRK_BBA() { return; }
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 asm void __init_user() {
   // clang-format off
   nofralloc
@@ -91,10 +91,10 @@ void __init_cpp(void) {
   }
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void _ExitProcess(void) { PPCHalt(); }
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 void _ExitProcess(void) { PPCHalt(); }
 #else
 void exit(int status) {

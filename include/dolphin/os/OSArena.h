@@ -1,6 +1,8 @@
 #ifndef _DOLPHIN_OSARENA
 #define _DOLPHIN_OSARENA
 
+#include <SDKVersion.h>
+
 #include <dolphin/types.h>
 
 #ifdef __cplusplus
@@ -12,7 +14,7 @@ void* OSGetArenaLo(void);
 void OSSetArenaHi(void* addr);
 void OSSetArenaLo(void* addr);
 void* OSAllocFromArenaLo(u32 size, u32 align);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void* OSAllocFromArenaLo(u32 size, u32 align);
 #else
 

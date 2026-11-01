@@ -1,10 +1,11 @@
 #ifndef _DOLPHIN_GXPRIV
 #define _DOLPHIN_GXPRIV
 
-#include "GameVersions.h"
+#include <SDKVersion.h>
+
 #include "dolphin/gx/GXVert.h"
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 typedef struct GXLightObjInt {
 #else
 typedef struct GXLightObj_ {
@@ -23,7 +24,7 @@ typedef struct GXLightObj_ {
   float nx;
   float ny;
   float nz;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 } GXLightObjInt;
 #else
 } GXLightObj_;
@@ -34,14 +35,14 @@ typedef struct GXLightObj_ {
 
 #define GX_FIFO_ADDR 0xCC008000
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 volatile PPCWGPipe __GXWGFifo AT_ADDRESS(GX_FIFO_ADDR);
 #else
 #define GX_WRITE_U8(v) (GXWGFifo.u8 = v)
 #define GX_WRITE_U32(v) (GXWGFifo.u32 = v)
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #define GX_WRITE_U8(v) (__GXWGFifo.u8 = (u8)(v))
 #define GX_WRITE_U32(v) (__GXWGFifo.u32 = (u32)(v))
 
@@ -121,7 +122,7 @@ typedef struct __GXData_struct {
   u32 perfSel;
   GXBool inDispList;
   GXBool dlSaveContext;
-#if VERSION == VERSION_GM8E_02
+#if SDK_VERSION == SDK_VERSION_GM8E01_02
   GXBool abtWaitPECopy;
 #endif
   u8 dirtyVAT;
@@ -133,7 +134,7 @@ typedef struct GXData {
 #endif
 } GXData;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 typedef struct __GXFifoObj {
   u8* base;
   u8* top;
@@ -215,7 +216,7 @@ void __GXSetMatrixIndex(GXAttr matIdxAttr);
 void __GXSetRange(f32 nearz, f32 sideX);
 void __GXInitGX();
 
-#if VERSION == VERSION_GM8E_02
+#if SDK_VERSION == SDK_VERSION_GM8E01_02
 void __GXAbort(void);
 
 static inline u32 __GXReadMEMCounterU32(u32 addrHi, u32 addrLo) {

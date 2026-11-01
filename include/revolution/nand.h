@@ -1,6 +1,8 @@
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifndef _REVOLUTION_NAND
 #define _REVOLUTION_NAND
+
+#include <SDKVersion.h>
 
 #include <dolphin/types.h>
 

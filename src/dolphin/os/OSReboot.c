@@ -1,4 +1,4 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 
 #include "dolphin/ai.h"
 #include "dolphin/dvd.h"
@@ -8,7 +8,7 @@
 #include "dolphin/os/OSInterrupt.h"
 #include "dolphin/types.h"
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 typedef struct ApploaderHeader {
   // total size: 0x20
   char date[16];  // offset 0x0, size 0x10
@@ -22,16 +22,16 @@ extern OSExecParams __OSRebootParams;
 void __OSBootDol(u32 doloffset, u32 restartCode, const char** argv);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 ATTRIBUTE_ALIGN_DECL(32, static ApploaderHeader Header);
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 extern u32 __OSNextPartitionType;
 vu32 __OSLaunchPartitionType : (OS_BASE_CACHED | 0x3194);
 #endif
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 extern void *__OSSavedRegionStart;
 extern void *__OSSavedRegionEnd;
 #else
@@ -39,18 +39,18 @@ static void* SaveStart = NULL;
 static void* SaveEnd = NULL;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void *SaveStart = NULL;
 static void *SaveEnd = NULL;
 #else
 void __OSReboot(u32 resetCode, u32 bootDol) {
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
   OSContext exceptionContext;
 #endif
   const char* argvToPass;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 volatile u8 OS_REBOOT_BOOL : 0x800030e2;
 
 extern u32 BOOT_REGION_START AT_ADDRESS(0x812FDFF0);
@@ -78,22 +78,22 @@ asm void Run(void *entrypoint) {
   OSDisableInterrupts();
   OSSetArenaLo((void*)0x81280000);
   OSSetArenaHi((void*)0x812f0000);
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
   OSClearContext(&exceptionContext);
   OSSetCurrentContext(&exceptionContext);
 #endif
   argvToPass = NULL;
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   __OSNextPartitionType = __OSLaunchPartitionType;
 #endif
   __OSBootDol(bootDol, resetCode | 0x80000000, &argvToPass);
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void Callback(s32 result, DVDCommandBlock *block) { Prepared = TRUE; }
 
-#if VERSION >= VERSION_GM8E_02
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
 extern BOOL __OSIsGcam;
 extern void DVDResume(void);
 extern BOOL DVDReadAbsAsyncPrio(DVDCommandBlock *block, void *addr, s32 length, s32 offset,
@@ -258,7 +258,7 @@ void OSGetSaveRegion(void** start, void** end) {
   *end = SaveEnd;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void OSGetSavedRegion(void **start, void **end) {
   *start = __OSSavedRegionStart;
   *end = __OSSavedRegionEnd;

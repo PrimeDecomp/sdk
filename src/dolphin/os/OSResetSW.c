@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/os.h>
 
 extern OSTime __OSGetSystemTime();
@@ -70,7 +71,7 @@ BOOL OSGetResetButtonState(void) {
 
   LastState = state;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (GameChoice & 0x3f) {
     OSTime fire = (GameChoice & 0x3f) * 60;
 #else

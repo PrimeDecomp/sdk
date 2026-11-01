@@ -1,4 +1,5 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include <dolphin/base/PPCArch.h>
 #else
 #include <dolphin/PPCArch.h>

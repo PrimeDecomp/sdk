@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include "mem_funcs.h"
 
 #pragma ANSI_strict off
@@ -51,7 +52,7 @@ void __copy_longs_aligned(void* dst, const void* src, unsigned long n) {
   cps = ((unsigned char*)(lps + 1)) - 1;
   cpd = ((unsigned char*)(lpd + 1)) - 1;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   n &= 3ULL;
 #else
   n &= 3;
@@ -102,7 +103,7 @@ void __copy_longs_rev_aligned(void* dst, const void* src, unsigned long n) {
       *--lpd = *--lps;
     while (--i);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   n &= 3ULL;
 #else
   n &= 3;
@@ -162,7 +163,7 @@ void __copy_longs_unaligned(void* dst, const void* src, unsigned long n) {
   cps = ((unsigned char*)(lps + 1)) - 1;
   cpd = ((unsigned char*)(lpd + 1)) - 1;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   n &= 3ULL;
 #else
   n &= 3;
@@ -218,7 +219,7 @@ void __copy_longs_rev_unaligned(void* dst, const void* src, unsigned long n) {
     *--lpd = (v2 << left_shift) | (v1 >> right_shift);
   }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   n &= 3ULL;
 #else
   n &= 3;

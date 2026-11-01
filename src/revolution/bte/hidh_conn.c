@@ -552,28 +552,6 @@ static void hidh_l2cif_data_ind(UINT16 l2cap_cid, BT_HDR *p_msg) {
   }
 }
 
-#if 0
-
-UINT8 hidh_conn_snd_data(UINT8 dhandle /* r1+0x8 */, UINT8 trans_type /* r25 */,
-                         UINT8 param /* r22 */, UINT16 data /* r24 */,
-                         UINT8 report_id /* r23 */, BT_HDR *buf /* r31 */)
-{
-	struct hid_conn *p_hcon; // r30
-	BT_HDR *p_buf;           // r29
-	UINT8 *p_out;            // r27
-	UINT16 bytes_copied;     // r28
-	UINT8 seg_req;           // r1+0xC
-	UINT16 data_size;        // r26
-	UINT16 cid;              // r1+0xE
-	UINT8 pool_id;           // r1+0xB
-	UINT8 use_data;          // r1+0xA
-	UINT8 blank_datc;        // r1+0x9
-
-	// References
-	// -> struct host_ctb hh_cb;
-}
-
-#endif
 tHID_STATUS hidh_conn_snd_data(UINT8 dhandle, UINT8 trans_type, UINT8 param, UINT16 data,
                                UINT8 report_id, BT_HDR *buf) {
   tHID_CONN *p_hcon = &hh_cb.devices[dhandle].conn;

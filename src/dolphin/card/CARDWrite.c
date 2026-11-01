@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/card.h>
 #include <dolphin/dsp.h>
 #include <dolphin/dvd.h>
@@ -54,7 +55,7 @@ error:
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #line 134
   ASSERT(callback);
 #endif
@@ -73,7 +74,7 @@ static void EraseCallback(s32 chan, s32 result) {
   }
 
   fileInfo = card->fileInfo;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(OFFSET(fileInfo->offset, card->sectorSize) == 0);
 #endif
   result = __CARDWrite(chan, card->sectorSize * (u32)fileInfo->iBlock, card->sectorSize,
@@ -87,7 +88,7 @@ error:
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
   ASSERT(callback);
 #endif
@@ -102,7 +103,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
   CARDDir* dir;
   CARDDir* ent;
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(buf && ((u32)buf % 32) == 0);
   ASSERT(0 < length);
 #endif
@@ -111,7 +112,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
     return result;
   }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(OFFSET(offset, card->sectorSize) == 0);
   ASSERT(OFFSET(length, card->sectorSize) == 0);
 #endif
@@ -121,7 +122,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileInfo->fileNo];
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   result = __CARDAccess(card, ent);
 #else
   result = __CARDIsWritable(card, ent);
@@ -141,7 +142,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
   return result;
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 s32 CARDWrite(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offset) {
   s32 result;
   result = CARDWriteAsync(fileInfo, buf, length, offset, __CARDSyncCallback);

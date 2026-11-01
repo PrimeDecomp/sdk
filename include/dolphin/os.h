@@ -1,7 +1,8 @@
 #ifndef _DOLPHIN_OS
 #define _DOLPHIN_OS
 
-#include <GameVersions.h>
+#include <SDKVersion.h>
+
 #include <dolphin/gx.h>
 #include <dolphin/types.h>
 
@@ -17,7 +18,7 @@ extern "C" {
 #define OS_BASE_CACHED (OS_CACHED_REGION_PREFIX << 16)
 #define OS_BASE_UNCACHED (OS_UNCACHED_REGION_PREFIX << 16)
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #ifdef __MWERKS__
 #define AT_ADDRESS(xyz) : (xyz)
 #else
@@ -215,7 +216,7 @@ BOOL OSRestoreInterrupts(BOOL level);
 #define ASSERTMSG4(exp, msg, param1, param2, param3, param4) ((void)0)
 #endif
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #define ASSERTLINE(line, cond) (void)0
 #define ASSERTMSGLINE(line, cond, msg) (void)0
 #define ASSERTMSG1LINE(line, cond, msg, arg1) (void)0
@@ -230,9 +231,9 @@ const char* OSGetAppGamename(void);
 u8 OSGetAppType(void);
 void OSPanic(const char* file, int line, const char* msg, ...);
 void OSFatal(GXColor fg, GXColor bg, const char* msg);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 typedef struct OSIOSRev {
   u8 idHi;
   u8 idLo;

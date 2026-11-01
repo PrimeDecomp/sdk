@@ -424,18 +424,12 @@ void L2CA_SetCompression(UINT16 local_cid, UINT8 pe_type, UINT8 mem_level, UINT8
   p_lcb = p_ccb->p_lcb;
 
   if (p_lcb && p_lcb->in_use && p_lcb->link_state == LST_CONNECTED) {
-#if 0
-		/* ... */
-#endif
   } else {
     return;
   }
 }
 
 void L2CA_RegisterCompression(tL2CA_COMPRESS_CB *param_1, int param_2) {
-#if 0
-	/* ... */
-#endif
 }
 
 UINT8 L2CA_Flush(UINT16 cid) {

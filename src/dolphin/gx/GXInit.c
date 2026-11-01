@@ -1,11 +1,9 @@
-#ifdef PRIME1
-#include "GameVersions.h"
-#else
-#include <GameVersions.h>
+#include <SDKVersion.h>
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <string.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/base/PPCArch.h"
 #include "dolphin/gx.h"
 #include "dolphin/hw_regs.h"
@@ -19,16 +17,16 @@
 #include <dolphin/vi.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static GXData gxData;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 const char* __GXVersion = "<< RVL_SDK - GX \trelease build: Nov 29 2006 18:10:50 (0x4200_60308) >>";
 #else
 const char* __GXVersion = "<< Dolphin SDK - GX\trelease build: Apr  5 2004 04:14:28 (0x2301) >>";
@@ -37,17 +35,17 @@ const char* __GXVersion = "<< Dolphin SDK - GX\trelease build: Apr  5 2004 04:14
 #endif
 static GXFifoObj FifoObj;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXData *const __GXData = &gxData;
 #else
 static struct __GXData_struct gxData;
 struct __GXData_struct* const __GXData = &gxData;
 #endif
 
-#ifdef PRIME1
-#if VERSION < VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_GM8E01_02
 char *__GXVersion = "<< Dolphin SDK - GX\trelease build: Sep  5 2002 05:33:28 (0x2301) >>";
-#elif VERSION == VERSION_GM8E_02
+#elif SDK_VERSION == SDK_VERSION_GM8E01_02
 char *__GXVersion = "<< Dolphin SDK - GX\trelease build: Feb  7 2003 04:01:13 (0x2301) >>";
 #else
 char *__GXVersion = "<< Dolphin SDK - GX	release build: Nov  7 2002 05:47:57 (0x2301) >>";
@@ -60,7 +58,7 @@ OSTime time;
 u32 peCount;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void *__piReg = NULL;
 void *__cpReg = NULL;
 void *__peReg = NULL;
@@ -95,7 +93,7 @@ static GXVtxAttrFmtList GXDefaultVATList[] = {
 
 static f32 GXDefaultProjData[] = {1.0f, 0.0f, 1.0f, 0.0f, -1.0f, -2.0f, 0.0f};
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static asm BOOL IsWriteGatherBufferEmpty(void) {
   nofralloc;
   sync;
@@ -111,7 +109,7 @@ static u32 GXTexRegionAddrTable[] = {
     0x80000, 0x10000, 0xA0000, 0x30000, 0x80000, 0x50000, 0xA0000, 0x70000,
 };
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static BOOL __GXShutdown(BOOL final, u32 event);
 
 static OSShutdownFunctionInfo GXResetFuncInfo = {__GXShutdown, 0x7F, NULL, NULL};
@@ -129,7 +127,7 @@ asm BOOL IsWriteGatherBufferEmpty(void)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static void EnableWriteGatherPipe(void) {
   u32 hid2;
   hid2 = PPCMfhid2();
@@ -147,7 +145,7 @@ static void EnableWriteGatherPipe(void)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *obj, GXTexMapID id) {
   GXTexFmt format;
 #else
@@ -156,7 +154,7 @@ static void DisableWriteGatherPipe(void)
     u32 hid2 = PPCMfhid2();
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   format = GXGetTexObjFmt(obj);
 
   if (format != GX_TF_C4 && format != GX_TF_C8 && format != GX_TF_C14X2) {
@@ -170,7 +168,7 @@ static void DisableWriteGatherPipe(void)
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 tlut) {
   if (tlut >= 20) {
     return NULL;
@@ -182,7 +180,7 @@ static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *t_obj, GXTexMap
     u8 mm;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   return &__GXData->TlutRegions[tlut];
 #else
     fmt = GXGetTexObjFmt(t_obj);
@@ -208,8 +206,8 @@ static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *t_obj, GXTexMap
 #endif
 }
 
-#ifdef PRIME1
-#if VERSION == VERSION_GM8E_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION == SDK_VERSION_GM8E01_02
 static BOOL __GXShutdown(BOOL final) {
   static u32 peCount;
   static OSTime time;
@@ -283,7 +281,7 @@ static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 idx)
 }
 
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static BOOL __GXShutdown(BOOL final, u32 event) {
 #else
 static int __GXShutdown(int final) {
@@ -415,7 +413,7 @@ GXFifoObj *GXInit(void *base, u32 size)
     GXSetGPFifo(&FifoObj);
 
     if (!resetFuncRegistered) {
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
         OSRegisterShutdownFunction(&GXResetFuncInfo);
 #else
         OSRegisterResetFunction(&GXResetFuncInfo);
@@ -424,7 +422,7 @@ GXFifoObj *GXInit(void *base, u32 size)
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 GXFifoObj *GXInit(void *base, u32 size) {
   u32 i;
   u32 freqBase;
@@ -435,11 +433,11 @@ GXFifoObj *GXInit(void *base, u32 size) {
     EnableWriteGatherPipe();
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   OSRegisterVersion(__GXVersion);
   __GXData->inDispList = GX_FALSE;
   __GXData->dlSaveContext = GX_TRUE;
-#if VERSION == VERSION_GM8E_02
+#if SDK_VERSION == SDK_VERSION_GM8E01_02
   __GXData->abtWaitPECopy = GX_TRUE;
 #endif
   __GXData->tcsManEnab = 0;
@@ -478,7 +476,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     SET_REG_FIELD(0, __GXData->cpTex, 2, 7, 0);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GXSetMisc(GX_MT_XF_FLUSH, 0);
 
   __piReg = OSPhysicalToUncached(0x0C003000);
@@ -492,7 +490,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
   GXSetCPUFifo(&FifoObj);
   GXSetGPFifo(&FifoObj);
 
-#if VERSION == VERSION_GM8E_02
+#if SDK_VERSION == SDK_VERSION_GM8E01_02
   RegisterResetFunction();
 #endif
 
@@ -634,7 +632,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
 #endif
     GX_WRITE_RAS_REG(reg);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     reg = 0x24000000;
 #else
     __GXFlushTextureState();
@@ -642,7 +640,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
 #endif
     GX_WRITE_RAS_REG(reg);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     reg = 0x67000000;
     GX_WRITE_RAS_REG(reg);
   }
@@ -650,7 +648,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     __GXInitRevisionBits();
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXSetTmemConfig(0);
 #else
     for (i = 0; i < 8; i++) {
@@ -663,7 +661,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   __GXInitGX();
 #else
     for (i = 0; i < 16; i++) {
@@ -671,7 +669,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   return &FifoObj;
 #else
     for (i = 0; i < 4; i++) {
@@ -708,7 +706,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
 #endif
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 void __GXInitGX(void) {
   GXRenderModeObj *renderObj;
 #else
@@ -722,7 +720,7 @@ void __GXInitGX() {
     u32 i;
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   Mtx ident;
   GXColor clearColor = {64, 64, 64, 255};
   GXColor ambColor = {0, 0, 0, 0};
@@ -753,7 +751,7 @@ void __GXInitGX() {
     GXInvalidateVtxCache();
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   switch (VIGetTvFormat()) {
   case VI_NTSC:
     renderObj = &GXNtsc480IntDf;
@@ -764,7 +762,7 @@ void __GXInitGX() {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   case VI_PAL:
     renderObj = &GXPal528IntDf;
     break;
@@ -774,7 +772,7 @@ void __GXInitGX() {
     }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   case VI_EURGB60:
     renderObj = &GXEurgb60Hz480IntDf;
     break;
@@ -825,7 +823,7 @@ void __GXInitGX() {
     GXSetTlutRegionCallback(__GXDefaultTlutRegionCallback);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   case VI_MPAL:
     renderObj = &GXMpal480IntDf;
     break;
@@ -841,7 +839,7 @@ void __GXInitGX() {
     GXLoadTexObj(&tex_obj, 7);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   default:
     renderObj = &GXNtsc480IntDf;
     break;
@@ -865,7 +863,7 @@ void __GXInitGX() {
     GXSetTevOrder(GX_TEVSTAGE15, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GXSetCopyClear(clearColor, 0xFFFFFF);
 #else
     GXSetNumTevStages(1);
@@ -884,7 +882,7 @@ void __GXInitGX() {
     GXSetTevSwapModeTable(GX_TEV_SWAP3, GX_CH_BLUE, GX_CH_BLUE, GX_CH_BLUE, GX_CH_ALPHA);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
   GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
   GXSetTexCoordGen2(GX_TEXCOORD2, GX_TG_MTX2x4, GX_TG_TEX2, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
@@ -903,7 +901,7 @@ void __GXInitGX() {
     GXSetIndTexCoordScale(GX_INDTEXSTAGE3, GX_ITS_1, GX_ITS_1);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GXSetNumTexGens(1);
   GXClearVtxDesc();
   GXInvalidateVtxCache();
@@ -923,7 +921,7 @@ void __GXInitGX() {
                    ((rmode->viHeight == 2 * rmode->xfbHeight) ? GX_ENABLE : GX_DISABLE));
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   for (i = GX_VA_POS; i <= GX_LIGHT_ARRAY; i++) {
     GXSetArray((GXAttr)i, __GXData, 0);
   }
@@ -938,7 +936,7 @@ void __GXInitGX() {
     GXClearBoundingBox();
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   for (i = 0; i < GX_MAX_VTXFMT; i++) {
     GXSetVtxAttrFmtv((GXVtxFmt)i, GXDefaultVATList);
   }
@@ -953,7 +951,7 @@ void __GXInitGX() {
     GXPokeZMode(GX_TRUE, GX_ALWAYS, GX_TRUE);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   GXSetLineWidth(6, GX_TO_ZERO);
   GXSetPointSize(6, GX_TO_ZERO);
   GXEnableTexOffsets(GX_TEXCOORD0, GX_FALSE, GX_FALSE);

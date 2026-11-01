@@ -1,9 +1,9 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include "errno.h"
 #include "stdio.h"
 #include "string.h"
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #pragma ANSI_strict off
 
 #ifndef __WINT_TYPE__
@@ -121,7 +121,7 @@ int __wctomb_noconv(char *dst, wchar_t ch) {
   return 1;
 }
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static inline int wctomb(char *dst, wchar_t ch) {
   return _current_locale.ctype_cmpt_ptr->encode_wc(dst, ch);
 }

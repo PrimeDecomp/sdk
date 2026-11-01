@@ -1,10 +1,11 @@
+#include <SDKVersion.h>
 #include "NMWException.h"
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <stdlib.h>
 
 #endif
 #pragma exceptions on
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
 namespace std {
 typedef void (*terminate_handler)();

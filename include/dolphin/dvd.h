@@ -1,13 +1,11 @@
 #ifndef _DOLPHIN_DVD
 #define _DOLPHIN_DVD
 
-#include "GameVersions.h"
+#include <SDKVersion.h>
+
 
 // The Revolution SDK DVD library is separate from the Dolphin one.
-#ifdef PRIME1
-#if VERSION >= VERSION_R3IJ_00
-#include <revolution/dvd.h>
-#else
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 
 #include "types.h"
 
@@ -141,9 +139,8 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
 }
 #endif
 
-#endif // VERSION >= VERSION_R3IJ_00
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 #include <revolution/dvd.h>
 #else
 
@@ -274,7 +271,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
 }
 #endif
 
-#endif // VERSION >= VERSION_R32J01
+#endif // SDK_VERSION >= SDK_VERSION_R32J01_00
 #endif
 
 #endif // _DOLPHIN_DVD

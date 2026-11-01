@@ -1,7 +1,7 @@
-#ifdef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/base/PPCArch.h"
 #else
-#include "GameVersions.h"
 #include "dolphin/PPCArch.h"
 #endif
 #include "dolphin/ai.h"
@@ -13,10 +13,10 @@
 #include "string.h"
 #pragma fp_contract off
 extern void __OSStopAudioSystem();
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 extern BOOL __OSCallResetFunctions(u32);
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 extern BOOL __OSCallShutdownFunctions(BOOL final, u32 event);
 #else
 extern BOOL __OSCallResetFunctions(u32);
@@ -31,11 +31,11 @@ typedef struct OSFatalParam {
   const char* msg;
 } OSFatalParam;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 static OSFatalParam FatalParam;
 static OSContext FatalContext;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 static OSContext FatalContext;
 static OSFatalParam FatalParam;
 #else
@@ -186,7 +186,7 @@ static GXColor RGB2YUV(GXColor rgb) {
 }
 
 void OSFatal(GXColor fg, GXColor bg, const char* msg) {
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   u32 count = 0;
   OSBootInfo* bootInfo = (OSBootInfo*)OSPhysicalToCached(0);
 #else
@@ -201,29 +201,29 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   OSClearContext(&FatalContext);
   OSSetCurrentContext(&FatalContext);
   __OSStopAudioSystem();
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   AISetStreamVolLeft(0);
   AISetStreamVolRight(0);
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
   AISetStreamVolLeft(0);
   AISetStreamVolRight(0);
 #endif
 #endif
   VIInit();
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __OSUnmaskInterrupts(0x80);
 #endif
   VISetBlack(TRUE);
   VIFlush();
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   VISetPreRetraceCallback(NULL);
   VISetPostRetraceCallback(NULL);
 #endif
   OSEnableInterrupts();
 
   count = VIGetRetraceCount();
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   while ((s32)(VIGetRetraceCount() - count) < 1)
     ;
 #else
@@ -231,7 +231,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   } while ((s32)(VIGetRetraceCount() - count) < 1);
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   while (!__OSCallResetFunctions(0))
     ;
 
@@ -239,7 +239,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   __OSCallResetFunctions(1);
 #else
   t = OSGetTime();
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   while (!__OSCallShutdownFunctions(FALSE, 0) && OSGetTime() - t < OSMillisecondsToTicks(1000)) {
   }
 
@@ -268,12 +268,12 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
 #endif
   __OSSetExceptionHandler(8, OSDefaultExceptionHandler);
   GXAbortFrame();
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   OSSetArenaLo((void*)0x81200000);
   OSSetArenaHi(bootInfo->FSTLocation);
 #else
   OSSetArenaLo((void*)0x81400000);
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   if (bootInfo->FSTLocation == NULL) {
     OSSetArenaHi(*(void**)OSPhysicalToCached(0x3110));
   } else {
@@ -302,7 +302,7 @@ static void Halt() {
   len = strlen(fp->msg) + 1;
   fp->msg = memmove(OSAllocFromArenaLo(len, 32), fp->msg, len);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (OSGetFontEncode() == OS_FONT_ENCODE_SJIS) {
     fontData = OSAllocFromArenaLo(0x90ee4, 32);
   } else {

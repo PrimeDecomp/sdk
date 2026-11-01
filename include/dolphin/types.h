@@ -1,6 +1,8 @@
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifndef _DOLPHIN_TYPES
 #define _DOLPHIN_TYPES
+
+#include <SDKVersion.h>
 
 #include <stdint.h>
 

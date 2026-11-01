@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #ifndef RVL_SDK_NWC24_TYPES_H
 #define RVL_SDK_NWC24_TYPES_H
 #include <revolution/types.h>
@@ -173,7 +174,7 @@ typedef struct NWC24MsgObj {
   u32 data[64];
 } NWC24MsgObj;
 
-#if (VERSION == RMGJ01 || VERSION == RMGE01 || VERSION == RMGP01)
+#if (SDK_VERSION == SDK_VERSION_RMGJ01 || SDK_VERSION == SDK_VERSION_RMGE01 || SDK_VERSION == SDK_VERSION_RMGP01)
 #define NWC24_LED_APP_DEFAULT 0x00000001U
 #else
 #define NWC24_LED_APP_DEFAULT 0x00002019U

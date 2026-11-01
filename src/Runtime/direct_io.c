@@ -1,17 +1,17 @@
-#include "GameVersions.h"
+#include <SDKVersion.h>
 #include <ansi_files.h>
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <critical_regions.h>
 #endif
 #include <stdio.h>
 
 size_t fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) {
   size_t retval;
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __begin_critical_region(files_access);
 #endif
   retval = __fwrite(ptr, memb_size, num_memb, file);
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   __end_critical_region(files_access);
 #endif
   return (retval);
@@ -76,10 +76,10 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
         memcpy(file->buffer_ptr, write_ptr, num_bytes);
 
         write_ptr += num_bytes;
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
         bytes_written += num_bytes;
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
         bytes_written += num_bytes;
 #endif
 #endif
@@ -97,8 +97,8 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
           break;
         }
       }
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
       bytes_written += num_bytes;
 #endif
 #endif
@@ -116,10 +116,10 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
     if (__flush_buffer(file, &num_bytes) != __no_io_error)
       set_error(file);
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
     bytes_written += num_bytes;
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     else
 #endif
       bytes_written += num_bytes;
@@ -136,10 +136,10 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
   if (file->mode.buffer_mode != _IOFBF)
     file->buffer_len = 0;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   return ((bytes_written + memb_size - 1) / memb_size);
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   return bytes_written / memb_size;
 #else
   return ((bytes_written + memb_size - 1) / memb_size);

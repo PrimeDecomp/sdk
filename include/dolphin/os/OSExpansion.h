@@ -1,7 +1,8 @@
 #ifndef _DOLPHIN_OSEXPANSION
 #define _DOLPHIN_OSEXPANSION
 
-#include <GameVersions.h>
+#include <SDKVersion.h>
+
 #include <dolphin/os.h>
 #include <dolphin/types.h>
 
@@ -68,10 +69,10 @@ s32 EXIProbeEx(s32 chan);
 
 s32 EXIGetType(s32 chan, u32 dev, u32* type);
 char* EXIGetTypeString(u32 type);
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
 #endif
 #endif

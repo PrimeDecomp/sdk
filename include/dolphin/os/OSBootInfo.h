@@ -1,7 +1,9 @@
 #ifndef _DOLPHIN_OSBOOTINFO
 #define _DOLPHIN_OSBOOTINFO
 
-#ifdef PRIME1
+#include <SDKVersion.h>
+
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include "dolphin/DVDPriv.h"
 #include "dolphin/types.h"
 #else
@@ -43,7 +45,7 @@ typedef struct BI2Debug {
   u32 padSpec;       // 0x24
 } BI2Debug;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 // Magic number defines.
 #define OS_BOOTINFO_MAGIC 0x0D15EA5E
 #define OS_BOOTINFO_MAGIC_JTAG 0xE5207C22

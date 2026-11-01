@@ -1,7 +1,7 @@
+#include <SDKVersion.h>
 #include "string.h"
-#include "GameVersions.h"
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 size_t strlen(const char* str) {
   size_t len = -1;
   unsigned char* p = (unsigned char*)str - 1;
@@ -11,7 +11,7 @@ size_t strlen(const char* str) {
   return len;
 }
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
 size_t strlen(const char* str) {
   size_t len = -1;
   unsigned char* p = (unsigned char*)str - 1;
@@ -56,8 +56,8 @@ char*(strcpy)(char* dst, const char* src) {
 
   w = *((int*)(fromb));
   t = w + k2;
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   t &= ~w;
 #endif
 #endif
@@ -73,8 +73,8 @@ char*(strcpy)(char* dst, const char* src) {
     w = *(++((int*)(fromb)));
 
     t = w + k2;
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
     t &= ~w;
 #endif
 #endif
@@ -110,7 +110,7 @@ char* strncpy(char* dst, const char* src, size_t n) {
         *++q = 0;
       break;
     }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
   return dst;
 }
@@ -169,8 +169,8 @@ int strcmp(const char* str1, const char* str2) {
   l1 = *(int*)left;
   r1 = *(int*)right;
   x = l1 + k2;
-#ifndef PRIME1
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
   x &= ~l1;
 #endif
 #endif
@@ -186,14 +186,14 @@ int strcmp(const char* str1, const char* str2) {
     }
   }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (l1 > r1) {
     return 1;
   }
 
   return -1;
 #else
-#if VERSION < VERSION_R32J01
+#if SDK_VERSION < SDK_VERSION_R32J01_00
   if (l1 > r1) {
     return 1;
   }

@@ -1,4 +1,4 @@
-#include <GameVersions.h>
+#include <SDKVersion.h>
 #include <dolphin/os.h>
 #include <dolphin/db.h>
 
@@ -284,8 +284,8 @@ asm void OSLoadContext(register OSContext* context) {
   lwz      r6,context->srr0
   addi     r5,r4,__RAS_OSDisableInterrupts_begin@l
   cmplw    r6,r5
-#ifdef PRIME1
-#if VERSION == VERSION_GM8EAB_00
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION == SDK_VERSION_GM8EAB_00
   blt      _notInRAS
 #else
   ble      _notInRAS
@@ -296,8 +296,8 @@ asm void OSLoadContext(register OSContext* context) {
   lis      r4,__RAS_OSDisableInterrupts_end@ha
   addi     r0,r4,__RAS_OSDisableInterrupts_end@l
   cmplw    r6,r0
-#ifdef PRIME1
-#if VERSION == VERSION_GM8EAB_00
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION == SDK_VERSION_GM8EAB_00
   bgt      _notInRAS
 #else
   bge      _notInRAS
@@ -400,9 +400,9 @@ asm int OSSwitchFiber(register u32 pc, register u32 newsp) {
   blr
   // clang-format on
 }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 asm int OSSwitchFiberEx(u32 r3, u32 r4, u32 r5, u32 r6, register u32 pc, register u32 newsp) {
   // clang-format off
   nofralloc

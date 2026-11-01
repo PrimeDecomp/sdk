@@ -1,8 +1,9 @@
+#include <SDKVersion.h>
 #define _CTYPE_INLINE __declspec(weak)
 #include <ctype.h>
 #include <stdio.h>
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #define ctrl __control_char
 #define motn __motion_char
 #define spac __space_char
@@ -30,7 +31,7 @@ unsigned char __ctype_map[256] = {
 
 unsigned char __lower_map[256] = {
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 const unsigned short __ctype_mapC[256] = {
     0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x106, 0x104, 0x104, 0x104,
     0x104, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004,
@@ -71,7 +72,7 @@ unsigned char __ctype_map[256] = {
 
 #endif
 
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 const unsigned char __lower_mapC[256] = {
 #else
 unsigned char __lower_map[256] = {
@@ -97,10 +98,10 @@ unsigned char __lower_map[256] = {
     // clang-format on
 };
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 unsigned char __upper_map[256] = {
 #else
-#if VERSION >= VERSION_R32J01
+#if SDK_VERSION >= SDK_VERSION_R32J01_00
 const unsigned char __upper_mapC[256] = {
 #else
 unsigned char __upper_map[256] = {

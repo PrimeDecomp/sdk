@@ -1,4 +1,5 @@
-#ifndef PRIME1
+#include <SDKVersion.h>
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #include <critical_regions.h>
 #endif
 #include "ansi_files.h"
@@ -87,7 +88,7 @@ void __close_all() {
   FILE* p = &__files[0];
   FILE* plast;
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   // __begin_critical_region(2);
 #else
   __begin_critical_region(files_access);
@@ -109,7 +110,7 @@ void __close_all() {
     }
   }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   // __end_critical_region(2);
 #else
   __end_critical_region(files_access);

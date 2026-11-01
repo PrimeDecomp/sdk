@@ -1,13 +1,15 @@
 #ifndef _REVOLUTION_OS
 #define _REVOLUTION_OS
 
-#ifdef PRIME1
+#include <SDKVersion.h>
+
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #include <dolphin/types.h>
 #else
 #include <dolphin/os.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -22,7 +24,7 @@ extern "C" {
 #include <revolution/os/OSUtf.h>
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 BOOL OSDisableInterrupts(void);
 BOOL OSEnableInterrupts(void);
 BOOL OSRestoreInterrupts(BOOL level);

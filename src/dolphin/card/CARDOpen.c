@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/card.h>
 #include <dolphin/dsp.h>
 #include <dolphin/dvd.h>
@@ -29,14 +30,14 @@ BOOL __CARDCompareFileName(CARDDir* ent, const char* fileName) {
 }
 
 s32 __CARDAccess(CARDControl* card, CARDDir* ent) {
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   const DVDDiskID* diskID = card->diskID;
 #endif
   if (ent->gameName[0] == 0xFF) {
     return CARD_RESULT_NOFILE;
   }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if (card->diskID == &__CARDDiskNone || (memcmp(ent->gameName, card->diskID->gameName, 4) == 0 &&
                                           memcmp(ent->company, card->diskID->company, 2) == 0)) {
 #else
@@ -49,7 +50,7 @@ s32 __CARDAccess(CARDControl* card, CARDDir* ent) {
   return CARD_RESULT_NOPERM;
 }
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 BOOL __CARDIsWritable(CARDDir* ent) {
   if (ent->gameName[0] == 0xFF) {
     return CARD_RESULT_NOFILE;
@@ -76,12 +77,12 @@ s32 __CARDIsWritable(CARDControl* card, CARDDir* ent) {
     }
 #endif
   }
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   return result;
 }
 #endif
 
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   if ((ent->permission & CARD_ATTR_PUBLIC) != 0) {
     return CARD_RESULT_READY;
 #else
@@ -95,7 +96,7 @@ s32 __CARDIsReadable(CARDControl* card, CARDDir* ent) {
     }
 #endif
   }
-#ifdef PRIME1
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
 
   return CARD_RESULT_NOPERM;
 #else
@@ -129,7 +130,7 @@ s32 __CARDGetFileNo(CARDControl* card, const char* fileName, s32* pfileNo) {
   return CARD_RESULT_NOFILE;
 }
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
 #line 272
 s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo* fileInfo) {
   CARDControl* card;
@@ -173,7 +174,7 @@ s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
   s32 result;
   s32 fileNo;
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(0 <= chan && chan < 2);
 #endif
   fileInfo->chan = -1;
@@ -202,7 +203,7 @@ s32 CARDClose(CARDFileInfo* fileInfo) {
   CARDControl* card;
   s32 result;
 
-#ifndef PRIME1
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00
   ASSERT(0 <= fileInfo->chan && fileInfo->chan < 2);
   ASSERT(0 <= fileInfo->fileNo && fileInfo->fileNo < CARD_MAX_FILE);
 #endif
