@@ -4,33 +4,13 @@
 
 #pragma scheduling off
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Sep  5 2002 05:33:04 (0x2301) >>";
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Nov 11 2002 05:21:45 (0x2301) >>";
-#endif
-
-#define MAX_DEV 3
-#define MAX_CHAN 3
-
-#define REG_MAX 5
-#define REG(chan, idx) (__EXIRegs[((chan)*REG_MAX) + (idx)])
-
-#define STATE_IDLE 0x00
-#define STATE_DMA 0x01
-#define STATE_IMM 0x02
-#define STATE_BUSY (STATE_DMA | STATE_IMM)
-#define STATE_SELECTED 0x04
-#define STATE_ATTACHED 0x08
-#define STATE_LOCKED 0x10
-
-#define EXI_0CR(tstart, dma, rw, tlen)                                                             \
-  ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
-#else
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Apr  5 2004 04:14:14 (0x2301) >>";
 #else
@@ -54,11 +34,10 @@ const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:
 #define EXI_0CR(tstart, dma, rw, tlen)                                                             \
   ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
 
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 #define DMA_ADDR_MASK 0x3ffffe0
 #else
 #define DMA_ADDR_MASK 0xffffffe0
-#endif
 #endif
 
 #define CPR_CS(x) ((1u << (x)) << 7)
@@ -221,11 +200,7 @@ BOOL EXIDma(s32 chan, void* buf, s32 len, u32 type, EXICallback callback) {
 
   exi->state |= STATE_DMA;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  REG(chan, 1) = (u32)buf & 0x3ffffe0;
-#else
   REG(chan, 1) = (u32)buf & DMA_ADDR_MASK;
-#endif
   REG(chan, 2) = (u32)len;
   REG(chan, 3) = EXI_0CR(1, 1, type, 0);
 
@@ -577,15 +552,13 @@ extern BOOL __OSInIPL;
 void __OSEnableBarnacle(s32 chan, u32 dev);
 
 void EXIInit(void) {
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
-  
-  OSRegisterVersion(__EXIVersion);
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  
-  while (((REG(0, 3) & 1) == 1) || ((REG(1, 3) & 1) == 1) || ((REG(2, 3) & 1) == 1)) {}
-#else
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   u32 id;
 
+#endif
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
+  OSRegisterVersion(__EXIVersion);
+#else
   while (((REG(0, 3) & 1) == 1) || ((REG(1, 3) & 1) == 1) || ((REG(2, 3) & 1) == 1)) {}
 #endif
 
@@ -609,12 +582,22 @@ void EXIInit(void) {
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_EXI, EXIIntrruptHandler);
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_TC, TCIntrruptHandler);
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
   if ((OSGetConsoleType() & 0x10000000) != 0) {
     __EXIProbeStartTime[0] = __EXIProbeStartTime[1] = 0;
     Ecb[0].idTime = Ecb[1].idTime = 0;
     __EXIProbe(0);
     __EXIProbe(1);
+  }
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+  if ((OSGetConsoleType() & 0x10000000) != 0) {
+    __EXIProbeStartTime[0] = __EXIProbeStartTime[1] = 0;
+    Ecb[0].idTime = Ecb[1].idTime = 0;
+    __EXIProbe(0);
+    __EXIProbe(1);
+  }
+  EXIGetID(0, 2, &IDSerialPort1);
+  OSRegisterVersion(__EXIVersion);
 #else
   EXIGetID(0, 2, &IDSerialPort1);
 
@@ -624,12 +607,7 @@ void EXIInit(void) {
     __OSEnableBarnacle(1, 0);
   } else if (EXIGetID(1, 0, &id) && id == 0x7010000) {
     __OSEnableBarnacle(0, 2);
-#endif
   }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  EXIGetID(0, 2, &IDSerialPort1);
-  OSRegisterVersion(__EXIVersion);
-#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   OSRegisterVersion(__EXIVersion);
 #endif
 }
