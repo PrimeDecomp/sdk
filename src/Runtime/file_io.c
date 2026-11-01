@@ -1,7 +1,9 @@
 #include "ansi_files.h"
 #include "types.h"
 
-#pragma dont_inline on 
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#pragma dont_inline on
+#endif
 int fclose(FILE* file) {
   int flush_result, close_result;
 
@@ -67,4 +69,6 @@ int fflush(FILE* file) {
   file->buffer_len = 0;
   return 0;
 }
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #pragma dont_inline reset
+#endif
