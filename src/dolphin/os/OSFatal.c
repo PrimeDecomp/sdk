@@ -197,12 +197,12 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   AISetStreamVolRight(0);
 #endif
   VIInit();
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   __OSUnmaskInterrupts(0x80);
 #endif
   VISetBlack(TRUE);
   VIFlush();
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   VISetPreRetraceCallback(NULL);
   VISetPostRetraceCallback(NULL);
 #endif
@@ -225,7 +225,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   __OSCallResetFunctions(1);
 #else
   t = OSGetTime();
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
   while (!__OSCallResetFunctions(FALSE) && OSGetTime() - t < OSMillisecondsToTicks(1000)) {
   }
 

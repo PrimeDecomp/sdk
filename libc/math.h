@@ -313,7 +313,7 @@ double nextafter(double, double);
 #ifdef __cplusplus
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 // MSL C++ float overload; the GC retail binary calls it out of line.
 float sqrt(float x);
 #elif SDK_VERSION >= SDK_VERSION_RVL_2008_01

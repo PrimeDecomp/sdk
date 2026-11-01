@@ -1,17 +1,17 @@
 #include <SDKVersion.h>
 #include <ansi_files.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #include <critical_regions.h>
 #endif
 #include <stdio.h>
 
 size_t fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) {
   size_t retval;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   __begin_critical_region(files_access);
 #endif
   retval = __fwrite(ptr, memb_size, num_memb, file);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   __end_critical_region(files_access);
 #endif
   return (retval);

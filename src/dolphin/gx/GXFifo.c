@@ -444,7 +444,7 @@ GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb) {
   return oldCallback;
 #else
 // NONMATCHING
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXSetCPUFifo(GXFifoObj *fifo)
 {
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
@@ -641,7 +641,7 @@ void GXSetGPFifo(GXFifoObj *fifo)
 }
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXSaveCPUFifo(GXFifoObj *fifo)
 {
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
@@ -665,7 +665,7 @@ do { \
     fifo->count = temp; \
 } while (0)
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void __GXSaveCPUFifoAux(struct __GXFifoObj *realFifo)
 {
     BOOL enabled = OSDisableInterrupts();
@@ -793,7 +793,7 @@ static void __GXFifoLink(u8 en) {
   SET_REG_FIELD(__GXData->cpEnable, 1, 4, (en != 0) ? 1 : 0);
   GX_SET_CP_REG(1, __GXData->cpEnable);
 #else
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXGetFifoStatus(GXFifoObj *fifo, GXBool *overhi, GXBool *underflow, u32 *fifoCount, GXBool *cpuWrite, GXBool *gpRead, GXBool *fifowrap)
 {
     struct __GXFifoObj *realFifo = (struct __GXFifoObj *)fifo;
@@ -1027,7 +1027,7 @@ static void __GXWriteFifoIntReset(u8 hiWatermarkClr, u8 loWatermarkClr)
     GX_SET_CP_REG(2, __GXData->cpClr);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void __GXInsaneWatermark(void)
 {
     struct __GXFifoObj *realFifo = GPFifo;

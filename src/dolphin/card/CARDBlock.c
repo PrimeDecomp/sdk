@@ -29,7 +29,7 @@ static void WriteCallback(s32 chan, s32 result) {
 #endif
 
   card = &__CARDBlock[chan];
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   if (result >= 0) {
     fat0 = (u16*)((u8*)card->workArea + 0x6000);
     fat1 = (u16*)((u8*)card->workArea + 0x8000);
@@ -119,7 +119,7 @@ s32 __CARDAllocBlock(s32 chan, u32 cBlock, CARDCallback callback) {
   u16 prevBlock;
   u16 count;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(0 < cBlock);
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -198,11 +198,11 @@ s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback) {
 #line 291
 s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback) {
   CARDControl* card;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   u32 addr;
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];

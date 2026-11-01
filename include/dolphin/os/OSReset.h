@@ -43,7 +43,7 @@ struct OSResetFunctionInfo {
   OSResetFunctionInfo* prev;
 };
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 
 void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu);
 

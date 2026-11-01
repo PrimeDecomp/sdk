@@ -71,7 +71,7 @@ void GXSetLineWidth(u8 width, GXTexOffset texOffsets) {
   GX_WRITE_RAS_REG(__GXData->lpSize);
   __GXData->bpSentNot = 0;
 #else
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void __GXSetDirtyState(void)
 {
     u32 dState = __GXData->dirtyState;
@@ -350,7 +350,7 @@ void GXGetPointSize(u8 *pointSize, GXTexOffset *texOffsets)
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 void GXEnableTexOffsets(GXTexCoordID coord, u8 line_enable, u8 point_enable)
 {
     CHECK_GXBEGIN(0x211, "GXEnableTexOffsets");
@@ -368,7 +368,7 @@ void GXSetCullMode(GXCullMode mode)
     GXCullMode hwMode;
 
     CHECK_GXBEGIN(0x22D, "GXSetCullMode");
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     hwMode = (mode >> 1) & 1;
     __rlwimi(hwMode, mode, 1, 30, 30);
 #else

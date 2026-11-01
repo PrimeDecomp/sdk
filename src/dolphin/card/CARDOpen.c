@@ -30,7 +30,7 @@ BOOL __CARDCompareFileName(CARDDir* ent, const char* fileName) {
 }
 
 s32 __CARDAccess(CARDControl* card, CARDDir* ent) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   const DVDDiskID* diskID = card->diskID;
 #endif
   if (ent->gameName[0] == 0xFF) {
@@ -77,7 +77,7 @@ s32 __CARDIsWritable(CARDControl* card, CARDDir* ent) {
     }
 #endif
   }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   return result;
 }
 #endif
@@ -130,7 +130,7 @@ s32 __CARDGetFileNo(CARDControl* card, const char* fileName, s32* pfileNo) {
   return CARD_RESULT_NOFILE;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #line 272
 s32 CARDFastOpen(s32 chan, s32 fileNo, CARDFileInfo* fileInfo) {
   CARDControl* card;
@@ -174,7 +174,7 @@ s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
   s32 result;
   s32 fileNo;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(0 <= chan && chan < 2);
 #endif
   fileInfo->chan = -1;
@@ -203,7 +203,7 @@ s32 CARDClose(CARDFileInfo* fileInfo) {
   CARDControl* card;
   s32 result;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(0 <= fileInfo->chan && fileInfo->chan < 2);
   ASSERT(0 <= fileInfo->fileNo && fileInfo->fileNo < CARD_MAX_FILE);
 #endif

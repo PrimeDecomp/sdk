@@ -926,7 +926,7 @@ u32 OSLoadFont(OSFontHeader* fontData, void* tmp) {
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 static char* ParseStringS(u16 encode, const char* string, OSFontHeader** pfont, int* pfontCode) {
     OSFontHeader* font;
     u16 code = 0;

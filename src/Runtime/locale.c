@@ -1,7 +1,7 @@
 #include <SDKVersion.h>
 #include <limits.h>
 #include <locale.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #include <ctype.h>
 #endif
 

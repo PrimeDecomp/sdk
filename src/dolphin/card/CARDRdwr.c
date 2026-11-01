@@ -43,7 +43,7 @@ error:
 #line 88
 s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
   ASSERT(0 < length && length % CARD_SEG_SIZE == 0);
   ASSERT(0 <= chan && chan < 2);
@@ -109,7 +109,7 @@ error:
 s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
   card = &__CARDBlock[chan];
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(0 < length && length % card->pageSize == 0);
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -129,7 +129,7 @@ s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback
   return __CARDWritePage(chan, BlockWriteCallback);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #line 182
 s32 CARDGetXferredBytes(s32 chan) {
   ASSERT(0 <= chan && chan < 2);
