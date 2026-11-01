@@ -18,7 +18,7 @@ extern "C" {
 #define OS_BASE_CACHED (OS_CACHED_REGION_PREFIX << 16)
 #define OS_BASE_UNCACHED (OS_UNCACHED_REGION_PREFIX << 16)
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #ifdef __MWERKS__
 #define AT_ADDRESS(xyz) : (xyz)
 #else
@@ -216,7 +216,7 @@ BOOL OSRestoreInterrupts(BOOL level);
 #define ASSERTMSG4(exp, msg, param1, param2, param3, param4) ((void)0)
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #define ASSERTLINE(line, cond) (void)0
 #define ASSERTMSGLINE(line, cond, msg) (void)0
 #define ASSERTMSG1LINE(line, cond, msg, arg1) (void)0
@@ -231,9 +231,9 @@ const char* OSGetAppGamename(void);
 u8 OSGetAppType(void);
 void OSPanic(const char* file, int line, const char* msg, ...);
 void OSFatal(GXColor fg, GXColor bg, const char* msg);
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 typedef struct OSIOSRev {
   u8 idHi;
   u8 idLo;

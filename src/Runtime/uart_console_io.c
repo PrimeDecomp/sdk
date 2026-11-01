@@ -20,7 +20,7 @@ static inline int __init_uart_console(void) {
 }
 int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
                     __idle_proc idle_proc) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (__init_uart_console() != 0) {
     return 1;
   }
@@ -31,7 +31,7 @@ int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (WriteUARTN(buffer, *count) != 0) {
     *count = 0;
     return 1;
@@ -47,7 +47,7 @@ int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
   return 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 int __close_console() { return 0; }
 #else
 int __close_console(__file_handle handle) { return 0; }

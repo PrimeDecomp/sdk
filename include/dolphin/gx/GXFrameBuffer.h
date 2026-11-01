@@ -17,7 +17,7 @@ extern "C" {
 extern GXRenderModeObj GXNtsc480IntDf;
 // extern GXRenderModeObj GXNtsc480Int;
 // extern GXRenderModeObj GXNtsc480IntAa;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 // extern GXRenderModeObj GXNtsc480Prog;
 #else
 extern GXRenderModeObj GXNtsc480Prog;

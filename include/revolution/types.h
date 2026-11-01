@@ -14,7 +14,7 @@
 
 #include <dolphin/types.h>
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #define ROUND_UP(x, align) (((x) + (align) - 1) & (-(align)))
 #define ROUND_UP_PTR(x, align) ((void*)((((u32)(x)) + (align) - 1) & (~((align) - 1))))
 #define FOURCC(c0, c1, c2, c3) ((u32)(((c0) & 0xFF) << 24 | ((c1) & 0xFF) << 16 | ((c2) & 0xFF) << 8 | ((c3) & 0xFF)))

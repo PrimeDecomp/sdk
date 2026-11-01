@@ -102,7 +102,7 @@ struct __GXFifoObj {
     void *rdPtr;
     void *wrPtr;
     s32 count;
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     u8 wrap;
 #endif
     u8 bind_cpu;
@@ -145,7 +145,7 @@ struct __GXData_struct {
     unsigned long indexStride[4]; // offset 0x98, size 0x10
     unsigned long ambColor[2]; // offset 0xA8, size 0x8
     unsigned long matColor[2]; // offset 0xB0, size 0x8
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     // The Wii SDK keeps shadows of the channel and texgen registers, which moves every later field by 0x50.
     unsigned long colorControl[4];
     unsigned long texRegs[8];

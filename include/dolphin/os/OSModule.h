@@ -9,7 +9,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if SDK_VERSION >= SDK_VERSION_GM8E01_02
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
 #define OS_MODULE_VERSION 3
 #else
 #define OS_MODULE_VERSION 2

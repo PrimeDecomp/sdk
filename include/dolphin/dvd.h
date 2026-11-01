@@ -5,7 +5,7 @@
 
 
 // The Revolution SDK DVD library is separate from the Dolphin one.
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 
 #include "types.h"
 
@@ -140,7 +140,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
 #endif
 
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #include <revolution/dvd.h>
 #else
 
@@ -271,7 +271,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
 }
 #endif
 
-#endif // SDK_VERSION >= SDK_VERSION_R32J01_00
+#endif // SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #endif
 
 #endif // _DOLPHIN_DVD

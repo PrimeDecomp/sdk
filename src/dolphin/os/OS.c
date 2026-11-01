@@ -5,8 +5,8 @@
 #include "dolphin/os/OSBootInfo.h"
 
 extern OSTime __OSGetSystemTime();
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION < SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
 static const char* __OSVersion =
     "<< Dolphin SDK - OS\trelease build: Sep  5 2002 05:32:39 (0x2301) >>";
 #else
@@ -37,7 +37,7 @@ static __OSExceptionHandler* OSExceptionTable;
 OSTime __OSStartTime;
 BOOL __OSInIPL;
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 const char* __OSVersion = "<< RVL_SDK - OS \trelease build: Jan 30 2008 01:38:43 (0x4199_60831) >>";
 #else
 static const char* __OSVersion =
@@ -53,7 +53,7 @@ extern char _db_stack_end[];
 extern char* __OSResetSWInterruptHandler[];
 
 vu16 __OSDeviceCode : (OS_BASE_CACHED | 0x30E6);
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 OSExecParams __OSRebootParams;
 static DVDDriveInfo DriveInfo ATTRIBUTE_ALIGN(32);
 static DVDCommandBlock DriveBlock;
@@ -116,12 +116,12 @@ extern u32 __PADSpec;
 void OSDefaultExceptionHandler(__OSException exception, OSContext* context);
 extern BOOL __DBIsExceptionMarked(__OSException);
 static void OSExceptionInit(void);
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 void __OSGetExecParams(OSExecParams* params);
 void EnableMetroTRKInterrupts(void);
 extern char _stack_addr[];
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 u8 OSGetAppType(void);
 void __OSInitAlarm(void);
 void __OSInitIPCBuffer(void);
@@ -234,7 +234,7 @@ SkipPairedSingles:
 }
 /* clang-format on */
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 u32 OSGetConsoleType() {
   if (BootInfo == NULL || BootInfo->consoleType == 0) {
     return OS_CONSOLE_ARTHUR;
@@ -274,7 +274,7 @@ void ClearArena(void) {
   }
 }
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #define OS_MEM1_BEGIN 0x80000000
 #define OSIsMEM1Region(addr) (((u32)(addr)&0x30000000) == 0)
 #define OSIsMEM2Region(addr) (((u32)(addr)&0x30000000) == 0x10000000)
@@ -477,7 +477,7 @@ static void InquiryCallback(s32 result, DVDCommandBlock* block) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void OSInit(void) {
   /*
   Initializes the Dolphin operating system.
@@ -565,7 +565,7 @@ void OSInit(void) {
     }
 
     // begin OS reporting
-#if SDK_VERSION < SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
     OSReport("\nDolphin OS $Revision: 58 $.\n");
     OSReport("Kernel built : %s %s\n", "Sep  5 2002", "05:32:39");
 #else 
@@ -642,7 +642,7 @@ void OSInit(void) {
   }
 }
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 
 static void ReportOSInfo(void) {
   u32 type;
@@ -1148,10 +1148,10 @@ static asm void __OSDBJump(void){
 
     nofralloc
 entry __OSDBJUMPSTART
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     bla     OS_DBJUMPPOINT_ADDR
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     bl      __OSDBJUMPDEST
 #else
     bla     OS_DBJUMPPOINT_ADDR
@@ -1201,7 +1201,7 @@ entry __OSEVStart
     mflr    r3
     stw     r3, OS_CONTEXT_LR(r4)
     mfctr   r3
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
 entry __OSDBJUMPDEST
 #endif
     stw     r3, OS_CONTEXT_CTR(r4)
@@ -1284,7 +1284,7 @@ void __OSPSInit(void)
     {
         li      r3, 0
         mtspr   GQR0, r3
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
         mtspr   GQR1, r3
         mtspr   GQR2, r3
         mtspr   GQR3, r3
@@ -1303,8 +1303,8 @@ u32 __OSGetDIConfig(void) { return (__DIRegs[DI_CONFIG_IDX] & DI_CONFIG_CONFIG_M
 
 void OSRegisterVersion(const char* id) { OSReport("%s\n", id); }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 // Must be defined down here because of data pooling
 static const char* AppGameNameForSysMenu = "HAEA";
 

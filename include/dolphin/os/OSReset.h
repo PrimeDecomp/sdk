@@ -43,8 +43,8 @@ struct OSResetFunctionInfo {
   OSResetFunctionInfo* prev;
 };
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 typedef BOOL (*OSShutdownFunction)(BOOL final, u32 event);
 typedef struct OSShutdownFunctionInfo OSShutdownFunctionInfo;
 

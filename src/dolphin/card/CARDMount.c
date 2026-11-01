@@ -57,7 +57,7 @@ static BOOL IsCard(u32 id) {
   }
 
   return TRUE;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 }
 void __CARDDisable(BOOL disable) {
   BOOL enabled;
@@ -144,7 +144,7 @@ static s32 DoMount(s32 chan) {
   u8 checkSum;
   int step;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 
 #endif
@@ -165,20 +165,20 @@ static s32 DoMount(s32 chan) {
     card->cid = id;
 
     card->size = (u16)(id & 0xFC);
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     ASSERT(card->size);
 #endif
     card->sectorSize = SectorSizeTable[(id & 0x00003800) >> 11];
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     ASSERT(card->sectorSize);
 #endif
     card->cBlock = (u16)((card->size * 1024 * 1024 / 8) / card->sectorSize);
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     ASSERT(8 <= card->cBlock);
 
 #endif
     card->latency = LatencyTable[(id & 0x00000700) >> 8];
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
     result = __CARDReadVendorID(chan, &card->vendorID);
     if (result < 0) {
@@ -283,7 +283,7 @@ void __CARDMountCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
@@ -320,7 +320,7 @@ void __CARDMountCallback(s32 chan, s32 result) {
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #line 620
   ASSERT(callback);
 
@@ -333,7 +333,7 @@ s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback,
                    CARDCallback attachCallback) {
   CARDControl* card;
   BOOL enabled;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   // clang-format off
   ASSERT(workArea && ((u32) workArea % 32 == 0));
   ASSERT(0 <= chan && chan < 2);
@@ -389,7 +389,7 @@ s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback,
   return DoMount(chan);
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 s32 CARDMount(s32 chan, void *workArea, CARDCallback detachCallback) {
     s32 result = CARDMountAsync(chan, workArea, detachCallback, __CARDSyncCallback);
 #else
@@ -401,7 +401,7 @@ s32 CARDMount(s32 chan, void* workArea, CARDCallback detachCallback) {
   }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (result < 0)
         return result;
     return __CARDSync(chan);
@@ -415,7 +415,7 @@ static void DoUnmount(s32 chan, s32 result) {
   CARDControl* card;
   BOOL enabled;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
@@ -436,7 +436,7 @@ s32 CARDUnmount(s32 chan) {
   CARDControl* card;
   s32 result;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   result = __CARDGetControlBlock(chan, &card);

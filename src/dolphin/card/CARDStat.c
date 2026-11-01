@@ -68,7 +68,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   CARDDir* dir;
   CARDDir* ent;
   s32 result;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   ASSERT(0 <= chan && chan < 2);
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
@@ -84,7 +84,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   result = __CARDAccess(card, ent);
   if (result == CARD_RESULT_NOPERM) {
     result = __CARDIsWritable(ent);
@@ -118,7 +118,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
   CARDDir* ent;
   s32 result;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
   ASSERT(0 <= chan && chan < 2);
 
@@ -147,7 +147,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   result = __CARDAccess(card, ent);
 #else
   result = __CARDIsWritable(card, ent);
@@ -175,7 +175,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 s32 CARDSetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   s32 result;
   result = CARDSetStatusAsync(chan, fileNo, stat, __CARDSyncCallback);

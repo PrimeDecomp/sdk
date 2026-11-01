@@ -3,7 +3,7 @@
 
 char* __THPVersion = "<< Dolphin SDK - THP\trelease build: Aug 27 2002 20:42:01 >>";
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Ydchuff);
 ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Udchuff);
 ATTRIBUTE_ALIGN_DECL(32, static THPHuffmanTab* Vdchuff);
@@ -23,7 +23,7 @@ static f32 __THPIDCTWorkspace[64] ATTRIBUTE_ALIGN(32);
 static u8* __THPHuffmanBits;
 static u8* __THPHuffmanSizeTab;
 static u16* __THPHuffmanCodeTab;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 ATTRIBUTE_ALIGN_DECL(32, static THPSample* Gbase);
 ATTRIBUTE_ALIGN_DECL(32, static u32 Gwid);
 ATTRIBUTE_ALIGN_DECL(32, static f32* Gq);

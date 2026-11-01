@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #define VI_INTERLACE 0
 #define VI_NON_INTERLACE 1
 #define VI_PROGRESSIVE 2
@@ -19,7 +19,7 @@ extern "C" {
 typedef void (*VIRetraceCallback)(u32 retraceCount);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #define VI_NTSC 0
 #define VI_PAL 1
 #define VI_MPAL 2
@@ -131,7 +131,7 @@ typedef struct VIPositionInfo {
   VITimingInfo* timing; // _54
 } VIPositionInfo;
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #define VI_TVMODE_PAL_PROG ((VITVMode)6)
 
 typedef u8 VIBool;

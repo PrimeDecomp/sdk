@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 
 #include "dolphin/base/PPCArch.h"
 #else
@@ -135,7 +135,7 @@ asm void DCZeroRange(register void* addr, register u32 nBytes) {
 
 asm void ICInvalidateRange(register void* addr, register u32 nBytes) {
   nofralloc
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   nofralloc
 #endif
   cmplwi nBytes, 0
@@ -267,10 +267,10 @@ asm void LCDisable() {
 asm void LCLoadBlocks(register void* destTag, register void* srcAddr, register u32 numBlocks) {
   nofralloc
   rlwinm  r6, numBlocks, 30, 27, 31
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   rlwinm  srcAddr, srcAddr, 0, 4, 31
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   rlwinm  srcAddr, srcAddr, 0, 3, 31
 #else
   rlwinm  srcAddr, srcAddr, 0, 4, 31
@@ -288,10 +288,10 @@ asm void LCLoadBlocks(register void* destTag, register void* srcAddr, register u
 asm void LCStoreBlocks(register void* destAddr, register void* srcTag, register u32 numBlocks) {
   nofralloc
   rlwinm  r6, numBlocks, 30, 27, 31
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   rlwinm  destAddr, destAddr, 0, 4, 31
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   rlwinm  destAddr, destAddr, 0, 3, 31
 #else
   rlwinm  destAddr, destAddr, 0, 4, 31
@@ -355,8 +355,8 @@ asm u32 LCQueueLength() {
 
 asm void LCQueueWait(register u32 len) {
   nofralloc
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION < SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
   addi len, len, 1
 @1
   mfspr r4, HID2

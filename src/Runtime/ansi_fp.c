@@ -4,7 +4,7 @@
 #include <float.h>
 #include <math.h>
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static int __count_trailing_zerol(unsigned long x) {
   int result = 0;
   int bits_not_checked = sizeof(unsigned long) * 8;
@@ -35,7 +35,7 @@ static int __count_trailing_zero(double x) {
   return (int)(sizeof(unsigned long) * 8 + __count_trailing_zerol(l[0] | 0x00100000));
 }
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static inline int __count_trailing_zero(double x) {
   return __builtin___count_trailing_zero64(*(unsigned long long *)&x | 0x0010000000000000ULL);
 }
@@ -120,7 +120,7 @@ static void __rounddec(decimal* d, int digits) {
 
 static void __ull2dec(decimal* result, unsigned long long integer) {
   result->sgn = 0;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (integer == 0) {
     result->exp = 0;
     result->sig.length = 1;
@@ -132,7 +132,7 @@ static void __ull2dec(decimal* result, unsigned long long integer) {
     result->sgn = 1;
   }
 #else
-#if SDK_VERSION < SDK_VERSION_R32J01_00
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
   if (integer == 0) {
     result->exp = 0;
     result->sig.length = 1;
@@ -216,7 +216,7 @@ static void __str2dec(decimal* d, const char* s, short exp) {
   if (*s != 0) {
     if (*s < 5)
       return;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     if (*s > 5)
       goto round;
 #endif
@@ -233,7 +233,7 @@ static void __str2dec(decimal* d, const char* s, short exp) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static void __two_exp(decimal* result, short exp) {
 #else
 static void __two_exp(decimal* result, long exp) {
@@ -305,13 +305,13 @@ static void __two_exp(decimal* result, long exp) {
   }
   {
     decimal x2;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     __two_exp(&x2, (short)(exp / 2));
 #else
     __two_exp(&x2, exp / 2);
 #endif
     __timesdec(result, &x2, &x2);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   }
   if (exp & 1) {
     decimal temp = *result;
@@ -338,26 +338,26 @@ static void __two_exp(decimal* result, long exp) {
 
 static int __equals_dec(const decimal *x, const decimal *y) {
   if (x->sig.text[0] == 0) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (y->sig.text[0] == 0)
 #else
     if (y->sig.text[0] == 0) {
 #endif
       return 1;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     }
 
 #endif
     return 0;
   }
   if (y->sig.text[0] == 0) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (x->sig.text[0] == 0)
 #else
     if (x->sig.text[0] == 0) {
 #endif
       return 1;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     }
 
 #endif
@@ -366,14 +366,14 @@ static int __equals_dec(const decimal *x, const decimal *y) {
   if (x->exp == y->exp) {
     int i;
     int l = x->sig.length;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (l > y->sig.length)
 #else
 
     if (l > y->sig.length) {
 #endif
       l = y->sig.length;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     for (i = 0; i < l; ++i)
       if (x->sig.text[i] != y->sig.text[i])
 #else
@@ -383,7 +383,7 @@ static int __equals_dec(const decimal *x, const decimal *y) {
       if (x->sig.text[i] != y->sig.text[i]) {
 #endif
         return 0;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (l == x->sig.length) {
       for (; i < y->sig.length; ++i)
         if (y->sig.text[i] != 0)
@@ -397,7 +397,7 @@ static int __equals_dec(const decimal *x, const decimal *y) {
       }
     }
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     if (l == x->sig.length) {
       x = y;
     }
@@ -537,10 +537,10 @@ done:
 }
 
 static void __num2dec_internal(decimal* d, double x) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   char sgn = signbit(x) != 0;
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   char sgn = __signbitd(x) != 0;
 #else
   char sgn = signbit(x) != 0;
@@ -566,20 +566,20 @@ static void __num2dec_internal(decimal* d, double x) {
   {
     int exp;
     double frac = frexp(x, &exp);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     short num_bits_extract = (short)(DBL_MANT_DIG - __count_trailing_zero(frac));
 #else
     int num_bits_extract = DBL_MANT_DIG - __count_trailing_zero(frac);
 #endif
     double integer;
     decimal int_d, pow2_d;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     __two_exp(&pow2_d, (short)(exp - num_bits_extract));
     frac = modf(ldexp(frac, num_bits_extract), &integer);
     __ull2dec(&int_d, (unsigned long long)integer);
 #else
     __two_exp(&pow2_d, exp - num_bits_extract);
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     __ull2dec(&int_d, (unsigned long long)ldexp(frac, num_bits_extract));
 #else
     frac = modf(ldexp(frac, num_bits_extract), &integer);
@@ -622,7 +622,7 @@ double __dec2num(const decimal* d) {
     *ll = 0x7FF0000000000000;
     if (d->sgn)
       *ll |= 0x8000000000000000;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (d->sig.length == 1)
       *ll |= 0x0008000000000000;
     else {
@@ -651,7 +651,7 @@ double __dec2num(const decimal* d) {
         *ll |= 0x0008000000000000;
     }
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     *ll |= 0x0008000000000000;
 #else
     if (d->sig.length == 1)
@@ -697,7 +697,7 @@ double __dec2num(const decimal* d) {
       *i -= '0';
     dec.exp += dec.sig.length - 1;
     exponent = dec.exp;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
     {
       decimal max;
       __str2dec(&max, "179769313486231580793728714053034151", 308);
@@ -729,14 +729,14 @@ double __dec2num(const decimal* d) {
       first_guess *= pow(5.0, exponent);
     first_guess = ldexp(first_guess, exponent);
     if (isinf(first_guess)) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
       decimal max;
       __str2dec(&max, "179769313486231580793729011405303420", 308);
       if (__less_dec(&max, &dec))
         goto done;
       first_guess = DBL_MAX;
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
       first_guess = 1.7976931348623157e308;
 #else
       decimal max;
@@ -747,7 +747,7 @@ double __dec2num(const decimal* d) {
 #endif
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     {
       decimal feedback1;
       __num2dec_internal(&feedback1, first_guess);
@@ -799,7 +799,7 @@ double __dec2num(const decimal* d) {
       }
     }
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     {
       decimal feedback1, feedback2, difflow, diffhigh;
       double next_guess;

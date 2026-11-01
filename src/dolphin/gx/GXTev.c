@@ -1,18 +1,18 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/gx.h"
 #else
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static u32 TEVCOpTableST0[] = {
     0xC008F8AF, // modulate
     0xC008A89F, // decal
@@ -40,7 +40,7 @@ static struct {
 #endif
 };
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static u32 TEVCOpTableST1[] = {
     0xC008F80F, // modulate
     0xC008089F, // decal
@@ -68,7 +68,7 @@ static struct {
 #endif
 };
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static u32 TEVAOpTableST0[] = {
     0xC108F2F0, // modulate
     0xC108FFD0, // decal
@@ -98,7 +98,7 @@ static struct {
 #endif
 };
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static u32 TEVAOpTableST1[] = {
     0xC108F070, // modulate
     0xC108FF80, // decal
@@ -128,7 +128,7 @@ static struct {
 #endif
 };
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetTevOp(GXTevStageID id, GXTevMode mode) {
   u32 *ctmp;
   u32 *atmp;
@@ -140,7 +140,7 @@ void GXSetTevOp(GXTevStageID id, GXTevMode mode) {
 	} while (0);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (id == GX_TEVSTAGE0) {
     ctmp = (u32 *)TEVCOpTableST0 + mode;
     atmp = (u32 *)TEVAOpTableST0 + mode;
@@ -156,7 +156,7 @@ void GXSetTevOp(GXTevStageID id, GXTevMode mode)
     u32 tevReg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   tevReg = __GXData->tevc[id];
   tevReg = (*ctmp & ~0xFF000000) | (tevReg & 0xFF000000);
   GX_WRITE_RAS_REG(tevReg);
@@ -167,7 +167,7 @@ void GXSetTevOp(GXTevStageID id, GXTevMode mode)
     ASSERTMSGLINE(0x1A6, mode <= 4, "GXSetTevOp: Invalid Tev Mode");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   tevReg = __GXData->teva[id];
   tevReg = (*atmp & ~0xFF00000F) | (tevReg & 0xFF00000F);
   GX_WRITE_RAS_REG(tevReg);
@@ -182,7 +182,7 @@ void GXSetTevOp(GXTevStageID id, GXTevMode mode)
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __GXData->bpSentNot = 0;
 #else
     tevReg = __GXData->tevc[id];
@@ -203,7 +203,7 @@ void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTev
 {
     u32 tevReg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   tevReg = __GXData->tevc[stage];
   __SET_REG_FIELD(tevReg, 4, 12, a);
   __SET_REG_FIELD(tevReg, 4, 8, b);
@@ -218,7 +218,7 @@ void GXSetTevColorIn(GXTevStageID stage, GXTevColorArg a, GXTevColorArg b, GXTev
     ASSERTMSGLINE(0x247, d <= 15, "GXSetTev*In: A/B/C/D argument out of range");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(tevReg);
   __GXData->tevc[stage] = tevReg;
   __GXData->bpSentNot = 0;
@@ -239,7 +239,7 @@ void GXSetTevAlphaIn(GXTevStageID stage, GXTevAlphaArg a, GXTevAlphaArg b, GXTev
 {
     u32 tevReg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   tevReg = __GXData->teva[stage];
   __SET_REG_FIELD(tevReg, 3, 13, a);
   __SET_REG_FIELD(tevReg, 3, 10, b);
@@ -254,7 +254,7 @@ void GXSetTevAlphaIn(GXTevStageID stage, GXTevAlphaArg a, GXTevAlphaArg b, GXTev
     ASSERTMSGLINE(0x26B, d <= 7, "GXSetTev*In: A/B/C/D argument out of range");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(tevReg);
   __GXData->teva[stage] = tevReg;
   __GXData->bpSentNot = 0;
@@ -275,7 +275,7 @@ void GXSetTevColorOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
 {
     u32 tevReg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   tevReg = __GXData->tevc[stage];
   __SET_REG_FIELD(tevReg, 1, 18, op & 1);
   if (op <= 1) {
@@ -292,7 +292,7 @@ void GXSetTevColorOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
     ASSERTMSGLINE(0x28E, stage < 16, "GXSetTevColor*: Invalid Tev Stage Index");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(tevReg);
   __GXData->tevc[stage] = tevReg;
   __GXData->bpSentNot = 0;
@@ -319,7 +319,7 @@ void GXSetTevAlphaOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
 {
     u32 tevReg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   tevReg = __GXData->teva[stage];
   __SET_REG_FIELD(tevReg, 1, 18, op & 1);
   if (op <= 1) {
@@ -336,7 +336,7 @@ void GXSetTevAlphaOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
     ASSERTMSGLINE(0x2BC, stage < 16, "GXSetTevAlpha*: Invalid Tev Stage Index");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(tevReg);
   __GXData->teva[stage] = tevReg;
   __GXData->bpSentNot = 0;
@@ -359,7 +359,7 @@ void GXSetTevAlphaOp(GXTevStageID stage, GXTevOp op, GXTevBias bias, GXTevScale 
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetTevColor(GXTevRegID id, GXColor color) {
   u32 regRA;
   u32 regBG;
@@ -371,7 +371,7 @@ void GXSetTevColor(GXTevRegID id, GXColor color)
     u32 regBG;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   regRA = 0;
   SET_REG_FIELD(regRA, 11, 0, color.r);
   SET_REG_FIELD(regRA, 11, 12, color.a);
@@ -381,7 +381,7 @@ void GXSetTevColor(GXTevRegID id, GXColor color)
     rgba = *(u32*)&color;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   regBG = 0;
   SET_REG_FIELD(regBG, 11, 0, color.b);
   SET_REG_FIELD(regBG, 11, 12, color.g);
@@ -392,7 +392,7 @@ void GXSetTevColor(GXTevRegID id, GXColor color)
     SET_REG_FIELD(0x2EA, regRA, 8, 12, rgba & 0xFF);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(regRA);
   GX_WRITE_RAS_REG(regBG);
   GX_WRITE_RAS_REG(regBG);
@@ -403,7 +403,7 @@ void GXSetTevColor(GXTevRegID id, GXColor color)
     SET_REG_FIELD(0x2EE, regBG, 8, 12, (rgba >> 16) & 0xFF);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __GXData->bpSentNot = 0;
 #else
     GX_WRITE_RAS_REG(regRA);
@@ -422,7 +422,7 @@ void GXSetTevColorS10(GXTevRegID id, GXColorS10 color)
     u32 regRA;
     u32 regBG;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   regRA = 0;
   SET_REG_FIELD(regRA, 11, 0, color.r & 0x7FF);
   SET_REG_FIELD(regRA, 11, 12, color.a & 0x7FF);
@@ -434,7 +434,7 @@ void GXSetTevColorS10(GXTevRegID id, GXColorS10 color)
     ASSERTMSGLINE(0x30C, color.a >= -1024 && color.a < 1024, "GXSetTevColorS10: Color not in range -1024 to +1023");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   regBG = 0;
   SET_REG_FIELD(regBG, 11, 0, color.b & 0x7FF);
   SET_REG_FIELD(regBG, 11, 12, color.g & 0x7FF);
@@ -445,7 +445,7 @@ void GXSetTevColorS10(GXTevRegID id, GXColorS10 color)
     sBA = *((u32*)&color + 1);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(regRA);
   GX_WRITE_RAS_REG(regBG);
   GX_WRITE_RAS_REG(regBG);
@@ -456,7 +456,7 @@ void GXSetTevColorS10(GXTevRegID id, GXColorS10 color)
     SET_REG_FIELD(0x316, regRA, 11, 12, sBA & 0x7FF);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __GXData->bpSentNot = 0;
 #else
     regBG = (0xE1 + id * 2) << 24;
@@ -472,7 +472,7 @@ void GXSetTevColorS10(GXTevRegID id, GXColorS10 color)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetTevKColor(GXTevKColorID id, GXColor color) {
   u32 regRA;
   u32 regBG;
@@ -484,7 +484,7 @@ void GXSetTevKColor(GXTevKColorID id, GXColor color)
     u32 regBG;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   regRA = 0;
   SET_REG_FIELD(regRA, 8, 0, color.r);
   SET_REG_FIELD(regRA, 8, 12, color.a);
@@ -495,7 +495,7 @@ void GXSetTevKColor(GXTevKColorID id, GXColor color)
     rgba = *(u32*)&color;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   regBG = 0;
   SET_REG_FIELD(regBG, 8, 0, color.b);
   SET_REG_FIELD(regBG, 8, 12, color.g);
@@ -508,7 +508,7 @@ void GXSetTevKColor(GXTevKColorID id, GXColor color)
     SET_REG_FIELD(0x347, regRA, 4, 20, 8);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(regRA);
   GX_WRITE_RAS_REG(regBG);
   __GXData->bpSentNot = 0;
@@ -529,7 +529,7 @@ void GXSetTevKColorSel(GXTevStageID stage, GXTevKColorSel sel)
 {
     u32 *Kreg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   Kreg = &__GXData->tevKsel[stage >> 1];
   if (stage & 1) {
     SET_REG_FIELD(*Kreg, 5, 14, sel);
@@ -541,7 +541,7 @@ void GXSetTevKColorSel(GXTevStageID stage, GXTevKColorSel sel)
     ASSERTMSGLINE(0x369, stage < 16, "GXSetTevKColor*: Invalid Tev Stage Index");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(*Kreg);
   __GXData->bpSentNot = 0;
 #else
@@ -561,7 +561,7 @@ void GXSetTevKAlphaSel(GXTevStageID stage, GXTevKAlphaSel sel)
 {
     u32 *Kreg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   Kreg = &__GXData->tevKsel[stage >> 1];
   if (stage & 1) {
     SET_REG_FIELD(*Kreg, 5, 19, sel);
@@ -573,7 +573,7 @@ void GXSetTevKAlphaSel(GXTevStageID stage, GXTevKAlphaSel sel)
     ASSERTMSGLINE(0x38A, stage < 16, "GXSetTevKColor*: Invalid Tev Stage Index");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(*Kreg);
   __GXData->bpSentNot = 0;
 #else
@@ -593,7 +593,7 @@ void GXSetTevSwapMode(GXTevStageID stage, GXTevSwapSel ras_sel, GXTevSwapSel tex
 {
     u32 *pTevReg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   pTevReg = &__GXData->teva[stage];
   SET_REG_FIELD(*pTevReg, 2, 0, ras_sel);
   SET_REG_FIELD(*pTevReg, 2, 2, tex_sel);
@@ -602,7 +602,7 @@ void GXSetTevSwapMode(GXTevStageID stage, GXTevSwapSel ras_sel, GXTevSwapSel tex
     ASSERTMSGLINE(0x3AF, stage < 16, "GXSetTevSwapMode: Invalid Tev Stage Index");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(*pTevReg);
   __GXData->bpSentNot = 0;
 #else
@@ -615,7 +615,7 @@ void GXSetTevSwapMode(GXTevStageID stage, GXTevSwapSel ras_sel, GXTevSwapSel tex
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red, GXTevColorChan green,
                            GXTevColorChan blue, GXTevColorChan alpha) {
   u32 *Kreg;
@@ -627,14 +627,14 @@ void GXSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red, GXTevColorCha
     int index = table * 2;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   int index = table * 2;
 #else
     CHECK_GXBEGIN(0x3D2, "GXSetTevSwapModeTable");
     ASSERTMSGLINE(0x3D3, table < 4, "GXSetTevSwapModeTable: Invalid Swap Selection Index");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   Kreg = &__GXData->tevKsel[index];
 #else
     Kreg = &__GXData->tevKsel[index];
@@ -642,14 +642,14 @@ void GXSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red, GXTevColorCha
     SET_REG_FIELD(0x3D7, *Kreg, 2, 2, green);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   SET_REG_FIELD(*Kreg, 2, 0, red);
   SET_REG_FIELD(*Kreg, 2, 2, green);
 #else
     GX_WRITE_RAS_REG(*Kreg);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_RAS_REG(*Kreg);
 #else
     Kreg = &__GXData->tevKsel[table * 2 + 1];
@@ -657,7 +657,7 @@ void GXSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red, GXTevColorCha
     SET_REG_FIELD(0x3DC, *Kreg, 2, 2, alpha);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   Kreg = &__GXData->tevKsel[table * 2 + 1];
   SET_REG_FIELD(*Kreg, 2, 0, blue);
   SET_REG_FIELD(*Kreg, 2, 2, alpha);
@@ -670,7 +670,7 @@ void GXSetTevSwapModeTable(GXTevSwapSel table, GXTevColorChan red, GXTevColorCha
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, u8 ref1) {
   u32 reg;
 
@@ -691,7 +691,7 @@ void GXSetTevClampMode(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias) {
   u32 zenv0;
   u32 zenv1;
@@ -702,7 +702,7 @@ void GXSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, 
     u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   zenv0 = 0;
   SET_REG_FIELD(zenv0, 24, 0, bias);
   SET_REG_FIELD(zenv0, 8, 24, 0xF4);
@@ -711,7 +711,7 @@ void GXSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, 
     reg = 0xF3000000;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   zenv1 = 0;
   switch (fmt) {
   case GX_TF_Z8:
@@ -732,7 +732,7 @@ void GXSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, 
     SET_REG_FIELD(0x41D, reg, 2, 22, op);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     type = 2;
     break;
   }
@@ -750,7 +750,7 @@ void GXSetAlphaCompare(GXCompare comp0, u8 ref0, GXAlphaOp op, GXCompare comp1, 
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXChannelID color) {
   u32 *ptref;
   u32 tmap;
@@ -764,14 +764,14 @@ void GXSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias)
     u32 type;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   ptref = &__GXData->tref[stage / 2];
   __GXData->texmapId[stage] = map;
 #else
     CHECK_GXBEGIN(0x435, "GXSetZTexture");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   tmap = map & ~GX_TEX_DISABLE;
   tmap = (tmap >= GX_MAX_TEXMAP) ? GX_TEXMAP0 : tmap;
 #else
@@ -780,7 +780,7 @@ void GXSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias)
     SET_REG_FIELD(0x439, zenv0, 8, 24, 0xF4);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (coord >= GX_MAX_TEXCOORD) {
     tcoord = GX_TEXCOORD0;
     __GXData->tevTcEnab = __GXData->tevTcEnab & ~(1 << stage);
@@ -811,7 +811,7 @@ void GXSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias)
     SET_REG_FIELD(0x446, zenv1, 8, 24, 0xF5);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (stage & 1) {
     SET_REG_FIELD(*ptref, 3, 12, tmap);
     SET_REG_FIELD(*ptref, 3, 15, tcoord);
@@ -834,7 +834,7 @@ void GXSetZTexture(GXZTexOp op, GXTexFmt fmt, u32 bias)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetNumTevStages(u8 nStages) {
 #else
 void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXChannelID color)
@@ -845,7 +845,7 @@ void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXCha
     static int c2r[] = { 0, 1, 0, 1, 0, 1, 7, 5, 6 };
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   SET_REG_FIELD(__GXData->genMode, 4, 10, nStages - 1);
   __GXData->dirtyState |= 4;
 #else
@@ -887,7 +887,7 @@ void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXCha
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 void GXSetNumTevStages(u8 nStages)
 {
     CHECK_GXBEGIN(0x4A3, "GXSetNumTevStages");

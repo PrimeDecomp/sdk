@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #ifndef _DOLPHIN_HW_REGS_H_
 #define _DOLPHIN_HW_REGS_H_
 
@@ -130,23 +130,23 @@ vu16 __VIRegs[59] : 0xCC002000;
 vu32 __PIRegs[12] : 0xCC003000;
 vu16 __MEMRegs[64] : 0xCC004000;
 vu16 __DSPRegs[32] : 0xCC005000;
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 vu32 __DIRegs[16] : 0xCD006000;
 #else
 vu32 __DIRegs[16] : 0xCC006000;
 #endif
 vu32 __SIRegs[64] : 0xCC006400;
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 vu32 __EXIRegs[16] : 0xCD006800;
 #else
 vu32 __EXIRegs[16] : 0xCC006800;
 #endif
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 vu32 __AIRegs[8] : 0xCD006C00;
 #else
 vu32 __AIRegs[8] : 0xCC006C00;
 #endif
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 vu32 __IPCRegs[256] : 0xCD800000;
 #endif
 
@@ -155,23 +155,23 @@ vu32 __IPCRegs[256] : 0xCD800000;
 #define __PIRegs ((vu32*)0xCC003000)
 #define __MEMRegs ((vu16*)0xCC004000)
 #define __DSPRegs ((vu16*)0xCC005000)
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #define __DIRegs ((vu32*)0xCD006000)
 #else
 #define __DIRegs ((vu32*)0xCC006000)
 #endif
 #define __SIRegs ((vu32*)0xCC006400)
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #define __EXIRegs ((vu32*)0xCD006800)
 #else
 #define __EXIRegs ((vu32*)0xCC006800)
 #endif
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #define __AIRegs ((vu32*)0xCD006C00)
 #else
 #define __AIRegs ((vu32*)0xCC006C00)
 #endif
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #define __IPCRegs ((vu32*)0xCD800000)
 #endif
 #endif

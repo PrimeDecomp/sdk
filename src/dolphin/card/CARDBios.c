@@ -6,7 +6,7 @@
 
 #include <dolphin/CARDPriv.h>
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 const char* __CARDVersion =
     "<< Dolphin SDK - CARD\trelease build: Sep  5 2002 05:35:20 (0x2301) >>";
 #else
@@ -25,7 +25,7 @@ u32 __CARDFreq = EXI_FREQ_16M;
 CARDControl __CARDBlock[2];
 DVDDiskID __CARDDiskNone;
 static u16 __CARDEncode;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 static u16 __CARDFastMode;
 #endif
 
@@ -34,7 +34,7 @@ s32 __CARDClearStatus(s32 chan);
 void __CARDSetDiskID(const DVDDiskID* id);
 static s32 Retry(s32 chan);
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 BOOL OnReset(BOOL f);
 static OSResetFunctionInfo ResetFunctionInfo = {OnReset, 127};
 #else
@@ -46,12 +46,12 @@ static OSResetFunctionInfo ResetFunctionInfo = {
 #endif
 
 void __CARDDefaultApiCallback(s32 chan, s32 result) {}
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void __CARDSyncCallback(s32 chan) {
   CARDControl* card = &__CARDBlock[chan];
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 void __CARDSyncCallback(s32 chan, s32 result) {
   CARDControl* card;
   card = &__CARDBlock[chan];
@@ -64,11 +64,11 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
   CARDControl* card;
   CARDCallback callback;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (card->attached) {
     card->attached = FALSE;
     EXISetExiCallback(chan, 0);
@@ -76,7 +76,7 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
     callback = card->exiCallback;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (callback) {
       card->exiCallback = 0;
       callback(chan, CARD_RESULT_NOCARD);
@@ -87,7 +87,7 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
   }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     if (card->result != CARD_RESULT_BUSY) {
       card->result = CARD_RESULT_NOCARD;
     }
@@ -95,7 +95,7 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
   ASSERT(card->txCallback == 0);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     callback = card->extCallback;
     if (callback && CARD_MAX_MOUNT_STEP <= card->mountStep) {
       card->extCallback = 0;
@@ -130,7 +130,7 @@ void __CARDExiHandler(s32 chan, OSContext* context) {
   CARDCallback callback;
   u8 status;
   s32 result;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -177,7 +177,7 @@ void __CARDTxHandler(s32 chan, OSContext* context) {
   CARDControl* card;
   CARDCallback callback;
   BOOL err;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -197,7 +197,7 @@ void __CARDUnlockedHandler(s32 chan, OSContext* context) {
   CARDControl* card;
   CARDCallback callback;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
@@ -213,7 +213,7 @@ s32 __CARDEnableInterrupt(s32 chan, BOOL enable) {
   BOOL err;
   u32 cmd;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (!EXISelect(chan, 0, 4)) {
 #else
   ASSERT(0 <= chan && chan < 2);
@@ -238,7 +238,7 @@ s32 __CARDReadStatus(s32 chan, u8* status) {
   BOOL err;
   u32 cmd;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (!EXISelect(chan, 0, 4)) {
 #else
   ASSERT(0 <= chan && chan < 2);
@@ -261,7 +261,7 @@ s32 __CARDReadStatus(s32 chan, u8* status) {
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #line 467
 s32 __CARDReadVendorID(s32 chan, u16* id) {
   BOOL err;
@@ -292,7 +292,7 @@ s32 __CARDClearStatus(s32 chan) {
   BOOL err;
   u32 cmd;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (!EXISelect(chan, 0, 4)) {
 #else
 #ifdef _DEBUG
@@ -313,7 +313,7 @@ s32 __CARDClearStatus(s32 chan) {
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 //
 s32 __CARDSleep(s32 chan) {
   BOOL err;
@@ -370,7 +370,7 @@ static void TimeoutHandler(OSAlarm* alarm, OSContext* context) {
       break;
     }
   }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   //
   //
@@ -395,7 +395,7 @@ static void SetupTimeoutAlarm(CARDControl* card) {
   case 0xF2:
     OSSetAlarm(&card->alarm, OSMillisecondsToTicks(100), TimeoutHandler);
     break;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   case 0xF3:
 #else
   case 0xF4:
@@ -408,7 +408,7 @@ static void SetupTimeoutAlarm(CARDControl* card) {
                TimeoutHandler);
 #endif
     break;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   case 0xF4:
   case 0xF1:
     OSSetAlarm(&card->alarm, OSSecondsToTicks((OSTime)2) * (card->sectorSize / 0x2000),
@@ -422,7 +422,7 @@ static void SetupTimeoutAlarm(CARDControl* card) {
 
 static s32 Retry(s32 chan) {
   CARDControl* card;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
 #line 654
   ASSERT(0 <= chan && chan < 2);
@@ -430,7 +430,7 @@ static s32 Retry(s32 chan) {
 #endif
   card = &__CARDBlock[chan];
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (!EXISelect(chan, 0, 4)) {
 #else
 #ifdef _DEBUG
@@ -464,7 +464,7 @@ static s32 Retry(s32 chan) {
     return CARD_RESULT_READY;
   }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (!EXIDma(chan, card->buffer, (s32)((card->cmd[0] == 0x52) ? 512 : 128), card->mode,
 #else
   if (!EXIDma(chan, card->buffer, (s32)((card->cmd[0] == 0x52) ? 512 : card->pageSize), card->mode,
@@ -483,7 +483,7 @@ static void UnlockedCallback(s32 chan, s32 result) {
   CARDCallback callback;
   CARDControl* card;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
@@ -528,7 +528,7 @@ static s32 __CARDStart(s32 chan, CARDCallback txCallback, CARDCallback exiCallba
 
   enabled = OSDisableInterrupts();
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
@@ -548,7 +548,7 @@ static s32 __CARDStart(s32 chan, CARDCallback txCallback, CARDCallback exiCallba
     } else {
       card->unlockCallback = 0;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
       if (!EXISelect(chan, 0, 4)) {
 #else
 #ifdef _DEBUG
@@ -580,7 +580,7 @@ static s32 __CARDStart(s32 chan, CARDCallback txCallback, CARDCallback exiCallba
 s32 __CARDReadSegment(s32 chan, CARDCallback callback) {
   CARDControl* card;
   s32 result;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   // clang-format off
   ASSERT(0 <= chan && chan < 2);
   card = &__CARDBlock[chan];
@@ -589,7 +589,7 @@ s32 __CARDReadSegment(s32 chan, CARDCallback callback) {
   // clang-format on
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   card = &__CARDBlock[chan];
 #endif
   card->cmd[0] = 0x52;
@@ -624,7 +624,7 @@ s32 __CARDReadSegment(s32 chan, CARDCallback callback) {
 s32 __CARDWritePage(s32 chan, CARDCallback callback) {
   CARDControl* card;
   s32 result;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   // clang-format off
   ASSERT(0 <= chan && chan < 2);
   card = &__CARDBlock[chan];
@@ -633,11 +633,11 @@ s32 __CARDWritePage(s32 chan, CARDCallback callback) {
   // clang-format on
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   card = &__CARDBlock[chan];
 #endif
   card->cmd[0] = 0xF2;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   card->cmd[1] = AD1(card->addr);
 #else
   if (CARD_PAGE_SIZE < card->pageSize) {
@@ -658,7 +658,7 @@ s32 __CARDWritePage(s32 chan, CARDCallback callback) {
     result = CARD_RESULT_READY;
   } else if (result >= 0) {
     if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1) ||
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
         !EXIDma(chan, card->buffer, 128, card->mode, __CARDTxHandler)) {
 #else
         !EXIDma(chan, card->buffer, card->pageSize, card->mode, __CARDTxHandler)) {
@@ -674,7 +674,7 @@ s32 __CARDWritePage(s32 chan, CARDCallback callback) {
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #line 958
 s32 __CARDErase(s32 chan, CARDCallback callback) {
   CARDControl* card;
@@ -710,7 +710,7 @@ s32 __CARDErase(s32 chan, CARDCallback callback) {
 s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback) {
   CARDControl* card;
   s32 result;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   // clang-format off
   ASSERT(0 <= chan && chan < 2);
   card = &__CARDBlock[chan];
@@ -719,7 +719,7 @@ s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback) {
   // clang-format on
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   card = &__CARDBlock[chan];
 #else
   if (CARD_PAGE_SIZE < card->pageSize) {
@@ -743,11 +743,11 @@ s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback) {
     result = CARD_RESULT_READY;
   } else if (result >= 0) {
     if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1)) {
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
       result = CARD_RESULT_NOCARD;
 #endif
       card->exiCallback = NULL;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
       result = CARD_RESULT_NOCARD;
 #endif
     } else {
@@ -788,7 +788,7 @@ void CARDInit(void) {
 
 u16 __CARDGetFontEncode() { return __CARDEncode; }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 u16 __CARDSetFontEncode(u16 encode) {
   u16 prev;
 
@@ -806,7 +806,7 @@ u16 __CARDSetFontEncode(u16 encode) {
 void __CARDSetDiskID(const DVDDiskID* id) {
   __CARDBlock[0].diskID = id ? id : &__CARDDiskNone;
   __CARDBlock[1].diskID = id ? id : &__CARDDiskNone;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 }
 
 #line 1167
@@ -860,7 +860,7 @@ s32 __CARDGetControlBlock(s32 chan, CARDControl** pcard) {
 s32 __CARDPutControlBlock(CARDControl* card, s32 result) {
   BOOL enabled;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(result != CARD_RESULT_BUSY);
 #endif
   enabled = OSDisableInterrupts();
@@ -876,7 +876,7 @@ s32 __CARDPutControlBlock(CARDControl* card, s32 result) {
 #line 1289
 s32 CARDGetResultCode(s32 chan) {
   CARDControl* card;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -932,14 +932,14 @@ s32 CARDGetEncoding(s32 chan, u16* encode) {
   if (result < 0) {
     return result;
   }
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   id = card->workArea;
 #else
 
   id = (CARDID*)card->workArea;
 #endif
   *encode = id->encode;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   return __CARDPutControlBlock(card, 0);
 #else
 
@@ -956,7 +956,7 @@ s32 CARDGetMemSize(s32 chan, u16* size) {
     return result;
   }
   *size = card->size;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   return __CARDPutControlBlock(card, 0);
 #else
 
@@ -972,7 +972,7 @@ s32 CARDGetSectorSize(s32 chan, u32* size) {
   if (result < 0) {
     return result;
   }
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   *size = card->sectorSize;
   return __CARDPutControlBlock(card, 0);
 #else
@@ -986,7 +986,7 @@ s32 CARDGetSectorSize(s32 chan, u32* size) {
 s32 __CARDSync(s32 chan) {
   CARDControl* card;
   s32 result;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   s32 enabled;
 #else
   BOOL enabled;
@@ -994,7 +994,7 @@ s32 __CARDSync(s32 chan) {
 
   card = &__CARDBlock[chan];
   enabled = OSDisableInterrupts();
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   while ((result = CARDGetResultCode(chan)) == -1) {
 #else
   while ((result = CARDGetResultCode(chan)) == CARD_RESULT_BUSY) {
@@ -1015,7 +1015,7 @@ static BOOL OnReset(BOOL f) {
   return TRUE;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 BOOL CARDSetFastMode(BOOL enable) {
   u16 prev;
 

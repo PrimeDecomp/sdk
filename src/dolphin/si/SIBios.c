@@ -3,14 +3,14 @@
 #include <dolphin/os.h>
 #include <dolphin/si.h>
 #include <dolphin/sipriv.h>
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
 vu32 __SIRegs[64] : 0xCC006400;
 #endif
 
 extern OSTime __OSGetSystemTime();
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 const char* __SIVersion = "<< Dolphin SDK - SI\trelease build: Sep  5 2002 05:33:08 (0x2301) >>";
 #else
 const char* __SIVersion = "<< Dolphin SDK - SI\trelease build: Apr  5 2004 04:14:16 (0x2301) >>";

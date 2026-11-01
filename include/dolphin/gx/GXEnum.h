@@ -775,7 +775,7 @@ typedef enum _GXTlut {
   GX_BIGTLUT3 = 19,
 } GXTlut;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 typedef enum _GXTlutSize {
   GX_TLUT_16 = 1,
   GX_TLUT_32 = 2,
@@ -914,7 +914,7 @@ typedef enum _GXCopyMode {
   GX_COPY_INTLC_ODD = 3,
 } GXCopyMode;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 typedef enum _GXTlutSize {
   GX_TLUT_16 = 1,
   GX_TLUT_32 = 2,
@@ -931,7 +931,7 @@ typedef enum _GXTlutSize {
 
 #endif
 typedef enum _GXAlphaReadMode {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_READ_00 = 0,
   GX_READ_FF = 1,
   GX_READ_NONE = 2,

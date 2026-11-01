@@ -21,10 +21,10 @@ void* GXGetFifoBase(const GXFifoObj* fifo);
 u32 GXGetFifoSize(const GXFifoObj* fifo);
 void GXGetFifoPtrs(GXFifoObj* fifo, void** readPtr, void** writePtr);
 GXFifoObj* GXGetCPUFifo(void);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 GXFifoObj* GXGetGPFifo(void);
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 BOOL GXGetGPFifo(GXFifoObj* fifo);
 GXBool __GXIsGPFifoReady(void);
 #else

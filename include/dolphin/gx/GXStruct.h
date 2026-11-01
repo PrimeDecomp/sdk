@@ -10,7 +10,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
 #define VI_TVMODE(format, interlace) (((format) << 2) + (interlace))
 
@@ -65,7 +65,7 @@ typedef struct _GXColor {
   u8 b;
   u8 a;
 } GXColor;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 
 typedef struct _GXFogAdjTable {
   u16 r[10];
@@ -112,7 +112,7 @@ typedef struct _GXTlutRegion {
   u32 dummy[4];
 } GXTlutRegion;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 typedef struct _GXFogAdjTable {
   u16 r[10];
 } GXFogAdjTable;

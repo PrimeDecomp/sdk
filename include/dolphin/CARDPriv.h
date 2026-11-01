@@ -119,7 +119,7 @@ void __CARDExiHandler(s32 chan, OSContext* context);
 void __CARDExtHandler(s32 chan, OSContext* context);
 void __CARDUnlockedHandler(s32 chan, OSContext* context);
 s32 __CARDAccess(CARDControl* card, CARDDir* ent);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 BOOL __CARDIsWritable(CARDDir* ent);
 #else
 s32 __CARDIsWritable(CARDControl* card, CARDDir* ent);
@@ -138,7 +138,7 @@ extern u8 __CARDPermMask;
 extern u32 __CARDFreq;
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #define CARD_DIR_PERM_PUBLIC 0x04u
 #define CARD_DIR_PERM_NO_COPY 0x08u
 #define CARD_DIR_PERM_NO_MOVE 0x10u

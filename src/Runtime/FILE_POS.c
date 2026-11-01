@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #include <critical_regions.h>
 #endif
 #include <ansi_files.h>
@@ -25,7 +25,7 @@ inline fpos_t _ftell(FILE* file) {
     position -= charsInUndoBuffer;
   }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   if (!file->mode.binary_io) {
     int n = file->buffer_ptr - file->buffer - charsInUndoBuffer;
     unsigned char* p = (unsigned char*)file->buffer;
@@ -42,11 +42,11 @@ inline fpos_t _ftell(FILE* file) {
 long ftell(FILE* file) {
   long retval;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   __begin_critical_region(files_access);
 #endif
   retval = (long)_ftell(file);
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   __end_critical_region(files_access);
 #endif
 
@@ -110,7 +110,7 @@ int _fseek(FILE* file, fpos_t offset, int mode) {
   return 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 int fseek(FILE * file, long offset, int mode)
 {
 		fpos_t real_offset = (fpos_t)offset;
@@ -123,7 +123,7 @@ int fseek(FILE * file, long offset, int mode)
 		return(retval);
 }
 #else
-#if SDK_VERSION < SDK_VERSION_R32J01_00
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 int fseek(FILE * file, long offset, int mode)
 {
 		fpos_t real_offset = (fpos_t)offset;

@@ -1,12 +1,12 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/gx.h"
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <string.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXCallDisplayList(const void *list, u32 nbytes) {
   if (__GXData->dirtyState != 0) {
     __GXSetDirtyState();
@@ -19,7 +19,7 @@ void GXCallDisplayList(const void *list, u32 nbytes) {
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_U8(0x40);
   GX_WRITE_U32((u32)list);
   GX_WRITE_U32(nbytes);
@@ -58,7 +58,7 @@ void GXBeginDisplayList(void *list, u32 size)
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 unsigned long GXEndDisplayList(void)
 {
     u32 ov;

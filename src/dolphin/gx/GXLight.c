@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/gx.h"
 #include "dolphin/gx/GXPriv.h"
 #else
@@ -9,14 +9,14 @@ extern double cos(double x);
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 extern float cosf(float x);
 extern float sqrtf(float x);
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #define GX_LARGE_NUMBER 1.0e+18f;
 #else
 // GXLightObj private data
@@ -30,7 +30,7 @@ struct __GXLightObjInt_struct {
 };
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightAttn(GXLightObj *lt_obj, f32 a0, f32 a1, f32 a2, f32 k0, f32 k1, f32 k2) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   obj->a0 = a0;
@@ -56,7 +56,7 @@ void GXInitLightAttn(GXLightObj *lt_obj, f32 a0, f32 a1, f32 a2, f32 k0, f32 k1,
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightAttnA(GXLightObj *lt_obj, f32 a0, f32 a1, f32 a2) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   obj->a0 = a0;
@@ -76,7 +76,7 @@ void GXInitLightAttnA(GXLightObj *lt_obj, f32 a0, f32 a1, f32 a2)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXGetLightAttnA(const GXLightObj *lt_obj, f32 *a0, f32 *a1, f32 *a2) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   *a0 = obj->a0;
@@ -96,7 +96,7 @@ void GXGetLightAttnA(const GXLightObj *lt_obj, f32 *a0, f32 *a1, f32 *a2)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightAttnK(GXLightObj *lt_obj, f32 k0, f32 k1, f32 k2) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   obj->k0 = k0;
@@ -116,7 +116,7 @@ void GXInitLightAttnK(GXLightObj *lt_obj, f32 k0, f32 k1, f32 k2)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXGetLightAttnK(const GXLightObj *lt_obj, f32 *k0, f32 *k1, f32 *k2) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   *k0 = obj->k0;
@@ -136,12 +136,12 @@ void GXGetLightAttnK(const GXLightObj *lt_obj, f32 *k0, f32 *k1, f32 *k2)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #define PI 3.14159265358979323846F
 #else
 void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func)
 {
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     float r;
     float d;
     float cr;
@@ -155,7 +155,7 @@ void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func)
     struct __GXLightObjInt_struct *obj;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func) {
   f32 a0, a1, a2, r, d, cr;
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
@@ -165,7 +165,7 @@ void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func) {
     CHECK_GXBEGIN(0xC8, "GXInitLightSpot");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (cutoff <= 0.0f || cutoff > 90.0f) {
     spot_func = GX_SP_OFF;
   }
@@ -174,7 +174,7 @@ void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func) {
         spot_func = GX_SP_OFF;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   r = cutoff * PI / 180.0f;
   cr = cosf(r);
 
@@ -225,7 +225,7 @@ void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func) {
   obj->a2 = a2;
 #else
     r = (3.1415927f * cutoff) / 180.0f;
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     cr = cos(r);
 #else
     cr = cosf(r);
@@ -277,7 +277,7 @@ void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightDistAttn(GXLightObj *lt_obj, f32 ref_dist, f32 ref_br, GXDistAttnFn dist_func) {
   f32 k0, k1, k2;
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
@@ -288,7 +288,7 @@ void GXInitLightDistAttn(GXLightObj *lt_obj, f32 ref_dist, f32 ref_br, GXDistAtt
     struct __GXLightObjInt_struct *obj;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (ref_dist < 0.0F) {
     dist_func = GX_DA_OFF;
   }
@@ -298,7 +298,7 @@ void GXInitLightDistAttn(GXLightObj *lt_obj, f32 ref_dist, f32 ref_br, GXDistAtt
     CHECK_GXBEGIN(0x113, "GXInitLightDistAttn");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (ref_br <= 0.0F || ref_br >= 1.0F) {
     dist_func = GX_DA_OFF;
   }
@@ -309,7 +309,7 @@ void GXInitLightDistAttn(GXLightObj *lt_obj, f32 ref_dist, f32 ref_br, GXDistAtt
         dist_func = GX_DA_OFF;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   switch (dist_func) {
   case GX_DA_GENTLE:
     k0 = 1.0F;
@@ -359,7 +359,7 @@ void GXInitLightDistAttn(GXLightObj *lt_obj, f32 ref_dist, f32 ref_br, GXDistAtt
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   obj->k0 = k0;
   obj->k1 = k1;
   obj->k2 = k2;
@@ -370,7 +370,7 @@ void GXInitLightDistAttn(GXLightObj *lt_obj, f32 ref_dist, f32 ref_br, GXDistAtt
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightPos(GXLightObj *lt_obj, f32 x, f32 y, f32 z) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
 #else
@@ -379,7 +379,7 @@ void GXInitLightPos(GXLightObj *lt_obj, f32 x, f32 y, f32 z)
     struct __GXLightObjInt_struct *obj;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   obj->px = x;
   obj->py = y;
   obj->pz = z;
@@ -394,7 +394,7 @@ void GXInitLightPos(GXLightObj *lt_obj, f32 x, f32 y, f32 z)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXGetLightPos(const GXLightObj *lt_obj, f32 *x, f32 *y, f32 *z) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   *x = obj->px;
@@ -415,7 +415,7 @@ void GXGetLightPos(const GXLightObj *lt_obj, f32 *x, f32 *y, f32 *z)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
 #else
@@ -424,7 +424,7 @@ void GXInitLightDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
     struct __GXLightObjInt_struct *obj;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   obj->nx = -nx;
   obj->ny = -ny;
   obj->nz = -nz;
@@ -438,7 +438,7 @@ void GXInitLightDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXGetLightDir(const GXLightObj *lt_obj, f32 *nx, f32 *ny, f32 *nz) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   *nx = -(obj->nx);
@@ -458,7 +458,7 @@ void GXGetLightDir(const GXLightObj *lt_obj, f32 *nx, f32 *ny, f32 *nz)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitSpecularDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz) {
   f32 mag;
   f32 vx, vy, vz;
@@ -473,7 +473,7 @@ void GXInitSpecularDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
     struct __GXLightObjInt_struct *obj;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   vx = -nx;
   vy = -ny;
   vz = (-nz + 1.0F);
@@ -484,7 +484,7 @@ void GXInitSpecularDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
     CHECK_GXBEGIN(0x18F, "GXInitSpecularDir");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (mag != 0.0f) {
     mag = 1.0f / sqrtf(mag);
   }
@@ -494,7 +494,7 @@ void GXInitSpecularDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
     vz = -nz + 1.0f;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   obj->px = vx * mag;
   obj->py = vy * mag;
   obj->pz = vz * mag;
@@ -517,7 +517,7 @@ void GXInitSpecularDir(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitSpecularDirHA(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz, f32 hx, f32 hy, f32 hz) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
 #else
@@ -526,7 +526,7 @@ void GXInitSpecularDirHA(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz, f32 hx, f32
     struct __GXLightObjInt_struct *obj;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   obj->nx = hx;
   obj->ny = hy;
   obj->nz = hz;
@@ -536,7 +536,7 @@ void GXInitSpecularDirHA(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz, f32 hx, f32
     CHECK_GXBEGIN(0x1B5, "GXInitSpecularHA");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   obj->px = nx * -GX_LARGE_NUMBER;
   obj->py = ny * -GX_LARGE_NUMBER;
   obj->pz = nz * -GX_LARGE_NUMBER;
@@ -550,7 +550,7 @@ void GXInitSpecularDirHA(GXLightObj *lt_obj, f32 nx, f32 ny, f32 nz, f32 hx, f32
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitLightColor(GXLightObj *lt_obj, GXColor color) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   obj->color = *(u32 *)(&color);
@@ -567,7 +567,7 @@ void GXInitLightColor(GXLightObj *lt_obj, GXColor color)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXGetLightColor(const GXLightObj *lt_obj, GXColor *color) {
   GXLightObjInt *obj = (GXLightObjInt *)lt_obj;
   *(u32 *)color = obj->color;
@@ -584,7 +584,7 @@ void GXGetLightColor(const GXLightObj *lt_obj, GXColor *color)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static inline void PushLight(const register GXLightObjInt *lt_obj, register void *dest) {
   register u32 zero, color;
   register f32 a0_a1, a2_k0, k1_k2;
@@ -594,7 +594,7 @@ static inline void PushLight(const register GXLightObjInt *lt_obj, register void
 #define WRITE_SOME_LIGHT_REG2(val, addr) GX_WRITE_F32(val)
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   asm
       {
         lwz     color, 12(lt_obj)
@@ -633,7 +633,7 @@ static inline u32 ConvLightID2Num(GXLightID id) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXLoadLightObjImm(GXLightObj *lt_obj, GXLightID light) {
   u32 addr;
   u32 idx;
@@ -680,7 +680,7 @@ static inline void PushLight(const register GXLightObj* lt_obj, register void* d
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetChanAmbColor(GXChannelID chan, GXColor amb_color) {
   u32 reg;
   u32 rgb;
@@ -693,7 +693,7 @@ void GXLoadLightObjImm(const GXLightObj *lt_obj, GXLightID light)
     struct __GXLightObjInt_struct * obj;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   switch (chan) {
   case GX_COLOR0:
     reg = __GXData->ambColor[GX_COLOR0];
@@ -732,14 +732,14 @@ void GXLoadLightObjImm(const GXLightObj *lt_obj, GXLightID light)
     CHECK_GXBEGIN(0x239, "GXLoadLightObjImm");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     return;
   }
 #else
     idx = 31 - __cntlzw(light);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_XF_REG(colIdx + 10, reg);
   __GXData->bpSentNot = 1;
   __GXData->ambColor[colIdx] = reg;
@@ -757,7 +757,7 @@ void GXLoadLightObjImm(const GXLightObj *lt_obj, GXLightID light)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetChanMatColor(GXChannelID chan, GXColor mat_color) {
   u32 reg;
   u32 rgb;
@@ -770,7 +770,7 @@ void GXLoadLightObjIndx(u32 lt_obj_indx, GXLightID light)
     u32 idx;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   switch (chan) {
   case GX_COLOR0:
     reg = __GXData->matColor[GX_COLOR0];
@@ -807,14 +807,14 @@ void GXLoadLightObjIndx(u32 lt_obj_indx, GXLightID light)
     CHECK_GXBEGIN(0x270, "GXLoadLightObjIndx");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     return;
   }
 #else
     idx = 31 - __cntlzw(light);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   GX_WRITE_XF_REG(colIdx + 12, reg);
   __GXData->bpSentNot = 1;
   __GXData->matColor[colIdx] = reg;
@@ -833,13 +833,13 @@ void GXLoadLightObjIndx(u32 lt_obj_indx, GXLightID light)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetNumChans(u8 nChans) {
 #else
 #define GXCOLOR_AS_U32(color) (*((u32*)&(color)))
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   SET_REG_FIELD(__GXData->genMode, 3, 4, nChans);
   GX_WRITE_XF_REG(9, nChans);
   __GXData->dirtyState |= 4;
@@ -860,7 +860,7 @@ void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc amb_src, GXColorS
   SET_REG_FIELD(reg, 1, 9, (attn_fn != 2));
   SET_REG_FIELD(reg, 1, 10, (attn_fn != 0));
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 void GXSetChanAmbColor(GXChannelID chan, GXColor amb_color)
 {
     u32 reg;
@@ -950,7 +950,7 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor amb_color)
 #endif
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   SET_REG_FIELD(reg, 4, 2, light_mask & 0xF);
   SET_REG_FIELD(reg, 4, 11, (light_mask >> 4) & 0xF);
 
@@ -965,7 +965,7 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor amb_color)
   __GXData->bpSentNot = 1;
 }
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 void GXSetChanMatColor(GXChannelID chan, GXColor mat_color)
 {
     u32 reg;
@@ -1055,8 +1055,8 @@ void GXSetChanMatColor(GXChannelID chan, GXColor mat_color)
 #endif
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 void GXSetNumChans(u8 nChans)
 {
     __GXData->genMode = __rlwimi(__GXData->genMode, nChans, 4, 25, 27);
@@ -1075,7 +1075,7 @@ void GXSetNumChans(u8 nChans)
 }
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc amb_src,
     GXColorSrc mat_src, u32 light_mask, GXDiffuseFn diff_fn, GXAttnFn attn_fn)
 {

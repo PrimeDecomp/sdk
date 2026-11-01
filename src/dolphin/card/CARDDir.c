@@ -6,7 +6,7 @@
 
 #include <dolphin/CARDPriv.h>
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 CARDDir* __CARDGetDirBlock(CARDControl* card) { return card->currentDir; }
 #else
 #line 53
@@ -20,14 +20,14 @@ CARDDir* __CARDGetDirBlock(CARDControl* card) {
 static void WriteCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   CARDDir* dir0;
   CARDDir* dir1;
 #endif
 
   card = &__CARDBlock[chan];
   if (0 <= result) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     CARDDir* dir0 = (CARDDir*)((u8*)card->workArea + 0x2000);
     CARDDir* dir1 = (CARDDir*)((u8*)card->workArea + 0x4000);
 #else
@@ -40,7 +40,7 @@ static void WriteCallback(s32 chan, s32 result) {
       card->currentDir = dir1;
       memcpy(dir1, dir0, 0x2000);
     } else {
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     
       ASSERT(card->currentDir == dir1);
 #endif
@@ -64,7 +64,7 @@ static void EraseCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
   CARDDir* dir;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   u32 tmp[2];
 #endif
   u32 addr;
@@ -98,13 +98,13 @@ error:
 s32 __CARDUpdateDir(s32 chan, CARDCallback callback) {
   CARDControl* card;
   CARDDirCheck* check;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   u32 tmp[2];
 #endif
   u32 addr;
   CARDDir* dir;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];

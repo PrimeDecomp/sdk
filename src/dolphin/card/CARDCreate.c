@@ -26,7 +26,7 @@ static void CreateCallbackFat(s32 chan, s32 result) {
   memcpy(ent->company, card->diskID->company, sizeof(ent->company));
   ent->permission = CARD_ATTR_PUBLIC;
   ent->copyTimes = 0;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   ASSERT(CARDIsValidBlockNo(card, card->startBlock));
 #endif
@@ -63,17 +63,17 @@ s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* file
   CARDControl* card;
   CARDDir* dir;
   CARDDir* ent;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   s32 result;
 #endif
   u16 fileNo;
   u16 freeNo;
   u16* fat;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   s32 result;
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
   ASSERT(strlen(fileName) <= CARD_FILENAME_MAX);
 #endif
@@ -86,7 +86,7 @@ s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* file
     return result;
   }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 < size && (size % card->sectorSize) == 0);
 #endif
   if (size <= 0 || (size % card->sectorSize) != 0) {
@@ -133,7 +133,7 @@ s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* file
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 s32 CARDCreate(s32 chan, const char* fileName, u32 size, CARDFileInfo* fileInfo) {
   s32 result;
   result = CARDCreateAsync(chan, fileName, size, fileInfo, __CARDSyncCallback);

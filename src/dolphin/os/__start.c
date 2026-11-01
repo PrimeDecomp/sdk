@@ -8,7 +8,7 @@ void __check_pad3(void) {
   }
   return;
 }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
 static void __set_debug_bba(void) { 
   Debug_BBA = 1;
@@ -60,14 +60,14 @@ _check_debug_flag:
 	cmplwi r7, 2
 	beq _goto_inittrk
 	cmplwi r7, 3
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
 	li r5, 1
 	beq _goto_inittrk
 	cmplwi r7, 4
 #endif
 	bne _goto_main
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 	li r5, 1
 #else
 	li r5, 2
@@ -107,7 +107,7 @@ _loop:
 	addi r5, r5, ARENAHI_ADDR@l
 	rlwinm r7, r15, 0, 0, 0x1a
 	stw r7, 0(r5)
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
 	lis r5, OS_USABLE_MEM1_END@ha
 	addi r5, r5, OS_USABLE_MEM1_END@l
 	rlwinm r7, r15, 0, 0, 0x1a
@@ -129,7 +129,7 @@ _end_of_parseargs:
 	beq _check_pad3
 	andi. r3, r3, 0x7fff
 	cmplwi r3, 1
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 	bne _goto_skip_init_bba
 #else
 	bne _skip_crc
@@ -137,7 +137,7 @@ _end_of_parseargs:
 
 _check_pad3:
 	bl __check_pad3
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
 _skip_crc:
 	bl __get_debug_bba
@@ -158,7 +158,7 @@ _goto_skip_init_bba:
 asm static void __init_registers(void) {
   // clang-format off
 	nofralloc
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 	li r0, 0
 	li r3, 0
 	li r4, 0
@@ -212,10 +212,10 @@ inline static void __init_bss_section(void* dst, unsigned long size) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #pragma scheduling off
 #else
-#if SDK_VERSION < SDK_VERSION_R32J01_00
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 #pragma scheduling off
 #endif
 #endif

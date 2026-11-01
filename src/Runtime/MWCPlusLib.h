@@ -3,11 +3,11 @@
 
 #include <SDKVersion.h>
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #include <stddef.h>
 #endif
 #include <types.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include <stddef.h>
 #endif
 

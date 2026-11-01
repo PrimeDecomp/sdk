@@ -16,7 +16,7 @@ void __CARDCheckSum(void* ptr, int length, u16* checksum, u16* checksumInv) {
   u16* p;
   int i;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(length % sizeof(u16) == 0);
 #endif
   length /= sizeof(u16);
@@ -183,7 +183,7 @@ s32 __CARDVerify(CARDControl* card) {
   errors += VerifyFAT(card, NULL);
   switch (errors) {
   case 0:
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     ASSERT(card->currentDir);
     ASSERT(card->currentFat);
 #endif
@@ -213,7 +213,7 @@ s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
   BOOL updateDir = FALSE;
   BOOL updateOrphan = FALSE;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= chan && chan < 2);
 
 #endif
@@ -242,13 +242,13 @@ s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
   fat[0] = (u16*)((u8*)card->workArea + (3 + 0) * CARD_SYSTEM_BLOCK_SIZE);
   fat[1] = (u16*)((u8*)card->workArea + (3 + 1) * CARD_SYSTEM_BLOCK_SIZE);
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(errors == 0 || errors == 1);
 
 #endif
   switch (errors) {
   case 0:
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     ASSERT(card->currentDir);
     ASSERT(card->currentFat);
 
@@ -256,7 +256,7 @@ s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
     break;
   case 1:
     if (!card->currentDir) {
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
       ASSERT(card->currentFat);
 
 #endif
@@ -264,7 +264,7 @@ s32 CARDCheckExAsync(s32 chan, s32* xferBytes, CARDCallback callback) {
       memcpy(dir[currentDir], dir[currentDir ^ 1], CARD_SYSTEM_BLOCK_SIZE);
       updateDir = TRUE;
     } else {
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
       ASSERT(!card->currentFat);
 #endif
@@ -352,7 +352,7 @@ s32 CARDCheckAsync(s32 chan, CARDCallback callback) {
   return CARDCheckExAsync(chan, &xferBytes, callback);
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 s32 CARDCheckEx(s32 chan, s32* xferBytes) {
   s32 result;
 

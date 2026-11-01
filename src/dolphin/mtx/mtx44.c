@@ -135,11 +135,11 @@ void C_MTX44Identity(Mtx44 m) {
 
 #ifdef GEKKO
 void PSMTX44Identity(register Mtx44 m) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   register f32 c1 = 1.0F;
   register f32 c0 = 0.0F;
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   register f32 c1;
   register f32 c0;
   c0 = 0.0F;
@@ -152,11 +152,11 @@ void PSMTX44Identity(register Mtx44 m) {
 
   asm
   {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
         stfs        c1,  0(m);
         psq_st      c0,  4(m), 0, 0;
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
         psq_st      c0,  4(m), 0, 0;
         stfs        c1,  0(m);
 #else
@@ -502,11 +502,11 @@ void PSMTX44Trans(register Mtx44 m, register f32 xT, register f32 yT, register f
   asm
   {
         stfs        xT,     12(m); 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
         stfs        yT,     28(m); 
         ps_merge00  c_01,   c_zero, c_one; 
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
         ps_merge00  c_01,   c_zero, c_one; 
         stfs        yT,     28(m); 
 #else

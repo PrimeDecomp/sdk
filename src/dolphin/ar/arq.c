@@ -2,7 +2,7 @@
 #include "dolphin/arq.h"
 #include "dolphin/os.h"
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 const char* __ARQVersion = "<< Dolphin SDK - ARQ\trelease build: Sep  5 2002 05:34:29 (0x2301) >>";
 #else
 //const char* __ARQVersion = "<< Dolphin SDK - ARQ\trelease build: Sep  5 2002 05:34:29 (0x2301) >>";
@@ -83,7 +83,7 @@ void __ARQCallbackHack(void) { return; }
 void __ARQInterruptServiceRoutine(void) {
 
   if (__ARQCallbackHi) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     (*__ARQCallbackHi)((uintptr_t)__ARQRequestPendingHi);
 #else
     (*__ARQCallbackHi)((u32)__ARQRequestPendingHi);
@@ -93,7 +93,7 @@ void __ARQInterruptServiceRoutine(void) {
   }
 
   else if (__ARQCallbackLo) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     (*__ARQCallbackLo)((uintptr_t)__ARQRequestPendingLo);
 #else
     (*__ARQCallbackLo)((u32)__ARQRequestPendingLo);

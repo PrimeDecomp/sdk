@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/base/PPCArch.h"
 #else
 #include "dolphin/PPCArch.h"
@@ -12,7 +12,7 @@ static struct OSAlarmQueue {
 } AlarmQueue;
 
 static void DecrementerExceptionHandler(__OSException exception, OSContext* context);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static BOOL OnReset(BOOL final);
 
 void OSInitAlarm(void) {
@@ -22,7 +22,7 @@ void OSInitAlarm(void) {
   }
 }
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static BOOL OnReset(BOOL final, u32 event);
 
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnReset, 0xFFFFFFFF, NULL, NULL};
@@ -215,10 +215,10 @@ static asm void DecrementerExceptionHandler(register __OSException exception,
   b DecrementerExceptionCallback
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 BOOL __DVDTestAlarm(const OSAlarm* alarm);
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag) { alarm->tag = tag; }
 
 static BOOL OnReset(BOOL final, u32 event) {
@@ -245,7 +245,7 @@ static BOOL OnReset(BOOL final) {
   return TRUE;
 }
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 void OSSetAlarmUserData(OSAlarm* alarm, void* userData) { alarm->userData = userData; }
 
 void* OSGetAlarmUserData(const OSAlarm* alarm) { return alarm->userData; }

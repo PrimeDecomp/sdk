@@ -3,7 +3,7 @@
 
 #define table_ptr(i) (((char*)table_base) + (member_size * ((i)-1)))
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #define swap(dst, src, cnt)                                                                        \
   do {                                                                                             \
     char* p;                                                                                       \
@@ -71,13 +71,13 @@ void qsort(void* table_base, size_t num_members, size_t member_size,
     jp = table_ptr(j);
 
     while (j * 2 <= r) {
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
       ip = jp;
 
 #endif
       j *= 2;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
       ip = jp;
 #endif
       jp = table_ptr(j);

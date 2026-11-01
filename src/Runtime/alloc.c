@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #include <critical_regions.h>
 #endif
 #include <string.h>
@@ -436,7 +436,7 @@ static inline Block *__unlink(__mem_pool_obj *pool_obj, Block *bp) {
   return result;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static inline void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
 #else
 static void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
@@ -522,7 +522,7 @@ void deallocate_from_fixed_pools(__mem_pool_obj *pool_obj, void *ptr, unsigned l
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 static inline void __pool_free(__mem_pool *pool, void *ptr) {
 #else
 void __pool_free(__mem_pool *pool, void *ptr) {
@@ -544,7 +544,7 @@ void __pool_free(__mem_pool *pool, void *ptr) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void free(void *ptr) { __pool_free(get_malloc_pool(), ptr); }
 #else
 void free(void *ptr) {

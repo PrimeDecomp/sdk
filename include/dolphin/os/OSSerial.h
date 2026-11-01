@@ -3,13 +3,13 @@
 
 #include <SDKVersion.h>
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include <dolphin/hw_regs.h>
 #else
 #include <types.h>
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #ifdef __cplusplus
 extern "C" {
 #endif

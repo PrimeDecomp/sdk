@@ -3,13 +3,13 @@
 
 #include <SDKVersion.h>
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include <dolphin/types.h>
 #else
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,7 +24,7 @@ extern "C" {
 #include <revolution/os/OSUtf.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 BOOL OSDisableInterrupts(void);
 BOOL OSEnableInterrupts(void);
 BOOL OSRestoreInterrupts(BOOL level);

@@ -29,7 +29,7 @@ asm void __ptmf_test(register PTMF* ptmf) {
   blr
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 asm long __ptmf_cmpr(void) {
   nofralloc
 
@@ -65,7 +65,7 @@ asm void __ptmf_scall(...) {
   mtctr r12
   bctr
 }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 asm void __ptmf_scall4(...) {
   nofralloc
   lwz r0, PTMF.this_delta(r12)

@@ -43,7 +43,7 @@ error:
 #line 88
 s32 __CARDRead(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   ASSERT(0 < length && length % CARD_SEG_SIZE == 0);
   ASSERT(0 <= chan && chan < 2);
@@ -71,13 +71,13 @@ static void BlockWriteCallback(s32 chan, s32 result) {
     goto error;
   }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   card->xferred += CARD_PAGE_SIZE;
 #else
   card->xferred += card->pageSize;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   card->addr += CARD_PAGE_SIZE;
   (u8*)card->buffer += CARD_PAGE_SIZE;
 #else
@@ -109,7 +109,7 @@ error:
 s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback) {
   CARDControl* card;
   card = &__CARDBlock[chan];
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 < length && length % card->pageSize == 0);
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -118,7 +118,7 @@ s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback
   }
 
   card->xferCallback = callback;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   card->repeat = (int)(length / CARD_PAGE_SIZE);
 #else
   card->repeat = (int)(length / card->pageSize);
@@ -129,7 +129,7 @@ s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback
   return __CARDWritePage(chan, BlockWriteCallback);
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #line 182
 s32 CARDGetXferredBytes(s32 chan) {
   ASSERT(0 <= chan && chan < 2);

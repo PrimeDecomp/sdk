@@ -100,13 +100,13 @@ asm void PPCMthid0 (register u32 newHID0)
  * Address:	........
  * Size:	000008
  */
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void PPCMfhid1(void)
 #else
 asm void PPCMfhid1(void)
 #endif
 {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 	// UNUSED FUNCTION
 #else
     nofralloc
@@ -156,13 +156,13 @@ __declspec ( weak ) asm void PPCMtdec ( register u32 newDec )
  * Address:	........
  * Size:	000008
  */
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void PPCMfdec(void)
 #else
 asm void PPCMfdec(void)
 #endif
 {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 	// UNUSED FUNCTION
 #else
     nofralloc
@@ -429,11 +429,11 @@ void PPCMtfpscr(register u32 newFPSCR)
     asm
     {
         li    r4, 0
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
         stw   r4, m.u.fpscr_pad;
         stw   newFPSCR, m.u.fpscr
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
         stw   newFPSCR, m.u.fpscr
         stw   r4, m.u.fpscr_pad;
 #else
@@ -593,8 +593,8 @@ asm void PPCSetFpNonIEEEMode (void)
 }
 // clang-format on
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #include "dolphin/os.h"
 
 #define HID4 1011

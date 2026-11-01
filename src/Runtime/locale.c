@@ -1,7 +1,7 @@
 #include <SDKVersion.h>
 #include <limits.h>
 #include <locale.h>
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #include <ctype.h>
 #endif
 
@@ -32,12 +32,12 @@ struct lconv __lconv = {
     CHAR_MAX, // int_n_sign_posn
 };
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 // Just here to generate the extra string,
 // the real usage is inside setlocale, which is stripped
 static char* locale_name = "C";
 #else
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 // Guessed name
 struct _loc_ctype_cmpt _loc_ctyp_C = {"C",
                                       &__ctype_mapC[0],

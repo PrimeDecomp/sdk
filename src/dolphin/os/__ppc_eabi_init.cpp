@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/__ppc_eabi_init.h"
 #include "dolphin/base/PPCArch.h"
 #else
@@ -23,7 +23,7 @@ asm void __init_hardware(void) {
 
   mflr r31
   bl __OSPSInit
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   bl __OSFPRInit
 #endif
   bl __OSCacheInit
@@ -53,12 +53,12 @@ loop:
   // clang-format on
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void __init_user() { __init_cpp(); }
 #else
 __declspec(weak) void InitMetroTRK_BBA() { return; }
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 asm void __init_user() {
   // clang-format off
   nofralloc
@@ -91,10 +91,10 @@ void __init_cpp(void) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void _ExitProcess(void) { PPCHalt(); }
 #else
-#if SDK_VERSION < SDK_VERSION_R32J01_00
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 void _ExitProcess(void) { PPCHalt(); }
 #else
 void exit(int status) {

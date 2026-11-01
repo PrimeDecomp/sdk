@@ -21,7 +21,7 @@ typedef struct SramControlBlock {
   void (*callback)(void);
 } SramControlBlock;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 ATTRIBUTE_ALIGN_DECL(32, static SramControlBlock Scb);
 #else
 static SramControlBlock Scb ATTRIBUTE_ALIGN(32);
@@ -160,7 +160,7 @@ void __OSInitSram() {
   Scb.locked = Scb.enabled = FALSE;
   Scb.sync = ReadSram(Scb.sram);
   Scb.offset = RTC_SRAM_SIZE;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   OSSetGbsMode(OSGetGbsMode());
 #endif
@@ -205,7 +205,7 @@ static BOOL UnlockSram(BOOL commit, u32 offset) {
 
     if (offset < Scb.offset) {
       Scb.offset = offset;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     }
 
     if (Scb.offset <= 0x14) {
@@ -259,7 +259,7 @@ BOOL __OSReadROM(void* buffer, s32 length, s32 offset) {
 }
 
 inline OSSram* __OSLockSramHACK() { return LockSram(0); }
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 u32 OSGetSoundMode() {
   OSSram* sram;
   u32 mode;
@@ -360,7 +360,7 @@ void OSSetEuRgb60Mode(u32 mode) {
   __OSUnlockSram(TRUE);
 }
 #else
-#if SDK_VERSION < SDK_VERSION_R32J01_00
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 u32 OSGetSoundMode() {
   OSSram* sram;
   u32 mode;
@@ -474,7 +474,7 @@ void OSSetWirelessID(s32 channel, u16 id) {
   __OSUnlockSramEx(FALSE);
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 u16 OSGetGbsMode(void) {
   OSSramEx* sram;
   u16 mode;
@@ -504,7 +504,7 @@ void OSSetGbsMode(u16 mode) {
   __OSUnlockSramEx(TRUE);
 }
 
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 BOOL __OSGetRTCFlags(u32* out) {
   BOOL err;
   u32 cmd;

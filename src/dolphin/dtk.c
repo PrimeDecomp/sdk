@@ -23,7 +23,7 @@ static vu8 __DTKVolumeR;
 static volatile u32 __DTKShutdownFlag;
 static volatile u32 __DTKTrackEnded;
 static DTKFlushCallback __DTKFlushCallback;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 static BOOL __busy_for_ais_isr;
 #endif
 
@@ -98,7 +98,7 @@ static void __DTKPrepareCurrentTrack(DVDCallback callback) {
 }
 static void __DTKCallbackForPlaylist(s32 result, DVDCommandBlock* block) {
   __DTKPosition = result;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   __busy_for_ais_isr = FALSE;
 #endif
 
@@ -156,7 +156,7 @@ static void __DTKCallbackForPlaylist(s32 result, DVDCommandBlock* block) {
 static void __DTKCallbackForAIInterrupt(u32 result) {
   AISetStreamTrigger(result + __DTKInterruptFrequency);
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (__DTKCurrentTrack != NULL) {
 #else
   if (__DTKCurrentTrack != NULL && !__busy_for_ais_isr) {
@@ -264,13 +264,13 @@ u32 DTKQueueTrack(char* fileName, DTKTrack* track, u32 eventMask, DTKCallback ca
   return 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void DTKFlushTracks(DTKFlushCallback callback) {
 #else
 BOOL DTKFlushTracks(DTKFlushCallback callback) {
 #endif
   u32 oldState;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (__DTKState != 3) {
     oldState = __DTKState;
     __DTKState = 3;
@@ -285,7 +285,7 @@ BOOL DTKFlushTracks(DTKFlushCallback callback) {
     return FALSE;
 #endif
   }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 
   oldState = __DTKState;
   __DTKState = 3;
@@ -303,7 +303,7 @@ void DTKSetSampleRate(u32 rate) {}
 
 void DTKSetRepeatMode(u32 repeat) { __DTKRepeatMode = repeat; }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void DTKSetState(u32 state) {
   if (__DTKState == state || __DTKState == 3) {
     return;
@@ -369,12 +369,12 @@ BOOL DTKSetState(u32 state) {
     break;
   }
   }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   return TRUE;
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void DTKNextTrack() {
   if (__DTKState != 3 && __DTKCurrentTrack != NULL) {
 #else
@@ -395,11 +395,11 @@ BOOL DTKNextTrack() {
       __DTKForward();
       __DTKState = __DTKTempState;
     }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
     return TRUE;
 #endif
   }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   return FALSE;
 #endif
 }
@@ -415,7 +415,7 @@ void DTKSetVolume(u8 left, u8 right) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 u16 DTKGetVolume(void) { return (__DTKVolumeL << 8) | __DTKVolumeR; }
 
 #endif

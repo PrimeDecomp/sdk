@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/gx.h"
 #include "dolphin/mtx.h"
 #include "math.h"
@@ -9,14 +9,14 @@
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION == SDK_VERSION_GM8E01_02 || SDK_VERSION == SDK_VERSION_GM8P01_00 || SDK_VERSION == SDK_VERSION_GM8J01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
 void GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color) {
   u32 fogclr;
   u32 fog0;
@@ -379,13 +379,13 @@ void GXSetFogRangeAdj(GXBool enable, u16 center, const GXFogAdjTable *table)
     u32 range_adj;
     u32 range_c;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   if (enable) {
 #else
     CHECK_GXBEGIN(0x14B, "GXSetFogRangeAdj");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
     for (i = 0; i < 10; i += 2) {
       range_adj = 0;
       SET_REG_FIELD(range_adj, 12, 0, table->r[i]);
@@ -404,7 +404,7 @@ void GXSetFogRangeAdj(GXBool enable, u16 center, const GXFogAdjTable *table)
         }
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   }
   range_c = 0;
   SET_REG_FIELD(range_c, 10, 0, center + 342);
@@ -427,13 +427,13 @@ void GXSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor ds
     u32 reg;
     u32 blend_en;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   reg = __GXData->cmode0;
 #else
     CHECK_GXBEGIN(0x177, "GXSetBlendMode");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __SET_REG_FIELD(reg, 1, 11, (type == GX_BM_SUBTRACT));
   __SET_REG_FIELD(reg, 1, 0, type);
   __SET_REG_FIELD(reg, 1, 1, (type == GX_BM_LOGIC));
@@ -445,7 +445,7 @@ void GXSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor ds
     reg = __GXData->cmode0;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __GXData->cmode0 = reg;
   __GXData->bpSentNot = 0;
 #else
@@ -463,7 +463,7 @@ void GXSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor ds
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetColorUpdate(GXBool update_enable) {
   u32 reg;
 #else
@@ -475,7 +475,7 @@ void GXSetColorUpdate(GXBool update_enable)
 
     reg = __GXData->cmode0;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __SET_REG_FIELD(reg, 1, 3, update_enable);
   GX_WRITE_RAS_REG(reg);
 #else
@@ -487,7 +487,7 @@ void GXSetColorUpdate(GXBool update_enable)
     __GXData->bpSentNot = 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetAlphaUpdate(GXBool update_enable) {
   u32 reg;
 #else
@@ -499,7 +499,7 @@ void GXSetAlphaUpdate(GXBool update_enable)
 
     reg = __GXData->cmode0;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __SET_REG_FIELD(reg, 1, 4, update_enable);
   GX_WRITE_RAS_REG(reg);
 #else
@@ -511,7 +511,7 @@ void GXSetAlphaUpdate(GXBool update_enable)
     __GXData->bpSentNot = 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetZMode(GXBool compare_enable, GXCompare func, GXBool update_enable) {
   u32 reg;
 #else
@@ -523,7 +523,7 @@ void GXSetZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
 
     reg = __GXData->zmode;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __SET_REG_FIELD(reg, 1, 0, compare_enable);
   __SET_REG_FIELD(reg, 3, 1, func);
   __SET_REG_FIELD(reg, 1, 4, update_enable);
@@ -539,7 +539,7 @@ void GXSetZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
     __GXData->bpSentNot = 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetZCompLoc(GXBool before_tex) {
 
   SET_REG_FIELD(__GXData->peCtrl, 1, 6, before_tex);
@@ -561,7 +561,7 @@ void GXSetPixelFmt(GXPixelFmt pix_fmt, GXZFmt16 z_fmt)
     u8 aa;
     static u32 p2f[8] = { 0, 1, 2, 3, 4, 4, 4, 5 };
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   oldPeCtrl = __GXData->peCtrl;
 
   SET_REG_FIELD(__GXData->peCtrl, 3, 0, p2f[pix_fmt]);
@@ -608,7 +608,7 @@ void GXSetPixelFmt(GXPixelFmt pix_fmt, GXZFmt16 z_fmt)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetDither(GXBool dither) {
   u32 reg;
 #else
@@ -620,8 +620,8 @@ void GXSetDither(GXBool dither)
 
     reg = __GXData->cmode0;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION == SDK_VERSION_GM8E01_02 || SDK_VERSION == SDK_VERSION_GM8P01_00 || SDK_VERSION == SDK_VERSION_GM8J01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
   __SET_REG_FIELD(reg, 1, 2, dither);
 #else
   SET_REG_FIELD(reg, 1, 2, dither);
@@ -636,7 +636,7 @@ void GXSetDither(GXBool dither)
     __GXData->bpSentNot = 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetDstAlpha(GXBool enable, u8 alpha) {
   u32 reg;
 #else
@@ -648,7 +648,7 @@ void GXSetDstAlpha(GXBool enable, u8 alpha)
 
     reg = __GXData->cmode1;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   __SET_REG_FIELD(reg, 8, 0, alpha);
   __SET_REG_FIELD(reg, 1, 8, enable);
   GX_WRITE_RAS_REG(reg);
@@ -666,7 +666,7 @@ void GXSetFieldMask(GXBool odd_mask, GXBool even_mask)
 {
     u32 reg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   reg = 0;
   SET_REG_FIELD(reg, 1, 0, even_mask);
   SET_REG_FIELD(reg, 1, 1, odd_mask);
@@ -688,7 +688,7 @@ void GXSetFieldMode(GXBool field_mode, GXBool half_aspect_ratio)
 {
     u32 reg;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   SET_REG_FIELD(__GXData->lpSize, 1, 22, half_aspect_ratio);
   GX_WRITE_RAS_REG(__GXData->lpSize);
   __GXFlushTextureState();

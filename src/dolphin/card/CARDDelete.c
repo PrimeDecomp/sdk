@@ -38,7 +38,7 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
   CARDDir* ent;
   s32 result;
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
   ASSERT(0 <= chan && chan < 2);
 
@@ -53,7 +53,7 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
   result = __CARDAccess(card, ent);
 #else
   result = __CARDIsWritable(card, ent);
@@ -74,7 +74,7 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
   }
   return result;
 }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 s32 CARDFastDelete(s32 chan, s32 fileNo) {
   s32 result;
   result = CARDFastDeleteAsync(chan, fileNo, __CARDSyncCallback);
@@ -83,7 +83,7 @@ s32 CARDFastDelete(s32 chan, s32 fileNo) {
   }
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   return __CARDSync(chan);
 }
 #endif
@@ -119,7 +119,7 @@ s32 CARDDeleteAsync(s32 chan, const char* fileName, CARDCallback callback) {
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 s32 CARDDelete(s32 chan, const char* fileName){
   s32 result;
   result = CARDDeleteAsync(chan, fileName, __CARDSyncCallback);

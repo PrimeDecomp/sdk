@@ -11,13 +11,13 @@ extern "C" {
 #endif
 
 typedef GXTexRegion* (*GXTexRegionCallback)(const GXTexObj* obj, GXTexMapID id);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 typedef GXTlutRegion* (*GXTlutRegionCallback)(u32 tlut);
 #else
 typedef GXTlutRegion* (*GXTlutRegionCallback)(u32 idx);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitTexObj(GXTexObj* obj, const void* data, u16 width, u16 height, u32 format,
 #else
 void GXInitTexObj(GXTexObj* obj, const void* data, u16 width, u16 height, GXTexFmt format,
@@ -36,7 +36,7 @@ void GXLoadTexObj(GXTexObj* obj, GXTexMapID id);
 u32 GXGetTexBufferSize(u16 width, u16 height, u32 format, GXBool mipmap, u8 max_lod);
 void GXInvalidateTexAll();
 void GXInitTexObjWrapMode(GXTexObj* obj, GXTexWrapMode s, GXTexWrapMode t);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXInitTlutObj(GXTlutObj* obj, void* data, GXTlutFmt format, u16 entries);
 void GXLoadTlut(const GXTlutObj* obj, GXTlut idx);
 void GXSetTexCoordBias(GXTexCoordID coord, GXBool s_enable, GXBool t_enable);

@@ -1,6 +1,6 @@
 #include <SDKVersion.h>
 #include "dolphin/mtx.h"
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #include "dolphin/os.h"
 
 void C_MTXMultVec(const Mtx m, const Vec *src, Vec *dst) {

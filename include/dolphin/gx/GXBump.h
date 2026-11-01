@@ -14,7 +14,7 @@ void GXSetNumIndStages(u8 nIndStages);
 #ifdef TARGET_PC
 void GXSetIndTexMtx(GXIndTexMtxID mtx_sel, const void* offset, s8 scale_exp);
 #else
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 void GXSetIndTexMtx(GXIndTexMtxID mtx_sel, f32 offset[2][3], s8 scale_exp);
 #else
 void GXSetIndTexMtx(GXIndTexMtxID mtx_sel, const f32 offset[2][3], s8 scale_exp);
