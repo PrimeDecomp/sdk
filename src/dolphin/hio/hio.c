@@ -3,6 +3,8 @@
 #include <dolphin/os.h>
 #include <dolphin/hw_regs.h>
 
+vu16 __OSDeviceCode : (OS_BASE_CACHED | 0x30E6);
+
 static u32 Dev;
 #define HIO_DEV Dev
 

@@ -29,7 +29,6 @@ typedef s64 OSTime;
 typedef u32 OSTick;
 u32 __OSBusClock AT_ADDRESS(OS_BASE_CACHED | 0x00F8);  // sync with OSLoMem.h
 u32 __OSCoreClock AT_ADDRESS(OS_BASE_CACHED | 0x00FC); // sync with OSLoMem.h
-volatile u16 __OSDeviceCode AT_ADDRESS(OS_BASE_CACHED | 0x30E6);
 #define OS_BUS_CLOCK (u32) __OSBusClock
 #define OS_CORE_CLOCK __OSCoreClock
 #define OS_TIMER_CLOCK (OS_BUS_CLOCK / 4)

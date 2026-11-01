@@ -2467,12 +2467,11 @@ void VISetBlack(BOOL black) {
 #endif
 }
 
+void VISet3D(BOOL threeD) {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-void VISet3D(void) {
   // UNUSED FUNCTION
 #else
-// NONMATCHING
-void VISet3D(BOOL threeD) {
+    // NONMATCHING
     BOOL enabled;
     u32 reg;
 
