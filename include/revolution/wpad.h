@@ -126,8 +126,7 @@ void WPADControlMotor(WPADChannel chan, WPADMotorCommand command);
 #define _REVOLUTION_WPAD_H_
 
 // Revolution SDK wpadEmu (wpadv3.c), Nov 25 2005 build. Structure, member and function
-// names come from the matching RELSAB debug build's DWARF. Constant names are guessed;
-// their values come from G2MEAB's WPAD code and CRevolutionController's diagnostics.
+// names come from the matching RELSAB debug build's DWARF. Constant names are guessed.
 
 #include <dolphin/pad.h>
 #include <dolphin/types.h>
