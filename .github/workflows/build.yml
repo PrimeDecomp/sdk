@@ -1,0 +1,114 @@
+name: Build games
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  build:
+    name: ${{ matrix.game }} (${{ matrix.version }})
+    # These jobs need private sources and original game files.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+
+    container: ghcr.io/primedecomp/build:main
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Prime 1
+          - game: prime
+            version: GM8EAB_00
+          - game: prime
+            version: GM8E01_00
+          - game: prime
+            version: GM8E01_01
+          - game: prime
+            version: GM8E01_48
+          - game: prime
+            version: GM8E01_02
+          - game: prime
+            version: GM8P01_00
+          - game: prime
+            version: GM8J01_DD
+          - game: prime
+            version: GM8J01_00
+          - game: prime
+            version: R3IJ01_00
+          - game: prime
+            version: R3ME01_00
+          - game: prime
+            version: R3MP01_00
+
+          # Echoes
+          - game: echoes
+            version: G2ME01
+          - game: echoes
+            version: G2MP01
+          - game: echoes
+            version: G2MJ01
+          - game: echoes
+            version: R3ME01
+
+          # Corruption Prototype
+          - game: corruption-proto
+            version: G2MEAB
+    defaults:
+      run:
+        working-directory: game
+
+    steps:
+      - name: Create game repository token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: PrimeDecomp
+          repositories: ${{ matrix.game }}
+          permission-contents: read
+
+      - name: Checkout game main
+        id: game
+        uses: actions/checkout@v7
+        with:
+          repository: PrimeDecomp/${{ matrix.game }}
+          ref: main
+          token: ${{ steps.app-token.outputs.token }}
+          path: game
+          fetch-depth: 0
+          submodules: recursive
+          persist-credentials: false
+
+      # Override the game's pinned submodule with the SDK revision under test.
+      # On pull_request, checkout defaults to GitHub's PR merge commit.
+      - name: Checkout SDK under test
+        uses: actions/checkout@v7
+        with:
+          path: game/extern/sdk
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Record tested revisions
+        run: |
+          echo "Game: $(git rev-parse HEAD)"
+          echo "SDK: $(git -C extern/sdk rev-parse HEAD)"
+
+      # Copy the original files to the workspace
+      - name: Prepare original files
+        run: cp -av /orig/${{ matrix.version }}/ orig/
+
+      - name: Build
+        env:
+          MAP_FLAG: ${{ github.event_name == 'workflow_dispatch' && '--map' || '' }}
+        run: |
+          python3 -m venv .venv
+          .venv/bin/python configure.py --portable-build-ninja $MAP_FLAG --version ${{ matrix.version }}
+          ninja all_source progress build/${{ matrix.version }}/report.json
