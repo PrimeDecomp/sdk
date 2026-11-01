@@ -55,7 +55,7 @@ error:
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #line 134
   ASSERT(callback);
 #endif
@@ -74,7 +74,7 @@ static void EraseCallback(s32 chan, s32 result) {
   }
 
   fileInfo = card->fileInfo;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(OFFSET(fileInfo->offset, card->sectorSize) == 0);
 #endif
   result = __CARDWrite(chan, card->sectorSize * (u32)fileInfo->iBlock, card->sectorSize,
@@ -88,7 +88,7 @@ error:
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
   ASSERT(callback);
 #endif
@@ -103,7 +103,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
   CARDDir* dir;
   CARDDir* ent;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(buf && ((u32)buf % 32) == 0);
   ASSERT(0 < length);
 #endif
@@ -112,7 +112,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
     return result;
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(OFFSET(offset, card->sectorSize) == 0);
   ASSERT(OFFSET(length, card->sectorSize) == 0);
 #endif
@@ -142,7 +142,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 s32 CARDWrite(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offset) {
   s32 result;
   result = CARDWriteAsync(fileInfo, buf, length, offset, __CARDSyncCallback);

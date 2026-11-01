@@ -1,11 +1,11 @@
 #include <SDKVersion.h>
 #include "NMWException.h"
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #include <stdlib.h>
 
 #endif
 #pragma exceptions on
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 namespace std {
 typedef void (*terminate_handler)();

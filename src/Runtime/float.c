@@ -16,6 +16,6 @@ _INT32 __extended_epsilon[] = {0x3cb00000, 0};
 _INT32 __extended_tiny[] = {0, 1};
 _INT32 __extended_huge[] = {0x7FF00000, 0};
 _INT32 __extended_nan[] = {0x7FFFFFFF, 0xFFFFFFFF};
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 _INT32 __float_max[] = {0x7F7FFFFF};
 #endif

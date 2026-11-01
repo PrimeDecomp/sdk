@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #include <critical_regions.h>
 #endif
 #include <string.h>

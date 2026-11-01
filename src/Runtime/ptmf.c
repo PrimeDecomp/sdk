@@ -65,7 +65,7 @@ asm void __ptmf_scall(...) {
   mtctr r12
   bctr
 }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 asm void __ptmf_scall4(...) {
   nofralloc
   lwz r0, PTMF.this_delta(r12)

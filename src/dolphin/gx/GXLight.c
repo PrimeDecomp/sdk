@@ -226,7 +226,7 @@ void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func) {
   obj->a2 = a2;
 #else
     r = (3.1415927f * cutoff) / 180.0f;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     cr = cosf(r);
 #else
     cr = cos(r);
@@ -1052,7 +1052,7 @@ void GXSetChanMatColor(GXChannelID chan, GXColor mat_color)
 }
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXSetNumChans(u8 nChans)
 {
     CHECK_GXBEGIN(0x359, "GXSetNumChans");

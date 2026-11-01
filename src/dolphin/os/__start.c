@@ -8,7 +8,7 @@ void __check_pad3(void) {
   }
   return;
 }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 static void __set_debug_bba(void) { 
   Debug_BBA = 1;
@@ -60,7 +60,7 @@ _check_debug_flag:
 	cmplwi r7, 2
 	beq _goto_inittrk
 	cmplwi r7, 3
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 	li r5, 1
 	beq _goto_inittrk
@@ -137,7 +137,7 @@ _end_of_parseargs:
 
 _check_pad3:
 	bl __check_pad3
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 _skip_crc:
 	bl __get_debug_bba
@@ -158,7 +158,7 @@ _goto_skip_init_bba:
 asm static void __init_registers(void) {
   // clang-format off
 	nofralloc
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 	li r0, 0
 	li r3, 0
 	li r4, 0

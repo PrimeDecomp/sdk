@@ -1052,7 +1052,7 @@ void GXClearBoundingBox(void)
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 void GXReadBoundingBox(u16 *left, u16 *top, u16 *right, u16 *bottom)
 {
     *left = GX_GET_PE_REG(8);

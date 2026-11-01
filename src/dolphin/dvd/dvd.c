@@ -48,7 +48,7 @@ static volatile BOOL FirstTimeInBootrom = FALSE;
 static DVDCommandBlock DummyCommandBlock;
 static OSAlarm ResetAlarm;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 static u32 MotorState = 0;
 #endif
 static BOOL DVDInitialized = FALSE;
@@ -107,7 +107,7 @@ void DVDInit() {
   __DVDClearWaitingQueue();
   __DVDInitWA();
   bootInfo = (OSBootInfo*)OSPhysicalToCached(0x0000);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   MotorState = 0;
 #endif
   IDShouldBe = &(bootInfo->DVDDiskID);
@@ -178,7 +178,7 @@ inline static void stateError(u32 error) {
 static void cbForStateError(u32 intType) {
   DVDCommandBlock* finished;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   executing->state = -1;
 #endif
   if (intType == 16) {
@@ -577,7 +577,7 @@ static void stateCoverClosed() {
     break;
 
   default:
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
     MotorState = 0;
 #endif
     DVDReset();
@@ -692,7 +692,7 @@ cover_closed:
 #endif
     executing->state = 1;
     stateBusy(executing);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   } else {
     stateCoverClosed();
 #endif
@@ -780,7 +780,7 @@ static void stateBusy(DVDCommandBlock* block) {
     block->currTransferSize = sizeof(DVDDriveInfo);
     DVDLowInquiry(block->addr, cbForStateBusy);
     break;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   case 16:
     __DIRegs[1] = __DIRegs[1];
     DVDLowStopMotor(cbForStateBusy);
@@ -883,7 +883,7 @@ static void cbForStateBusy(u32 intType) {
 
   if (intType & 1) {
     NumInternalRetry = 0;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
     if (CurrCommand == 16) {
       MotorState = 1;
@@ -1027,7 +1027,7 @@ BOOL DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, s32 off
   block->length = length;
   block->offset = offset;
   block->transferredSize = 0;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   block->callback = callback;
 
   idle = issueCommand(prio, block);
@@ -1519,7 +1519,7 @@ void __DVDPrepareResetAsync(DVDCBCallback callback) {
   OSRestoreInterrupts(enabled);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 BOOL __DVDTestAlarm(const OSAlarm* alarm) {
   if (alarm == &ResetAlarm) {
     return TRUE;

@@ -4,7 +4,7 @@
 #include <SDKVersion.h>
 
 #include <stddef.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 #include "__ppc_eabi_linker.h"
 #endif
@@ -23,7 +23,7 @@ extern "C" {
 #define DTORARG_TYPE int
 
 #define DTORCALL_COMPLETE(dtor, objptr) (((void (*)(void*, DTORARG_TYPE))dtor)(objptr, -1))
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #define DTORCALL_PARTIAL(dtor, objptr) (((void (*)(void*, DTORARG_TYPE))dtor)(objptr, 0))
 
 typedef short vbase_ctor_arg_type;

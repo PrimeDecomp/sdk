@@ -3,7 +3,7 @@
 #include <dolphin/os.h>
 #include <dolphin/si.h>
 #include <dolphin/sipriv.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 vu32 __SIRegs[64] : 0xCC006400;
 #endif

@@ -182,7 +182,7 @@ static void __str2dec(decimal* d, const char* s, short exp) {
   if (*s != 0) {
     if (*s < 5)
       return;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
     if (*s > 5)
       goto round;
 #endif
@@ -310,7 +310,7 @@ static int __equals_dec(const decimal *x, const decimal *y) {
     if (y->sig.text[0] == 0) {
 #endif
       return 1;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
     }
 
 #endif
@@ -323,7 +323,7 @@ static int __equals_dec(const decimal *x, const decimal *y) {
     if (x->sig.text[0] == 0) {
 #endif
       return 1;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
     }
 
 #endif

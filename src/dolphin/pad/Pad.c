@@ -69,7 +69,7 @@ static u32 RecalibrateBits;
 static u32 WaitingBits;
 static u32 CheckingBits;
 static u32 PendingBits;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 static u32 BarrelBits;
 #endif
 
@@ -185,7 +185,7 @@ static void PADDisable(s32 chan) {
   WaitingBits &= ~chanBit;
   CheckingBits &= ~chanBit;
   PendingBits &= ~chanBit;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   BarrelBits &= ~chanBit;
 #endif
   OSSetWirelessID(chan, 0);
@@ -273,7 +273,7 @@ static void UpdateOrigin(s32 chan) {
 }
 
 static void PADOriginCallback(s32 chan, u32 error, OSContext* context) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(0 <= ResettingChan && ResettingChan < SI_MAX_CHAN);
   ASSERT(chan == ResettingChan);
 
@@ -316,7 +316,7 @@ static void PADOriginUpdateCallback(s32 chan, u32 error, OSContext* context) {
 }
 
 static void PADProbeCallback(s32 chan, u32 error, OSContext* context) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   u32 type;
   ASSERT(0 <= ResettingChan && ResettingChan < SI_MAX_CHAN);
   ASSERT(chan == ResettingChan);
@@ -337,7 +337,7 @@ static void PADTypeAndStatusCallback(s32 chan, u32 type) {
   u32 recalibrate;
   BOOL rc = TRUE;
   u32 error;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
   ASSERT(0 <= ResettingChan && ResettingChan < SI_MAX_CHAN);
   ASSERT(chan == ResettingChan);
@@ -345,7 +345,7 @@ static void PADTypeAndStatusCallback(s32 chan, u32 type) {
 #endif
   chanBit = PAD_CHAN0_BIT >> ResettingChan;
   error = type & 0xFF;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(!(error & SI_ERROR_BUSY));
 
 #endif
@@ -468,7 +468,7 @@ int PADReset(u32 mask) {
   disableBits = ResettingBits & EnabledBits;
 #endif
   EnabledBits &= ~mask;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   BarrelBits &= ~mask;
 #endif
 
@@ -505,7 +505,7 @@ BOOL PADRecalibrate(u32 mask) {
   BOOL enabled;
   u32 disableBits;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERTMSG(!(mask & 0x0FFFFFFF), "PADReset(): invalid mask");
 #endif
   enabled = OSDisableInterrupts();
@@ -516,7 +516,7 @@ BOOL PADRecalibrate(u32 mask) {
   ResettingBits |= mask;
   disableBits = ResettingBits & EnabledBits;
   EnabledBits &= ~mask;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   BarrelBits &= ~mask;
 #endif
 
@@ -604,7 +604,7 @@ u32 PADRead(PADStatus* status) {
   u32 motor;
 
   enabled = OSDisableInterrupts();
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   motor = 0;
 #endif
 
@@ -795,7 +795,7 @@ u32 PADRead(PADStatus* status) {
   OSRestoreInterrupts(enabled);
   return motor;
 }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 typedef struct XY {
   u8 line;
@@ -861,7 +861,7 @@ void PADControlMotor(s32 chan, u32 command) {
   BOOL enabled;
   u32 chanBit;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERTMSG(!(command & 0xFFFFFFFC), "PADControlMotor(): invalid command");
 
 #endif
@@ -888,7 +888,7 @@ void PADControlMotor(s32 chan, u32 command) {
 }
 
 void PADSetSpec(u32 spec) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   ASSERT(!Initialized);
 #endif
   __PADSpec = 0;
@@ -1095,7 +1095,7 @@ static void SPEC2_MakeStatus(s32 chan, PADStatus* status, u32 data[2]) {
   status->substickX -= 128;
   status->substickY -= 128;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   if (((Type[chan] & (0xFFFF0000)) == SI_GC_CONTROLLER) && ((status->button & 0x80) ^ 0x80)) {
     BarrelBits |= (PAD_CHAN0_BIT >> chan);
     status->stickX = 0;
@@ -1150,7 +1150,7 @@ BOOL PADSync(void) { return ResettingBits == 0 && (s32)ResettingChan == 32 && !S
 void PADSetAnalogMode(u32 mode) {
   BOOL enabled;
   u32 mask;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
   ASSERTMSG((mode < 8), "PADSetAnalogMode(): invalid mode");
 #endif
@@ -1279,7 +1279,7 @@ BOOL __PADDisableRumble(BOOL disable) {
   return prev;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 BOOL PADIsBarrel(s32 chan) {
   if (chan < 0 || chan >= 4) {
     return FALSE;

@@ -552,7 +552,7 @@ extern BOOL __OSInIPL;
 void __OSEnableBarnacle(s32 chan, u32 dev);
 
 void EXIInit(void) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   u32 id;
 
 #endif

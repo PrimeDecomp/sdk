@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #include <string.h>
 #endif
 
@@ -106,7 +106,7 @@ static u32 GXTexRegionAddrTable[] = {
     0x80000, 0x10000, 0xA0000, 0x30000, 0x80000, 0x50000, 0xA0000, 0x70000,
 };
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static int __GXShutdown(int final);
 
 static OSResetFunctionInfo GXResetFuncInfo = {__GXShutdown, 0x7F, NULL, NULL};
@@ -266,7 +266,7 @@ static inline void RegisterResetFunction(void) {
     resetFuncRegistered = 1;
   }
 }
-#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 idx)
 {
     if (idx >= 0x14U) {
@@ -276,7 +276,7 @@ static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 idx)
 }
 
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static int __GXShutdown(int final) {
 #else
 static BOOL __GXShutdown(BOOL final, u32 event) {
@@ -408,7 +408,7 @@ GXFifoObj *GXInit(void *base, u32 size)
     GXSetGPFifo(&FifoObj);
 
     if (!resetFuncRegistered) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
         OSRegisterResetFunction(&GXResetFuncInfo);
 #else
         OSRegisterShutdownFunction(&GXResetFuncInfo);

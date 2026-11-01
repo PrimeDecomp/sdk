@@ -71,7 +71,7 @@ void qsort(void* table_base, size_t num_members, size_t member_size,
     jp = table_ptr(j);
 
     while (j * 2 <= r) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
       ip = jp;
 
 #endif

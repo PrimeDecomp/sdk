@@ -8,11 +8,11 @@
 #include <dolphin/OSRtcPriv.h>
 
 u16 __CARDVendorID = 0xffff;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 u8 __CARDPermMask = CARD_DIR_PERM_PUBLIC | CARD_DIR_PERM_NO_COPY | CARD_DIR_PERM_NO_MOVE;
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 u16 CARDSetVendorID(u16 vendorID) {
   u16 prevID;
   prevID = __CARDVendorID;
@@ -26,11 +26,11 @@ u16 CARDGetVendorID() { return __CARDVendorID; }
 #endif
 s32 CARDGetSerialNo(s32 chan, u64* serialNo) {
   CARDControl* card;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   s32 result;
 #endif
   CARDID* id;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   u64 code;
 #endif
   int i;
@@ -60,7 +60,7 @@ s32 CARDGetSerialNo(s32 chan, u64* serialNo) {
   return __CARDPutControlBlock(card, CARD_RESULT_READY);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #line 141
 s32 CARDGetUniqueCode(s32 chan, u64* uniqueCode) {
   CARDControl* card;

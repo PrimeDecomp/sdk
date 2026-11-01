@@ -180,7 +180,7 @@ void GXSetProjection(const f32 mtx[4][4], GXProjectionType type)
         __GXData->projMtx[3] = mtx[1][2];
     }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     __GXSetProjection();
     __GXData->bpSentNot = 1;
 #else
@@ -726,7 +726,7 @@ void GXLoadTexMtxIndx(u16 mtx_indx, u32 id, GXTexMtxType type)
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 void __GXSetViewport() {
     f32 sx;
     f32 sy;
@@ -775,7 +775,7 @@ void GXSetViewportJitter(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz,
     __GXData->vpNearz = nearz;
     __GXData->vpFarz = farz;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     __GXSetViewport();
     __GXData->bpSentNot = 1;
 #else

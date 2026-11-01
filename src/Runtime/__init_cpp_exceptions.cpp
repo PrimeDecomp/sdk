@@ -53,7 +53,7 @@ extern void __init_cpp_exceptions(void) {
 void __init_cpp_exceptions(void) {
 #endif
   char* R2;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   void* info;
 #endif
   if (fragmentID == -2) {
@@ -96,7 +96,7 @@ __declspec(section
 #pragma force_active on
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 /* clang-format off */
 #pragma section ".ctors$10"
 __declspec(section ".ctors$10")

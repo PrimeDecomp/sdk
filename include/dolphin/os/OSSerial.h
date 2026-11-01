@@ -9,7 +9,7 @@
 #include <types.h>
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #ifdef __cplusplus
 extern "C" {
 #endif

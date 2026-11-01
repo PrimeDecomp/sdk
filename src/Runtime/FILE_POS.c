@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #include <critical_regions.h>
 #endif
 #include <ansi_files.h>
@@ -25,7 +25,7 @@ inline fpos_t _ftell(FILE* file) {
     position -= charsInUndoBuffer;
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   if (!file->mode.binary_io) {
     int n = file->buffer_ptr - file->buffer - charsInUndoBuffer;
     unsigned char* p = (unsigned char*)file->buffer;
@@ -42,11 +42,11 @@ inline fpos_t _ftell(FILE* file) {
 long ftell(FILE* file) {
   long retval;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   __begin_critical_region(files_access);
 #endif
   retval = (long)_ftell(file);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
   __end_critical_region(files_access);
 #endif
 

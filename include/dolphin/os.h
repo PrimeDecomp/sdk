@@ -18,7 +18,7 @@ extern "C" {
 #define OS_BASE_CACHED (OS_CACHED_REGION_PREFIX << 16)
 #define OS_BASE_UNCACHED (OS_UNCACHED_REGION_PREFIX << 16)
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 #ifdef __MWERKS__
 #define AT_ADDRESS(xyz) : (xyz)
 #else
@@ -231,7 +231,7 @@ const char* OSGetAppGamename(void);
 u8 OSGetAppType(void);
 void OSPanic(const char* file, int line, const char* msg, ...);
 void OSFatal(GXColor fg, GXColor bg, const char* msg);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 
 
 u32 OSGetStackPointer(void);
