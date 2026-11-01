@@ -216,6 +216,11 @@ typedef int BOOL;
 #endif
 #endif
 
+// Allow final in C++98 mode, for the game code that includes this header
+#if defined(__cplusplus) && !defined(final)
+#define final
+#endif
+
 #endif
 
 #ifndef ATTRIBUTE_ALIGN
