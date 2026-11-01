@@ -634,10 +634,12 @@ void EXIInit(void) {
     __OSEnableBarnacle(0, 2);
 #endif
   }
-#if SDK_VERSION >= SDK_VERSION_GM8E01_02 && SDK_VERSION < SDK_VERSION_G2ME01_00
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00
   EXIGetID(0, 2, &IDSerialPort1);
 #endif
   OSRegisterVersion(__EXIVersion);
+#endif
 }
 
 BOOL EXILock(s32 chan, u32 dev, EXICallback unlockedCallback) {
