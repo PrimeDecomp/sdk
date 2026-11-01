@@ -1,8 +1,7 @@
+#include <SDKVersion.h>
 #if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifndef _DOLPHIN_PPCARCH
 #define _DOLPHIN_PPCARCH
-
-#include <SDKVersion.h>
 
 #include "types.h"
 

@@ -1,8 +1,7 @@
+#include <SDKVersion.h>
 #if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifndef _DOLPHIN_HW_REGS_H_
 #define _DOLPHIN_HW_REGS_H_
-
-#include <SDKVersion.h>
 
 #ifdef __MWERKS__
 volatile u16 __VIRegs[59]     : 0xCC002000;

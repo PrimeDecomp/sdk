@@ -1,8 +1,7 @@
+#include <SDKVersion.h>
 #if SDK_VERSION < SDK_VERSION_G2ME01_00
 #ifndef _REVOLUTION_KPAD
 #define _REVOLUTION_KPAD
-
-#include <SDKVersion.h>
 
 
 #include <dolphin/mtx/GeoTypes.h>
