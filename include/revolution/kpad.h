@@ -272,16 +272,6 @@ void KPADInit();
 void KPADSetBtnRepeat(s32, f32, f32);
 void KPADSetSensorHeight(s32, f32);
 void KPADSetAccParam(s32 chan, f32 playRadius, f32 sensitivity);
-typedef struct KPADUnifiedWpadStatus {
-  union {
-    WPADStatus core;
-    WPADFSStatus fs;
-    WPADCLStatus cl;
-  } u;
-  u8 fmt;
-  u8 padding;
-} KPADUnifiedWpadStatus;
-
 void KPADGetUnifiedWpadStatus(s32 chan, KPADUnifiedWpadStatus* status, u32 count);
 void KPADDisableAimingMode(s32 chan);
 void KPADSetPosParam(s32, f32, f32);
