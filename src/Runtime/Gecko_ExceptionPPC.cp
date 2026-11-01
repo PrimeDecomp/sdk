@@ -22,7 +22,8 @@ void unexpected();
 class exception {
 public:
   exception() throw() {}
-  virtual const char* what() const throw();
+  virtual ~exception() throw() {}
+  virtual const char* what() const throw() { return "exception"; }
 };
 
 class bad_exception : public exception {
