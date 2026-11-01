@@ -106,6 +106,10 @@ def modules_for(
         "net": "GC/3.0a5.2",
     }
 
+    # Software floating point, for the few Wii SDK objects built with it. OSFastCast.h leaves out
+    # its paired-single helpers there, which need the floating-point registers.
+    FP_SOFT = ["-fp soft", "-DOS_SOFT_FLOAT"]
+
     # The Bluetooth stack keeps its own headers next to the public ones.
     BTE_CFLAGS = [
         f"-i {sdk_dir}/include/revolution/bte/internal",
@@ -630,7 +634,7 @@ def modules_for(
                 Object(
                     MatchingFor("RVL_2008_01"),
                     "revolution/wpad/WPAD.c",
-                    extra_cflags=["-fp soft"],
+                    extra_cflags=FP_SOFT,
                 ),
                 Object(MatchingFor("RVL_2008_01"), "revolution/wpad/WPADHIDParser.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/wpad/WPADMem.c"),
@@ -754,7 +758,7 @@ def modules_for(
                 Object(
                     MatchingFor("RVL_2008_01"),
                     "revolution/wud/WUD.c",
-                    extra_cflags=["-fp soft"],
+                    extra_cflags=FP_SOFT,
                 ),
                 Object(MatchingFor("RVL_2008_01"), "revolution/wud/WUDHidHost.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/wud/debug_msg.c"),
@@ -873,7 +877,7 @@ def modules_for(
                 Object(
                     EquivalentFor("DOLPHIN_2004_04"),
                     "revolution/vf/pf_file.c",
-                    extra_cflags=["-fp soft"],
+                    extra_cflags=FP_SOFT,
                 ),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_path.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_sector.c"),
@@ -898,12 +902,12 @@ def modules_for(
                 Object(
                     MatchingFor("RVL_2008_01"),
                     "revolution/vf/d_vf.c",
-                    extra_cflags=["-fp soft"],
+                    extra_cflags=FP_SOFT,
                 ),
                 Object(
                     MatchingFor("RVL_2008_01"),
                     "revolution/vf/d_vf_sys.c",
-                    extra_cflags=["-fp soft"],
+                    extra_cflags=FP_SOFT,
                 ),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/d_hash.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/d_time.c"),
@@ -911,7 +915,7 @@ def modules_for(
                 Object(
                     MatchingFor("RVL_2008_01"),
                     "revolution/vf/nand_drv.c",
-                    extra_cflags=["-fp soft"],
+                    extra_cflags=FP_SOFT,
                 ),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/sd_drv.c"),
             ],

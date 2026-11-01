@@ -19,6 +19,7 @@ extern "C" {
 #define OS_FASTCAST_U16 3
 #define OS_FASTCAST_S8 4
 #define OS_FASTCAST_S16 5
+#ifndef OS_SOFT_FLOAT
 // SDK conversion helpers used when the GQR fast-cast registers are initialized.
 static inline float __OSs16tof32(register const s16* value) {
 #ifdef __MWERKS__
@@ -33,6 +34,7 @@ static inline float __OSs16tof32(register const s16* value) {
 static inline void OSs16tof32(const s16* value, float* result) {
   *result = __OSs16tof32(value);
 }
+#endif
 
 // clang-format off
 static inline void OSInitFastCast(void) {
