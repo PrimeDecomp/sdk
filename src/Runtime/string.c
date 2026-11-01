@@ -104,7 +104,7 @@ char* strncpy(char* dst, const char* src, size_t n) {
         *++q = 0;
       break;
     }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   return dst;
 }

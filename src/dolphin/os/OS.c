@@ -37,8 +37,11 @@ static __OSExceptionHandler* OSExceptionTable;
 OSTime __OSStartTime;
 BOOL __OSInIPL;
 #else
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2003_04
+static const char* __OSVersion =
+    "<< Dolphin SDK - OS\trelease build: May 20 2004 18:01:28 (0x2301) >>";
+#elif SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04_OS_APR
 static const char* __OSVersion =
     "<< Dolphin SDK - OS\trelease build: Apr  5 2004 04:13:58 (0x2301) >>";
 #else
@@ -58,7 +61,7 @@ extern char _db_stack_end[];
 extern char* __OSResetSWInterruptHandler[];
 
 vu16 __OSDeviceCode : (OS_BASE_CACHED | 0x30E6);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static DVDDriveInfo DriveInfo ATTRIBUTE_ALIGN(32);
 static DVDCommandBlock DriveBlock;
 
@@ -121,7 +124,7 @@ extern u32 __PADSpec;
 void OSDefaultExceptionHandler(__OSException exception, OSContext* context);
 extern BOOL __DBIsExceptionMarked(__OSException);
 static void OSExceptionInit(void);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 void __OSGetExecParams(OSExecParams* params);
 void EnableMetroTRKInterrupts(void);
 extern char _stack_addr[];
@@ -710,7 +713,9 @@ void OSInit(void) {
     }
 
     OSReport("\nDolphin OS\n");
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2003_04
+    OSReport("Kernel built : %s %s\n", "May 20 2004", "18:01:28");
+#elif SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04_OS_APR
     OSReport("Kernel built : %s %s\n", "Apr  5 2004", "04:13:58");
 #else
     OSReport("Kernel built : %s %s\n", "May 21 2004", "09:28:09");
@@ -1286,7 +1291,7 @@ void __OSPSInit(void)
     {
         li      r3, 0
         mtspr   GQR0, r3
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
         mtspr   GQR1, r3
         mtspr   GQR2, r3
         mtspr   GQR3, r3

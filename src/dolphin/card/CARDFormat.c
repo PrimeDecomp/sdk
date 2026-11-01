@@ -45,7 +45,7 @@ error:
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #line 133
   ASSERT(callback);
 #endif
@@ -64,7 +64,7 @@ s32 __CARDFormatRegionAsync(s32 chan, u16 encode, CARDCallback callback) {
   u16 viDTVStatus;
   OSTime time;
   OSTime rand;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #line 167
   ASSERT(encode == CARD_ENCODE_ANSI || encode == CARD_ENCODE_SJIS);
   ASSERT(0 <= chan && chan < 2);
@@ -134,7 +134,7 @@ s32 __CARDFormatRegionAsync(s32 chan, u16 encode, CARDCallback callback) {
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 s32 __CARDFormatRegion(s32 chan, u16 encode) {
   s32 result;
   result = __CARDFormatRegionAsync(chan, encode, __CARDSyncCallback);
@@ -150,7 +150,7 @@ s32 CARDFormatAsync(s32 chan, CARDCallback callback) {
   return __CARDFormatRegionAsync(chan, __CARDGetFontEncode(), callback);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
 s32 CARDFormat(s32 chan) {
   s32 result = __CARDFormatRegionAsync(chan, __CARDGetFontEncode(), __CARDSyncCallback);;

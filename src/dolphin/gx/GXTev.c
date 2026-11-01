@@ -887,7 +887,7 @@ void GXSetTevOrder(GXTevStageID stage, GXTexCoordID coord, GXTexMapID map, GXCha
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 void GXSetNumTevStages(u8 nStages)
 {
     CHECK_GXBEGIN(0x4A3, "GXSetNumTevStages");

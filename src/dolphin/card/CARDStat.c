@@ -68,7 +68,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   CARDDir* dir;
   CARDDir* ent;
   s32 result;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   ASSERT(0 <= chan && chan < 2);
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
@@ -118,7 +118,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
   CARDDir* ent;
   s32 result;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(0 <= fileNo && fileNo < CARD_MAX_FILE);
   ASSERT(0 <= chan && chan < 2);
 
@@ -175,7 +175,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 s32 CARDSetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
   s32 result;
   result = CARDSetStatusAsync(chan, fileNo, stat, __CARDSyncCallback);

@@ -23,7 +23,7 @@ static vu8 __DTKVolumeR;
 static volatile u32 __DTKShutdownFlag;
 static volatile u32 __DTKTrackEnded;
 static DTKFlushCallback __DTKFlushCallback;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 static BOOL __busy_for_ais_isr;
 #endif
 
@@ -98,7 +98,7 @@ static void __DTKPrepareCurrentTrack(DVDCallback callback) {
 }
 static void __DTKCallbackForPlaylist(s32 result, DVDCommandBlock* block) {
   __DTKPosition = result;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __busy_for_ais_isr = FALSE;
 #endif
 
@@ -285,7 +285,7 @@ BOOL DTKFlushTracks(DTKFlushCallback callback) {
     return FALSE;
 #endif
   }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   oldState = __DTKState;
   __DTKState = 3;
@@ -369,7 +369,7 @@ BOOL DTKSetState(u32 state) {
     break;
   }
   }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   return TRUE;
 #endif
 }
@@ -395,11 +395,11 @@ BOOL DTKNextTrack() {
       __DTKForward();
       __DTKState = __DTKTempState;
     }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
     return TRUE;
 #endif
   }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   return FALSE;
 #endif
 }

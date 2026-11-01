@@ -395,7 +395,7 @@ BOOL DVDLowAudioBufferConfig(BOOL enable, u32 size, DVDLowCallback callback) {
   return TRUE;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 u32 DVDLowGetLength(void) { return __DIRegs[6]; }
 
 #endif
@@ -426,7 +426,7 @@ DVDLowCallback DVDLowClearCallback() {
   DVDLowCallback old;
   __DIRegs[1] = 0;
   old = Callback;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   WaitingCoverClose = FALSE;
 #endif
   Callback = NULL;
@@ -441,7 +441,7 @@ void __DVDLowSetWAType(u32 type, u32 location) {
   OSRestoreInterrupts(enabled);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 BOOL __DVDLowTestAlarm(const OSAlarm* alarm) {
   if (alarm == &AlarmForBreak) {
     return TRUE;

@@ -213,10 +213,10 @@ static asm void DecrementerExceptionHandler(register __OSException exception,
   b DecrementerExceptionCallback
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 BOOL __DVDTestAlarm(const OSAlarm* alarm);
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static BOOL OnReset(BOOL final) {
 #else
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag) { alarm->tag = tag; }

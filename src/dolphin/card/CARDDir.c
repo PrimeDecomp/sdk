@@ -20,7 +20,7 @@ CARDDir* __CARDGetDirBlock(CARDControl* card) {
 static void WriteCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   CARDDir* dir0;
   CARDDir* dir1;
 #endif
@@ -40,7 +40,7 @@ static void WriteCallback(s32 chan, s32 result) {
       card->currentDir = dir1;
       memcpy(dir1, dir0, 0x2000);
     } else {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
     
       ASSERT(card->currentDir == dir1);
 #endif
@@ -104,7 +104,7 @@ s32 __CARDUpdateDir(s32 chan, CARDCallback callback) {
   u32 addr;
   CARDDir* dir;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];

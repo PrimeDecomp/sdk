@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #include "Gecko_ExceptionPPC.h"
 #include "NMWException.h"
 #endif
@@ -11,7 +11,7 @@
 #if __MWERKS__
 #pragma exceptions on
 #endif
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
 #define RETURN_ADDRESS 4
 
@@ -146,7 +146,7 @@ void __unregister_fragment(int fragmentID) {
   }
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 static inline int ExPPC_FindExceptionFragment(char* returnaddr, FragmentInfo* frag) {
   ProcessInfo* f;
   int i;

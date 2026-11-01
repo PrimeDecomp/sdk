@@ -1,6 +1,6 @@
 #include <SDKVersion.h>
 #include "stdio.h"
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
 #include <ctype.h>
 #include <math.h>
@@ -806,7 +806,7 @@ int __StringRead(void* isc, int ch, int Action) {
   return 0; 
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 static inline int vsscanf(const char *s, const char *format, va_list arg) {
   __InStrCtrl isc;
   isc.NextChar = (char *)s;

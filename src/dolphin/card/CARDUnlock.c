@@ -130,7 +130,7 @@ static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 rlen, s32 mode) {
   BOOL err;
   u8 cmd[5];
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   card = &__CARDBlock[chan];
@@ -166,7 +166,7 @@ static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 rlen, s32 mode) {
   err |= !EXIDeselect(chan);
 
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 }
 
 static u32 GetInitVal(void) {
@@ -358,7 +358,7 @@ static void InitCallback(void* _task) {
       break;
     }
   }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   ASSERT(0 <= chan && chan < 2);
 #endif
@@ -406,7 +406,7 @@ static void DoneCallback(void* _task) {
     }
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(0 <= chan && chan < 2);
 #endif
   param = (DecodeParameters*)card->workArea;

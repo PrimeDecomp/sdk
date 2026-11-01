@@ -15,7 +15,7 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   int fileNo;
   int newNo;
   int oldNo;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   ASSERT(0 <= chan && chan < 2);
   ASSERT(*old != 0xff && *new != 0xff);
@@ -81,7 +81,7 @@ s32 CARDRenameAsync(s32 chan, const char* old, const char* new, CARDCallback cal
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 s32 CARDRename(s32 chan, const char* old, const char* new) {
   s32 result;
   result = CARDRenameAsync(chan,  old, new, __CARDSyncCallback);

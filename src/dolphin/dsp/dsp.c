@@ -120,7 +120,7 @@ DSPTaskInfo* DSPAddTask(DSPTaskInfo* task) {
   return task;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task) {
   u32 oldInt;
   oldInt = OSDisableInterrupts();

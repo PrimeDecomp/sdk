@@ -22,15 +22,20 @@
                                       // Metroid Prime mp-v1.110 PAL, mp-v1.111 NTSC-J and its demo.
 #define SDK_VERSION_DOLPHIN_2003_02 3 // The above with the Feb 7 2003 GX.
                                       // Metroid Prime mp-v1.111 NTSC-U.
-#define SDK_VERSION_DOLPHIN_2004_04_OS_APR 4 // Apr 5 2004 release (0x2301), with the Apr 5 2004 OS.
+#define SDK_VERSION_DOLPHIN_2003_04 4 // Apr 17 2003 release (0x2301) EXI, SI, VI, AI, DSP and CARD,
+                                      // Aug 6 2003 PAD, Nov 26 2003 GX, AR and ARQ,
+                                      // Feb 12 2004 DVD and May 20 2004 OS.
+                                      // Metroid Prime 2: Echoes demo disc D75E01 and the bonus
+                                      // disc P2ME01.
+#define SDK_VERSION_DOLPHIN_2004_04_OS_APR 5 // Apr 5 2004 release (0x2301), with the Apr 5 2004 OS.
                                               // Metroid Prime 2: Echoes demo discs (D84P01).
-#define SDK_VERSION_DOLPHIN_2004_04 5 // Apr 5 2004 release (0x2301), with the May 21 2004 OS.
+#define SDK_VERSION_DOLPHIN_2004_04 6 // Apr 5 2004 release (0x2301), with the May 21 2004 OS.
                                       // Metroid Prime 2: Echoes, all retail GameCube versions.
 
 // Revolution SDK (Wii)
-#define SDK_VERSION_RVL_2005_11 6 // Apr 2004 Dolphin libraries with the Nov 2005 pre-release
+#define SDK_VERSION_RVL_2005_11 7 // Apr 2004 Dolphin libraries with the Nov 2005 pre-release
                                   // Revolution KPAD and WPAD. Corruption prototype.
-#define SDK_VERSION_RVL_2008_01 7 // RVL_SDK 0x4199_60831 builds, with the Jan 30 2008 OS.
+#define SDK_VERSION_RVL_2008_01 8 // RVL_SDK 0x4199_60831 builds, with the Jan 30 2008 OS.
                                   // New Play Controls and Trilogy, for both Prime and Echoes.
 
 #ifndef SDK_VERSION

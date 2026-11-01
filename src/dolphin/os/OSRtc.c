@@ -160,7 +160,7 @@ void __OSInitSram() {
   Scb.locked = Scb.enabled = FALSE;
   Scb.sync = ReadSram(Scb.sram);
   Scb.offset = RTC_SRAM_SIZE;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   OSSetGbsMode(OSGetGbsMode());
 #endif
@@ -205,7 +205,7 @@ static BOOL UnlockSram(BOOL commit, u32 offset) {
 
     if (offset < Scb.offset) {
       Scb.offset = offset;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
     }
 
     if (Scb.offset <= 0x14) {
@@ -484,7 +484,7 @@ void OSSetWirelessID(s32 channel, u16 id) {
   __OSUnlockSramEx(FALSE);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 u16 OSGetGbsMode(void) {
   OSSramEx* sram;
   u16 mode;
