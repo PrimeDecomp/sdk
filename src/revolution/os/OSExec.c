@@ -28,10 +28,6 @@ s32 __OSCurrentTGCOffset : OS_BASE_CACHED + 0x30F4;
 vu32 __OSLaunchPartitionType : (OS_BASE_CACHED | 0x3194);
 vu8 __OSLockedFlag : (OS_BASE_CACHED | 0x3187);
 
-#if (SDK_VERSION == SDK_VERSION_RMGJ01 || SDK_VERSION == SDK_VERSION_RMGE01 || SDK_VERSION == SDK_VERSION_RMGP01)
-#define TitleIdLo(t) ((u32)(((u64)t) & 0xffffffff))
-#define TitleIdHi(t) ((u32)((((u64)t) >> 32) & 0xffffffff))
-#endif
 
 extern void __DVDShowFatalMessageForSystem(u32 command, u32 intType);
 
