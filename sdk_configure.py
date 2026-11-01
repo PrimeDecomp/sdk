@@ -19,7 +19,6 @@ def modules_for(
     cflags_base: list[str],
     sdk_dir: str = "extern/sdk",
     non_matching: bool = False,
-    trk: bool = True,
 ) -> list[dict]:
     src_dir = f"{sdk_dir}/src"
     SDK = sdk_versions(sdk_dir)
@@ -168,6 +167,34 @@ def modules_for(
     ]
 
     libs = [
+        {
+            # Prime's MetroTRK build, which differs from the Echoes and Wii ones in MetroTRK/.
+            "lib": "TRK_MINNOW_DOLPHIN",
+            "src_dir": src_dir,
+            "mw_version": "GC/1.2.5n",
+            "shift_jis": SJIS,
+            "cflags": [
+                *cflags_base,
+                "-use_lmw_stmw on",
+                "-pool off",
+                "-sdata 0",
+                "-sdata2 0",
+                "-inline on,noauto",
+                "-rostr",
+            ],
+            "progress_category": "sdk",
+            "host": False,
+            "objects": [
+                Object(
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02"),
+                    "TRK_MINNOW_DOLPHIN/nubinit.c",
+                ),
+                Object(
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02"),
+                    "TRK_MINNOW_DOLPHIN/mslsupp.c",
+                ),
+            ],
+        },
         {
             "lib": "MetroTRK",
             "src_dir": src_dir,
@@ -1212,9 +1239,5 @@ def modules_for(
             ],
         ),
     ]
-
-    if not trk:
-        # The game provides its own MetroTRK sources.
-        libs = [lib for lib in libs if lib["lib"] not in ("MetroTRK", "TRK")]
 
     return libs
