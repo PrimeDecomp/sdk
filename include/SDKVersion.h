@@ -30,11 +30,10 @@
 #define SDK_VERSION_G2MP01_00 7 // mp2-v1.035 PAL
 #define SDK_VERSION_G2MJ01_00 8 // mp2-v1.036 NTSC-J
 
-// Wii (New Play Controls and Trilogy; Prime and Echoes use the same build in the Trilogy)
+// Wii (New Play Controls and Trilogy)
 #define SDK_VERSION_R32J01_00 9  // mp2-v3.561 New Play Controls
-#define SDK_VERSION_R3IJ01_00 10 // mp-v3.570 New Play Controls
-#define SDK_VERSION_R3ME01_00 11 // mp-v3.593 Trilogy NTSC
-#define SDK_VERSION_R3MP01_00 12 // mp-v3.629 Trilogy PAL
+#define SDK_VERSION_R3ME01_00 10 // mp-v3.570 New Play Controls, mp-v3.593 Trilogy NTSC and
+                                 // mp-v3.629 Trilogy PAL, for both Prime and Echoes
 
 #ifndef SDK_VERSION
 #error "SDK_VERSION is not defined: the game's build configuration must define it to one of the SDK_VERSION_* values"
