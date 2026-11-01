@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/base/PPCArch.h"
 #else
 #include "dolphin/PPCArch.h"
@@ -12,7 +12,7 @@ static struct OSAlarmQueue {
 } AlarmQueue;
 
 static void DecrementerExceptionHandler(__OSException exception, OSContext* context);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static BOOL OnReset(BOOL final);
 
 void OSInitAlarm(void) {
@@ -21,20 +21,7 @@ void OSInitAlarm(void) {
     __OSSetExceptionHandler(8, DecrementerExceptionHandler);
   }
 }
-#else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-static BOOL OnReset(BOOL final, u32 event);
-
-static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnReset, 0xFFFFFFFF, NULL, NULL};
-
-void __OSInitAlarm(void) {
-  if (__OSGetExceptionHandler(8) != DecrementerExceptionHandler) {
-    AlarmQueue.head = AlarmQueue.tail = NULL;
-    __OSSetExceptionHandler(8, DecrementerExceptionHandler);
-    OSRegisterShutdownFunction(&ShutdownFunctionInfo);
-  }
-}
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static BOOL OnReset(BOOL final);
 
 static OSResetFunctionInfo ResetFunctionInfo = {OnReset, 0xFFFFFFFF, NULL, NULL};
@@ -46,7 +33,18 @@ void OSInitAlarm(void) {
     OSRegisterResetFunction(&ResetFunctionInfo);
   }
 }
-#endif
+#else
+static BOOL OnReset(BOOL final, u32 event);
+
+static OSShutdownFunctionInfo ShutdownFunctionInfo = {OnReset, 0xFFFFFFFF, NULL, NULL};
+
+void __OSInitAlarm(void) {
+  if (__OSGetExceptionHandler(8) != DecrementerExceptionHandler) {
+    AlarmQueue.head = AlarmQueue.tail = NULL;
+    __OSSetExceptionHandler(8, DecrementerExceptionHandler);
+    OSRegisterShutdownFunction(&ShutdownFunctionInfo);
+  }
+}
 #endif
 
 void OSCreateAlarm(OSAlarm* alarm) {
@@ -218,12 +216,12 @@ static asm void DecrementerExceptionHandler(register __OSException exception,
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 BOOL __DVDTestAlarm(const OSAlarm* alarm);
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+static BOOL OnReset(BOOL final) {
+#else
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag) { alarm->tag = tag; }
 
 static BOOL OnReset(BOOL final, u32 event) {
-#else
-static BOOL OnReset(BOOL final) {
 #endif
   OSAlarm* alarm;
   OSAlarm* next;

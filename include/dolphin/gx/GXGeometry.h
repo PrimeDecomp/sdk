@@ -10,7 +10,7 @@ extern "C" {
 #endif
 
 void GXSetVtxDesc(GXAttr attr, GXAttrType type);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetVtxDescv(GXVtxDescList* list);
 #else
 void GXSetVtxDescv(const GXVtxDescList* list);

@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/__ppc_eabi_init.h"
 #include "dolphin/base/PPCArch.h"
 #else
@@ -53,12 +53,15 @@ loop:
   // clang-format on
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+void __init_user() { __init_cpp(); }
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+__declspec(weak) void InitMetroTRK_BBA() { return; }
+
 void __init_user() { __init_cpp(); }
 #else
 __declspec(weak) void InitMetroTRK_BBA() { return; }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 asm void __init_user() {
   // clang-format off
   nofralloc
@@ -72,9 +75,6 @@ asm void __init_user() {
   blr
   // clang-format on
 }
-#else
-void __init_user() { __init_cpp(); }
-#endif
 #endif
 
 typedef void (*voidfunctionptr)(void); // pointer to function returning void
@@ -91,10 +91,7 @@ void __init_cpp(void) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-void _ExitProcess(void) { PPCHalt(); }
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 void _ExitProcess(void) { PPCHalt(); }
 #else
 void exit(int status) {
@@ -103,7 +100,6 @@ void exit(int status) {
   }
   PPCHalt();
 }
-#endif
 #endif
 
 #ifdef __cplusplus

@@ -8,7 +8,7 @@
 #include "dolphin/os/OSInterrupt.h"
 #include "dolphin/types.h"
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 typedef struct ApploaderHeader {
   // total size: 0x20
   char date[16];  // offset 0x0, size 0x10
@@ -22,16 +22,14 @@ extern OSExecParams __OSRebootParams;
 void __OSBootDol(u32 doloffset, u32 restartCode, const char** argv);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 ATTRIBUTE_ALIGN_DECL(32, static ApploaderHeader Header);
-#else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
 extern u32 __OSNextPartitionType;
 vu32 __OSLaunchPartitionType : (OS_BASE_CACHED | 0x3194);
 #endif
-#endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 extern void *__OSSavedRegionStart;
 extern void *__OSSavedRegionEnd;
 #else
@@ -39,18 +37,19 @@ static void* SaveStart = NULL;
 static void* SaveEnd = NULL;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void *SaveStart = NULL;
 static void *SaveEnd = NULL;
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+void __OSReboot(u32 resetCode, u32 bootDol) {
+  OSContext exceptionContext;
+  const char* argvToPass;
 #else
 void __OSReboot(u32 resetCode, u32 bootDol) {
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
-  OSContext exceptionContext;
-#endif
   const char* argvToPass;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 volatile u8 OS_REBOOT_BOOL : 0x800030e2;
 
 extern u32 BOOT_REGION_START AT_ADDRESS(0x812FDFF0);
@@ -78,7 +77,7 @@ asm void Run(void *entrypoint) {
   OSDisableInterrupts();
   OSSetArenaLo((void*)0x81280000);
   OSSetArenaHi((void*)0x812f0000);
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
   OSClearContext(&exceptionContext);
   OSSetCurrentContext(&exceptionContext);
 #endif
@@ -90,10 +89,80 @@ asm void Run(void *entrypoint) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
 static void Callback(s32 result, DVDCommandBlock *block) { Prepared = TRUE; }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
+static inline void ReadApploader(void *addr, long length, long offset) {
+  DVDCommandBlock block;
+
+  while (!Prepared) {
+  }
+
+  DVDReadAbsAsyncForBS(&block, addr, length, offset + 0x2440, NULL);
+  while (1) {
+    switch (block.state) {
+    case 0:
+      return;
+    case 1:
+      break;
+    case -1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+      __OSDoHotReset(UNK_HOT_RESET2);
+      break;
+    default:
+      break;
+    }
+  }
+}
+
+void __OSReboot(u32 resetCode, u32 bootDol) {
+  OSContext exceptionContext;
+  u32 numBytes;
+  u32 offset;
+
+  OSDisableInterrupts();
+  UNK_HOT_RESET2 = 0;
+  UNK_HOT_RESET1 = 0;
+  OS_REBOOT_BOOL = 1;
+  BOOT_REGION_START = (u32)SaveStart;
+  BOOT_REGION_END = (u32)SaveEnd;
+  OSClearContext(&exceptionContext);
+  OSSetCurrentContext(&exceptionContext);
+  DVDInit();
+  DVDSetAutoInvalidation(TRUE);
+  __DVDPrepareResetAsync(Callback);
+  if (!DVDCheckDisk()) {
+    __OSDoHotReset(UNK_HOT_RESET2);
+  }
+
+  __OSMaskInterrupts(~0x1F);
+  __OSUnmaskInterrupts(0x400);
+  OSEnableInterrupts();
+
+  ReadApploader(&Header, 32, 0);
+  offset = Header.size + 0x20;
+  numBytes = OSRoundUp32B(Header.rebootSize);
+  ReadApploader((void *)OS_BOOTROM_ADDR, numBytes, offset);
+
+  ICInvalidateRange((void *)OS_BOOTROM_ADDR, numBytes);
+  OSDisableInterrupts();
+  ICFlashInvalidate();
+  Run((void *)OS_BOOTROM_ADDR);
+}
+
+void OSSetSaveRegion(void *start, void *end) {
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+static void Callback(s32 result, DVDCommandBlock *block) { Prepared = TRUE; }
+
 extern BOOL __OSIsGcam;
 extern void DVDResume(void);
 extern BOOL DVDReadAbsAsyncPrio(DVDCommandBlock *block, void *addr, s32 length, s32 offset,
@@ -176,74 +245,6 @@ void __OSReboot(u32 resetCode, u32 bootDol) {
   ICFlashInvalidate();
   Run((void *)OS_BOOTROM_ADDR);
 }
-#else
-static inline void ReadApploader(void *addr, long length, long offset) {
-  DVDCommandBlock block;
-
-  while (!Prepared) {
-  }
-
-  DVDReadAbsAsyncForBS(&block, addr, length, offset + 0x2440, NULL);
-  while (1) {
-    switch (block.state) {
-    case 0:
-      return;
-    case 1:
-      break;
-    case -1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    case 10:
-    case 11:
-      __OSDoHotReset(UNK_HOT_RESET2);
-      break;
-    default:
-      break;
-    }
-  }
-}
-
-void __OSReboot(u32 resetCode, u32 bootDol) {
-  OSContext exceptionContext;
-  u32 numBytes;
-  u32 offset;
-
-  OSDisableInterrupts();
-  UNK_HOT_RESET2 = 0;
-  UNK_HOT_RESET1 = 0;
-  OS_REBOOT_BOOL = 1;
-  BOOT_REGION_START = (u32)SaveStart;
-  BOOT_REGION_END = (u32)SaveEnd;
-  OSClearContext(&exceptionContext);
-  OSSetCurrentContext(&exceptionContext);
-  DVDInit();
-  DVDSetAutoInvalidation(TRUE);
-  __DVDPrepareResetAsync(Callback);
-  if (!DVDCheckDisk()) {
-    __OSDoHotReset(UNK_HOT_RESET2);
-  }
-
-  __OSMaskInterrupts(~0x1F);
-  __OSUnmaskInterrupts(0x400);
-  OSEnableInterrupts();
-
-  ReadApploader(&Header, 32, 0);
-  offset = Header.size + 0x20;
-  numBytes = OSRoundUp32B(Header.rebootSize);
-  ReadApploader((void *)OS_BOOTROM_ADDR, numBytes, offset);
-
-  ICInvalidateRange((void *)OS_BOOTROM_ADDR, numBytes);
-  OSDisableInterrupts();
-  ICFlashInvalidate();
-  Run((void *)OS_BOOTROM_ADDR);
-}
-#endif
 
 void OSSetSaveRegion(void *start, void *end) {
 #else
@@ -258,7 +259,7 @@ void OSGetSaveRegion(void** start, void** end) {
   *end = SaveEnd;
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void OSGetSavedRegion(void **start, void **end) {
   *start = __OSSavedRegionStart;
   *end = __OSSavedRegionEnd;

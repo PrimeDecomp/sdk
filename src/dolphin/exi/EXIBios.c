@@ -4,8 +4,8 @@
 
 #pragma scheduling off
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Sep  5 2002 05:33:04 (0x2301) >>";
 #else
@@ -30,11 +30,11 @@ static const char* __EXIVersion =
 #define EXI_0CR(tstart, dma, rw, tlen)                                                             \
   ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:22 (0x4199_60831) >>";
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Apr  5 2004 04:14:14 (0x2301) >>";
+#else
+const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:22 (0x4199_60831) >>";
 #endif
 
 #define MAX_DEV 3
@@ -54,10 +54,10 @@ static const char* __EXIVersion =
 #define EXI_0CR(tstart, dma, rw, tlen)                                                             \
   ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-#define DMA_ADDR_MASK 0xffffffe0
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 #define DMA_ADDR_MASK 0x3ffffe0
+#else
+#define DMA_ADDR_MASK 0xffffffe0
 #endif
 #endif
 
@@ -121,23 +121,16 @@ static void SetExiInterruptMask(s32 chan, EXIControl* exi) {
 
 static void CompleteTransfer(s32 chan) {
   EXIControl* exi = &Ecb[chan];
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
   u8* buf;
   u32 data;
   int i;
   int len;
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   int len;
   u8* buf;
   u32 data;
   int i;
-#else
-  u8* buf;
-  u32 data;
-  int i;
-  int len;
-#endif
 #endif
 
   if (exi->state & STATE_BUSY) {
@@ -228,7 +221,7 @@ BOOL EXIDma(s32 chan, void* buf, s32 len, u32 type, EXICallback callback) {
 
   exi->state |= STATE_DMA;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   REG(chan, 1) = (u32)buf & 0x3ffffe0;
 #else
   REG(chan, 1) = (u32)buf & DMA_ADDR_MASK;
@@ -274,7 +267,7 @@ BOOL EXISync(s32 chan) {
   return rc;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static
 #endif
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext) {
@@ -584,13 +577,12 @@ extern BOOL __OSInIPL;
 void __OSEnableBarnacle(s32 chan, u32 dev);
 
 void EXIInit(void) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
   
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
   OSRegisterVersion(__EXIVersion);
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+  
   while (((REG(0, 3) & 1) == 1) || ((REG(1, 3) & 1) == 1) || ((REG(2, 3) & 1) == 1)) {}
-#endif
 #else
   u32 id;
 
@@ -617,7 +609,7 @@ void EXIInit(void) {
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_EXI, EXIIntrruptHandler);
   __OSSetInterruptHandler(__OS_INTERRUPT_EXI_2_TC, TCIntrruptHandler);
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if ((OSGetConsoleType() & 0x10000000) != 0) {
     __EXIProbeStartTime[0] = __EXIProbeStartTime[1] = 0;
     Ecb[0].idTime = Ecb[1].idTime = 0;
@@ -634,10 +626,10 @@ void EXIInit(void) {
     __OSEnableBarnacle(0, 2);
 #endif
   }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   EXIGetID(0, 2, &IDSerialPort1);
-#endif
+  OSRegisterVersion(__EXIVersion);
+#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
   OSRegisterVersion(__EXIVersion);
 #endif
 }
@@ -808,12 +800,8 @@ char* EXIGetTypeString(u32 type) {
   case EXI_STREAM_HANGER:
     return "Stream Hanger";
   case EXI_IS_VIEWER:
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
     return "IS Viewer";
-#else
-    return "IS-DOL-VIEWER";
-#endif
 #else
     return "IS-DOL-VIEWER";
 #endif

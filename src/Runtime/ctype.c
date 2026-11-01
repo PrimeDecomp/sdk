@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #define ctrl __control_char
 #define motn __motion_char
 #define spac __space_char
@@ -30,8 +30,35 @@ unsigned char __ctype_map[256] = {
 };
 
 unsigned char __lower_map[256] = {
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#define ctrl __control_char
+#define motn __motion_char
+#define spac __space_char
+#define punc __punctuation
+#define digi __digit
+#define hexd __hex_digit
+#define lowc __lower_case
+#define uppc __upper_case
+#define dhex (hexd | digi)
+#define uhex (hexd | uppc)
+#define lhex (hexd | lowc)
+
+unsigned char __ctype_map[256] = {
+    // clang-format off
+    ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, motn, motn, motn, motn, motn, ctrl, ctrl,
+    ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl,
+    spac, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc,
+    dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, punc, punc, punc, punc, punc, punc,
+    punc, uhex, uhex, uhex, uhex, uhex, uhex, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc,
+    uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, punc, punc, punc, punc, punc,
+    punc, lhex, lhex, lhex, lhex, lhex, lhex, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc,
+    lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, punc, punc, punc, punc, ctrl,
+    // clang-format on
+};
+
+
+unsigned char __lower_map[256] = {
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 const unsigned short __ctype_mapC[256] = {
     0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x106, 0x104, 0x104, 0x104,
     0x104, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004, 0x004,
@@ -44,39 +71,8 @@ const unsigned short __ctype_mapC[256] = {
     0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x071,
     0x071, 0x071, 0x071, 0x071, 0x071, 0x071, 0x0D0, 0x0D0, 0x0D0, 0x0D0, 0x004,
 };
-#else
-#define ctrl __control_char
-#define motn __motion_char
-#define spac __space_char
-#define punc __punctuation
-#define digi __digit
-#define hexd __hex_digit
-#define lowc __lower_case
-#define uppc __upper_case
-#define dhex (hexd | digi)
-#define uhex (hexd | uppc)
-#define lhex (hexd | lowc)
 
-unsigned char __ctype_map[256] = {
-    // clang-format off
-    ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, motn, motn, motn, motn, motn, ctrl, ctrl,
-    ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl,
-    spac, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc,
-    dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, punc, punc, punc, punc, punc, punc,
-    punc, uhex, uhex, uhex, uhex, uhex, uhex, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc,
-    uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, punc, punc, punc, punc, punc,
-    punc, lhex, lhex, lhex, lhex, lhex, lhex, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc,
-    lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, punc, punc, punc, punc, ctrl,
-    // clang-format on
-};
-
-#endif
-
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 const unsigned char __lower_mapC[256] = {
-#else
-unsigned char __lower_map[256] = {
-#endif
 #endif
     // clang-format off
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
@@ -98,14 +94,10 @@ unsigned char __lower_map[256] = {
     // clang-format on
 };
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 unsigned char __upper_map[256] = {
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 const unsigned char __upper_mapC[256] = {
-#else
-unsigned char __upper_map[256] = {
-#endif
 #endif
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,

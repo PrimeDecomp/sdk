@@ -7,7 +7,7 @@
 #include <stddef.h>
 #endif
 #include <types.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include <stddef.h>
 #endif
 

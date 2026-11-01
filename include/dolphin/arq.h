@@ -22,7 +22,7 @@ extern "C" {
 #define ARQ_PRIORITY_LOW 0
 #define ARQ_PRIORITY_HIGH 1
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 typedef void (*ARQCallback)(uintptr_t pointerToARQRequest);
 #else
 typedef void (*ARQCallback)(u32 pointerToARQRequest);

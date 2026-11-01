@@ -22,7 +22,6 @@ static u8 DSPInitCode[128] = {
 
 #define __DSPWorkBuffer (void*)0x81000000
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 #define IPC_DIFLAGS (0x180 / 4)
 #define IPC_GPIO2DIR (0x1CC / 4)
@@ -77,7 +76,6 @@ static void __AIClockInit(BOOL arg0) {
   __IPCRegs[IPC_GPIO2IN] = (__IPCRegs[IPC_GPIO2IN] & ~0x80000000) | 0x80000000;
   waitMicroSec(1000);
 }
-#endif
 
 #endif
 void __OSInitAudioSystem(void) {
@@ -85,13 +83,11 @@ void __OSInitAudioSystem(void) {
   u16 r3;
 
   u32 padding;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
-
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+
   if (!__OSInIPL) {
     __AIClockInit(TRUE);
   }
-#endif
 #endif
 
   memcpy((void*)((u8*)OSGetArenaHi() - 128), __DSPWorkBuffer, 128);

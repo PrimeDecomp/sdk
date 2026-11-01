@@ -19,7 +19,7 @@ void __VIGetCurrentPosition(s16* x, s16* y);
 u32 VIGetDTVStatus(void);
 
 // These use types that only the SDK vitypes.h defines
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 BOOL VIEnableDimming(BOOL enable);
 VITimeToDIM VISetTimeToDimming(VITimeToDIM time);
 BOOL VIResetDimmingCount(void);

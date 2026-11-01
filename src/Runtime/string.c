@@ -1,7 +1,7 @@
 #include <SDKVersion.h>
 #include "string.h"
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 size_t strlen(const char* str) {
   size_t len = -1;
   unsigned char* p = (unsigned char*)str - 1;
@@ -10,8 +10,7 @@ size_t strlen(const char* str) {
   } while (*++p);
   return len;
 }
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 size_t strlen(const char* str) {
   size_t len = -1;
   unsigned char* p = (unsigned char*)str - 1;
@@ -21,7 +20,6 @@ size_t strlen(const char* str) {
   return len;
 }
 
-#endif
 #endif
 
 char*(strcpy)(char* dst, const char* src) {
@@ -56,7 +54,7 @@ char*(strcpy)(char* dst, const char* src) {
 
   w = *((int*)(fromb));
   t = w + k2;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   t &= ~w;
 #endif
   t &= k1;
@@ -71,7 +69,7 @@ char*(strcpy)(char* dst, const char* src) {
     w = *(++((int*)(fromb)));
 
     t = w + k2;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     t &= ~w;
 #endif
     t &= k1;
@@ -165,7 +163,7 @@ int strcmp(const char* str1, const char* str2) {
   l1 = *(int*)left;
   r1 = *(int*)right;
   x = l1 + k2;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   x &= ~l1;
 #endif
   if (x & k1) {
@@ -180,20 +178,12 @@ int strcmp(const char* str1, const char* str2) {
     }
   }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
   if (l1 > r1) {
     return 1;
   }
 
   return -1;
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
-  if (l1 > r1) {
-    return 1;
-  }
-
-  return -1;
-#endif
 #endif
 
 adjust:

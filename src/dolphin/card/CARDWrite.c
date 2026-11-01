@@ -122,7 +122,7 @@ s32 CARDWriteAsync(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offs
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileInfo->fileNo];
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   result = __CARDAccess(card, ent);
 #else
   result = __CARDIsWritable(card, ent);

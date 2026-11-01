@@ -118,7 +118,7 @@ s32 DVDConvertPathToEntrynum(char* pathPtr) {
         illegal = TRUE;
 
       if (illegal)
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
         OSPanic(__FILE__, 379,
 #else
         OSPanic(__FILE__, 387,
@@ -279,7 +279,7 @@ BOOL DVDChangeDir(char* dirName) {
 BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
                       DVDCallback callback, s32 prio) {
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (!((0 <= offset) && (offset < fileInfo->length))) {
     OSPanic(__FILE__, 742, "DVDReadAsync(): specified area is out of the file  ");
 #else
@@ -289,7 +289,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
   }
 
   if (!((0 <= offset + length) && (offset + length < fileInfo->length + DVD_MIN_TRANSFER_SIZE))) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     OSPanic(__FILE__, 748, "DVDReadAsync(): specified area is out of the file  ");
 #else
     OSPanic(__FILE__, 756, "DVDReadAsync(): specified area is out of the file  ");
@@ -507,7 +507,7 @@ BOOL DVDPrepareStreamAsync(DVDFileInfo* fileInfo, u32 length, u32 offset, DVDCal
   start = fileInfo->startAddr + offset;
 
   if (!Is32KBAligned(start)) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     OSPanic(__FILE__, 1189,
 #else
     OSPanic(__FILE__, 1211,
@@ -521,7 +521,7 @@ BOOL DVDPrepareStreamAsync(DVDFileInfo* fileInfo, u32 length, u32 offset, DVDCal
     length = fileInfo->length - offset;
 
   if (!Is32KBAligned(length)) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     OSPanic(__FILE__, 1199,
 #else
     OSPanic(__FILE__, 1221,
@@ -530,7 +530,7 @@ BOOL DVDPrepareStreamAsync(DVDFileInfo* fileInfo, u32 length, u32 offset, DVDCal
             length);
   }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (!((offset < fileInfo->length) && (offset + length <= fileInfo->length))) {
     OSPanic(__FILE__, 1207,
 #else

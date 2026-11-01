@@ -2,7 +2,7 @@
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include <dolphin/gx/GXPriv.h>
 #else
 #include <dolphin/gx/__gx.h>
@@ -14,7 +14,7 @@ do { \
     GX_WRITE_U32(b); \
 } while (0)
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetTevIndirect(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXIndTexFormat format,
                       GXIndTexBiasSel bias_sel, GXIndTexMtxID matrix_sel, GXIndTexWrap wrap_s,
                       GXIndTexWrap wrap_t, GXBool add_prev, GXBool utc_lod,
@@ -66,7 +66,7 @@ void GXSetTevIndirect(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXIndTe
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetIndTexMtx(GXIndTexMtxID mtx_id, f32 offset[2][3], s8 scale_exp) {
   s32 mtx[6];
   u32 reg;
@@ -79,7 +79,7 @@ void GXSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp)
     u32 id;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   switch (mtx_id) {
   case GX_ITM_0:
   case GX_ITM_1:
@@ -104,7 +104,7 @@ void GXSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp)
     CHECK_GXBEGIN(0xBA, "GXSetIndTexMtx");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   mtx[0] = (int)(1024.0f * offset[0][0]) & 0x7FF;
   mtx[1] = (int)(1024.0f * offset[1][0]) & 0x7FF;
   scale_exp += 0x11;
@@ -137,7 +137,7 @@ void GXSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp)
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   mtx[2] = (int)(1024.0f * offset[0][1]) & 0x7FF;
   mtx[3] = (int)(1024.0f * offset[1][1]) & 0x7FF;
   reg = 0;
@@ -158,7 +158,7 @@ void GXSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp)
     GX_WRITE_SOME_REG5(0x61, reg);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   mtx[4] = (int)(1024.0f * offset[0][2]) & 0x7FF;
   mtx[5] = (int)(1024.0f * offset[1][2]) & 0x7FF;
   reg = 0;
@@ -178,7 +178,7 @@ void GXSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp)
     GX_WRITE_SOME_REG5(0x61, reg);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXData->bpSentNot = 0;
 #else
     mtx[4] = (int)(1024.0f * offset[0][2]) & 0x7FF;
@@ -194,7 +194,7 @@ void GXSetIndTexMtx(GXIndTexMtxID mtx_id, const f32 offset[2][3], s8 scale_exp)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetIndTexCoordScale(GXIndTexStageID ind_state, GXIndTexScale scale_s,
                            GXIndTexScale scale_t) {
 #else
@@ -203,7 +203,7 @@ void GXSetIndTexCoordScale(GXIndTexStageID ind_state, GXIndTexScale scale_s, GXI
     CHECK_GXBEGIN(0xF9, "GXSetIndTexScale");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   switch (ind_state) {
   case GX_INDTEXSTAGE0:
     SET_REG_FIELD(__GXData->IndTexScale0, 4, 0, scale_s);
@@ -267,7 +267,7 @@ void GXSetIndTexCoordScale(GXIndTexStageID ind_state, GXIndTexScale scale_s, GXI
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetIndTexOrder(GXIndTexStageID ind_stage, GXTexCoordID tex_coord, GXTexMapID tex_map) {
   switch (ind_stage) {
   case GX_INDTEXSTAGE0:
@@ -335,7 +335,7 @@ void GXSetIndTexOrder(GXIndTexStageID ind_stage, GXTexCoordID tex_coord, GXTexMa
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetNumIndStages(u8 nIndStages) {
   SET_REG_FIELD(__GXData->genMode, 3, 16, nIndStages);
   __GXData->dirtyState |= 6;
@@ -353,7 +353,7 @@ void GXSetNumIndStages(u8 nIndStages)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetTevIndWarp(GXTevStageID tev_stage, GXIndTexStageID ind_stage, u8 signed_offset,
                      u8 replace_mode, GXIndTexMtxID matrix_sel) {
   GXIndTexWrap wrap = (replace_mode != 0) ? GX_ITW_0 : GX_ITW_OFF;
@@ -376,7 +376,7 @@ void GXSetTevIndWarp(GXTevStageID tev_stage, GXIndTexStageID ind_stage, u8 signe
 }
 
 void GXSetTevIndTile(GXTevStageID tev_stage, GXIndTexStageID ind_stage, u16 tilesize_s,
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
                      u16 tilesize_t, u16 tilespacing_s, u16 tilespacing_t, GXIndTexFormat format,
                      GXIndTexMtxID matrix_sel, GXIndTexBiasSel bias_sel,
                      GXIndTexAlphaSel alpha_sel) {
@@ -492,7 +492,7 @@ void GXSetTevIndTile(GXTevStageID tev_stage, GXIndTexStageID ind_stage, u16 tile
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetTevIndBumpST(GXTevStageID tev_stage, GXIndTexStageID ind_stage,
                        GXIndTexMtxID matrix_sel) {
   GXIndTexMtxID sm;
@@ -547,7 +547,7 @@ void GXSetTevIndBumpST(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXIndT
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetTevIndBumpXYZ(GXTevStageID tev_stage, GXIndTexStageID ind_stage,
                         GXIndTexMtxID matrix_sel) {
   GXSetTevIndirect(tev_stage, ind_stage, GX_ITF_8, GX_ITB_STU, matrix_sel, GX_ITW_OFF, GX_ITW_OFF,
@@ -560,7 +560,7 @@ void GXSetTevIndBumpXYZ(GXTevStageID tev_stage, GXIndTexStageID ind_stage, GXInd
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetTevIndRepeat(GXTevStageID tev_stage) {
   GXSetTevIndirect(tev_stage, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_NONE, GX_ITM_OFF, GX_ITW_0,
                    GX_ITW_0, 1U, 0, 0);
@@ -572,7 +572,7 @@ void GXSetTevIndRepeat(GXTevStageID tev_stage)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXUpdateBPMask(void) {
   u32 nIndStages;
   u32 i;
@@ -584,7 +584,7 @@ void __GXUpdateBPMask(void) {
 void __GXUpdateBPMask(void) {}
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   new_imask = 0;
   new_dmask = 0;
   nIndStages = GET_REG_FIELD(__GXData->genMode, 3, 16);
@@ -610,13 +610,13 @@ void __GXSetIndirectMask(u32 mask) {
     SET_REG_FIELD(0x298, __GXData->bpMask, 8, ~0xFF, mask);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if ((u8)__GXData->bpMask != new_imask) {
     SET_REG_FIELD(__GXData->bpMask, 8, 0, new_imask);
 #endif
     GX_WRITE_SOME_REG5(0x61, __GXData->bpMask);
     __GXData->bpSentNot = 0;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   }
 #endif
 }

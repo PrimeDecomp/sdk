@@ -65,7 +65,7 @@ typedef struct _GXColor {
   u8 b;
   u8 a;
 } GXColor;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 
 typedef struct _GXFogAdjTable {
   u16 r[10];

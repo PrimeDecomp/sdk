@@ -69,12 +69,8 @@ s32 EXIProbeEx(s32 chan);
 
 s32 EXIGetType(s32 chan, u32 dev, u32* type);
 char* EXIGetTypeString(u32 type);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
-u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
-#endif
 #endif
 s32 EXIGetID(s32 chan, u32 dev, u32* id);
 

@@ -6,7 +6,7 @@
 
 #include <dolphin/CARDPriv.h>
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 CARDDir* __CARDGetDirBlock(CARDControl* card) { return card->currentDir; }
 #else
 #line 53
@@ -27,7 +27,7 @@ static void WriteCallback(s32 chan, s32 result) {
 
   card = &__CARDBlock[chan];
   if (0 <= result) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     CARDDir* dir0 = (CARDDir*)((u8*)card->workArea + 0x2000);
     CARDDir* dir1 = (CARDDir*)((u8*)card->workArea + 0x4000);
 #else
@@ -64,7 +64,7 @@ static void EraseCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
   CARDDir* dir;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   u32 tmp[2];
 #endif
   u32 addr;
@@ -98,7 +98,7 @@ error:
 s32 __CARDUpdateDir(s32 chan, CARDCallback callback) {
   CARDControl* card;
   CARDDirCheck* check;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   u32 tmp[2];
 #endif
   u32 addr;

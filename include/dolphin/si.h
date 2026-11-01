@@ -3,7 +3,7 @@
 
 #include <SDKVersion.h>
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include <types.h>
 
 #define SI_CHAN0 0

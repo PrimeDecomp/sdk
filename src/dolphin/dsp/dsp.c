@@ -8,20 +8,18 @@
 extern "C" {
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static const char* __DSPVersion =
     "<< Dolphin SDK - DSP\trelease build: Sep  5 2002 05:35:13 (0x2301) >>";
-#else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char* __DSPVersion = "<< RVL_SDK - DSP \trelease build: Aug  8 2007 01:59:06 (0x4199_60831) >>";
-#define DSP_BUILD_DATE "Aug  8 2007"
-#define DSP_BUILD_TIME "01:59:06"
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static const char* __DSPVersion =
     "<< Dolphin SDK - DSP\trelease build: Apr  5 2004 04:15:32 (0x2301) >>";
 #define DSP_BUILD_DATE "Apr  5 2004"
 #define DSP_BUILD_TIME "04:15:32"
-#endif
+#else
+const char* __DSPVersion = "<< RVL_SDK - DSP \trelease build: Aug  8 2007 01:59:06 (0x4199_60831) >>";
+#define DSP_BUILD_DATE "Aug  8 2007"
+#define DSP_BUILD_TIME "01:59:06"
 #endif
 
 static s32 __DSP_init_flag = 0;
@@ -56,7 +54,7 @@ void DSPSendMailToDSP(u32 mail) {
 void DSPInit(void) {
   u32 oldInt;
   u16 reg;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", "Sep  5 2002", "05:35:13");
 #else
   __DSP_debug_printf("DSPInit(): Build Date: %s %s\n", DSP_BUILD_DATE, DSP_BUILD_TIME);
@@ -104,10 +102,8 @@ void DSPHalt(void) {
 
 u32 DSPGetDMAStatus(void) { return __DSPRegs[5] & 0x200; }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 BOOL DSPCheckInit(void) { return __DSP_init_flag; }
-#endif
 
 #endif
 DSPTaskInfo* DSPAddTask(DSPTaskInfo* task) {

@@ -26,7 +26,7 @@ void DTKInit(void);
 void DTKShutdown(void);
 u32 DTKQueueTrack(char* fileName, DTKTrack* track, u32 eventMask, DTKCallback callback);
 u32 DTKRemoveTrack(DTKTrack* track);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void DTKFlushTracks(DTKFlushCallback callback);
 #else
 BOOL DTKFlushTracks(DTKFlushCallback callback);
@@ -37,13 +37,13 @@ void DTKSetInterruptFrequency(u32 samples);
 u32 DTKGetInterruptFrequency(void);
 void DTKSetRepeatMode(u32 repeat);
 u32 DTKGetRepeatMode(void);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void DTKSetState(u32 state);
 #else
 BOOL DTKSetState(u32 state);
 #endif
 u32 DTKGetState(void);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void DTKNextTrack(void);
 #else
 BOOL DTKNextTrack(void);

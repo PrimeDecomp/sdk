@@ -32,12 +32,11 @@ struct lconv __lconv = {
     CHAR_MAX, // int_n_sign_posn
 };
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 // Just here to generate the extra string,
 // the real usage is inside setlocale, which is stripped
 static char* locale_name = "C";
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 // Guessed name
 struct _loc_ctype_cmpt _loc_ctyp_C = {"C",
                                       &__ctype_mapC[0],
@@ -85,9 +84,4 @@ struct _loc_time_cmpt _loc_tim_C = {
 struct __locale _current_locale = {0,           "C",         &_loc_coll_C, &_loc_ctyp_C,
                                    &_loc_mon_C, &_loc_num_C, &_loc_tim_C};
 
-#else
-// Just here to generate the extra string,
-// the real usage is inside setlocale, which is stripped
-static char* locale_name = "C";
-#endif
 #endif

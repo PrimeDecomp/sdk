@@ -63,7 +63,7 @@ s32 CARDCreateAsync(s32 chan, const char* fileName, u32 size, CARDFileInfo* file
   CARDControl* card;
   CARDDir* dir;
   CARDDir* ent;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   s32 result;
 #endif
   u16 fileNo;

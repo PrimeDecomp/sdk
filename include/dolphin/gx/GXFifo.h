@@ -21,15 +21,15 @@ void* GXGetFifoBase(const GXFifoObj* fifo);
 u32 GXGetFifoSize(const GXFifoObj* fifo);
 void GXGetFifoPtrs(GXFifoObj* fifo, void** readPtr, void** writePtr);
 GXFifoObj* GXGetCPUFifo(void);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 GXFifoObj* GXGetGPFifo(void);
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+GXFifoObj* GXGetGPFifo(void);
+struct OSThread* GXGetCurrentGXThread(void);
+u32 GXGetOverflowCount(void);
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 BOOL GXGetGPFifo(GXFifoObj* fifo);
 GXBool __GXIsGPFifoReady(void);
-#else
-GXFifoObj* GXGetGPFifo(void);
-#endif
 struct OSThread* GXGetCurrentGXThread(void);
 u32 GXGetOverflowCount(void);
 #endif

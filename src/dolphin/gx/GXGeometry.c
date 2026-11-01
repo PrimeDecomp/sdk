@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx.h"
 #else
 #include <stddef.h>
@@ -7,13 +7,13 @@
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXSetDirtyState(void) {
 #define dState __GXData->dirtyState
 
@@ -71,7 +71,33 @@ void GXSetLineWidth(u8 width, GXTexOffset texOffsets) {
   GX_WRITE_RAS_REG(__GXData->lpSize);
   __GXData->bpSentNot = 0;
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+void __GXSetDirtyState(void)
+{
+    u32 dState = __GXData->dirtyState;
+
+    if (dState & 1) {
+        __GXSetSUTexRegs();
+    }
+    if (dState & 2) {
+        __GXUpdateBPMask();
+    }
+    if (dState & 4) {
+        __GXSetGenMode();
+    }
+    if (dState & 8) {
+        __GXSetVCD();
+    }
+    if (dState & 0x10) {
+        __GXSetVAT();
+    }
+    if (dState & 0x18) {
+        __GXCalculateVLim();
+    }
+
+    __GXData->dirtyState = 0;
+}
+#else
 static inline void __GXSetAmbMat(u32 dirty)
 {
     if (dirty & 0x100) {
@@ -201,32 +227,6 @@ void __GXSetDirtyState(void)
 
     __GXData->dirtyState = 0;
 }
-#else
-void __GXSetDirtyState(void)
-{
-    u32 dState = __GXData->dirtyState;
-
-    if (dState & 1) {
-        __GXSetSUTexRegs();
-    }
-    if (dState & 2) {
-        __GXUpdateBPMask();
-    }
-    if (dState & 4) {
-        __GXSetGenMode();
-    }
-    if (dState & 8) {
-        __GXSetVCD();
-    }
-    if (dState & 0x10) {
-        __GXSetVAT();
-    }
-    if (dState & 0x18) {
-        __GXCalculateVLim();
-    }
-
-    __GXData->dirtyState = 0;
-}
 #endif
 
 void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts)
@@ -245,7 +245,7 @@ void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets) {
 #else
 void __GXSendFlushPrim(void)
@@ -254,7 +254,7 @@ void __GXSendFlushPrim(void)
     u32 numD = __GXData->vNum * __GXData->vLim;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   SET_REG_FIELD(__GXData->lpSize, 8, 8, pointSize);
   SET_REG_FIELD(__GXData->lpSize, 3, 19, texOffsets);
   GX_WRITE_RAS_REG(__GXData->lpSize);
@@ -269,7 +269,7 @@ void __GXSendFlushPrim(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXEnableTexOffsets(GXTexCoordID coord, u8 line_enable, u8 point_enable) {
 
   SET_REG_FIELD(__GXData->suTs0[coord], 1, 18, line_enable);
@@ -287,7 +287,7 @@ void GXSetLineWidth(u8 width, GXTexOffset texOffsets)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetCullMode(GXCullMode mode) {
   GXCullMode hwMode;
 #else
@@ -296,7 +296,7 @@ void GXGetLineWidth(u8 *width, GXTexOffset *texOffsets)
     ASSERTMSGLINE(0x1CF, width != NULL && texOffsets != NULL, "GXGet*: invalid null pointer");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   switch (mode) {
   case GX_CULL_FRONT:
     hwMode = GX_CULL_BACK;
@@ -317,7 +317,7 @@ void GXGetLineWidth(u8 *width, GXTexOffset *texOffsets)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetCoPlanar(GXBool enable) {
   u32 reg;
 
@@ -336,7 +336,7 @@ void GXSetPointSize(u8 pointSize, GXTexOffset texOffsets)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXSetGenMode(void) {
   GX_WRITE_RAS_REG(__GXData->genMode);
   __GXData->bpSentNot = 0;
@@ -368,11 +368,11 @@ void GXSetCullMode(GXCullMode mode)
     GXCullMode hwMode;
 
     CHECK_GXBEGIN(0x22D, "GXSetCullMode");
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-    hwMode = ((mode << 1) & 2) | ((mode >> 1) & 1);
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
     hwMode = (mode >> 1) & 1;
     __rlwimi(hwMode, mode, 1, 30, 30);
+#else
+    hwMode = ((mode << 1) & 2) | ((mode >> 1) & 1);
 #endif
 
     SET_REG_FIELD(0x23A, __GXData->genMode, 2, 14, hwMode);

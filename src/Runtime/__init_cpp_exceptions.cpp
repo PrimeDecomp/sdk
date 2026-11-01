@@ -2,7 +2,7 @@
 #include "NMWException.h"
 #include "__ppc_eabi_linker.h"
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static int fragmentID = -2;
 #else
 #if __MWERKS__
@@ -23,7 +23,7 @@ extern void suspend(void);
 }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 /* clang-format off */
 static asm char* GetR2() {
   nofralloc;
@@ -45,7 +45,7 @@ void __exception_info_constants(void** info, char** R2) {
 }
 /* clang-format on */
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 extern void __init_cpp_exceptions(void) {
 #else
 // UNUSED: __find_exception_addresses__FPvPcPPvPPv
@@ -57,7 +57,7 @@ void __init_cpp_exceptions(void) {
   void* info;
 #endif
   if (fragmentID == -2) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 
     R2 = GetR2();
 
@@ -71,7 +71,7 @@ void __init_cpp_exceptions(void) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 extern void __fini_cpp_exceptions(void) {
 #else
 void __fini_cpp_exceptions(void) {
@@ -82,7 +82,7 @@ void __fini_cpp_exceptions(void) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 __declspec(section
            ".ctors") static void* const __init_cpp_exceptions_reference = __init_cpp_exceptions;
 __declspec(section

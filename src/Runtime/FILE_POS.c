@@ -110,7 +110,7 @@ int _fseek(FILE* file, fpos_t offset, int mode) {
   return 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 int fseek(FILE * file, long offset, int mode)
 {
 		fpos_t real_offset = (fpos_t)offset;
@@ -122,8 +122,7 @@ int fseek(FILE * file, long offset, int mode)
 
 		return(retval);
 }
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 int fseek(FILE * file, long offset, int mode)
 {
 		fpos_t real_offset = (fpos_t)offset;
@@ -137,5 +136,4 @@ int fseek(FILE * file, long offset, int mode)
 
 		return(retval);
 }
-#endif
 #endif

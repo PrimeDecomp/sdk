@@ -3,7 +3,7 @@
 #include <string.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/base/PPCArch.h"
 #include "dolphin/gx.h"
 #include "dolphin/hw_regs.h"
@@ -17,39 +17,36 @@
 #include <dolphin/vi.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static GXData gxData;
-#else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char* __GXVersion = "<< RVL_SDK - GX \trelease build: Nov 29 2006 18:10:50 (0x4200_60308) >>";
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 const char* __GXVersion = "<< Dolphin SDK - GX\trelease build: Apr  5 2004 04:14:28 (0x2301) >>";
-#endif
+
+#else
+const char* __GXVersion = "<< RVL_SDK - GX \trelease build: Nov 29 2006 18:10:50 (0x4200_60308) >>";
 
 #endif
 static GXFifoObj FifoObj;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 GXData *const __GXData = &gxData;
 #else
 static struct __GXData_struct gxData;
 struct __GXData_struct* const __GXData = &gxData;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
 char *__GXVersion = "<< Dolphin SDK - GX\trelease build: Sep  5 2002 05:33:28 (0x2301) >>";
-#elif SDK_VERSION == SDK_VERSION_DOLPHIN_2003_02
-char *__GXVersion = "<< Dolphin SDK - GX\trelease build: Feb  7 2003 04:01:13 (0x2301) >>";
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_11
 char *__GXVersion = "<< Dolphin SDK - GX	release build: Nov  7 2002 05:47:57 (0x2301) >>";
-#endif
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+char *__GXVersion = "<< Dolphin SDK - GX\trelease build: Feb  7 2003 04:01:13 (0x2301) >>";
 #else
 // these are supposed to be in-function static, but it messed up sbss order
 u32 resetFuncRegistered;
@@ -58,7 +55,7 @@ OSTime time;
 u32 peCount;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void *__piReg = NULL;
 void *__cpReg = NULL;
 void *__peReg = NULL;
@@ -93,7 +90,7 @@ static GXVtxAttrFmtList GXDefaultVATList[] = {
 
 static f32 GXDefaultProjData[] = {1.0f, 0.0f, 1.0f, 0.0f, -1.0f, -2.0f, 0.0f};
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static asm BOOL IsWriteGatherBufferEmpty(void) {
   nofralloc;
   sync;
@@ -109,14 +106,14 @@ static u32 GXTexRegionAddrTable[] = {
     0x80000, 0x10000, 0xA0000, 0x30000, 0x80000, 0x50000, 0xA0000, 0x70000,
 };
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-static BOOL __GXShutdown(BOOL final, u32 event);
-
-static OSShutdownFunctionInfo GXResetFuncInfo = {__GXShutdown, 0x7F, NULL, NULL};
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 static int __GXShutdown(int final);
 
 static OSResetFunctionInfo GXResetFuncInfo = {__GXShutdown, 0x7F, NULL, NULL};
+#else
+static BOOL __GXShutdown(BOOL final, u32 event);
+
+static OSShutdownFunctionInfo GXResetFuncInfo = {__GXShutdown, 0x7F, NULL, NULL};
 #endif
 
 asm BOOL IsWriteGatherBufferEmpty(void)
@@ -127,7 +124,7 @@ asm BOOL IsWriteGatherBufferEmpty(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void EnableWriteGatherPipe(void) {
   u32 hid2;
   hid2 = PPCMfhid2();
@@ -145,7 +142,7 @@ static void EnableWriteGatherPipe(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *obj, GXTexMapID id) {
   GXTexFmt format;
 #else
@@ -154,7 +151,7 @@ static void DisableWriteGatherPipe(void)
     u32 hid2 = PPCMfhid2();
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   format = GXGetTexObjFmt(obj);
 
   if (format != GX_TF_C4 && format != GX_TF_C8 && format != GX_TF_C14X2) {
@@ -168,7 +165,7 @@ static void DisableWriteGatherPipe(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 tlut) {
   if (tlut >= 20) {
     return NULL;
@@ -180,7 +177,7 @@ static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *t_obj, GXTexMap
     u8 mm;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   return &__GXData->TlutRegions[tlut];
 #else
     fmt = GXGetTexObjFmt(t_obj);
@@ -206,7 +203,6 @@ static GXTexRegion *__GXDefaultTexRegionCallback(const GXTexObj *t_obj, GXTexMap
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION == SDK_VERSION_DOLPHIN_2003_02
 static BOOL __GXShutdown(BOOL final) {
   static u32 peCount;
@@ -270,8 +266,7 @@ static inline void RegisterResetFunction(void) {
     resetFuncRegistered = 1;
   }
 }
-#endif
-#else
+#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 idx)
 {
     if (idx >= 0x14U) {
@@ -281,10 +276,10 @@ static GXTlutRegion *__GXDefaultTlutRegionCallback(u32 idx)
 }
 
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-static BOOL __GXShutdown(BOOL final, u32 event) {
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 static int __GXShutdown(int final) {
+#else
+static BOOL __GXShutdown(BOOL final, u32 event) {
 #endif
     u32 reg;
     u32 peCountNew;
@@ -413,16 +408,16 @@ GXFifoObj *GXInit(void *base, u32 size)
     GXSetGPFifo(&FifoObj);
 
     if (!resetFuncRegistered) {
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-        OSRegisterShutdownFunction(&GXResetFuncInfo);
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
         OSRegisterResetFunction(&GXResetFuncInfo);
+#else
+        OSRegisterShutdownFunction(&GXResetFuncInfo);
 #endif
         resetFuncRegistered = 1;
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 GXFifoObj *GXInit(void *base, u32 size) {
   u32 i;
   u32 freqBase;
@@ -433,7 +428,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     EnableWriteGatherPipe();
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   OSRegisterVersion(__GXVersion);
   __GXData->inDispList = GX_FALSE;
   __GXData->dlSaveContext = GX_TRUE;
@@ -476,7 +471,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     SET_REG_FIELD(0, __GXData->cpTex, 2, 7, 0);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   GXSetMisc(GX_MT_XF_FLUSH, 0);
 
   __piReg = OSPhysicalToUncached(0x0C003000);
@@ -632,7 +627,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
 #endif
     GX_WRITE_RAS_REG(reg);
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     reg = 0x24000000;
 #else
     __GXFlushTextureState();
@@ -640,7 +635,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
 #endif
     GX_WRITE_RAS_REG(reg);
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     reg = 0x67000000;
     GX_WRITE_RAS_REG(reg);
   }
@@ -648,7 +643,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     __GXInitRevisionBits();
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXSetTmemConfig(0);
 #else
     for (i = 0; i < 8; i++) {
@@ -661,7 +656,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXInitGX();
 #else
     for (i = 0; i < 16; i++) {
@@ -669,7 +664,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   return &FifoObj;
 #else
     for (i = 0; i < 4; i++) {
@@ -706,7 +701,7 @@ GXFifoObj *GXInit(void *base, u32 size) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXInitGX(void) {
   GXRenderModeObj *renderObj;
 #else
@@ -720,7 +715,7 @@ void __GXInitGX() {
     u32 i;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   Mtx ident;
   GXColor clearColor = {64, 64, 64, 255};
   GXColor ambColor = {0, 0, 0, 0};
@@ -751,7 +746,7 @@ void __GXInitGX() {
     GXInvalidateVtxCache();
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   switch (VIGetTvFormat()) {
   case VI_NTSC:
     renderObj = &GXNtsc480IntDf;
@@ -762,7 +757,7 @@ void __GXInitGX() {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   case VI_PAL:
     renderObj = &GXPal528IntDf;
     break;
@@ -772,7 +767,7 @@ void __GXInitGX() {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   case VI_EURGB60:
     renderObj = &GXEurgb60Hz480IntDf;
     break;
@@ -823,7 +818,7 @@ void __GXInitGX() {
     GXSetTlutRegionCallback(__GXDefaultTlutRegionCallback);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   case VI_MPAL:
     renderObj = &GXMpal480IntDf;
     break;
@@ -839,7 +834,7 @@ void __GXInitGX() {
     GXLoadTexObj(&tex_obj, 7);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   default:
     renderObj = &GXNtsc480IntDf;
     break;
@@ -863,7 +858,7 @@ void __GXInitGX() {
     GXSetTevOrder(GX_TEVSTAGE15, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   GXSetCopyClear(clearColor, 0xFFFFFF);
 #else
     GXSetNumTevStages(1);
@@ -882,7 +877,7 @@ void __GXInitGX() {
     GXSetTevSwapModeTable(GX_TEV_SWAP3, GX_CH_BLUE, GX_CH_BLUE, GX_CH_BLUE, GX_CH_ALPHA);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
   GXSetTexCoordGen2(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
   GXSetTexCoordGen2(GX_TEXCOORD2, GX_TG_MTX2x4, GX_TG_TEX2, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
@@ -901,7 +896,7 @@ void __GXInitGX() {
     GXSetIndTexCoordScale(GX_INDTEXSTAGE3, GX_ITS_1, GX_ITS_1);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   GXSetNumTexGens(1);
   GXClearVtxDesc();
   GXInvalidateVtxCache();
@@ -921,7 +916,7 @@ void __GXInitGX() {
                    ((rmode->viHeight == 2 * rmode->xfbHeight) ? GX_ENABLE : GX_DISABLE));
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   for (i = GX_VA_POS; i <= GX_LIGHT_ARRAY; i++) {
     GXSetArray((GXAttr)i, __GXData, 0);
   }
@@ -936,7 +931,7 @@ void __GXInitGX() {
     GXClearBoundingBox();
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   for (i = 0; i < GX_MAX_VTXFMT; i++) {
     GXSetVtxAttrFmtv((GXVtxFmt)i, GXDefaultVATList);
   }
@@ -951,7 +946,7 @@ void __GXInitGX() {
     GXPokeZMode(GX_TRUE, GX_ALWAYS, GX_TRUE);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   GXSetLineWidth(6, GX_TO_ZERO);
   GXSetPointSize(6, GX_TO_ZERO);
   GXEnableTexOffsets(GX_TEXCOORD0, GX_FALSE, GX_FALSE);

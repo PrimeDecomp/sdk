@@ -6,12 +6,10 @@
 #include <dolphin/os.h>
 #include <dolphin/os/OSBootInfo.h>
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
 const char* __DVDVersion = "<< Dolphin SDK - DVD\trelease build: Sep  5 2002 05:34:06 (0x2301) >>";
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 const char* __DVDVersion = "<< Dolphin SDK - DVD\trelease build: Oct 29 2002 09:56:49 (0x2301) >>";
-#endif
 #else
 const char* __DVDVersion = "<< Dolphin SDK - DVD\trelease build: Apr  5 2004 04:14:51 (0x2301) >>";
 #endif
@@ -21,7 +19,7 @@ stateFunc LastState;
 
 extern OSThreadQueue __DVDThreadQueue;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 ATTRIBUTE_ALIGN_DECL(32, static DVDBB2 BB2);
 ATTRIBUTE_ALIGN_DECL(32, static DVDDiskID CurrDiskID);
 #else
@@ -130,13 +128,10 @@ static void stateReadingFST() {
   LastState = (stateFunc)stateReadingFST;
 
   if (bootInfo->FSTMaxLength < BB2.FSTLength) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
-#define LINE 630
-#else
-#define LINE 647
-#endif
-    OSPanic("dvd.c", LINE, "DVDChangeDisk(): FST in the new disc is too big.   ");
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
+    OSPanic("dvd.c", 630, "DVDChangeDisk(): FST in the new disc is too big.   ");
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+    OSPanic("dvd.c", 647, "DVDChangeDisk(): FST in the new disc is too big.   ");
 #else
     OSPanic("dvd.c", 661, "DVDChangeDisk(): FST in the new disc is too big.   ");
 #endif
@@ -150,7 +145,7 @@ static void cbForStateReadingFST(u32 intType) {
   DVDCommandBlock* finished;
 
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -187,7 +182,7 @@ static void cbForStateError(u32 intType) {
   executing->state = -1;
 #endif
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -282,7 +277,7 @@ static void cbForStateGettingError(u32 intType) {
   u32 resume;
 
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -290,7 +285,7 @@ static void cbForStateGettingError(u32 intType) {
   }
 
   if (intType & 2) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateError(0x1234567);
@@ -303,7 +298,7 @@ static void cbForStateGettingError(u32 intType) {
   errorCategory = CategorizeError(error);
 
   if (errorCategory == 1) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateError(error);
@@ -354,7 +349,7 @@ static void cbForStateGettingError(u32 intType) {
     stateMotorStopped();
     return;
   } else {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateError(0x1234567);
@@ -364,7 +359,7 @@ static void cbForStateGettingError(u32 intType) {
 
 static void cbForUnrecoveredError(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -381,13 +376,13 @@ static void cbForUnrecoveredError(u32 intType) {
 
 static void cbForUnrecoveredErrorRetry(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
     return;
   }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   executing->state = -1;
 #endif
 
@@ -405,7 +400,7 @@ static void stateGoToRetry() { DVDLowStopMotor(cbForStateGoToRetry); }
 
 static void cbForStateGoToRetry(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -413,7 +408,7 @@ static void cbForStateGoToRetry(u32 intType) {
   }
 
   if (intType & 2) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateError(0x1234567);
@@ -469,7 +464,7 @@ static void stateCheckID2a() {
 
 static void cbForStateCheckID2a(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -491,7 +486,7 @@ static void stateCheckID2() {
 
 static void cbForStateCheckID1(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -499,7 +494,7 @@ static void cbForStateCheckID1(u32 intType) {
   }
 
   if (intType & 2) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateError(0x1234567);
@@ -516,7 +511,7 @@ static void cbForStateCheckID1(u32 intType) {
 
 static void cbForStateCheckID2(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -537,7 +532,7 @@ static void cbForStateCheckID2(u32 intType) {
 
 static void cbForStateCheckID3(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -598,7 +593,7 @@ static void stateCoverClosed_CMD(DVDCommandBlock* block) {
 
 static void cbForStateCoverClosed(u32 intType) {
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -653,13 +648,9 @@ static void stateReady() {
   if (ResumeFromHere) {
     switch (ResumeFromHere) {
     case 1:
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
       executing->state = 1;
       stateCoverClosed();
-#else
-      goto cover_closed;
-#endif
 #else
       goto cover_closed;
 #endif
@@ -686,7 +677,7 @@ cover_closed:
       break;
 
     case 5:
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       executing->state = -1;
 #endif
       stateError(CancelLastError);
@@ -694,7 +685,7 @@ cover_closed:
     }
 
     ResumeFromHere = 0;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   } else {
 #else
   } else if (MotorState == 0) {
@@ -840,7 +831,7 @@ static void cbForStateBusy(u32 intType) {
   DVDCommandBlock* finished;
 
   if (intType == 16) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     executing->state = -1;
 #endif
     stateTimeout();
@@ -849,7 +840,7 @@ static void cbForStateBusy(u32 intType) {
 
   if ((CurrCommand == 3) || (CurrCommand == 15)) {
     if (intType & 2) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       executing->state = -1;
 #endif
       stateError(0x1234567);
@@ -978,7 +969,7 @@ static void cbForStateBusy(u32 intType) {
     }
   } else {
     if (CurrCommand == 14) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       executing->state = -1;
 #endif
       stateError(0x01234567);
@@ -1389,7 +1380,7 @@ static void cbForCancelSync(s32 result, DVDCommandBlock* block) {
   OSWakeupThread(&__DVDThreadQueue);
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 inline BOOL DVDCancelAllAsync(DVDCBCallback callback) {
 #else
 BOOL DVDCancelAllAsync(DVDCBCallback callback) {

@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/base/PPCArch.h"
 #include "dolphin/gx.h"
 #include "dolphin/hw_regs.h"
@@ -11,7 +11,7 @@
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
@@ -19,14 +19,14 @@
 
 static GXDrawSyncCallback TokenCB;
 static GXDrawDoneCallback DrawDoneCB;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static GXBool DrawDone;
 #else
 static u8 DrawDone;
 #endif
 static OSThreadQueue FinishQueue;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetMisc(GXMiscToken token, u32 val) {
   switch (token) {
   case GX_MT_NULL:
@@ -41,7 +41,7 @@ void GXSetMisc(GXMiscToken token, u32 val)
         __GXData->bpSentNot = 1;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   case GX_MT_XF_FLUSH:
     __GXData->vNum = val;
     __GXData->vNumNot = !__GXData->vNum;
@@ -67,7 +67,7 @@ void GXSetMisc(GXMiscToken token, u32 val)
         break;
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     break;
 
   case GX_MT_DL_SAVE_CONTEXT:
@@ -82,7 +82,7 @@ void GXSetMisc(GXMiscToken token, u32 val)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXFlush(void) {
   if (__GXData->dirtyState) {
     __GXSetDirtyState();
@@ -117,7 +117,7 @@ void GXFlush(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void __GXAbortWait(u32 clocks) {
   OSTime time0, time1;
   time0 = OSGetTime();
@@ -134,7 +134,7 @@ void GXResetWriteGatherPipe(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #if SDK_VERSION == SDK_VERSION_DOLPHIN_2003_02
 static void __GXAbortWaitPECopyDone(void) {
   u32 peCnt0, peCnt1;
@@ -182,10 +182,10 @@ static void __GXAbortWaitPECopyDone() {
     } while (peCnt0 != peCnt1);
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-#define GX_GP_FIFO_READY __GXIsGPFifoReady()
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 #define GX_GP_FIFO_READY (GXGetGPFifo() != (GXFifoObj*)NULL)
+#else
+#define GX_GP_FIFO_READY __GXIsGPFifoReady()
 #endif
 
 void __GXAbort() {
@@ -200,7 +200,7 @@ void __GXAbort() {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXAbortFrame(void) {
   __GXAbort();
   __GXCleanGPFifo();
@@ -223,7 +223,7 @@ void GXSetDrawSync(u16 token)
     BOOL enabled;
     u32 reg;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   enabled = OSDisableInterrupts();
   reg = token | 0x48000000;
   GX_WRITE_RAS_REG(reg);
@@ -259,7 +259,7 @@ void GXSetDrawDone(void)
     u32 reg;
     BOOL enabled;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   enabled = OSDisableInterrupts();
   reg = 0x45000002;
   GX_WRITE_RAS_REG(reg);
@@ -277,7 +277,7 @@ void GXSetDrawDone(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXWaitDrawDone(void) {
   BOOL interrupts;
   interrupts = OSDisableInterrupts();
@@ -290,7 +290,7 @@ void GXWaitDrawDone(void)
     BOOL enabled;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   OSRestoreInterrupts(interrupts);
 #else
     CHECK_GXBEGIN(0x216, "GXWaitDrawDone");
@@ -303,7 +303,7 @@ void GXWaitDrawDone(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXDrawDone(void) {
   GXSetDrawDone();
   GXWaitDrawDone();
@@ -316,7 +316,7 @@ void GXDrawDone(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPixModeSync(void) {
 
   GX_WRITE_RAS_REG(__GXData->peCtrl);
@@ -330,7 +330,7 @@ void GXPixModeSync(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeAlphaMode(GXCompare func, u8 threshold) {
   u32 reg;
 #else
@@ -339,7 +339,7 @@ void GXTexModeSync(void)
     u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = (func << 8) | threshold;
   GX_SET_PE_REG(3, reg);
 #else
@@ -350,12 +350,12 @@ void GXTexModeSync(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeAlphaRead(GXAlphaReadMode mode) {
   u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = 0;
   SET_REG_FIELD(reg, 2, 0, mode);
   SET_REG_FIELD(reg, 1, 2, 1);
@@ -370,7 +370,7 @@ void GXPokeAlphaMode(GXCompare func, u8 threshold)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeAlphaUpdate(GXBool update_enable) {
   u32 reg;
 #else
@@ -379,7 +379,7 @@ void GXPokeAlphaRead(GXAlphaReadMode mode)
     u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = GX_GET_PE_REG(1);
   SET_REG_FIELD(reg, 1, 4, update_enable);
   GX_SET_PE_REG(1, reg);
@@ -391,7 +391,7 @@ void GXPokeAlphaRead(GXAlphaReadMode mode)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor dst_factor,
                      GXLogicOp op) {
   u32 reg;
@@ -401,7 +401,7 @@ void GXPokeAlphaUpdate(GXBool update_enable)
     u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = GX_GET_PE_REG(1);
   SET_REG_FIELD(reg, 1, 0, (type == GX_BM_BLEND) || (type == GX_BM_SUBTRACT));
   SET_REG_FIELD(reg, 1, 11, (type == GX_BM_SUBTRACT));
@@ -418,7 +418,7 @@ void GXPokeAlphaUpdate(GXBool update_enable)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeColorUpdate(GXBool update_enable) {
   u32 reg;
 #else
@@ -427,7 +427,7 @@ void GXPokeBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor d
     u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = GX_GET_PE_REG(1);
   SET_REG_FIELD(reg, 1, 3, update_enable);
   GX_SET_PE_REG(1, reg);
@@ -444,7 +444,7 @@ void GXPokeBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor d
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeDstAlpha(GXBool enable, u8 alpha) {
   u32 reg = 0;
 #else
@@ -453,7 +453,7 @@ void GXPokeColorUpdate(GXBool update_enable)
     u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   SET_REG_FIELD(reg, 8, 0, alpha);
   SET_REG_FIELD(reg, 1, 8, enable);
   GX_SET_PE_REG(2, reg);
@@ -464,7 +464,7 @@ void GXPokeColorUpdate(GXBool update_enable)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeDither(GXBool dither) {
   u32 reg;
 #else
@@ -473,7 +473,7 @@ void GXPokeDstAlpha(GXBool enable, u8 alpha)
     u32 reg = 0;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = GX_GET_PE_REG(1);
   SET_REG_FIELD(reg, 1, 2, dither);
   GX_SET_PE_REG(1, reg);
@@ -484,7 +484,7 @@ void GXPokeDstAlpha(GXBool enable, u8 alpha)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPokeZMode(GXBool compare_enable, GXCompare func, GXBool update_enable) {
   u32 reg = 0;
 #else
@@ -493,7 +493,7 @@ void GXPokeDither(GXBool dither)
     u32 reg;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   SET_REG_FIELD(reg, 1, 0, compare_enable);
   SET_REG_FIELD(reg, 3, 1, func);
   SET_REG_FIELD(reg, 1, 4, update_enable);
@@ -505,7 +505,7 @@ void GXPokeDither(GXBool dither)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXPeekZ(u16 x, u16 y, u32 *z) {
   u32 addr = (u32)OSPhysicalToUncached(0x08000000);
 #else
@@ -514,7 +514,7 @@ void GXPokeZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
     u32 reg = 0;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   SET_REG_FIELD(addr, 10, 2, x);
   SET_REG_FIELD(addr, 10, 12, y);
   SET_REG_FIELD(addr, 2, 22, 1);
@@ -527,7 +527,7 @@ void GXPokeZMode(GXBool compare_enable, GXCompare func, GXBool update_enable)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 GXDrawSyncCallback GXSetDrawSyncCallback(GXDrawSyncCallback callback) {
   GXDrawSyncCallback prevCB;
   BOOL interrupts;
@@ -537,7 +537,7 @@ void GXPeekARGB(u16 x, u16 y, u32 *color)
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   prevCB = TokenCB;
   interrupts = OSDisableInterrupts();
   TokenCB = callback;
@@ -551,7 +551,7 @@ void GXPeekARGB(u16 x, u16 y, u32 *color)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void GXTokenInterruptHandler(__OSInterrupt interrupt, OSContext *context) {
   u16 token;
   OSContext exceptionContext;
@@ -562,7 +562,7 @@ void GXPokeARGB(u16 x, u16 y, u32 color)
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   token = GX_GET_PE_REG(7);
   if (TokenCB != NULL) {
     OSClearContext(&exceptionContext);
@@ -582,7 +582,7 @@ void GXPokeARGB(u16 x, u16 y, u32 color)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 GXDrawDoneCallback GXSetDrawDoneCallback(GXDrawDoneCallback callback) {
   GXDrawDoneCallback prevCB;
   BOOL interrupts;
@@ -592,7 +592,7 @@ void GXPeekZ(u16 x, u16 y, u32 *z)
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   prevCB = DrawDoneCB;
   interrupts = OSDisableInterrupts();
   DrawDoneCB = callback;
@@ -606,7 +606,7 @@ void GXPeekZ(u16 x, u16 y, u32 *z)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void GXFinishInterruptHandler(__OSInterrupt interrupt, OSContext *context) {
   OSContext exceptionContext;
   u32 reg;
@@ -616,7 +616,7 @@ void GXPokeZ(u16 x, u16 y, u32 z)
     u32 addr = (u32)OSPhysicalToUncached(0x08000000);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = GX_GET_PE_REG(5);
   SET_REG_FIELD(reg, 1, 3, 1);
   GX_SET_PE_REG(5, reg);
@@ -637,7 +637,7 @@ void GXPokeZ(u16 x, u16 y, u32 z)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXPEInit(void) {
   u32 reg;
   __OSSetInterruptHandler(0x12, GXTokenInterruptHandler);

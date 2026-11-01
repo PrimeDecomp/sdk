@@ -119,7 +119,7 @@ void __CARDExiHandler(s32 chan, OSContext* context);
 void __CARDExtHandler(s32 chan, OSContext* context);
 void __CARDUnlockedHandler(s32 chan, OSContext* context);
 s32 __CARDAccess(CARDControl* card, CARDDir* ent);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 BOOL __CARDIsWritable(CARDDir* ent);
 #else
 s32 __CARDIsWritable(CARDControl* card, CARDDir* ent);

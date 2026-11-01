@@ -284,24 +284,16 @@ asm void OSLoadContext(register OSContext* context) {
   lwz      r6,context->srr0
   addi     r5,r4,__RAS_OSDisableInterrupts_begin@l
   cmplw    r6,r5
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2002_06
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_06
   blt      _notInRAS
-#else
-  ble      _notInRAS
-#endif
 #else
   ble      _notInRAS
 #endif
   lis      r4,__RAS_OSDisableInterrupts_end@ha
   addi     r0,r4,__RAS_OSDisableInterrupts_end@l
   cmplw    r6,r0
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2002_06
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_06
   bgt      _notInRAS
-#else
-  bge      _notInRAS
-#endif
 #else
   bge      _notInRAS
 #endif
@@ -400,9 +392,8 @@ asm int OSSwitchFiber(register u32 pc, register u32 newsp) {
   blr
   // clang-format on
 }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
-
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+
 asm int OSSwitchFiberEx(u32 r3, u32 r4, u32 r5, u32 r6, register u32 pc, register u32 newsp) {
   // clang-format off
   nofralloc
@@ -420,7 +411,6 @@ asm int OSSwitchFiberEx(u32 r3, u32 r4, u32 r5, u32 r6, register u32 pc, registe
   blr
   // clang-format on
 }
-#endif
 #endif
 
 void OSClearContext(register OSContext* context) {

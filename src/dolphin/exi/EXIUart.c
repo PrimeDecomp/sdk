@@ -119,7 +119,7 @@ static int QueueLength(void) {
 
 u32 WriteUARTN(const void* buf, unsigned long len) {
   u32 cmd;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   s32 enabled;
 #endif
   int qLen;
@@ -131,12 +131,12 @@ u32 WriteUARTN(const void* buf, unsigned long len) {
   if (Enabled != EXI_MAGIC)
     return 2;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   enabled = OSDisableInterrupts();
 #endif
   locked = EXILock(Chan, Dev, 0);
   if (!locked) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     OSRestoreInterrupts(enabled);
 #endif
     return 0;
@@ -181,7 +181,7 @@ u32 WriteUARTN(const void* buf, unsigned long len) {
   }
 
   EXIUnlock(Chan);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   OSRestoreInterrupts(enabled);
 #endif
   return error;

@@ -12,7 +12,7 @@ typedef struct XY {
 } XY;
 
 static XY XYNTSC[12] = {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     {263 - 17, 2}, {15, 18}, {30, 9}, {44, 6},  {52, 5},  {65, 4},
 #else
     {263 - 17, 2}, {14, 19}, {30, 9}, {44, 6},  {52, 5},  {65, 4},

@@ -9,10 +9,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2002_11
-#define OS_MODULE_VERSION 3
-#else
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
 #define OS_MODULE_VERSION 2
+#else
+#define OS_MODULE_VERSION 3
 #endif
 typedef struct OSModuleHeader OSModuleHeader;
 

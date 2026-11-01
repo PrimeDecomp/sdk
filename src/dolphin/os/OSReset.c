@@ -25,7 +25,7 @@ typedef struct OSResetQueue {
   OSResetFunctionInfo* last;
 } OSResetQueue;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 OSResetQueue ResetFunctionQueue;
 #else
 static OSResetQueue ResetFunctionQueue;
@@ -64,7 +64,7 @@ void OSRegisterResetFunction(OSResetFunctionInfo* func) {
   tmp->next = func;
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 BOOL __OSCallResetFunctions(u32 arg0) {
   OSResetFunctionInfo* iter;
   s32 retCode = 0;
@@ -75,7 +75,7 @@ BOOL __OSCallResetFunctions(BOOL final) {
   u32 priority;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   for (iter = ResetFunctionQueue.first; iter != NULL; iter = iter->next) {
     retCode |= !iter->func(arg0);
 #else
@@ -90,7 +90,7 @@ BOOL __OSCallResetFunctions(BOOL final) {
     info = info->next;
 #endif
   }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   retCode |= !__OSSyncSram();
   if (retCode) {
 #else
@@ -158,13 +158,13 @@ static void KillThreads(void) {
     case 1:
     case 4:
       OSCancelThread(thread);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       break;
 #else
       continue;
 #endif
     default:
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       break;
 #else
       continue;
@@ -180,22 +180,20 @@ void __OSDoHotReset(s32 arg0) {
   Reset(arg0 * 8);
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
 #else
 static void __OSShutdownDevices(BOOL doRecal) {
 #endif
   BOOL rc;
   BOOL disableRecalibration;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   u32 unk[3];
   OSDisableScheduler();
-#else
-
 #endif
   __OSStopAudioSystem();
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (reset == OS_RESET_SHUTDOWN) {
 #else
   if (!doRecal) {
@@ -228,7 +226,7 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
 #endif
 
   if (reset == OS_RESET_HOTRESET && forceMenu) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     OSSram* sram;
 
 #endif
@@ -236,14 +234,14 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
     sram->flags |= 0x40;
     __OSUnlockSram(TRUE);
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     while (!__OSSyncSram())
       ;
 #else
     resetCode = 0;
 #endif
   }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   OSDisableInterrupts();
   __OSCallResetFunctions(TRUE);
   LCDisable();
@@ -260,7 +258,7 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
   if (reset == OS_RESET_HOTRESET) {
     __OSDoHotReset(resetCode);
   } else if (reset == OS_RESET_RESTART) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     KillThreads();
 #else
     if (forceMenu == TRUE) {
@@ -268,16 +266,14 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
     }
 #endif
     OSEnableScheduler();
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     __OSReboot(resetCode, forceMenu);
 #else
     __OSReboot(resetCode, bootThisDol);
 #endif
   }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   KillThreads();
-#else
-
 #endif
   memset(OSPhysicalToCached(0x40), 0, 0xcc - 0x40);
   memset(OSPhysicalToCached(0xd4), 0, 0xe8 - 0xd4);
@@ -285,14 +281,14 @@ void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu) {
   memset(OSPhysicalToCached(0x3000), 0, 0xc0);
   memset(OSPhysicalToCached(0x30c8), 0, 0xd4 - 0xc8);
   memset(OSPhysicalToCached(0x30e2), 0, 1);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 
   __PADDisableRecalibration(disableRecalibration);
 #endif
 }
 
 u32 OSGetResetCode(void) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (DAT_800030e2 != 0) {
     return 0x80000000;
   }

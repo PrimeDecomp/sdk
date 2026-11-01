@@ -71,13 +71,13 @@ static void BlockWriteCallback(s32 chan, s32 result) {
     goto error;
   }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   card->xferred += CARD_PAGE_SIZE;
 #else
   card->xferred += card->pageSize;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   card->addr += CARD_PAGE_SIZE;
   (u8*)card->buffer += CARD_PAGE_SIZE;
 #else
@@ -118,7 +118,7 @@ s32 __CARDWrite(s32 chan, u32 addr, s32 length, void* dst, CARDCallback callback
   }
 
   card->xferCallback = callback;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   card->repeat = (int)(length / CARD_PAGE_SIZE);
 #else
   card->repeat = (int)(length / card->pageSize);

@@ -3,7 +3,7 @@
 
 DestructorChain* __global_destructor_chain;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 extern void* __register_global_object(void* object, void* destructor, void* regmem) {
 #else
 void* __register_global_object(void* object, void* destructor, void* regmem) {
@@ -24,7 +24,7 @@ void __destroy_global_chain(void) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 __declspec(section
            ".dtors") static void* const __destroy_global_chain_reference = __destroy_global_chain;
 #else

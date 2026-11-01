@@ -4,7 +4,7 @@
 #include <float.h>
 #include <math.h>
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static int __count_trailing_zerol(unsigned long x) {
   int result = 0;
   int bits_not_checked = sizeof(unsigned long) * 8;
@@ -35,41 +35,9 @@ static int __count_trailing_zero(double x) {
   return (int)(sizeof(unsigned long) * 8 + __count_trailing_zerol(l[0] | 0x00100000));
 }
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static inline int __count_trailing_zero(double x) {
   return __builtin___count_trailing_zero64(*(unsigned long long *)&x | 0x0010000000000000ULL);
 }
-#else
-static int __count_trailing_zerol(unsigned long x) {
-  int result = 0;
-  int bits_not_checked = sizeof(unsigned long) * 8;
-  int n = bits_not_checked / 2;
-  int mask_size = n;
-  unsigned long mask = (~0UL) >> (bits_not_checked - n);
-  while (bits_not_checked) {
-    if (!(x & mask)) {
-      result += mask_size;
-      x >>= mask_size;
-      bits_not_checked -= mask_size;
-    } else if (mask == 1)
-      break;
-    if (n > 1)
-      n /= 2;
-    if (mask > 1) {
-      mask >>= n;
-      mask_size -= n;
-    }
-  }
-  return result;
-}
-
-static int __count_trailing_zero(double x) {
-  unsigned long* l = (unsigned long*)&x;
-  if (l[1] != 0)
-    return __count_trailing_zerol(l[1]);
-  return (int)(sizeof(unsigned long) * 8 + __count_trailing_zerol(l[0] | 0x00100000));
-}
-#endif
 #endif
 
 static int __must_round(const decimal* d, int pos) {
@@ -120,7 +88,7 @@ static void __rounddec(decimal* d, int digits) {
 
 static void __ull2dec(decimal* result, unsigned long long integer) {
   result->sgn = 0;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (integer == 0) {
     result->exp = 0;
     result->sig.length = 1;
@@ -131,15 +99,13 @@ static void __ull2dec(decimal* result, unsigned long long integer) {
     integer = -integer;
     result->sgn = 1;
   }
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
   if (integer == 0) {
     result->exp = 0;
     result->sig.length = 1;
     result->sig.text[0] = 0;
     return;
   }
-#endif
 #endif
   result->sig.length = 0;
   for (; integer != 0; integer /= 10)
@@ -233,7 +199,7 @@ static void __str2dec(decimal* d, const char* s, short exp) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void __two_exp(decimal* result, short exp) {
 #else
 static void __two_exp(decimal* result, long exp) {
@@ -305,13 +271,13 @@ static void __two_exp(decimal* result, long exp) {
   }
   {
     decimal x2;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     __two_exp(&x2, (short)(exp / 2));
 #else
     __two_exp(&x2, exp / 2);
 #endif
     __timesdec(result, &x2, &x2);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   }
   if (exp & 1) {
     decimal temp = *result;
@@ -338,7 +304,7 @@ static void __two_exp(decimal* result, long exp) {
 
 static int __equals_dec(const decimal *x, const decimal *y) {
   if (x->sig.text[0] == 0) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (y->sig.text[0] == 0)
 #else
     if (y->sig.text[0] == 0) {
@@ -351,7 +317,7 @@ static int __equals_dec(const decimal *x, const decimal *y) {
     return 0;
   }
   if (y->sig.text[0] == 0) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (x->sig.text[0] == 0)
 #else
     if (x->sig.text[0] == 0) {
@@ -366,14 +332,14 @@ static int __equals_dec(const decimal *x, const decimal *y) {
   if (x->exp == y->exp) {
     int i;
     int l = x->sig.length;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (l > y->sig.length)
 #else
 
     if (l > y->sig.length) {
 #endif
       l = y->sig.length;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     for (i = 0; i < l; ++i)
       if (x->sig.text[i] != y->sig.text[i])
 #else
@@ -383,7 +349,20 @@ static int __equals_dec(const decimal *x, const decimal *y) {
       if (x->sig.text[i] != y->sig.text[i]) {
 #endif
         return 0;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+    if (l == x->sig.length) {
+      for (; i < y->sig.length; ++i)
+        if (y->sig.text[i] != 0)
+          return 0;
+    } else {
+      for (; i < x->sig.length; ++i)
+        if (x->sig.text[i] != 0)
+          return 0;
+    }
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+      }
+    }
+
     if (l == x->sig.length) {
       for (; i < y->sig.length; ++i)
         if (y->sig.text[i] != 0)
@@ -397,7 +376,6 @@ static int __equals_dec(const decimal *x, const decimal *y) {
       }
     }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     if (l == x->sig.length) {
       x = y;
     }
@@ -407,17 +385,6 @@ static int __equals_dec(const decimal *x, const decimal *y) {
         return 0;
       }
     }
-#else
-    if (l == x->sig.length) {
-      for (; i < y->sig.length; ++i)
-        if (y->sig.text[i] != 0)
-          return 0;
-    } else {
-      for (; i < x->sig.length; ++i)
-        if (x->sig.text[i] != 0)
-          return 0;
-    }
-#endif
 #endif
     return 1;
   }
@@ -537,14 +504,10 @@ done:
 }
 
 static void __num2dec_internal(decimal* d, double x) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
   char sgn = signbit(x) != 0;
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
   char sgn = __signbitd(x) != 0;
-#else
-  char sgn = signbit(x) != 0;
-#endif
 #endif
   if (x == 0.0) {
     d->sgn = sgn;
@@ -566,25 +529,25 @@ static void __num2dec_internal(decimal* d, double x) {
   {
     int exp;
     double frac = frexp(x, &exp);
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     short num_bits_extract = (short)(DBL_MANT_DIG - __count_trailing_zero(frac));
 #else
     int num_bits_extract = DBL_MANT_DIG - __count_trailing_zero(frac);
 #endif
     double integer;
     decimal int_d, pow2_d;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     __two_exp(&pow2_d, (short)(exp - num_bits_extract));
     frac = modf(ldexp(frac, num_bits_extract), &integer);
     __ull2dec(&int_d, (unsigned long long)integer);
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
     __two_exp(&pow2_d, exp - num_bits_extract);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-    __ull2dec(&int_d, (unsigned long long)ldexp(frac, num_bits_extract));
-#else
     frac = modf(ldexp(frac, num_bits_extract), &integer);
     __ull2dec(&int_d, (unsigned long long)integer);
-#endif
+
+#else
+    __two_exp(&pow2_d, exp - num_bits_extract);
+    __ull2dec(&int_d, (unsigned long long)ldexp(frac, num_bits_extract));
 
 #endif
     __timesdec(d, &int_d, &pow2_d);
@@ -622,7 +585,7 @@ double __dec2num(const decimal* d) {
     *ll = 0x7FF0000000000000;
     if (d->sgn)
       *ll |= 0x8000000000000000;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
     if (d->sig.length == 1)
       *ll |= 0x0008000000000000;
     else {
@@ -651,37 +614,7 @@ double __dec2num(const decimal* d) {
         *ll |= 0x0008000000000000;
     }
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     *ll |= 0x0008000000000000;
-#else
-    if (d->sig.length == 1)
-      *ll |= 0x0008000000000000;
-    else {
-      unsigned char* p = (unsigned char*)&result + 1;
-      int placed_non_zero = 0;
-      int low = 1;
-      int i;
-      int e = d->sig.length;
-      if (e > 14)
-        e = 14;
-      for (i = 1; i < e; ++i) {
-        unsigned char c = d->sig.text[i];
-        if (isdigit(c))
-          c -= '0';
-        else
-          c = (unsigned char)(tolower(c) - 'a' + 10);
-        if (c != 0)
-          placed_non_zero = 1;
-        if (low)
-          *p++ |= c;
-        else
-          *p = (unsigned char)(c << 4);
-        low = !low;
-      }
-      if (!placed_non_zero)
-        *ll |= 0x0008000000000000;
-    }
-#endif
 #endif
     return result;
   }
@@ -697,7 +630,7 @@ double __dec2num(const decimal* d) {
       *i -= '0';
     dec.exp += dec.sig.length - 1;
     exponent = dec.exp;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     {
       decimal max;
       __str2dec(&max, "179769313486231580793728714053034151", 308);
@@ -729,25 +662,17 @@ double __dec2num(const decimal* d) {
       first_guess *= pow(5.0, exponent);
     first_guess = ldexp(first_guess, exponent);
     if (isinf(first_guess)) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
       decimal max;
       __str2dec(&max, "179769313486231580793729011405303420", 308);
       if (__less_dec(&max, &dec))
         goto done;
       first_guess = DBL_MAX;
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
       first_guess = 1.7976931348623157e308;
-#else
-      decimal max;
-      __str2dec(&max, "179769313486231580793729011405303420", 308);
-      if (__less_dec(&max, &dec))
-        goto done;
-      first_guess = DBL_MAX;
-#endif
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     {
       decimal feedback1;
       __num2dec_internal(&feedback1, first_guess);
@@ -798,63 +723,7 @@ double __dec2num(const decimal* d) {
           first_guess = next_guess;
       }
     }
-#else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-    {
-      decimal feedback1, feedback2, difflow, diffhigh;
-      double next_guess;
-      unsigned long long *ull = (unsigned long long *)&next_guess;
-      int guessed_low = 0;
-      __num2dec_internal(&feedback1, first_guess);
-
-      if (__equals_dec(&feedback1, &dec)) {
-        goto done;
-      }
-
-      if (__less_dec(&feedback1, &dec)) {
-        guessed_low = 1;
-      }
-
-      next_guess = first_guess;
-      while (1) {
-        if (guessed_low) {
-          ++*ull;
-          if (isinf(next_guess)) {
-            goto done;
-          }
-        } else {
-          --*ull;
-        }
-
-        __num2dec_internal(&feedback2, next_guess);
-        if (guessed_low && !__less_dec(&feedback2, &dec)) {
-          break;
-        } else if (!guessed_low && !__less_dec(&dec, &feedback2)) {
-          difflow = feedback1;
-          feedback1 = feedback2;
-          feedback2 = difflow;
-          {
-            double temp = first_guess;
-            first_guess = next_guess;
-            next_guess = temp;
-          }
-          break;
-        }
-        feedback1 = feedback2;
-        first_guess = next_guess;
-      }
-
-      __minus_dec(&difflow, &dec, &feedback1);
-      __minus_dec(&diffhigh, &feedback2, &dec);
-      if (__equals_dec(&difflow, &diffhigh)) {
-        if (*(unsigned long long *)&first_guess & 1) {
-          first_guess = next_guess;
-        }
-      } else if (!__less_dec(&difflow, &diffhigh)) {
-        first_guess = next_guess;
-      }
-    }
-#else
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
     {
       decimal feedback1;
       __num2dec_internal(&feedback1, first_guess);
@@ -909,7 +778,61 @@ double __dec2num(const decimal* d) {
           first_guess = next_guess;
       }
     }
-#endif
+#else
+    {
+      decimal feedback1, feedback2, difflow, diffhigh;
+      double next_guess;
+      unsigned long long *ull = (unsigned long long *)&next_guess;
+      int guessed_low = 0;
+      __num2dec_internal(&feedback1, first_guess);
+
+      if (__equals_dec(&feedback1, &dec)) {
+        goto done;
+      }
+
+      if (__less_dec(&feedback1, &dec)) {
+        guessed_low = 1;
+      }
+
+      next_guess = first_guess;
+      while (1) {
+        if (guessed_low) {
+          ++*ull;
+          if (isinf(next_guess)) {
+            goto done;
+          }
+        } else {
+          --*ull;
+        }
+
+        __num2dec_internal(&feedback2, next_guess);
+        if (guessed_low && !__less_dec(&feedback2, &dec)) {
+          break;
+        } else if (!guessed_low && !__less_dec(&dec, &feedback2)) {
+          difflow = feedback1;
+          feedback1 = feedback2;
+          feedback2 = difflow;
+          {
+            double temp = first_guess;
+            first_guess = next_guess;
+            next_guess = temp;
+          }
+          break;
+        }
+        feedback1 = feedback2;
+        first_guess = next_guess;
+      }
+
+      __minus_dec(&difflow, &dec, &feedback1);
+      __minus_dec(&diffhigh, &feedback2, &dec);
+      if (__equals_dec(&difflow, &diffhigh)) {
+        if (*(unsigned long long *)&first_guess & 1) {
+          first_guess = next_guess;
+        }
+      } else if (!__less_dec(&difflow, &diffhigh)) {
+        first_guess = next_guess;
+      }
+    }
 #endif
   done:
     if (dec.sgn)

@@ -53,7 +53,7 @@ s32 CARDFastDeleteAsync(s32 chan, s32 fileNo, CARDCallback callback) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   result = __CARDAccess(card, ent);
 #else
   result = __CARDIsWritable(card, ent);

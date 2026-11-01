@@ -88,7 +88,7 @@ void __close_all() {
   FILE* p = &__files[0];
   FILE* plast;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   // __begin_critical_region(2);
 #else
   __begin_critical_region(files_access);
@@ -110,7 +110,7 @@ void __close_all() {
     }
   }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   // __end_critical_region(2);
 #else
   __end_critical_region(files_access);

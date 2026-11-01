@@ -156,7 +156,7 @@ static void __DTKCallbackForPlaylist(s32 result, DVDCommandBlock* block) {
 static void __DTKCallbackForAIInterrupt(u32 result) {
   AISetStreamTrigger(result + __DTKInterruptFrequency);
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (__DTKCurrentTrack != NULL) {
 #else
   if (__DTKCurrentTrack != NULL && !__busy_for_ais_isr) {
@@ -264,13 +264,13 @@ u32 DTKQueueTrack(char* fileName, DTKTrack* track, u32 eventMask, DTKCallback ca
   return 0;
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void DTKFlushTracks(DTKFlushCallback callback) {
 #else
 BOOL DTKFlushTracks(DTKFlushCallback callback) {
 #endif
   u32 oldState;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (__DTKState != 3) {
     oldState = __DTKState;
     __DTKState = 3;
@@ -303,7 +303,7 @@ void DTKSetSampleRate(u32 rate) {}
 
 void DTKSetRepeatMode(u32 repeat) { __DTKRepeatMode = repeat; }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void DTKSetState(u32 state) {
   if (__DTKState == state || __DTKState == 3) {
     return;
@@ -374,7 +374,7 @@ BOOL DTKSetState(u32 state) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void DTKNextTrack() {
   if (__DTKState != 3 && __DTKCurrentTrack != NULL) {
 #else
@@ -415,7 +415,7 @@ void DTKSetVolume(u8 left, u8 right) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 u16 DTKGetVolume(void) { return (__DTKVolumeL << 8) | __DTKVolumeR; }
 
 #endif

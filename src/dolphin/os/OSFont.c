@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include <dolphin/OSRtcPriv.h>
 #include <dolphin/hw_regs.h>
 #include <dolphin/os.h>
@@ -10,7 +10,7 @@
 #include "dolphin/vi.h"
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static OSFontHeader *FontData;
 static u8 *SheetImage;
 static u8 *WidthTable;
@@ -23,7 +23,7 @@ u8 OSUTF32toANSI(u32 utf32);
 u16 OSUTF32toSJIS(u32 utf32);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static u16 HankakuToCode[] = {
     0x20C, 0x20D, 0x20E, 0x20F, 0x210, 0x211, 0x212, 0x213, 0x214, 0x215, 0x216, 0x217, 0x218,
     0x219, 0x21A, 0x21B, 0x21C, 0x21D, 0x21E, 0x21F, 0x220, 0x221, 0x222, 0x223, 0x224, 0x225,
@@ -45,7 +45,7 @@ static u16 HankakuToCode[] = {
 typedef char* (*ParseStringCallback)(u16, char*, OSFontHeader**, int*);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static u16 Zenkaku2Code[] = {
     0x000, 0x001, 0x002, 0x003, 0x004, 0x005, 0x006, 0x007, 0x008, 0x009, 0x00A, 0x00B, 0x00C,
     0x00D, 0x00E, 0x00F, 0x010, 0x011, 0x012, 0x013, 0x014, 0x015, 0x016, 0x017, 0x018, 0x019,
@@ -150,7 +150,7 @@ static ParseStringCallback ParseString;
 static u16 FontEncode = 0xFFFF;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static inline BOOL IsSjisLeadByte(u8 c) {
   return (0x81 <= c && c <= 0x9F) || (0xE0 <= c && c <= 0xFC);
 #else
@@ -349,7 +349,7 @@ static BOOL IsSjisLeadByte(u8 c) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static inline BOOL IsSjisTrailByte(u8 c) { return (0x40 <= c && c <= 0xFC) && (c != 0x7F); }
 #else
 static BOOL IsSjisTrailByte(u8 c) {
@@ -357,7 +357,7 @@ static BOOL IsSjisTrailByte(u8 c) {
 }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static int GetFontCode(u16 code) {
   u16 encode = OSGetFontEncode();
 #else
@@ -368,7 +368,7 @@ static int GetFontCode(u16 encode, u16 code) {
         }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (encode == OS_FONT_ENCODE_SJIS) {
     if (code >= 0x20 && code <= 0xDF) {
       return HankakuToCode[code - 0x20];
@@ -409,7 +409,7 @@ static int GetFontCode(u16 encode, u16 code) {
 #endif
     }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (code > 0x889E && code <= 0x9872) {
       int i = ((code >> 8) - 0x88) * 188;
       int j = (code & 0xFF);
@@ -418,7 +418,7 @@ static int GetFontCode(u16 encode, u16 code) {
 }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       if (!IsSjisTrailByte(j)) {
         return 0;
       }
@@ -437,7 +437,7 @@ static void Decode(u8* s, u8* d) {
     unsigned int code;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       j -= 0x40;
       if (j >= 0x40) {
         j--;
@@ -448,7 +448,7 @@ static void Decode(u8* s, u8* d) {
     r25 = *(int*)(s + 0xC);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       return (i + j + 0x2BE);
 #else
     q    = 0;
@@ -500,7 +500,7 @@ static u32 GetFontSize(u8* buf) {
 #endif
     }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (code >= 0x8140 && code < 0x879E) {
       int i = ((code >> 8) - 0x81) * 188;
       int j = (code & 0xFF);
@@ -595,7 +595,7 @@ static inline u32 GetFontSize(u8 *buf) {
 }
 
 u16 OSGetFontEncode(void) {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   static u16 fontEncode = 0xFFFF;
   if (fontEncode <= 1) {
     return fontEncode;
@@ -610,7 +610,7 @@ u16 OSGetFontEncode(void) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   case VI_PAL:
   case VI_MPAL:
   case VI_DEBUG:
@@ -634,7 +634,7 @@ u16 OSGetFontEncode(void) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   return fontEncode;
 #else
     ParseString = (ParseStringCallback)ParseStringS;
@@ -642,7 +642,7 @@ u16 OSGetFontEncode(void) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void ReadROM(void *buf, int length, int offset) {
   int len;
   while (length > 0) {
@@ -653,7 +653,7 @@ u16 OSSetFontEncode(u16 encode) {
     u16 prev;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     while (!__OSReadROM(buf, len, offset)) {
       ;
 #else
@@ -666,7 +666,7 @@ u16 OSSetFontEncode(u16 encode) {
 #endif
     }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     offset += len;
     (u8 *)buf += len;
   }
@@ -675,7 +675,7 @@ u16 OSSetFontEncode(u16 encode) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static inline u32 ReadFont(void *img) {
   if (OSGetFontEncode() == OS_FONT_ENCODE_SJIS) {
     ReadROM(img, OS_FONT_ROM_SIZE_SJIS, 0x1AFF00);
@@ -690,7 +690,7 @@ static void ReadROM(void* buf, int length, int offset) {
         length -= len;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   return GetFontSize(img);
 #else
         while (!__OSReadROM(buf, len, offset)) {
@@ -703,7 +703,7 @@ static void ReadROM(void* buf, int length, int offset) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 u32 OSLoadFont(OSFontHeader *fontData, void *temp) {
   u32 size;
 #else
@@ -712,7 +712,7 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
     u32 padding[1];
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   SheetImage = NULL;
   size = ReadFont(temp);
   if (size) {
@@ -728,7 +728,7 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (OSGetFontEncode() == OS_FONT_ENCODE_SJIS) {
       int fontCode;
       u8 *imageSrc;
@@ -747,7 +747,7 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       fontCode = GetFontCode(0x54);
       sheet = fontCode / CharsInSheet;
       numChars = fontCode - (sheet * CharsInSheet);
@@ -771,7 +771,7 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
         u16 imageT[4] = {0x2ABE, 0x003D, 0x003D, 0x003D};
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       imageSrc = (u8 *)FontData + FontData->sheetImage;
       imageSrc += ((sheet * FontData->sheetSize) >> 1);
 #else
@@ -784,7 +784,7 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
         column *= font->cellWidth;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       for (y = 4; y < 8; y++) {
         x = 0;
         src = imageSrc + ((((FontData->sheetWidth / 8) << 5) / 2) * ((row + y) / 8));
@@ -796,7 +796,7 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
         imageSrc += ((sheet * font->sheetSize) >> 1);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
         *(u16 *)src = imageT[y - 4];
       }
 #else
@@ -811,14 +811,14 @@ static u32 ReadFont(void* img, u16 encode, void* fontData) {
         }
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   }
 #endif
 
     return size;
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 char *OSGetFontTexel(char *string, void *image, long pos, long stride, long *width) {
   unsigned short code;
   unsigned char *src;
@@ -840,7 +840,7 @@ u32 OSLoadFont(OSFontHeader* fontData, void* tmp) {
     u32 size;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   // ASSERTLINE(0x1F6, FontData && !SheetImage);
 #else
     encode = OSGetFontEncode();
@@ -870,7 +870,7 @@ u32 OSLoadFont(OSFontHeader* fontData, void* tmp) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   code = (u8)*string;
   if (code == '\0') {
     return string;

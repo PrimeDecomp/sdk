@@ -1,12 +1,12 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx.h"
 #else
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
@@ -16,7 +16,7 @@ void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
 {
     u32 reg;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   switch (__GXData->perf0) {
   case GX_PERF0_VERTICES:
   case GX_PERF0_CLIP_VTX:
@@ -71,7 +71,7 @@ void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
     CHECK_GXBEGIN(0x86, "GXSetGPMetric");
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   switch (__GXData->perf1) {
   case GX_PERF1_TEXELS:
   case GX_PERF1_TX_IDLE:
@@ -163,7 +163,7 @@ void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXData->perf0 = perf0;
   switch (__GXData->perf0) {
   case GX_PERF0_VERTICES:
@@ -352,7 +352,7 @@ void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXData->perf1 = perf1;
   switch (__GXData->perf1) {
   case GX_PERF1_TEXELS:
@@ -497,7 +497,7 @@ void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXData->bpSentNot = 0;
 #else
     __GXData->perf1 = perf1;
@@ -534,7 +534,7 @@ void GXSetGPMetric(GXPerf0 perf0, GXPerf1 perf1)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXClearGPMetric(void) {
   u32 reg;
 #else
@@ -544,7 +544,7 @@ void GXReadGPMetric(u32 *cnt0, u32 *cnt1)
     u32 cpCtr0, cpCtr1, cpCtr2, cpCtr3;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   reg = 4;
   GX_SET_CP_REG(2, reg);
 #else
@@ -659,7 +659,7 @@ void GXClearGPMetric(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static u32 __GXReadCPCounterU32(u32 low, u32 high) {
   u32 previous;
   u32 lower;
@@ -680,7 +680,7 @@ u32 GXReadGP0Metric(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXReadGPMetric(u32* cnt0, u32* cnt1) {
   u32 cpCtr0, cpCtr1, cpCtr2, cpCtr3;
 #else
@@ -689,7 +689,7 @@ u32 GXReadGP1Metric(void)
     u32 cnt0, cnt1;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   cpCtr0 = __GXReadCPCounterU32(32, 33);
   cpCtr1 = __GXReadCPCounterU32(34, 35);
   cpCtr2 = __GXReadCPCounterU32(36, 37);
@@ -793,7 +793,7 @@ u32 GXReadGP1Metric(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetVCacheMetric(GXVCachePerf attr) {
   u32 reg;
 #else
@@ -814,7 +814,7 @@ void GXReadMemMetric(u32 *cp_req, u32 *tc_req, u32 *cpu_rd_req, u32 *cpu_wr_req,
 #pragma scheduling reset
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   SET_REG_FIELD(__GXData->perfSel, 4, 0, attr);
   GX_WRITE_SOME_REG4(8, 0x20, __GXData->perfSel, -12);
   reg = 1;
@@ -845,7 +845,7 @@ void GXClearMemMetric(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXReadVCacheMetric(u32* check, u32* miss, u32* stall) {
   *check = __GXReadCPCounterU32(40, 41);
   *miss = __GXReadCPCounterU32(42, 43);
@@ -877,7 +877,7 @@ void GXClearPixMetric(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXClearVCacheMetric(void) {
   GX_WRITE_SOME_REG4(8, 0, 0, -12);
 #else

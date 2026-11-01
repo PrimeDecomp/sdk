@@ -21,7 +21,7 @@ typedef struct SramControlBlock {
   void (*callback)(void);
 } SramControlBlock;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 ATTRIBUTE_ALIGN_DECL(32, static SramControlBlock Scb);
 #else
 static SramControlBlock Scb ATTRIBUTE_ALIGN(32);
@@ -259,7 +259,7 @@ BOOL __OSReadROM(void* buffer, s32 length, s32 offset) {
 }
 
 inline OSSram* __OSLockSramHACK() { return LockSram(0); }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 u32 OSGetSoundMode() {
   OSSram* sram;
   u32 mode;
@@ -359,8 +359,7 @@ void OSSetEuRgb60Mode(u32 mode) {
   sram->ntd |= mode;
   __OSUnlockSram(TRUE);
 }
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 u32 OSGetSoundMode() {
   OSSram* sram;
   u32 mode;
@@ -448,7 +447,6 @@ void OSSetEuRgb60Mode(u32 mode) {
   sram->ntd |= mode;
   __OSUnlockSram(TRUE);
 }
-#endif
 #endif
 
 u16 OSGetWirelessID(s32 channel) {

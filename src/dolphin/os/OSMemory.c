@@ -7,7 +7,7 @@
 vu16 __MEMRegs[64] : 0xCC004000;
 extern OSErrorHandler __OSErrorTable[16];
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static BOOL OnReset(BOOL final);
 
 static OSResetFunctionInfo ResetFunctionInfo = {
@@ -27,7 +27,6 @@ u32 OSGetPhysicalMemSize() { return *(u32*)(OSPhysicalToCached(0x0028)); }
 
 u32 OSGetConsoleSimulatedMemSize() { return *(u32*)(OSPhysicalToCached(0x00F0)); }
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static BOOL OnShutdown(BOOL final, u32 event);
 
 static OSShutdownFunctionInfo ShutdownFunctionInfo = {
@@ -50,26 +49,6 @@ static BOOL OnShutdown(BOOL final, u32 event) {
   }
   return TRUE;
 }
-#else
-static BOOL OnReset(BOOL final);
-
-static OSResetFunctionInfo ResetFunctionInfo = {
-    OnReset,
-    127,
-};
-
-static BOOL OnReset(BOOL final) {
-  if (final != FALSE) {
-    __MEMRegs[8] = 0xFF;
-    __OSMaskInterrupts(0xf0000000);
-  }
-  return TRUE;
-}
-
-u32 OSGetPhysicalMemSize() { return *(u32*)(OSPhysicalToCached(0x0028)); }
-
-u32 OSGetConsoleSimulatedMemSize() { return *(u32*)(OSPhysicalToCached(0x00F0)); }
-#endif
 #endif
 
 static void MEMIntrruptHandler(__OSInterrupt interrupt, OSContext* context) {
@@ -220,7 +199,6 @@ static asm void Config48MB() {
   // clang-format on
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static asm void ConfigMEM2_52MB() {
     // clang-format off
@@ -538,7 +516,6 @@ static asm void ConfigMEM_ES1_0() {
     // clang-format on
 }
 
-#endif
 
 #endif
 static asm void RealMode(register u32 addr) {
@@ -553,7 +530,7 @@ static asm void RealMode(register u32 addr) {
   // clang-format on
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __OSInitMemoryProtection() {
   u32 padding[8];
   u32 simulatedSize;
@@ -586,8 +563,44 @@ void __OSInitMemoryProtection() {
   __OSUnmaskInterrupts(OS_INTERRUPTMASK_MEM_ADDRESS);
   OSRestoreInterrupts(enabled);
 }
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+void __OSInitMemoryProtection() {
+  u32 padding[9];
+  u32 temp;
+  BOOL enabled;
+  u32 size;
+
+  size = OSGetConsoleSimulatedMemSize();
+  enabled = OSDisableInterrupts();
+
+  __MEMRegs[16] = 0;
+  __MEMRegs[8] = 0xFF;
+
+  __OSMaskInterrupts(OS_INTERRUPTMASK_MEM_0 | OS_INTERRUPTMASK_MEM_1 | OS_INTERRUPTMASK_MEM_2 |
+                     OS_INTERRUPTMASK_MEM_3);
+  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_0, MEMIntrruptHandler);
+  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_1, MEMIntrruptHandler);
+  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_2, MEMIntrruptHandler);
+  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_3, MEMIntrruptHandler);
+  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_ADDRESS, MEMIntrruptHandler);
+  OSRegisterResetFunction(&ResetFunctionInfo);
+
+  temp = OSGetConsoleSimulatedMemSize();
+  if (temp < OSGetPhysicalMemSize() && temp == 0x1800000) {
+    DCInvalidateRange((void*)0x81800000, 0x1800000);
+    __MEMRegs[20] = 2;
+  }
+
+  if (size <= 0x1800000) {
+    RealMode((u32)&Config24MB);
+  } else if (size <= 0x3000000) {
+    RealMode((u32)&Config48MB);
+  }
+
+  __OSUnmaskInterrupts(OS_INTERRUPTMASK_MEM_ADDRESS);
+  OSRestoreInterrupts(enabled);
+}
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static void BATConfig(void) {
   u32 mem1sim;
   u32 mem1phys;
@@ -650,42 +663,4 @@ void __OSInitMemoryProtection() {
   __OSUnmaskInterrupts(OS_INTERRUPTMASK_MEM_ADDRESS);
   OSRestoreInterrupts(enabled);
 }
-#else
-void __OSInitMemoryProtection() {
-  u32 padding[9];
-  u32 temp;
-  BOOL enabled;
-  u32 size;
-
-  size = OSGetConsoleSimulatedMemSize();
-  enabled = OSDisableInterrupts();
-
-  __MEMRegs[16] = 0;
-  __MEMRegs[8] = 0xFF;
-
-  __OSMaskInterrupts(OS_INTERRUPTMASK_MEM_0 | OS_INTERRUPTMASK_MEM_1 | OS_INTERRUPTMASK_MEM_2 |
-                     OS_INTERRUPTMASK_MEM_3);
-  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_0, MEMIntrruptHandler);
-  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_1, MEMIntrruptHandler);
-  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_2, MEMIntrruptHandler);
-  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_3, MEMIntrruptHandler);
-  __OSSetInterruptHandler(__OS_INTERRUPT_MEM_ADDRESS, MEMIntrruptHandler);
-  OSRegisterResetFunction(&ResetFunctionInfo);
-
-  temp = OSGetConsoleSimulatedMemSize();
-  if (temp < OSGetPhysicalMemSize() && temp == 0x1800000) {
-    DCInvalidateRange((void*)0x81800000, 0x1800000);
-    __MEMRegs[20] = 2;
-  }
-
-  if (size <= 0x1800000) {
-    RealMode((u32)&Config24MB);
-  } else if (size <= 0x3000000) {
-    RealMode((u32)&Config48MB);
-  }
-
-  __OSUnmaskInterrupts(OS_INTERRUPTMASK_MEM_ADDRESS);
-  OSRestoreInterrupts(enabled);
-}
-#endif
 #endif

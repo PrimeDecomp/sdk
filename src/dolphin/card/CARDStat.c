@@ -84,7 +84,7 @@ s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   result = __CARDAccess(card, ent);
   if (result == CARD_RESULT_NOPERM) {
     result = __CARDIsWritable(ent);
@@ -147,7 +147,7 @@ s32 CARDSetStatusAsync(s32 chan, s32 fileNo, CARDStat* stat, CARDCallback callba
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileNo];
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   result = __CARDAccess(card, ent);
 #else
   result = __CARDIsWritable(card, ent);

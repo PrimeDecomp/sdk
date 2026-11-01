@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx.h"
 #include "dolphin/os.h"
 #else
@@ -7,13 +7,13 @@
 #include <dolphin/os.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx/GXPriv.h"
 #else
 #include <dolphin/gx/__gx.h>
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void __GXXfVtxSpecs(void) {
   u32 nCols = 0;
   u32 nNrm;
@@ -33,7 +33,7 @@ static void __GXXfVtxSpecs(void) {
 #define CHECK_MTXIDX(line, attr, type)    ASSERTMSGLINE(line, (attr) > 8 || (type) <= 1, "GXSetVtxDesc: GX_VA_*MTXIDX accepts GX_NONE or GX_DIRECT only")
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   nCols = GET_REG_FIELD(__GXData->vcdLo, 2, 13) ? 1 : 0;
   nCols += GET_REG_FIELD(__GXData->vcdLo, 2, 15) ? 1 : 0;
   nNrm = __GXData->hasBiNrms ? 2 : __GXData->hasNrms ? 1 : 0;
@@ -52,7 +52,27 @@ static void __GXXfVtxSpecs(void) {
   GX_WRITE_XF_REG(8, reg);
   __GXData->bpSentNot = 1;
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+static void __GXXfVtxSpecs(void)
+{
+    u32 nCols = 0;
+    u32 nNrm;
+    u32 nTex;
+    u32 reg;
+
+    nNrm = __GXData->hasBiNrms ? 2 : __GXData->hasNrms ? 1 : 0;
+
+    nCols = 33 - __cntlzw(GET_REG_FIELD(__GXData->vcdLo, 4, 13));
+    nCols /= 2;
+
+    nTex = 33 - __cntlzw(GET_REG_FIELD(__GXData->vcdHi, 16, 0));
+    nTex /= 2;
+
+    reg = (nCols) | (nNrm << 2) | (nTex << 4);
+    GX_WRITE_XF_REG(8, reg);
+    __GXData->bpSentNot = 1;
+}
+#else
 static void __GXXfVtxSpecs(void)
 {
     u32 reg;
@@ -71,26 +91,6 @@ static void __GXXfVtxSpecs(void)
     reg = reg | nCols >> 1;
     reg = (nTex << 3) & ~0xF | reg;
     GX_WRITE_U32(reg | nNrm << 2);
-    __GXData->bpSentNot = 1;
-}
-#else
-static void __GXXfVtxSpecs(void)
-{
-    u32 nCols = 0;
-    u32 nNrm;
-    u32 nTex;
-    u32 reg;
-
-    nNrm = __GXData->hasBiNrms ? 2 : __GXData->hasNrms ? 1 : 0;
-
-    nCols = 33 - __cntlzw(GET_REG_FIELD(__GXData->vcdLo, 4, 13));
-    nCols /= 2;
-
-    nTex = 33 - __cntlzw(GET_REG_FIELD(__GXData->vcdHi, 16, 0));
-    nTex /= 2;
-
-    reg = (nCols) | (nNrm << 2) | (nTex << 4);
-    GX_WRITE_XF_REG(8, reg);
     __GXData->bpSentNot = 1;
 }
 #endif
@@ -140,7 +140,7 @@ static inline void SETVCDATTR(GXAttr Attr, GXAttrType Type)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static inline void SETVCDATTR(GXAttr Attr, GXAttrType Type) {
   switch (Attr) {
   case GX_VA_PNMTXIDX:
@@ -192,13 +192,13 @@ void GXSetVtxDesc(GXAttr attr, GXAttrType type)
         SET_REG_FIELD(0x118, __GXData->vcdLo, 2, 11, __GXData->nrmType);
 #endif
     } else {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       __GXData->hasNrms = 0;
 #else
         SET_REG_FIELD(0x00, __GXData->vcdLo, 2, 11, 0);
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     break;
   case GX_VA_NBT:
     if (Type != GX_NONE) {
@@ -245,7 +245,7 @@ void GXSetVtxDesc(GXAttr attr, GXAttrType type)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetVtxDesc(GXAttr attr, GXAttrType type) {
   SETVCDATTR(attr, type);
 
@@ -277,7 +277,7 @@ void GXSetVtxDescv(const GXVtxDescList *attrPtr)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetVtxDescv(GXVtxDescList *attrPtr) {
   while (attrPtr->attr != GX_VA_NULL) {
     SETVCDATTR(attrPtr->attr, attrPtr->type);
@@ -299,7 +299,7 @@ void __GXSetVCD(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXSetVCD(void) {
   GX_WRITE_SOME_REG4(8, 0x50, __GXData->vcdLo, -12);
   GX_WRITE_SOME_REG4(8, 0x60, __GXData->vcdHi, -12);
@@ -356,7 +356,7 @@ void __GXCalculateVLim() {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXCalculateVLim(void) {
   static u8 tbl1[] = {0, 4, 1, 2};
   static u8 tbl2[] = {0, 8, 1, 2};
@@ -367,7 +367,7 @@ void GXGetVtxDesc(GXAttr attr, GXAttrType *type)
     u32 cpType;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   GXCompCnt nc = 0;
   u32 vlm;
   u32 b;
@@ -379,7 +379,7 @@ void GXGetVtxDesc(GXAttr attr, GXAttrType *type)
     CHECK_ATTRNAME3(0x1CC, attr);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (__GXData->vNum != 0) {
     vl = __GXData->vcdLo;
     vh = __GXData->vcdHi;
@@ -415,7 +415,7 @@ void GXGetVtxDesc(GXAttr attr, GXAttrType *type)
 }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     vlm = GET_REG_FIELD(vl, 1, 0);
     vlm += (u8)GET_REG_FIELD(vl, 1, 1);
     vlm += (u8)GET_REG_FIELD(vl, 1, 2);
@@ -432,7 +432,7 @@ void GXGetVtxDescv(GXVtxDescList *vcd)
     GXAttr attr;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (nc == 1) {
       b = 3;
     } else {
@@ -446,7 +446,7 @@ void GXGetVtxDescv(GXVtxDescList *vcd)
 #endif
     }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     vlm += tbl3[(u8)GET_REG_FIELD(vl, 2, 11)] * b;
     vlm += tbl1[(u8)GET_REG_FIELD(vl, 2, 13)];
     vlm += tbl1[(u8)GET_REG_FIELD(vl, 2, 15)];
@@ -469,7 +469,7 @@ void GXGetVtxDescv(GXVtxDescList *vcd)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXClearVtxDesc(void) {
 
   __GXData->vcdLo = 0;
@@ -491,7 +491,7 @@ void GXClearVtxDesc(void)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static inline void SETVAT(u32 *va, u32 *vb, u32 *vc, GXAttr attr, GXCompCnt cnt, GXCompType type,
                           u8 shft) {
   switch (attr) {
@@ -579,7 +579,7 @@ static inline void SETVAT(u32 *va, u32 *vb, u32 *vc, GXAttr attr, GXCompCnt cnt,
         break;
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     break;
   case GX_VA_CLR0:
     SET_REG_FIELD(*va, 1, 13, cnt);
@@ -639,7 +639,7 @@ void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType typ
     u32 *vb;
     u32 *vc;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   va = &__GXData->vatA[vtxfmt];
   vb = &__GXData->vatB[vtxfmt];
   vc = &__GXData->vatC[vtxfmt];
@@ -651,7 +651,7 @@ void GXSetVtxAttrFmt(GXVtxFmt vtxfmt, GXAttr attr, GXCompCnt cnt, GXCompType typ
     CHECK_FRAC(0x2A0, frac);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXData->dirtyState |= 0x10;
   __GXData->dirtyVAT |= (u8)(1 << (u8)vtxfmt);
 #else
@@ -672,7 +672,7 @@ void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList *list)
     u32 *vb;
     u32 *vc;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   va = &__GXData->vatA[vtxfmt];
   vb = &__GXData->vatB[vtxfmt];
   vc = &__GXData->vatC[vtxfmt];
@@ -701,7 +701,7 @@ void GXSetVtxAttrFmtv(GXVtxFmt vtxfmt, const GXVtxAttrFmtList *list)
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __GXSetVAT(void) {
   u8 i;
 #else
@@ -719,7 +719,7 @@ void __GXSetVAT(void)
         }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   for (i = 0; i < 8; i++) {
     if (__GXData->dirtyVAT & (1 << (u8)i)) {
       GX_WRITE_SOME_REG4(8, i | 0x70, __GXData->vatA[i], i - 12);
@@ -733,17 +733,17 @@ void __GXSetVAT(void)
     } while (dirty != 0);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXData->dirtyVAT = 0;
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+    __GXData->dirtyVAT = 0;
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     GX_WRITE_U8(0);
-#endif
     __GXData->dirtyVAT = 0;
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetArray(GXAttr attr, const void *base_ptr, u8 stride) {
   s32 idx;
   GXAttr cpAttr;
@@ -753,7 +753,7 @@ static inline u8 GetFracForNrm(GXCompType type) {
     u8 frac;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (attr == GX_VA_NBT) {
     attr = GX_VA_NRM;
   }
@@ -772,7 +772,7 @@ static inline u8 GetFracForNrm(GXCompType type) {
     }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   cpAttr = attr - GX_VA_POS;
   phyAddr = (u32)base_ptr & ~0xC0000000;
 
@@ -794,7 +794,7 @@ static inline u8 GetFracForNrm(GXCompType type) {
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXInvalidateVtxCache(void) { GX_WRITE_U8(0x48); }
 #else
 void GXGetVtxAttrFmt(GXVtxFmt fmt, GXAttr attr, GXCompCnt *cnt, GXCompType *type, u8 *frac)
@@ -804,7 +804,7 @@ void GXGetVtxAttrFmt(GXVtxFmt fmt, GXAttr attr, GXCompCnt *cnt, GXCompType *type
     u32 *vc;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc src_param, u32 mtx,
                        GXBool normalize, u32 pt_texmtx) {
   u32 reg = 0;
@@ -1002,7 +1002,7 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
         return;
 #endif
     }
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     SET_REG_FIELD(reg, 5, 7, 2);
     break;
   default:
@@ -1048,7 +1048,7 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
 #endif
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void GXSetNumTexGens(u8 nTexGens) {
 #else
 void GXGetVtxAttrFmtv(GXVtxFmt fmt, GXVtxAttrFmtList *vat)
@@ -1056,7 +1056,7 @@ void GXGetVtxAttrFmtv(GXVtxFmt fmt, GXVtxAttrFmtList *vat)
     GXAttr attr;
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   SET_REG_FIELD(__GXData->genMode, 4, 0, nTexGens);
   GX_WRITE_XF_REG(0x3F, nTexGens);
   __GXData->dirtyState |= 4;
@@ -1181,19 +1181,19 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
         ASSERTMSGLINE(0x459, 0, "GXSetTexCoordGen:  Invalid function");
         break;
     }
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+    GX_WRITE_XF_REG(dst_coord + 0x40, reg);
+#else
     __GXData->texRegs[dst_coord] = reg;
     __GXData->dirtyState |= 0x10000 << dst_coord;
-#else
-    GX_WRITE_XF_REG(dst_coord + 0x40, reg);
 #endif
     reg = 0;
     SET_REG_FIELD(0x46C, reg, 6, 0, pt_texmtx - 64);
     SET_REG_FIELD(0x46D, reg, 1, 8, normalize);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-    __GXData->dualTexRegs[dst_coord] = reg;
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
     GX_WRITE_XF_REG(dst_coord + 0x50, reg);
+#else
+    __GXData->dualTexRegs[dst_coord] = reg;
 #endif
     switch (dst_coord) {
     case GX_TEXCOORD0: SET_REG_FIELD(0x47B, __GXData->matIdxA, 6, 6, mtx);  break;
@@ -1205,11 +1205,11 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
     case GX_TEXCOORD6: SET_REG_FIELD(0x481, __GXData->matIdxB, 6, 12, mtx); break;
     default:           SET_REG_FIELD(0x482, __GXData->matIdxB, 6, 18, mtx); break;
     }
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-    __GXData->dirtyState |= 0x4000000;
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
     mtxIdAttr = dst_coord + 1;
     __GXSetMatrixIndex(mtxIdAttr);
+#else
+    __GXData->dirtyState |= 0x4000000;
 #endif
 }
 
@@ -1217,10 +1217,10 @@ void GXSetNumTexGens(u8 nTexGens)
 {
     CHECK_GXBEGIN(0x494, "GXSetNumTexGens");
     SET_REG_FIELD(0x496, __GXData->genMode, 4, 0, nTexGens);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-    __GXData->dirtyState |= 0x2000000;
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
     GX_WRITE_XF_REG(0x3F, nTexGens);
+#else
+    __GXData->dirtyState |= 0x2000000;
 #endif
     __GXData->dirtyState |= 4;
 }

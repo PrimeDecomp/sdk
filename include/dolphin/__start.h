@@ -30,7 +30,7 @@
 
 extern void InitMetroTRK();
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 u16 Pad3Button : PAD3_BUTTON_ADDR;
 #else
 #ifdef __MWERKS__
@@ -51,7 +51,7 @@ extern void OSResetSystem(BOOL reset, u32 resetCode, BOOL forceMenu);
 extern void __OSCacheInit(void);
 extern void __OSPSInit(void);
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 __declspec(section ".init") extern void __check_pad3(void);
 __declspec(section ".init") extern void __start(void);
 __declspec(section ".init") extern void __init_registers(void);
@@ -69,7 +69,7 @@ DECL_SECTION(".init") extern void __init_hardware(void);
 DECL_SECTION(".init") extern void __flush_cache(void* address, unsigned int size);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 __declspec(section ".init") extern char _stack_addr[];
 __declspec(section ".init") extern char _SDA_BASE_[];
 __declspec(section ".init") extern char _SDA2_BASE_[];

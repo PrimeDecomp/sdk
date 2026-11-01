@@ -231,9 +231,12 @@ const char* OSGetAppGamename(void);
 u8 OSGetAppType(void);
 void OSPanic(const char* file, int line, const char* msg, ...);
 void OSFatal(GXColor fg, GXColor bg, const char* msg);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+
+u32 OSGetStackPointer(void);
+#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
+
 typedef struct OSIOSRev {
   u8 idHi;
   u8 idLo;
@@ -245,7 +248,6 @@ typedef struct OSIOSRev {
 } OSIOSRev;
 
 void __OSGetIOSRev(OSIOSRev* rev);
-#endif
 
 u32 OSGetStackPointer(void);
 #endif

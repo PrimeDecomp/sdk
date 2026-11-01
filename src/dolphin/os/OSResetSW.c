@@ -71,7 +71,7 @@ BOOL OSGetResetButtonState(void) {
 
   LastState = state;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (GameChoice & 0x3f) {
     OSTime fire = (GameChoice & 0x3f) * 60;
 #else

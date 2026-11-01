@@ -389,7 +389,7 @@ s32 CARDMountAsync(s32 chan, void* workArea, CARDCallback detachCallback,
   return DoMount(chan);
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 s32 CARDMount(s32 chan, void *workArea, CARDCallback detachCallback) {
     s32 result = CARDMountAsync(chan, workArea, detachCallback, __CARDSyncCallback);
 #else
@@ -401,7 +401,7 @@ s32 CARDMount(s32 chan, void* workArea, CARDCallback detachCallback) {
   }
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (result < 0)
         return result;
     return __CARDSync(chan);

@@ -3,7 +3,7 @@
 #include "stdio.h"
 #include "string.h"
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #pragma ANSI_strict off
 
 #ifndef __WINT_TYPE__
@@ -121,11 +121,7 @@ int __wctomb_noconv(char *dst, wchar_t ch) {
   return 1;
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-static inline int wctomb(char *dst, wchar_t ch) {
-  return _current_locale.ctype_cmpt_ptr->encode_wc(dst, ch);
-}
-#else
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 #pragma ANSI_strict off
 
 #ifndef __WINT_TYPE__
@@ -209,6 +205,10 @@ static int unicode_to_UTF8(char* s, wchar_t wchar) {
 
 int wctomb(char* s, wchar_t wchar) { return (unicode_to_UTF8(s, wchar)); }
 
+#else
+static inline int wctomb(char *dst, wchar_t ch) {
+  return _current_locale.ctype_cmpt_ptr->encode_wc(dst, ch);
+}
 #endif
 #endif
 

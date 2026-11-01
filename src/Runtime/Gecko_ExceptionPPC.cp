@@ -4,7 +4,7 @@
 #include "NMWException.h"
 #endif
 #include "__ppc_eabi_linker.h"
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "NMWException.h"
 #endif
 
@@ -90,7 +90,7 @@ typedef struct ProcessInfo {
   int active;
 } ProcessInfo;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static ProcessInfo fragmentinfo[1];
 #else
 typedef struct ActionIterator {
@@ -110,7 +110,7 @@ int __register_fragment(struct __eti_init_info* info, char* TOC) {
   ProcessInfo* f;
   int i;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   for (i = 0, f = fragmentinfo; i < 1; ++i, ++f) {
 #else
   for (i = 0, f = fragmentinfo; i < MAXFRAGMENTS; ++i, ++f) {
@@ -126,13 +126,13 @@ int __register_fragment(struct __eti_init_info* info, char* TOC) {
   return -1;
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __unregister_fragment(int fragmentId) {
 #else
 void __unregister_fragment(int fragmentID) {
 #endif
   ProcessInfo* f;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (fragmentId >= 0 && fragmentId < 1) {
     f = &fragmentinfo[fragmentId];
 #else

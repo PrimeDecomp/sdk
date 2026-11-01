@@ -223,7 +223,6 @@ static void UpdatePriority(OSThread* thread) {
   } while (thread);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 void __OSPromoteThread(OSThread* thread, OSPriority priority) {
   do {
@@ -236,7 +235,6 @@ void __OSPromoteThread(OSThread* thread, OSPriority priority) {
     thread = SetEffectivePriority(thread, priority);
   } while (thread);
 }
-#endif
 
 #endif
 static void __OSSwitchThread(OSThread* nextThread) {
@@ -280,7 +278,7 @@ static OSThread* SelectThread(BOOL yield) {
     }
   }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   OSSetCurrentThread(NULL);
 #endif
   if (RunQueueBits == 0) {
@@ -327,9 +325,8 @@ void OSYieldThread(void) {
   SelectThread(TRUE);
   OSRestoreInterrupts(enabled);
 }
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
-
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+
 BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack,
                     u32 stackSize, OSPriority priority, u16 attr) {
   BOOL enabled;
@@ -408,7 +405,6 @@ void OSExitThread(void* val) {
   __OSReschedule();
   OSRestoreInterrupts(enabled);
 }
-#endif
 #endif
 
 void OSCancelThread(OSThread* thread) {
@@ -546,7 +542,6 @@ void OSWakeupThread(OSThreadQueue* queue) {
   OSRestoreInterrupts(enabled);
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static void SleepAlarmHandler(OSAlarm* alarm, OSContext* context) {
   OSResumeThread((OSThread*)OSGetAlarmUserData(alarm));
@@ -572,7 +567,6 @@ void OSSleepTicks(OSTime ticks) {
   OSCancelAlarm(&alarm);
   OSRestoreInterrupts(enabled);
 }
-#endif
 
 #endif
 void OSClearStack(u8 val) {
@@ -587,12 +581,10 @@ void OSClearStack(u8 val) {
   }
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 // IdleThread has no users but lives on in the retail binary
 extern void fake_function(...);
 void FORCEACTIVE_OSThread_c(void);
 void FORCEACTIVE_OSThread_c(void) { fake_function(&IdleThread); }
-#endif
 
 #endif

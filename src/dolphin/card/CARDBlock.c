@@ -6,7 +6,7 @@
 
 #include <dolphin/CARDPriv.h>
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 u16* __CARDGetFatBlock(CARDControl* card) { return card->currentFat; }
 #else
 #line 56
@@ -20,7 +20,7 @@ u16* __CARDGetFatBlock(CARDControl* card) {
 static void WriteCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   u16* fat;
   u16* fatBack;
 #else
@@ -36,7 +36,7 @@ static void WriteCallback(s32 chan, s32 result) {
     ASSERT(card->currentFat);
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (result >= 0) {
     fat = (u16*)((u8*)card->workArea + 0x6000);
     fatBack = (u16*)((u8*)card->workArea + 0x8000);
@@ -44,7 +44,7 @@ static void WriteCallback(s32 chan, s32 result) {
     if (card->currentFat == fat0) {
 #endif
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (card->currentFat == fat) {
       card->currentFat = fatBack;
       memcpy(fatBack, fat, 0x2000);
@@ -53,7 +53,7 @@ static void WriteCallback(s32 chan, s32 result) {
       memcpy(fat1, fat0, 0x2000);
 #endif
     } else {
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
       card->currentFat = fat;
       memcpy(fat, fatBack, 0x2000);
 #else
@@ -79,7 +79,7 @@ static void WriteCallback(s32 chan, s32 result) {
 static void EraseCallback(s32 chan, s32 result) {
   CARDControl* card;
   CARDCallback callback;
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   u32 temp[2]; /* this compiler sucks */
 #endif
   u16* fat;
@@ -170,7 +170,7 @@ s32 __CARDFreeBlock(s32 chan, u16 nBlock, CARDCallback callback) {
   u16* fat;
   u16 nextBlock;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   card = card = &__CARDBlock[chan];
 #else
   ASSERT(0 <= chan && chan < 2);
@@ -211,7 +211,7 @@ s32 __CARDUpdateFatBlock(s32 chan, u16* fat, CARDCallback callback) {
   DCStoreRange(fat, 0x2000);
   card->eraseCallback = callback;
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   return __CARDEraseSector(chan, (((u32)fat - (u32)card->workArea) / 8192u) * card->sectorSize,
                            EraseCallback);
 #else

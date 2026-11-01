@@ -67,7 +67,7 @@ _check_debug_flag:
 	cmplwi r7, 4
 #endif
 	bne _goto_main
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 	li r5, 1
 #else
 	li r5, 2
@@ -107,7 +107,7 @@ _loop:
 	addi r5, r5, ARENAHI_ADDR@l
 	rlwinm r7, r15, 0, 0, 0x1a
 	stw r7, 0(r5)
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 	lis r5, OS_USABLE_MEM1_END@ha
 	addi r5, r5, OS_USABLE_MEM1_END@l
 	rlwinm r7, r15, 0, 0, 0x1a
@@ -129,7 +129,7 @@ _end_of_parseargs:
 	beq _check_pad3
 	andi. r3, r3, 0x7fff
 	cmplwi r3, 1
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 	bne _goto_skip_init_bba
 #else
 	bne _skip_crc
@@ -212,12 +212,8 @@ inline static void __init_bss_section(void* dst, unsigned long size) {
   }
 }
 
-#if SDK_VERSION < SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 #pragma scheduling off
-#else
-#if SDK_VERSION < SDK_VERSION_RVL_2008_01
-#pragma scheduling off
-#endif
 #endif
 void __init_data(void) {
   __rom_copy_info* dci;
