@@ -162,6 +162,8 @@ extern void* __memReg;
 #define GX_WRITE_F32(v) (__GXWGFifo.f32 = (f32)(v))
 #define GX_WRITE_RAS_REG(v) GX_WRITE_RA_REG(v)
 
+#define CHECK_GXBEGIN(line, name) ASSERTMSGLINE(line, !__GXinBegin, "'" name "' is not allowed between GXBegin/GXEnd")
+
 #define SET_REG_FIELD(reg, size, shift, val)                                                       \
   do {                                                                                             \
     (reg) = ((u32)(reg) & ~(((1 << (size)) - 1) << (shift))) | ((u32)(val) << (shift));            \
