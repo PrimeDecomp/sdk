@@ -14,22 +14,6 @@ def sdk_versions(sdk_dir: str = "extern/sdk") -> dict[str, int]:
             for name, value in re.findall(r"#define SDK_VERSION_(\w+) (\d+)", f.read())
         }
 
-# Objects that only Echoes builds with extra flags.
-PRIME_NO_EXTRA_CFLAGS = [
-    "dolphin/os/OSFont.c",
-    "dolphin/pad/Pad.c",
-    "Runtime/Gecko_ExceptionPPC.cp",
-    "Runtime/NMWException.cp",
-]
-
-# The only objects Prime builds without the contracting of multiply-adds, besides the mtx library.
-PRIME_FP_CONTRACT_OFF = [
-    "dolphin/gx/GXLight.c",
-    "dolphin/gx/GXPixel.c",
-    "dolphin/gx/GXTransform.c",
-]
-
-
 def modules_for(
     sdk_version: int,
     cflags_base: list[str],
@@ -44,13 +28,25 @@ def modules_for(
     is_prime = sdk_version < SDK["G2ME01_00"]
     is_wii = sdk_version >= SDK["R32J01_00"]
 
+    def flags_if(cond: bool, *flags: str) -> List[str]:
+        return list(flags) if cond else []
+
+    def per_sdk(prime, echoes, wii):
+        """Pick the value for the Prime GameCube, Echoes GameCube or Wii SDK build."""
+        return prime if is_prime else wii if is_wii else echoes
+
+    IPA_FILE = flags_if(is_wii, "-ipa file")
+    CHAR_UNSIGNED = flags_if(not is_prime, "-char unsigned")
+    CPP_EXCEPTIONS = flags_if(not is_prime, "-RTTI on", "-Cpp_exceptions on")
+    # Prime contracts multiply-adds in its Dolphin libraries, except in a few objects and mtx.
+    FP_CONTRACT_OFF = flags_if(is_prime, "-fp_contract off")
+    # Prime builds its Dolphin and TRK libraries as Shift-JIS source, but not the runtime ones.
+    SJIS = True if is_prime else None
+    NOT_SJIS = False if is_prime else None
+
     # Dolphin flags
-    cflags_dolphin = [
-        *cflags_base,
-        "-fp_contract off",
-    ]
-    if is_prime:
-        cflags_dolphin = [*cflags_base]
+    cflags_fp_contract_off = [*cflags_base, "-fp_contract off"]
+    cflags_dolphin = [*cflags_base] if is_prime else cflags_fp_contract_off
 
     # The Wii SDK keeps its inline assembly blocks in source order.
     cflags_rvl_sdk = [
@@ -66,23 +62,12 @@ def modules_for(
         "-gccinc",
         "-common off",
         # "-inline auto",
+        *flags_if(is_wii, "-fp_contract off"),
+        *flags_if(is_prime, "-char signed"),
+        "-inline auto" if is_wii else "-inline deferred,auto",
+        *flags_if(is_wii, "-func_align 4"),
     ]
-    if is_wii:
-        cflags_runtime.append("-fp_contract off")
-
-    mw_version = "GC/2.7"
-    if is_prime:
-        mw_version = "GC/1.3"
-    if is_wii:
-        mw_version = "Wii/1.0RC1"
-        cflags_runtime.append("-inline auto")
-    else:
-        if is_prime:
-            cflags_runtime.append("-char signed")
-        cflags_runtime.append("-inline deferred,auto")
-
-    if is_wii:
-        cflags_runtime.append("-func_align 4")
+    runtime_mw_version = per_sdk(prime="GC/1.3", echoes="GC/2.7", wii="Wii/1.0RC1")
 
     # The Wii SDK libraries name their compiler in their version strings.
     RVL_SDK_MW_VERSIONS = {
@@ -130,13 +115,16 @@ def modules_for(
 
     # Helper function for Dolphin libraries
     def DolphinLib(
-        lib_name: str, objects: List[Object], gc_only: bool = False
+        lib_name: str,
+        objects: List[Object],
+        gc_only: bool = False,
+        cflags: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         if gc_only and is_wii:
             # The Wii versions use the separate Revolution library instead.
             objects = []
         mw_version = "GC/1.2.5n"
-        cflags = cflags_dolphin
+        cflags = cflags or cflags_dolphin
         if lib_name in RVL_SDK_MW_VERSIONS and is_wii:
             mw_version = RVL_SDK_MW_VERSIONS[lib_name]
             cflags = cflags_rvl_sdk
@@ -144,6 +132,7 @@ def modules_for(
             "lib": lib_name,
             "src_dir": src_dir,
             "mw_version": mw_version,
+            "shift_jis": SJIS,
             "cflags": cflags,
             "progress_category": "sdk",
             "host": False,
@@ -158,6 +147,7 @@ def modules_for(
             "lib": f"rvl_{lib_name}",
             "src_dir": src_dir,
             "mw_version": RVL_SDK_MW_VERSIONS[lib_name],
+            "shift_jis": SJIS,
             "cflags": [*cflags_rvl_sdk, "-ipa file", *(extra_cflags or [])],
             "progress_category": "sdk",
             "host": False,
@@ -186,6 +176,7 @@ def modules_for(
         {
             "lib": "MetroTRK",
             "src_dir": src_dir,
+            "shift_jis": SJIS,
             "cflags": cflags_runtime,
             "progress_category": "sdk",
             "host": False,
@@ -196,6 +187,7 @@ def modules_for(
         {
             "lib": "TRK",
             "src_dir": src_dir,
+            "shift_jis": SJIS,
             "mw_version": "Wii/1.0RC1",
             "progress_category": "sdk",
             "cflags": [
@@ -241,7 +233,8 @@ def modules_for(
         {
             "lib": "Runtime.PPCEABI.H",
             "src_dir": src_dir,
-            "mw_version": mw_version,
+            "mw_version": runtime_mw_version,
+            "shift_jis": NOT_SJIS,
             "cflags": cflags_runtime,
             "progress_category": "sdk",
             "objects": [
@@ -265,7 +258,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00"),
                     "Runtime/NMWException.cp",
-                    extra_cflags=["-RTTI on", "-Cpp_exceptions on"],
+                    extra_cflags=CPP_EXCEPTIONS,
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS, "R3ME01_00"),
@@ -282,7 +275,7 @@ def modules_for(
                 Object(
                     MatchingFor("GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00") or EquivalentFor("G2ME01_00"),
                     "Runtime/Gecko_ExceptionPPC.cp",
-                    extra_cflags=["-RTTI on", "-Cpp_exceptions on"],
+                    extra_cflags=CPP_EXCEPTIONS,
                 ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
@@ -293,10 +286,11 @@ def modules_for(
         {
             "lib": "MSL_C.PPCEABI.bare.H",
             "src_dir": src_dir,
-            "mw_version": mw_version,
+            "mw_version": runtime_mw_version,
+            "shift_jis": NOT_SJIS,
             "cflags": [
                 *cflags_runtime,
-                *([] if is_prime else ["-DMSL_OLD_FP_CLASSIFY", "-DMSL_NO_INLINE_SQRT"]),
+                *flags_if(not is_prime, "-DMSL_OLD_FP_CLASSIFY", "-DMSL_NO_INLINE_SQRT"),
             ],
             "progress_category": "sdk",
             "host": False,
@@ -935,7 +929,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
                     "dolphin/exi/EXIBios.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(MatchingFor(*GC_VERSIONS), "dolphin/exi/EXIUart.c"),
                 Object(MatchingFor("R3ME01_00"), "revolution/exi/EXIUart.c"),
@@ -948,28 +942,34 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
                     "dolphin/gx/GXInit.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00"),
                     "dolphin/gx/GXFifo.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00"), "dolphin/gx/GXAttr.c"),
                 Object(MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00"), "dolphin/gx/GXMisc.c"),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
                     "dolphin/gx/GXGeometry.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00"), "dolphin/gx/GXFrameBuf.c"),
                 Object(
-                    MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"), "dolphin/gx/GXLight.c"
+                    MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
+                    "dolphin/gx/GXLight.c",
+                    extra_cflags=FP_CONTRACT_OFF,
                 ),
                 Object(MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00"), "dolphin/gx/GXTexture.c"),
                 Object(MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00"), "dolphin/gx/GXBump.c"),
                 Object(MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"), "dolphin/gx/GXTev.c"),
-                Object(MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00"), "dolphin/gx/GXPixel.c"),
+                Object(
+                    MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00"),
+                    "dolphin/gx/GXPixel.c",
+                    extra_cflags=FP_CONTRACT_OFF,
+                ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"),
                     "dolphin/gx/GXDisplayList.c",
@@ -977,7 +977,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
                     "dolphin/gx/GXTransform.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=[*IPA_FILE, *FP_CONTRACT_OFF],
                 ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"),
@@ -1007,6 +1007,7 @@ def modules_for(
                 Object(EquivalentFor("GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"), "dolphin/mtx/quat.c"),
                 Object(MatchingFor("GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"), "dolphin/mtx/psmtx.c"),
             ],
+            cflags=cflags_fp_contract_off,
         ),
         DolphinLib(
             "pad",
@@ -1015,7 +1016,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
                     "dolphin/pad/Pad.c",
-                    extra_cflags=["-char unsigned"],
+                    extra_cflags=CHAR_UNSIGNED,
                 ),
             ],
         ),
@@ -1025,12 +1026,12 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
                     "dolphin/vi/vi.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(
                     MatchingFor("R3ME01_00"),
                     "dolphin/vi/i2c.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(MatchingFor("R3ME01_00"), "dolphin/vi/vi3in1.c"),
             ],
@@ -1132,7 +1133,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"),
                     "dolphin/os/OS.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
@@ -1164,12 +1165,12 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00"),
                     "dolphin/os/OSFont.c",
-                    extra_cflags=["-char unsigned"],
+                    extra_cflags=CHAR_UNSIGNED,
                 ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"),
                     "dolphin/os/OSInterrupt.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(MatchingFor("G2ME01_00", "G2MP01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00"), "dolphin/os/OSLink.c"),
                 Object(
@@ -1189,7 +1190,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
                     "dolphin/os/OSRtc.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"),
@@ -1198,7 +1199,7 @@ def modules_for(
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_DD", "GM8J01_00", "R3ME01_00"),
                     "dolphin/os/OSThread.c",
-                    extra_cflags=["-ipa file"] if is_wii else [],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(
                     MatchingFor("G2ME01_00", "G2MP01_00", "G2MJ01_00", "GM8EAB_00", "GM8E01_00", "GM8E01_02", "GM8P01_00", "GM8J01_00", "R3ME01_00"),
@@ -1221,15 +1222,4 @@ def modules_for(
         # The game provides its own MetroTRK sources.
         libs = [lib for lib in libs if lib["lib"] not in ("MetroTRK", "TRK")]
 
-    if is_prime:
-        # Prime's Dolphin libraries are built as Shift-JIS source, the runtime ones are not.
-        for lib in libs:
-            lib["shift_jis"] = not lib["lib"].startswith(("Runtime", "MSL"))
-            if lib["lib"] == "mtx":
-                lib["cflags"] = [*cflags_base, "-fp_contract off"]
-            for obj in lib["objects"]:
-                if obj.name in PRIME_NO_EXTRA_CFLAGS:
-                    obj.options["extra_cflags"] = []
-                if obj.name in PRIME_FP_CONTRACT_OFF:
-                    obj.options["extra_cflags"] = [*obj.options["extra_cflags"], "-fp_contract off"]
     return libs
