@@ -227,6 +227,7 @@ typedef s32 WPADChannel;
 #define WPAD_SENSOR_BAR_POS_TOP 1
 
 #define WPAD_ERR_NONE 0
+#define WPAD_ERR_OK WPAD_ERR_NONE
 #define WPAD_ERR_NO_CONTROLLER -1
 #define WPAD_ERR_BUSY -2
 #define WPAD_ERR_TRANSFER -3
