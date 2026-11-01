@@ -138,7 +138,7 @@ void GXGetLightAttnK(const GXLightObj *lt_obj, f32 *k0, f32 *k1, f32 *k2)
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #define PI 3.14159265358979323846F
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func)
 {
     float a0, a1, a2;
@@ -226,7 +226,7 @@ void GXInitLightSpot(GXLightObj *lt_obj, f32 cutoff, GXSpotFn spot_func) {
   obj->a2 = a2;
 #else
     r = (3.1415927f * cutoff) / 180.0f;
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     cr = cosf(r);
 #else
     cr = cos(r);
@@ -860,7 +860,7 @@ void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc amb_src, GXColorS
   SET_REG_FIELD(reg, 2, 7, (attn_fn == 0) ? 0 : diff_fn);
   SET_REG_FIELD(reg, 1, 9, (attn_fn != 2));
   SET_REG_FIELD(reg, 1, 10, (attn_fn != 0));
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXSetChanAmbColor(GXChannelID chan, GXColor amb_color)
 {
     u32 reg;
@@ -963,7 +963,7 @@ void GXSetChanAmbColor(GXChannelID chan, GXColor amb_color)
 
   __GXData->bpSentNot = 1;
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXSetChanMatColor(GXChannelID chan, GXColor mat_color)
 {
     u32 reg;
@@ -1052,7 +1052,7 @@ void GXSetChanMatColor(GXChannelID chan, GXColor mat_color)
 }
 #endif
 
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXSetNumChans(u8 nChans)
 {
     CHECK_GXBEGIN(0x359, "GXSetNumChans");

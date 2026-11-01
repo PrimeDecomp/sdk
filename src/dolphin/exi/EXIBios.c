@@ -10,7 +10,7 @@ static const char* __EXIVersion =
 #elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Nov 11 2002 05:21:45 (0x2301) >>";
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Apr  5 2004 04:14:14 (0x2301) >>";
 #else
@@ -34,7 +34,7 @@ const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:
 #define EXI_0CR(tstart, dma, rw, tlen)                                                             \
   ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 #define DMA_ADDR_MASK 0x3ffffe0
 #else
 #define DMA_ADDR_MASK 0xffffffe0
@@ -100,7 +100,7 @@ static void SetExiInterruptMask(s32 chan, EXIControl* exi) {
 
 static void CompleteTransfer(s32 chan) {
   EXIControl* exi = &Ecb[chan];
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   u8* buf;
   u32 data;
   int i;
@@ -745,6 +745,51 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
 
   return err ? 0 : !0;
 }
+
+#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+s32 EXIGetType(s32 chan, u32 dev, u32* type) {
+  u32 _type;
+  s32 probe;
+
+  probe = EXIGetID(chan, dev, &_type);
+
+  if (!probe) {
+    return probe;
+  }
+
+  switch (_type & ~0xFF) {
+  case 0x04020300:
+  case EXI_ETHER:
+  case 0x04020100:
+  case EXI_MIC:
+    *type = (_type & ~0xFF);
+    return probe;
+  default:
+    switch (_type & ~0xFFFF) {
+    case 0x00000000:
+      if (!(_type & 0x3803)) {
+        switch (_type & 0xFC) {
+        case EXI_MEMORY_CARD_59:
+        case EXI_MEMORY_CARD_123:
+        case EXI_MEMORY_CARD_251:
+        case EXI_MEMORY_CARD_507:
+        case EXI_MEMORY_CARD_1019:
+        case EXI_MEMORY_CARD_2043:
+          *type = _type & 0xFC;
+          return probe;
+        }
+      }
+      break;
+    case EXI_IS_VIEWER:
+      *type = EXI_IS_VIEWER;
+      return probe;
+    }
+
+    *type = _type;
+    return probe;
+  }
+}
+#endif
 
 char* EXIGetTypeString(u32 type) {
   switch (type) {

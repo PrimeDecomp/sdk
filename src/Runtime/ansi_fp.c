@@ -4,7 +4,7 @@
 #include <float.h>
 #include <math.h>
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static int __count_trailing_zerol(unsigned long x) {
   int result = 0;
   int bits_not_checked = sizeof(unsigned long) * 8;
@@ -99,7 +99,7 @@ static void __ull2dec(decimal* result, unsigned long long integer) {
     integer = -integer;
     result->sgn = 1;
   }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
   if (integer == 0) {
     result->exp = 0;
     result->sig.length = 1;
@@ -359,7 +359,7 @@ static int __equals_dec(const decimal *x, const decimal *y) {
         if (x->sig.text[i] != 0)
           return 0;
     }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
       }
     }
 
@@ -504,7 +504,7 @@ done:
 }
 
 static void __num2dec_internal(decimal* d, double x) {
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   char sgn = signbit(x) != 0;
 #else
   char sgn = __signbitd(x) != 0;
@@ -540,7 +540,7 @@ static void __num2dec_internal(decimal* d, double x) {
     __two_exp(&pow2_d, (short)(exp - num_bits_extract));
     frac = modf(ldexp(frac, num_bits_extract), &integer);
     __ull2dec(&int_d, (unsigned long long)integer);
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
     __two_exp(&pow2_d, exp - num_bits_extract);
     frac = modf(ldexp(frac, num_bits_extract), &integer);
     __ull2dec(&int_d, (unsigned long long)integer);
@@ -585,7 +585,7 @@ double __dec2num(const decimal* d) {
     *ll = 0x7FF0000000000000;
     if (d->sgn)
       *ll |= 0x8000000000000000;
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
     if (d->sig.length == 1)
       *ll |= 0x0008000000000000;
     else {
@@ -662,7 +662,7 @@ double __dec2num(const decimal* d) {
       first_guess *= pow(5.0, exponent);
     first_guess = ldexp(first_guess, exponent);
     if (isinf(first_guess)) {
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
       decimal max;
       __str2dec(&max, "179769313486231580793729011405303420", 308);
       if (__less_dec(&max, &dec))
@@ -723,7 +723,7 @@ double __dec2num(const decimal* d) {
           first_guess = next_guess;
       }
     }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
     {
       decimal feedback1;
       __num2dec_internal(&feedback1, first_guess);

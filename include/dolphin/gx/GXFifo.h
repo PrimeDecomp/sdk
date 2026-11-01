@@ -23,7 +23,7 @@ void GXGetFifoPtrs(GXFifoObj* fifo, void** readPtr, void** writePtr);
 GXFifoObj* GXGetCPUFifo(void);
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 GXFifoObj* GXGetGPFifo(void);
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 GXFifoObj* GXGetGPFifo(void);
 struct OSThread* GXGetCurrentGXThread(void);
 u32 GXGetOverflowCount(void);

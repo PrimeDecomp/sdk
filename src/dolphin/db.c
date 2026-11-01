@@ -1,3 +1,4 @@
+#include <SDKVersion.h>
 #include <dolphin/db.h>
 #include <dolphin/os.h>
 
@@ -13,6 +14,15 @@ void DBInit(void) {
   __DBInterface->ExceptionDestination = (void (*)())OSCachedToPhysical(__DBExceptionDestination);
   DBVerbose = TRUE;
 }
+
+#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+BOOL DBIsDebuggerPresent(void) {
+  if (__DBInterface == NULL) {
+    return FALSE;
+  }
+  return __DBInterface->bPresent;
+}
+#endif
 
 void __DBExceptionDestinationAux(void) {
   u32* contextAddr = (void*)0x00C0;

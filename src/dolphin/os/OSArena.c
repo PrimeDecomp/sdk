@@ -4,7 +4,7 @@
 #define ROUND(n, a) (((u32)(n) + (a)-1) & ~((a)-1))
 #define TRUNC(n, a) (((u32)(n)) & ~((a)-1))
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void* __OSArenaHi;
 void* __OSArenaLo = (void*)-1;
 
@@ -70,7 +70,7 @@ void* OSAllocFromArenaHi(u32 size, u32 align) {
   OSSetArenaHi(arenaHi);
   return ptr;
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 
 void* OSAllocFromArenaHi(u32 size, u32 align) {
   void* ptr;

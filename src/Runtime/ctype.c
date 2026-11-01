@@ -30,7 +30,7 @@ unsigned char __ctype_map[256] = {
 };
 
 unsigned char __lower_map[256] = {
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 #define ctrl __control_char
 #define motn __motion_char
 #define spac __space_char
@@ -94,7 +94,7 @@ const unsigned char __lower_mapC[256] = {
     // clang-format on
 };
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 unsigned char __upper_map[256] = {
 #else
 const unsigned char __upper_mapC[256] = {

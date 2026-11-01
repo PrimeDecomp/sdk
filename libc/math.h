@@ -126,7 +126,7 @@ int __signbitd(double x);
 
 #define signbit(x)((int)(__HI(x)&0x80000000))
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 /* The pre-2.4.7 runtime headers use different floating-point classification values.
    Echoes' prebuilt MSL_C (built with a newer compiler) still uses them: MSL_OLD_FP_CLASSIFY. */
 #if (!defined(__MWERKS__) || __MWERKS__ >= 0x2407) && !defined(MSL_OLD_FP_CLASSIFY)
@@ -236,7 +236,7 @@ static inline float sqrtf(float x) {
   }
   return x;
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static inline float sqrtf(float x) {
   const double _half = .5;
   const double _three = 3.0;
@@ -301,7 +301,7 @@ double sqrt(double x);
 
 static inline float ldexpf(float x, int exp) { return (float)ldexp((double)x, exp); }
 double frexp(double, int *exp);
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static inline double scalbn(double x, int n) { return ldexp(x, n); }
 #else
 double scalbn(double x, int n);
@@ -313,7 +313,7 @@ double nextafter(double, double);
 #ifdef __cplusplus
 }
 
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 // MSL C++ float overload; the GC retail binary calls it out of line.
 float sqrt(float x);
 #elif SDK_VERSION >= SDK_VERSION_RVL_2008_01

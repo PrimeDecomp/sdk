@@ -133,7 +133,7 @@ int __StringRead(void* isc, int ch, int Action);
 size_t fread(const void*, size_t memb_size, size_t num_memb, FILE*);
 size_t fwrite(const void*, size_t memb_size, size_t num_memb, FILE*);
 int _fseek(FILE* file, fpos_t offset, int mode);
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 int fseek(FILE* file, long offset, int mode);
 #else
 // Trilogy forwards to the positioning core without the GC critical-region wrapper.

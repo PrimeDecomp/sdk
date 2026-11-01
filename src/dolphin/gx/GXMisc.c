@@ -182,7 +182,7 @@ static void __GXAbortWaitPECopyDone() {
     } while (peCnt0 != peCnt1);
 }
 
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 #define GX_GP_FIFO_READY (GXGetGPFifo() != (GXFifoObj*)NULL)
 #else
 #define GX_GP_FIFO_READY __GXIsGPFifoReady()

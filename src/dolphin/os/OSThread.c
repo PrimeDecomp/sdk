@@ -325,7 +325,7 @@ void OSYieldThread(void) {
   SelectThread(TRUE);
   OSRestoreInterrupts(enabled);
 }
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
 
 BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack,
                     u32 stackSize, OSPriority priority, u16 attr) {
@@ -370,8 +370,12 @@ BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* s
   if (__OSErrorTable[OS_ERROR_FPE]) {
     thread->context.srr1 |= 0x900;
     thread->context.state |= 1;
+#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+    thread->context.fpscr = (__OSFpscrEnableBits & 0xF8) | 4;
+#else
     thread->context.fpscr = __OSFpscrEnableBits & 0xF8;
     thread->context.fpscr |= 4;
+#endif
     for (i = 0; i < 32; ++i) {
       *(u64*)&thread->context.fpr[i] = (u64)-1;
       *(u64*)&thread->context.psf[i] = (u64)-1;
@@ -568,7 +572,125 @@ void OSSleepTicks(OSTime ticks) {
   OSRestoreInterrupts(enabled);
 }
 
+#elif SDK_VERSION == SDK_VERSION_RVL_2005_11
+static BOOL CheckThreadQueue(OSThreadQueue* queue) {
+  OSThread* thread;
+
+  if (queue->head != NULL && queue->head->link.prev != NULL) {
+    return FALSE;
+  }
+  if (queue->tail != NULL && queue->tail->link.next != NULL) {
+    return FALSE;
+  }
+  thread = queue->head;
+  while (thread) {
+    if (thread->link.next != NULL && thread != thread->link.next->link.prev) {
+      return FALSE;
+    }
+    if (thread->link.prev != NULL && thread != thread->link.prev->link.next) {
+      return FALSE;
+    }
+    thread = thread->link.next;
+  }
+  return TRUE;
+}
+
+static BOOL IsMember(OSThreadQueue* queue, OSThread* thread) {
+  OSThread* member = queue->head;
+
+  while (member) {
+    if (thread == member) {
+      return TRUE;
+    }
+    member = member->link.next;
+  }
+  return FALSE;
+}
+
+#define IsSuspended(suspend) ((suspend) > 0)
+
+#define CheckReport(line, cond)                                                                    \
+  if (!(cond)) {                                                                                   \
+    OSReport("OSCheckActiveThreads: Failed " #cond " in %d\n", line);                              \
+    OSPanic(__FILE__, line, "");                                                                   \
+  }
+
+s32 OSCheckActiveThreads(void) {
+  OSThread* thread;
+  s32 prio;
+  s32 cThread;
+  BOOL enabled;
+
+  cThread = 0;
+  enabled = OSDisableInterrupts();
+
+  for (prio = 0; prio <= OS_PRIORITY_MAX; prio++) {
+    if (RunQueueBits & (1 << (OS_PRIORITY_MAX - prio))) {
+      CheckReport(1504, RunQueue[prio].head != NULL && RunQueue[prio].tail != NULL);
+    } else {
+      CheckReport(1509, RunQueue[prio].head == NULL && RunQueue[prio].tail == NULL);
+    }
+    CheckReport(1511, CheckThreadQueue(&RunQueue[prio]));
+  }
+
+  CheckReport(1516, __OSActiveThreadQueue.head == NULL ||
+                        __OSActiveThreadQueue.head->linkActive.prev == NULL);
+  CheckReport(1518, __OSActiveThreadQueue.tail == NULL ||
+                        __OSActiveThreadQueue.tail->linkActive.next == NULL);
+
+  thread = __OSActiveThreadQueue.head;
+  while (thread) {
+    cThread++;
+    CheckReport(1526, thread->linkActive.next == NULL ||
+                          thread == thread->linkActive.next->linkActive.prev);
+    CheckReport(1528, thread->linkActive.prev == NULL ||
+                          thread == thread->linkActive.prev->linkActive.next);
+    CheckReport(1531, *(thread->stackEnd) == OS_THREAD_STACK_MAGIC);
+    CheckReport(1534,
+                OS_PRIORITY_MIN <= thread->priority && thread->priority <= OS_PRIORITY_MAX + 1);
+    CheckReport(1535, 0 <= thread->suspend);
+    CheckReport(1536, CheckThreadQueue(&thread->queueJoin));
+
+    switch (thread->state) {
+    case OS_THREAD_STATE_READY:
+      if (thread->suspend <= 0) {
+        CheckReport(1542, thread->queue == &RunQueue[thread->priority]);
+        CheckReport(1543, IsMember(&RunQueue[thread->priority], thread));
+        CheckReport(1544, thread->priority == __OSGetEffectivePriority(thread));
+      }
+      break;
+    case OS_THREAD_STATE_RUNNING:
+      CheckReport(1548, !IsSuspended(thread->suspend));
+      CheckReport(1549, thread->queue == NULL);
+      CheckReport(1550, thread->priority == __OSGetEffectivePriority(thread));
+      break;
+    case OS_THREAD_STATE_WAITING:
+      CheckReport(1553, thread->queue != NULL);
+      CheckReport(1554, CheckThreadQueue(thread->queue));
+      CheckReport(1555, IsMember(thread->queue, thread));
+      if (thread->suspend <= 0) {
+        CheckReport(1558, thread->priority == __OSGetEffectivePriority(thread));
+      } else {
+        CheckReport(1562, thread->priority == 32);
+      }
+      CheckReport(1564, !__OSCheckDeadLock(thread));
+      break;
+    case OS_THREAD_STATE_MORIBUND:
+      CheckReport(1568, thread->queueMutex.head == NULL && thread->queueMutex.tail == NULL);
+      break;
+    default:
+      OSReport("OSCheckActiveThreads: Failed. unkown thread state (%d) of thread %p\n",
+               thread->state, thread);
+      OSPanic(__FILE__, 1574, "");
+    }
+    CheckReport(1579, __OSCheckMutexes(thread));
+    thread = thread->linkActive.next;
+  }
+  OSRestoreInterrupts(enabled);
+  return cThread;
+}
 #endif
+
 void OSClearStack(u8 val) {
   register u32 sp;
   register u32* p;

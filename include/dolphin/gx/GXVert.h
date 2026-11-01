@@ -221,8 +221,10 @@ typedef union {
 } PPCWGPipe;
 
 #if defined(__MWERKS__) && __MWERKS__ >= 0x4000
-// The Wii compiler merges repeated stores to a non-volatile address, so every FIFO write but the
+// The Wii compiler (and the Corruption prototype's GX) merges repeated stores to a non-volatile address, so every FIFO write but the
 // last would be lost.
+volatile PPCWGPipe GXWGFifo : GXFIFO_ADDR;
+#elif defined(__MWERKS__) && SDK_VERSION == SDK_VERSION_RVL_2005_11
 volatile PPCWGPipe GXWGFifo : GXFIFO_ADDR;
 #elif defined(__MWERKS__)
 /*volatile*/ PPCWGPipe GXWGFifo : GXFIFO_ADDR;

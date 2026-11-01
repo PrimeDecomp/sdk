@@ -26,7 +26,9 @@
                                       // Metroid Prime 2: Echoes, all GameCube versions.
 
 // Revolution SDK (Wii)
-#define SDK_VERSION_RVL_2008_01 5 // RVL_SDK 0x4199_60831 builds, with the Jan 30 2008 OS.
+#define SDK_VERSION_RVL_2005_11 5 // Apr 2004 Dolphin libraries with the Nov 2005 pre-release
+                                  // Revolution KPAD and WPAD. Corruption prototype.
+#define SDK_VERSION_RVL_2008_01 6 // RVL_SDK 0x4199_60831 builds, with the Jan 30 2008 OS.
                                   // New Play Controls and Trilogy, for both Prime and Echoes.
 
 #ifndef SDK_VERSION

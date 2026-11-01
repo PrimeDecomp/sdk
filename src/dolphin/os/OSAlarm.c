@@ -21,7 +21,7 @@ void OSInitAlarm(void) {
     __OSSetExceptionHandler(8, DecrementerExceptionHandler);
   }
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static BOOL OnReset(BOOL final);
 
 static OSResetFunctionInfo ResetFunctionInfo = {OnReset, 0xFFFFFFFF, NULL, NULL};
@@ -216,7 +216,7 @@ static asm void DecrementerExceptionHandler(register __OSException exception,
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04
 BOOL __DVDTestAlarm(const OSAlarm* alarm);
 
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static BOOL OnReset(BOOL final) {
 #else
 void OSSetAlarmTag(OSAlarm* alarm, u32 tag) { alarm->tag = tag; }

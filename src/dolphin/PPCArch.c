@@ -429,7 +429,7 @@ void PPCMtfpscr(register u32 newFPSCR)
     asm
     {
         li    r4, 0
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
         stw   r4, m.u.fpscr_pad;
         stw   newFPSCR, m.u.fpscr
 #else

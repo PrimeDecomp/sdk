@@ -122,7 +122,7 @@ int fseek(FILE * file, long offset, int mode)
 
 		return(retval);
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 int fseek(FILE * file, long offset, int mode)
 {
 		fpos_t real_offset = (fpos_t)offset;

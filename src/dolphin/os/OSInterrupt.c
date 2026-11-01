@@ -332,7 +332,7 @@ void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
 #endif
   intsr &= ~0x00010000;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   if (intsr == 0 || (intsr & __PIRegs[1]) == 0) {
 #else
   if (intsr == 0 || (intsr & piMask) == 0) {

@@ -13,7 +13,7 @@
 #include "string.h"
 #pragma fp_contract off
 extern void __OSStopAudioSystem();
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 extern BOOL __OSCallResetFunctions(u32);
 #else
 extern BOOL __OSCallShutdownFunctions(BOOL final, u32 event);
@@ -27,7 +27,7 @@ typedef struct OSFatalParam {
   const char* msg;
 } OSFatalParam;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static OSFatalParam FatalParam;
 static OSContext FatalContext;
 #else
@@ -192,7 +192,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   OSClearContext(&FatalContext);
   OSSetCurrentContext(&FatalContext);
   __OSStopAudioSystem();
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   AISetStreamVolLeft(0);
   AISetStreamVolRight(0);
 #endif
@@ -225,7 +225,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
   __OSCallResetFunctions(1);
 #else
   t = OSGetTime();
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
   while (!__OSCallResetFunctions(FALSE) && OSGetTime() - t < OSMillisecondsToTicks(1000)) {
   }
 
@@ -257,7 +257,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg) {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   OSSetArenaLo((void*)0x81200000);
   OSSetArenaHi(bootInfo->FSTLocation);
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
   OSSetArenaLo((void*)0x81400000);
   OSSetArenaHi(bootInfo->FSTLocation);
 

@@ -167,7 +167,12 @@ void __ARClearInterrupt(void) {
   tmp = (u16)((tmp & ~(0x00000080 | 0x00000008)) | 0x00000020);
   __DSPRegs[5] = tmp;
 }
-u16 __ARGetInterruptStatus(void) { return ((u16)(__DSPRegs[5] & 0x0200)); }
+#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+#define AR_INT_STATUS_MASK 0x0020
+#else
+#define AR_INT_STATUS_MASK 0x0200
+#endif
+u16 __ARGetInterruptStatus(void) { return ((u16)(__DSPRegs[5] & AR_INT_STATUS_MASK)); }
 
 static void __ARWaitForDMA(void) {
 

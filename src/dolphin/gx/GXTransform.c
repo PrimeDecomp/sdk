@@ -180,7 +180,7 @@ void GXSetProjection(const f32 mtx[4][4], GXProjectionType type)
         __GXData->projMtx[3] = mtx[1][2];
     }
 
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     __GXSetProjection();
     __GXData->bpSentNot = 1;
 #else
@@ -218,7 +218,7 @@ void GXSetProjectionv(const f32 *ptr)
         psq_st ps_4, 0(dst),  0, 0
         psq_st ps_5, 0(dst),  0, 0
   }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
     Copy6Floats(&ptr[1], __GXData->projMtx);
 
     __GXSetProjection();
@@ -640,7 +640,7 @@ void GXSetScissorBoxOffset(s32 x_off, s32 y_off) {
   SET_REG_FIELD(reg, 8, 24, 0x59);
   GX_WRITE_RAS_REG(reg);
   __GXData->bpSentNot = 0;
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void GXSetCurrentMtx(u32 id)
 {
     CHECK_GXBEGIN(0x2C4, "GXSetCurrentMtx");
@@ -775,7 +775,7 @@ void GXSetViewportJitter(f32 left, f32 top, f32 wd, f32 ht, f32 nearz, f32 farz,
     __GXData->vpNearz = nearz;
     __GXData->vpFarz = farz;
 
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     __GXSetViewport();
     __GXData->bpSentNot = 1;
 #else

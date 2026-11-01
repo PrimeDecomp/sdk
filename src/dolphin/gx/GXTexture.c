@@ -10,7 +10,7 @@
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include "dolphin/gx/GXPriv.h"
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 #include <dolphin/gx/__gx.h>
 
 // The Wii SDK widens the texture and TLUT address fields.
@@ -328,7 +328,7 @@ void GXInitTexObj(GXTexObj *obj, const void *image_ptr, u16 width, u16 height, G
     if (format == 8 || format == 9 || format == 10) {
       SET_REG_FIELD(t->mode0, 3, 5, 5);
 #else
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
         if (format == 8 || format == 9 || format == 10) {
 #else
         if ((u32)format - GX_TF_C4 <= GX_TF_C14X2 - GX_TF_C4) {

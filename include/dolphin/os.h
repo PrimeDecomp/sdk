@@ -29,6 +29,7 @@ typedef s64 OSTime;
 typedef u32 OSTick;
 u32 __OSBusClock AT_ADDRESS(OS_BASE_CACHED | 0x00F8);  // sync with OSLoMem.h
 u32 __OSCoreClock AT_ADDRESS(OS_BASE_CACHED | 0x00FC); // sync with OSLoMem.h
+volatile u16 __OSDeviceCode AT_ADDRESS(OS_BASE_CACHED | 0x30E6);
 #define OS_BUS_CLOCK (u32) __OSBusClock
 #define OS_CORE_CLOCK __OSCoreClock
 #define OS_TIMER_CLOCK (OS_BUS_CLOCK / 4)
@@ -116,6 +117,7 @@ void OSTicksToCalendarTime(OSTime ticks, OSCalendarTime* td);
 #define OS_CONSOLE_EMULATOR 0x10000000
 
 u32 OSGetConsoleType();
+u32 __OSGetDIConfig(void);
 
 #define OS_SOUND_MODE_MONO 0u
 #define OS_SOUND_MODE_STEREO 1u
@@ -229,7 +231,7 @@ const char* OSGetAppGamename(void);
 u8 OSGetAppType(void);
 void OSPanic(const char* file, int line, const char* msg, ...);
 void OSFatal(GXColor fg, GXColor bg, const char* msg);
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 
 
 u32 OSGetStackPointer(void);
@@ -273,4 +275,5 @@ u32 OSGetStackPointer(void);
 #include <dolphin/os/OSResetSW.h>
 #include <dolphin/os/OSSerial.h>
 #include <dolphin/os/OSThread.h>
+#include <dolphin/os/OSSemaphore.h>
 #endif // _DOLPHIN_OS

@@ -139,7 +139,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
 }
 #endif
 
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 
 #include "types.h"
 
@@ -231,6 +231,12 @@ BOOL DVDSetAutoFatalMessaging(BOOL);
 void DVDReset();
 s32 DVDCancel(DVDCommandBlock* block);
 BOOL DVDOpen(char* fileName, DVDFileInfo* fileInfo);
+BOOL DVDCheckDisk(void);
+BOOL DVDFastOpenDir(s32 entrynum, DVDDir* dir);
+BOOL DVDOpenDir(char* dirName, DVDDir* dir);
+BOOL DVDReadDir(DVDDir* dir, DVDDirEntry* dirent);
+BOOL DVDCloseDir(DVDDir* dir);
+void DVDRewindDir(DVDDir* dir);
 BOOL DVDFastOpen(s32 entrynum, DVDFileInfo* fileInfo);
 s32 DVDGetCommandBlockStatus(const DVDCommandBlock* block);
 BOOL DVDCancelAsync(DVDCommandBlock* block, DVDCBCallback callback);

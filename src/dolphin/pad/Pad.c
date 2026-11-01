@@ -14,7 +14,7 @@
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 const char* __PADVersion = "<< Dolphin SDK - PAD\trelease build: Sep  5 2002 05:34:02 (0x2301) >>";
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 u8 __gUnknown800030E3 : (OS_BASE_CACHED | 0x30E3);
 u16 __OSWirelessPadFixMode : (OS_BASE_CACHED | 0x30E0);
 #if DEBUG
@@ -77,7 +77,7 @@ static u32 BarrelBits;
 static u32 XPatchBits = PAD_CHAN0_BIT | PAD_CHAN1_BIT | PAD_CHAN2_BIT | PAD_CHAN3_BIT;
 
 static u32 AnalogMode = 0x00000300u;
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static u32 Type[4];
 static PADStatus Origin[4];
 #else
@@ -130,7 +130,7 @@ static SPECCallback MakeStatus = SPEC2_MakeStatus;
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static BOOL OnReset(BOOL final);
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static u32 CmdTypeAndStatus;
 static u32 CmdReadOrigin = 0x41000000;
 static u32 CmdCalibrate = 0x42000000;
@@ -556,7 +556,7 @@ BOOL PADInit() {
 #endif
   }
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   OSRegisterVersion(__PADVersion);
 #endif
 

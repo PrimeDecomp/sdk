@@ -35,7 +35,7 @@ void PSMTXIdentity(register Mtx m) {
   // clang-format off
   asm {
     psq_st zero_c, 8(m), 0, 0
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
     ps_merge01 c_01, zero_c, one_c
     psq_st zero_c, 24(m), 0, 0
     ps_merge10 c_10, one_c, zero_c

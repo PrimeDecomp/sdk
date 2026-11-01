@@ -10,7 +10,7 @@ size_t strlen(const char* str) {
   } while (*++p);
   return len;
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 size_t strlen(const char* str) {
   size_t len = -1;
   unsigned char* p = (unsigned char*)str - 1;
@@ -178,7 +178,7 @@ int strcmp(const char* str1, const char* str2) {
     }
   }
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   if (l1 > r1) {
     return 1;
   }

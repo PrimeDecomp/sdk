@@ -55,6 +55,10 @@ u32 AIGetDMAStartAddr(void) {
   return (u32)((__DSPRegs[24] & 0x03ff) << 16) | (__DSPRegs[25] & 0xffe0);
 }
 
+#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+BOOL AICheckInit(void) { return __AI_init_flag; }
+#endif
+
 AISCallback AIRegisterStreamCallback(AISCallback callback) {
   AISCallback ret;
   s32 oldInts;

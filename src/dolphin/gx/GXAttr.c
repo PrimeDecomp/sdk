@@ -52,7 +52,7 @@ static void __GXXfVtxSpecs(void) {
   GX_WRITE_XF_REG(8, reg);
   __GXData->bpSentNot = 1;
 #else
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static void __GXXfVtxSpecs(void)
 {
     u32 nCols = 0;
@@ -735,7 +735,7 @@ void __GXSetVAT(void)
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   __GXData->dirtyVAT = 0;
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
     __GXData->dirtyVAT = 0;
 #else
     GX_WRITE_U8(0);
@@ -1181,7 +1181,7 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
         ASSERTMSGLINE(0x459, 0, "GXSetTexCoordGen:  Invalid function");
         break;
     }
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     GX_WRITE_XF_REG(dst_coord + 0x40, reg);
 #else
     __GXData->texRegs[dst_coord] = reg;
@@ -1190,7 +1190,7 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
     reg = 0;
     SET_REG_FIELD(0x46C, reg, 6, 0, pt_texmtx - 64);
     SET_REG_FIELD(0x46D, reg, 1, 8, normalize);
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     GX_WRITE_XF_REG(dst_coord + 0x50, reg);
 #else
     __GXData->dualTexRegs[dst_coord] = reg;
@@ -1205,7 +1205,7 @@ void GXSetTexCoordGen2(GXTexCoordID dst_coord, GXTexGenType func, GXTexGenSrc sr
     case GX_TEXCOORD6: SET_REG_FIELD(0x481, __GXData->matIdxB, 6, 12, mtx); break;
     default:           SET_REG_FIELD(0x482, __GXData->matIdxB, 6, 18, mtx); break;
     }
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     mtxIdAttr = dst_coord + 1;
     __GXSetMatrixIndex(mtxIdAttr);
 #else
@@ -1217,7 +1217,7 @@ void GXSetNumTexGens(u8 nTexGens)
 {
     CHECK_GXBEGIN(0x494, "GXSetNumTexGens");
     SET_REG_FIELD(0x496, __GXData->genMode, 4, 0, nTexGens);
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     GX_WRITE_XF_REG(0x3F, nTexGens);
 #else
     __GXData->dirtyState |= 0x2000000;

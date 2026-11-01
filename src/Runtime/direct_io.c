@@ -76,7 +76,7 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
         memcpy(file->buffer_ptr, write_ptr, num_bytes);
 
         write_ptr += num_bytes;
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
         bytes_written += num_bytes;
 #endif
         bytes_to_go -= num_bytes;
@@ -112,7 +112,7 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     bytes_written += num_bytes;
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
       bytes_written += num_bytes;
 #else
     else
@@ -130,7 +130,7 @@ size_t __fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) 
   if (file->mode.buffer_mode != _IOFBF)
     file->buffer_len = 0;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   return ((bytes_written + memb_size - 1) / memb_size);
 #else
   return bytes_written / memb_size;

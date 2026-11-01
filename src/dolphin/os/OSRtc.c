@@ -359,7 +359,7 @@ void OSSetEuRgb60Mode(u32 mode) {
   sram->ntd |= mode;
   __OSUnlockSram(TRUE);
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 u32 OSGetSoundMode() {
   OSSram* sram;
   u32 mode;
@@ -420,6 +420,18 @@ u8 OSGetLanguage() {
   language = sram->language;
   __OSUnlockSram(FALSE);
   return language;
+}
+
+void OSSetLanguage(u8 language) {
+  OSSram* sram = __OSLockSram();
+
+  if (language == sram->language) {
+    __OSUnlockSram(FALSE);
+    return;
+  }
+
+  sram->language = language;
+  __OSUnlockSram(TRUE);
 }
 
 u32 OSGetEuRgb60Mode() {

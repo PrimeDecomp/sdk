@@ -40,7 +40,7 @@ static void* SaveEnd = NULL;
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static void *SaveStart = NULL;
 static void *SaveEnd = NULL;
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void __OSReboot(u32 resetCode, u32 bootDol) {
   OSContext exceptionContext;
   const char* argvToPass;
@@ -77,7 +77,7 @@ asm void Run(void *entrypoint) {
   OSDisableInterrupts();
   OSSetArenaLo((void*)0x81280000);
   OSSetArenaHi((void*)0x812f0000);
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
   OSClearContext(&exceptionContext);
   OSSetCurrentContext(&exceptionContext);
 #endif

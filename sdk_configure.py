@@ -153,6 +153,7 @@ def modules_for(
             "objects": objects if is_wii else [],
         }
 
+    Matching = True
     NonMatching = False
 
     # Object is only matching for specific versions
@@ -1036,6 +1037,8 @@ def modules_for(
             "pad",
             [
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "dolphin/pad/PadClamp.c"),
+                # Only the Corruption prototype's splits name these so far.
+                Object(MatchingFor("RVL_2005_11"), "dolphin/pad/PadFallback.c"),
                 Object(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01"),
                     "dolphin/pad/Pad.c",
@@ -1237,6 +1240,130 @@ def modules_for(
                     "dolphin/os/__ppc_eabi_init.cpp",
                 ),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02"), "dolphin/os/OSMessage.c"),
+                # Only the Corruption prototype's splits name these so far.
+                Object(NonMatching, "dolphin/os/OSAlloc.c"),
+                Object(NonMatching, "dolphin/os/OSSem.c"),
+            ],
+        ),
+        # Libraries that only the Corruption prototype has. Without splits naming them, no other
+        # game builds them, so they are listed for every version but only built for Corruption.
+        DolphinLib(
+            "AMCStubs",
+            [
+                Object(NonMatching, "dolphin/amcstubs/AmcExi2Stubs.c"),
+            ],
+        ),
+        DolphinLib(
+            "AX",
+            [
+                Object(NonMatching, "dolphin/ax/AX.c"),
+                Object(NonMatching, "dolphin/ax/AXAlloc.c"),
+                Object(NonMatching, "dolphin/ax/AXAux.c"),
+                Object(NonMatching, "dolphin/ax/AXCL.c"),
+                Object(NonMatching, "dolphin/ax/AXOut.c"),
+                Object(NonMatching, "dolphin/ax/AXSPB.c"),
+                Object(NonMatching, "dolphin/ax/AXVPB.c"),
+                Object(NonMatching, "dolphin/ax/AXProf.c"),
+            ],
+        ),
+        DolphinLib(
+            "AXFX",
+            [
+                Object(NonMatching, "dolphin/axfx/AXFXReverbHi.c"),
+                Object(NonMatching, "dolphin/axfx/AXFXReverbStd.c"),
+                Object(NonMatching, "dolphin/axfx/AXFXHooks.c"),
+                Object(NonMatching, "dolphin/axfx/AXFXReverbHiDpl2.c"),
+            ],
+        ),
+        DolphinLib(
+            "Base64",
+            [
+                Object(NonMatching, "dolphin/eth/base64.c"),
+            ],
+        ),
+        DolphinLib(
+            "ETH",
+            [
+                Object(NonMatching, "dolphin/eth/eth.c"),
+                Object(NonMatching, "dolphin/eth/ethAuth.c"),
+            ],
+        ),
+        DolphinLib(
+            "HIO",
+            [
+                Object(NonMatching, "dolphin/hio/hio.c"),
+            ],
+        ),
+        DolphinLib(
+            "IP",
+            [
+                Object(NonMatching, "dolphin/ip/IPArp.c"),
+                Object(NonMatching, "dolphin/ip/IPAutoIP.c"),
+                Object(NonMatching, "dolphin/ip/IPCommon.c"),
+                Object(NonMatching, "dolphin/ip/IPDhcp.c"),
+                Object(NonMatching, "dolphin/ip/IPDns.c"),
+                Object(NonMatching, "dolphin/ip/IPError.c"),
+                Object(NonMatching, "dolphin/ip/IPEthernet.c"),
+                Object(NonMatching, "dolphin/ip/IPFragment.c"),
+                Object(NonMatching, "dolphin/ip/IPIcmp.c"),
+                Object(NonMatching, "dolphin/ip/IPIgmp.c"),
+                Object(NonMatching, "dolphin/ip/IPInterface.c"),
+                Object(NonMatching, "dolphin/ip/IPOptions.c"),
+                Object(NonMatching, "dolphin/ip/IPPacket.c"),
+                Object(NonMatching, "dolphin/ip/IPRing.c"),
+                Object(NonMatching, "dolphin/ip/IPRoute.c"),
+                Object(NonMatching, "dolphin/ip/IPSocket.c"),
+                Object(NonMatching, "dolphin/ip/IPTcp.c"),
+                Object(NonMatching, "dolphin/ip/IPTcpInput.c"),
+                Object(NonMatching, "dolphin/ip/IPTcpOutput.c"),
+                Object(NonMatching, "dolphin/ip/IPTcpTimeWait.c"),
+                Object(NonMatching, "dolphin/ip/IPTcpTimer.c"),
+                Object(NonMatching, "dolphin/ip/IPUdp.c"),
+                Object(NonMatching, "dolphin/ip/PPP.c"),
+                Object(NonMatching, "dolphin/ip/PPPChap.c"),
+                Object(NonMatching, "dolphin/ip/PPPIpcp.c"),
+                Object(NonMatching, "dolphin/ip/PPPLcp.c"),
+                Object(NonMatching, "dolphin/ip/PPPPap.c"),
+                Object(NonMatching, "dolphin/ip/PPPoE.c"),
+            ],
+        ),
+        DolphinLib(
+            "MCC",
+            [
+                Object(NonMatching, "dolphin/mcc/mcc.c"),
+                Object(NonMatching, "dolphin/mcc/fio.c"),
+                Object(NonMatching, "dolphin/mcc/tty.c"),
+            ],
+        ),
+        DolphinLib(
+            "MD5",
+            [
+                Object(NonMatching, "dolphin/eth/md5.c"),
+            ],
+        ),
+        DolphinLib(
+            "MIX",
+            [
+                Object(NonMatching, "dolphin/mix/mix.c"),
+            ],
+        ),
+        DolphinLib(
+            "ODENotStub",
+            [
+                Object(NonMatching, "dolphin/odenotstub/odenotstub.c"),
+            ],
+        ),
+        DolphinLib(
+            "OdemuExi2",
+            [
+                Object(NonMatching, "dolphin/odemuexi2/DebuggerDriver.c"),
+            ],
+        ),
+        DolphinLib(
+            "Revolution",
+            [
+                Object(NonMatching, "revolution/WPAD.c"),
+                Object(NonMatching, "revolution/KPAD.c"),
             ],
         ),
     ]

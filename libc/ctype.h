@@ -11,7 +11,7 @@ extern "C" {
 // eof.h
 #define EOF -1L
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 extern unsigned char __ctype_map[];
 extern unsigned char __lower_map[];
 extern unsigned char __upper_map[];
@@ -57,7 +57,7 @@ extern const unsigned char __upper_mapC[256];
 #endif
 
 // Guessed name
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 #define __ctype_test(c, mask) (__ctype_map[__zero_fill(c)] & (mask))
 #else
 #define __ctype_test(c, mask) \
@@ -89,7 +89,7 @@ int isxdigit(int c) { return __ctype_test(c, __hex_digit); }
 
 #undef __ctype_test
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 _CTYPE_INLINE
 int tolower(int c) { return ((c == EOF) ? EOF : ((int)__lower_map[__zero_fill(c)])); }
 _CTYPE_INLINE

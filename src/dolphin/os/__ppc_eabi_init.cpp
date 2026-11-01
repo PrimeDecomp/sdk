@@ -55,7 +55,7 @@ loop:
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __init_user() { __init_cpp(); }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 __declspec(weak) void InitMetroTRK_BBA() { return; }
 
 void __init_user() { __init_cpp(); }
@@ -91,7 +91,7 @@ void __init_cpp(void) {
   }
 }
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void _ExitProcess(void) { PPCHalt(); }
 #else
 void exit(int status) {

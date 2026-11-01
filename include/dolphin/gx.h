@@ -6,6 +6,7 @@
 
 #include <dolphin/gx/GXBump.h>
 #include <dolphin/gx/GXCommandList.h>
+#include <dolphin/gx/GXCpu2Efb.h>
 #include <dolphin/gx/GXCull.h>
 #include <dolphin/gx/GXDispList.h>
 #include <dolphin/gx/GXDraw.h>

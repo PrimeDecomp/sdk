@@ -73,6 +73,7 @@ BOOL PADInit();
 u32 PADRead(PADStatus* status);
 BOOL PADReset(u32 mask);
 BOOL PADRecalibrate(u32 mask);
+BOOL __PADDisableRecalibration(BOOL disable);
 void PADClamp(PADStatus* status);
 void PADClampCircle(PADStatus* status);
 void PADControlMotor(s32 chan, u32 cmd);

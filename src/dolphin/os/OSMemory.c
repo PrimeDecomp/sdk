@@ -7,7 +7,7 @@
 vu16 __MEMRegs[64] : 0xCC004000;
 extern OSErrorHandler __OSErrorTable[16];
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static BOOL OnReset(BOOL final);
 
 static OSResetFunctionInfo ResetFunctionInfo = {
@@ -563,7 +563,7 @@ void __OSInitMemoryProtection() {
   __OSUnmaskInterrupts(OS_INTERRUPTMASK_MEM_ADDRESS);
   OSRestoreInterrupts(enabled);
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void __OSInitMemoryProtection() {
   u32 padding[9];
   u32 temp;

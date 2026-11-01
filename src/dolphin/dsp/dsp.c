@@ -11,7 +11,7 @@ extern "C" {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static const char* __DSPVersion =
     "<< Dolphin SDK - DSP\trelease build: Sep  5 2002 05:35:13 (0x2301) >>";
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static const char* __DSPVersion =
     "<< Dolphin SDK - DSP\trelease build: Apr  5 2004 04:15:32 (0x2301) >>";
 #define DSP_BUILD_DATE "Apr  5 2004"

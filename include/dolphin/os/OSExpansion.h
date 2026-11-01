@@ -39,6 +39,7 @@ extern "C" {
 
 #define EXI_MODEM 0x02020000
 #define EXI_ETHER 0x04020200
+#define EXI_MIC 0x04060000
 #define EXI_ETHER_VIEWER 0x04220001
 #define EXI_STREAM_HANGER 0x04130000
 
@@ -69,7 +70,7 @@ s32 EXIProbeEx(s32 chan);
 
 s32 EXIGetType(s32 chan, u32 dev, u32* type);
 char* EXIGetTypeString(u32 type);
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
 #endif
 s32 EXIGetID(s32 chan, u32 dev, u32* id);

@@ -267,7 +267,7 @@ asm void LCDisable() {
 asm void LCLoadBlocks(register void* destTag, register void* srcAddr, register u32 numBlocks) {
   nofralloc
   rlwinm  r6, numBlocks, 30, 27, 31
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   rlwinm  srcAddr, srcAddr, 0, 4, 31
 #else
   rlwinm  srcAddr, srcAddr, 0, 3, 31
@@ -284,7 +284,7 @@ asm void LCLoadBlocks(register void* destTag, register void* srcAddr, register u
 asm void LCStoreBlocks(register void* destAddr, register void* srcTag, register u32 numBlocks) {
   nofralloc
   rlwinm  r6, numBlocks, 30, 27, 31
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
   rlwinm  destAddr, destAddr, 0, 4, 31
 #else
   rlwinm  destAddr, destAddr, 0, 3, 31

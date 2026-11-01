@@ -32,7 +32,7 @@ struct lconv __lconv = {
     CHAR_MAX, // int_n_sign_posn
 };
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 // Just here to generate the extra string,
 // the real usage is inside setlocale, which is stripped
 static char* locale_name = "C";

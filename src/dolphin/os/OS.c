@@ -37,7 +37,7 @@ static __OSExceptionHandler* OSExceptionTable;
 OSTime __OSStartTime;
 BOOL __OSInIPL;
 #else
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static const char* __OSVersion =
     "<< Dolphin SDK - OS\trelease build: May 21 2004 09:28:09 (0x2301) >>";
 #else
@@ -53,7 +53,7 @@ extern char _db_stack_end[];
 extern char* __OSResetSWInterruptHandler[];
 
 vu16 __OSDeviceCode : (OS_BASE_CACHED | 0x30E6);
-#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static DVDDriveInfo DriveInfo ATTRIBUTE_ALIGN(32);
 static DVDCommandBlock DriveBlock;
 
@@ -273,7 +273,7 @@ void ClearArena(void) {
     }
   }
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 u32 OSGetConsoleType() {
   if (BootInfo == NULL || BootInfo->consoleType == 0) {
     return OS_CONSOLE_ARTHUR;
@@ -639,7 +639,7 @@ void OSInit(void) {
     }
   }
 }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
 void OSInit(void) {
   u32 consoleType;
   void* bi2StartAddr;
@@ -1145,7 +1145,7 @@ static asm void __OSDBJump(void){
 
     nofralloc
 entry __OSDBJUMPSTART
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
     bla     OS_DBJUMPPOINT_ADDR
 #else
     bl      __OSDBJUMPDEST

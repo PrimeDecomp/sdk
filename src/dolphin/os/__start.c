@@ -212,7 +212,7 @@ inline static void __init_bss_section(void* dst, unsigned long size) {
   }
 }
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
 #pragma scheduling off
 #endif
 void __init_data(void) {
