@@ -68,7 +68,7 @@ void __VIGetCurrentPosition(s16* x, s16* y);
     (reg) = ((u32)__rlwimi((u32)(reg), (val), (shift), 32 - (shift) - (size), 31 - (shift)));    \
   } while (0)
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 const char* __VIVersion = "<< Dolphin SDK - VI	release build: Apr  7 2004 04:13:59 (0x2301) >>";
 #else
 const char* __VIVersion = "<< RVL_SDK - VI 	release build: Aug  8 2007 02:07:17 (0x4199_60831) >>";
@@ -134,7 +134,7 @@ typedef struct {
     VITiming* timing;
 } SomeVIStruct;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static BOOL IsInitialized;
 static volatile u32 retraceCount;
 
@@ -237,7 +237,7 @@ static u16 taps[25] = {
     0x0001
 };
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static SomeVIStruct HorVer;
 static u32 FBSet;
 static VITiming* timingExtra;
@@ -402,7 +402,7 @@ int __VIGetLatch1Position(s16* px, s16* py);
 int __VIGetLatchPosition(u32 port, s16* px, s16* py);
 
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 static u32 getEncoderType(void) {
     return 1;
 }
@@ -536,8 +536,8 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
 #endif
     }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     if (inter == 0) {
     }
 #endif
@@ -804,7 +804,7 @@ static VITiming* getTiming(VITVMode mode) {
     case VI_TVMODE_EURGB60_DS:      return &timing[1];
     case VI_TVMODE_MPAL_INT:        return &timing[4];
     case VI_TVMODE_MPAL_DS:         return &timing[5];
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     case VI_TVMODE_NTSC_PROG:       return &timing[6];
 #else
     case VI_TVMODE_NTSC_PROG:
@@ -817,7 +817,7 @@ static VITiming* getTiming(VITVMode mode) {
     case VI_TVMODE_DEBUG_PAL_DS:    return &timing[3];
     case 24:                        return &timing[8];
     case 26:                        return &timing[9];
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     case 29:
     case 30:
     case 28:
@@ -844,7 +844,7 @@ void __VIInit(VITVMode mode) {
     volatile u32 a;
     u16 hct;
     u16 vct;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     u32 encoderType;
 
     encoderType = getEncoderType();
@@ -856,7 +856,7 @@ void __VIInit(VITVMode mode) {
     nonInter = mode & 3;
     tv = (u32)mode >> 2;
     *(u32*)OSPhysicalToCached(0xCC) = tv;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     if (encoderType == 0) {
         tv = 3;
     }
@@ -936,7 +936,7 @@ static void AdjustPosition(u16 acv) {
 }
 
 static void ImportAdjustingValues(void) {
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     OSSram* sram = __OSLockSram();
 
     displayOffsetH = sram->displayOffsetH;
@@ -961,7 +961,7 @@ void VIInit(void) {
     OSRegisterVersion(__VIVersion);
     IsInitialized = TRUE;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     encoderType = getEncoderType();
 #endif
     if (!(__VIRegs[1] & 1)) {
@@ -974,7 +974,7 @@ void VIInit(void) {
     changeMode = 0;
 #endif
     shdwChangeMode = 0;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
     flushFlag = 0;
 #if SDK_VERSION >= SDK_VERSION_RVL_2008_01
     flushFlag3in1 = 0;
@@ -999,14 +999,14 @@ void VIInit(void) {
 
     tvInBootrom = *(u32*)OSPhysicalToCached(0xCC);
     dspCfg = __VIRegs[1];
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     HorVer.nonInter = (s32) ((dspCfg >> 2U) & 1);
 #else
     HorVer.nonInter = VIGetScanMode();
 #endif
     HorVer.tv = ((u32)(dspCfg) & 0x300) >> 8;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     if (tvInBootrom == VI_PAL && HorVer.tv == VI_NTSC) {
 #else
     if (tvInBootrom == VI_EURGB60 || (tvInBootrom == VI_PAL && HorVer.tv == VI_NTSC)) {
@@ -1618,7 +1618,7 @@ static void setHorizontalRegs(VITiming* tm, u16 dispPosX, u16 dispSizeX) {
     MARK_CHANGED(3);
     regs[2] = tm->hce | (tm->hcs << 8);
     MARK_CHANGED(2);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     hbe = tm->hbe640 - 40 + dispPosX;
     hbs = tm->hbs640 + 40 + dispPosX - (720 - dispSizeX);
 #else
@@ -1667,7 +1667,7 @@ static void setVerticalRegs(u16 dispPosY, u16 dispSizeY, u8 equ, u16 acv, u16 pr
   } while (startCount == retraceCount);
   OSRestoreInterrupts(interrupt);
 #else
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
     if (regs[54] & 1) {
 #else
     if (HorVer.nonInter == 2 || HorVer.nonInter == 3) {
@@ -1934,7 +1934,7 @@ static void setScalingRegs(u16 panSizeX, u16 dispSizeX, BOOL is3D) {
     regClksel = regs[54];
     if (HorVer.nonInter == VI_PROGRESSIVE || HorVer.nonInter == 3) {
         regDspCfg = (((u32)(regDspCfg)) & ~0x00000004) | (((u32)(1)) << 2);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
         regClksel = (((u32)(regClksel)) & ~0x00000001) | (((u32)(1)) << 0);
 #else
         if (HorVer.tv == 8) {
@@ -2659,7 +2659,7 @@ u32 VIGetTvFormat(void) {
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 // NONMATCHING
 u32 VIGetScanMode(void) {
     u32 scanMode = 0;
@@ -2718,7 +2718,7 @@ u32 VIGetDTVStatus(void) {
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 void __VISetAdjustingValues(s16 x, s16 y) {
     BOOL enabled;
     VITiming* tm;

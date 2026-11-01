@@ -306,7 +306,7 @@ void GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor
 }
 #endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 void GXSetFogColor(GXColor color) {
   unsigned long rgba;
   unsigned long fogclr = 0xF2000000;

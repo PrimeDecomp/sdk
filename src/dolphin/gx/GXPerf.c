@@ -892,7 +892,7 @@ void GXSetVCacheMetric(GXVCachePerf attr)
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #pragma scheduling off
 void GXReadVCacheMetric(u32 *check, u32 *miss, u32 *stall)
 {

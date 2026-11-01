@@ -24,7 +24,7 @@ def modules_for(
     SDK = sdk_versions(sdk_dir)
     # sdk_version is one of the SDK_VERSION_* values of SDKVersion.h, chosen by the game's
     # configure.py, which defines the same value as SDK_VERSION when building.
-    is_prime = sdk_version < SDK["DOLPHIN_2004_04_OS_APR"]
+    is_prime = sdk_version < SDK["DOLPHIN_2003_04"]
     is_wii = sdk_version >= SDK["RVL_2008_01"]
 
     def flags_if(cond: bool, *flags: str) -> List[str]:
@@ -168,7 +168,7 @@ def modules_for(
         return MatchingFor(*versions) and non_matching
 
     GC_VERSIONS = [
-        "DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04_OS_APR",
+        "DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2003_04", "DOLPHIN_2004_04_OS_APR",
         "DOLPHIN_2004_04",
     ]
 

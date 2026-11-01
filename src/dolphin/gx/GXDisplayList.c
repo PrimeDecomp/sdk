@@ -58,7 +58,7 @@ void GXBeginDisplayList(void *list, u32 size)
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 unsigned long GXEndDisplayList(void)
 {
     u32 ov;

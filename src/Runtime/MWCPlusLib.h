@@ -3,7 +3,7 @@
 
 #include <SDKVersion.h>
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #include <stddef.h>
 #endif
 #include <types.h>

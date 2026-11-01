@@ -14,7 +14,7 @@ s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pca
   s32 result;
   u16* fat;
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(0 <= fileInfo->chan && fileInfo->chan < 2);
   ASSERT(0 <= fileInfo->fileNo && fileInfo->fileNo < CARD_MAX_FILE);
 #endif
@@ -23,7 +23,7 @@ s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pca
     return result;
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(CARDIsValidBlockNo(card, fileInfo->iBlock));
   ASSERT(fileInfo->offset < card->cBlock * card->sectorSize);
 #endif
@@ -34,7 +34,7 @@ s32 __CARDSeek(CARDFileInfo* fileInfo, s32 length, s32 offset, CARDControl** pca
 
   dir = __CARDGetDirBlock(card);
   ent = &dir[fileInfo->fileNo];
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   ASSERT(ent->gameName[0] != 0xff);
 #endif
@@ -100,7 +100,7 @@ static void ReadCallback(s32 chan, s32 result) {
     goto error;
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(OFFSET(fileInfo->length, CARD_SEG_SIZE) == 0);
   ASSERT(OFFSET(fileInfo->offset, card->sectorSize) == 0);
 #endif
@@ -117,7 +117,7 @@ error:
   callback = card->apiCallback;
   card->apiCallback = 0;
   __CARDPutControlBlock(card, result);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   ASSERT(callback);
 #endif
@@ -131,7 +131,7 @@ s32 CARDReadAsync(CARDFileInfo* fileInfo, void* buf, s32 length, s32 offset,
   s32 result;
   CARDDir* dir;
   CARDDir* ent;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
   ASSERT(buf && OFFSET(buf, 32) == 0);
   ASSERT(OFFSET(offset, CARD_SEG_SIZE) == 0);
@@ -174,7 +174,7 @@ s32 CARDReadAsync(CARDFileInfo* fileInfo, void* buf, s32 length, s32 offset,
   return result;
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 s32 CARDRead(CARDFileInfo* fileInfo, void* buf, s32 length, s32 offset) {
   s32 result;
   result = CARDReadAsync(fileInfo, buf, length, offset, __CARDSyncCallback);

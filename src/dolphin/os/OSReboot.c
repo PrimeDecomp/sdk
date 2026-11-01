@@ -77,7 +77,7 @@ asm void Run(void *entrypoint) {
   OSDisableInterrupts();
   OSSetArenaLo((void*)0x81280000);
   OSSetArenaHi((void*)0x812f0000);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
   OSClearContext(&exceptionContext);
   OSSetCurrentContext(&exceptionContext);
 #endif

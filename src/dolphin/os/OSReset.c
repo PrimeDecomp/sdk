@@ -203,7 +203,7 @@ static void __OSShutdownDevices(BOOL doRecal) {
 
   while (!__OSCallResetFunctions(FALSE))
     ;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   while (!__OSSyncSram())
     ;
 
@@ -304,7 +304,7 @@ u32 OSGetResetCode(void) {
 #endif
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 u32 OSSetBootDol(u32 dolOffset) {
   u32 oldDol;
 

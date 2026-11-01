@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #include <critical_regions.h>
 #endif
 // #include <cctype>
@@ -1227,13 +1227,13 @@ int printf(const char* format, ...) {
     return -1;
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __begin_critical_region(files_access);
 #endif
   va_start(l, format);
   ret = __pformatter(&__FileWrite, (void*)stdout, format, l);
   va_end(l);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __end_critical_region(files_access);
 #endif
   return ret;
@@ -1251,13 +1251,13 @@ int fprintf(FILE* file, const char* format, ...) {
     return -1;
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __begin_critical_region(files_access);
 #endif
   va_start(l, format);
   ret = __pformatter(&__FileWrite, file, format, l);
   va_end(l);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __end_critical_region(files_access);
 #endif
   return ret;
@@ -1274,11 +1274,11 @@ int vprintf(const char* pFormat, va_list arg) {
     return -1;
   }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __begin_critical_region(files_access);
 #endif
   ret = __pformatter(&__FileWrite, (void*)stdout, pFormat, arg);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __end_critical_region(files_access);
 #endif
   return ret;

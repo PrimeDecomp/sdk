@@ -23,7 +23,7 @@ asm void __init_hardware(void) {
 
   mflr r31
   bl __OSPSInit
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   bl __OSFPRInit
 #endif
   bl __OSCacheInit
