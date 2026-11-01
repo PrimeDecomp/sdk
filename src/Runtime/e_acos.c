@@ -75,10 +75,8 @@ double x;
       else
         return pi + 2.0 * pio2_lo; /* acos(-1)= pi */
     }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
     errno = EDOM;
-#endif
 #endif
     return NAN; /* acos(|x|>1) is NaN */
   }

@@ -1253,11 +1253,7 @@ void DVDResume(void) {
 BOOL DVDCancelAsync(DVDCommandBlock* block, DVDCBCallback callback) {
   BOOL enabled;
   DVDLowCallback old;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-  DVDCommandBlock* finished;
-#endif
-#else
   DVDCommandBlock* finished;
 #endif
 
@@ -1335,11 +1331,7 @@ BOOL DVDCancelAsync(DVDCommandBlock* block, DVDCBCallback callback) {
       ResumeFromHere = 2;
     if (block->state == 7)
       ResumeFromHere = 7;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-    executing = &DummyCommandBlock;
-#endif
-#else
     executing = &DummyCommandBlock;
 #endif
     block->state = 10;
@@ -1502,12 +1494,7 @@ BOOL DVDCheckDisk(void) {
     coverReg = __DIRegs[1];
     if (((coverReg >> 2) & 1) || (coverReg & 1)) {
       retVal = FALSE;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-    } else if (ResumeFromHere) {
-      retVal = FALSE;
-#endif
-#else
     } else if (ResumeFromHere) {
       retVal = FALSE;
 #endif

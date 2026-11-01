@@ -79,10 +79,8 @@ double x;
     if (((ix - 0x3ff00000) | __LO(x)) == 0)
       /* asin(1)=+-pi/2 with inexact */
       return x * pio2_hi + x * pio2_lo;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
     errno = EDOM;
-#endif
 #endif
     return NAN;                 /* asin(|x|>1) is NaN */
   } else if (ix < 0x3fe00000) { /* |x|<0.5 */

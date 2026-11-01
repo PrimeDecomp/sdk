@@ -9,15 +9,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
 #define OS_MODULE_VERSION 3
 #else
 #define OS_MODULE_VERSION 2
-#endif
-#else
-
-#define OS_MODULE_VERSION 3
 #endif
 typedef struct OSModuleHeader OSModuleHeader;
 

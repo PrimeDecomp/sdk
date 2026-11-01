@@ -119,10 +119,8 @@ static int QueueLength(void) {
 
 u32 WriteUARTN(const void* buf, unsigned long len) {
   u32 cmd;
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_GM8E01_02
   s32 enabled;
-#endif
 #endif
   int qLen;
   long xLen;
@@ -133,17 +131,13 @@ u32 WriteUARTN(const void* buf, unsigned long len) {
   if (Enabled != EXI_MAGIC)
     return 2;
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_GM8E01_02
   enabled = OSDisableInterrupts();
-#endif
 #endif
   locked = EXILock(Chan, Dev, 0);
   if (!locked) {
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_GM8E01_02
     OSRestoreInterrupts(enabled);
-#endif
 #endif
     return 0;
   }
@@ -187,10 +181,8 @@ u32 WriteUARTN(const void* buf, unsigned long len) {
   }
 
   EXIUnlock(Chan);
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_GM8E01_02
+#if SDK_VERSION < SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_GM8E01_02
   OSRestoreInterrupts(enabled);
-#endif
 #endif
   return error;
 }

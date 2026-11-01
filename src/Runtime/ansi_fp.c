@@ -697,15 +697,13 @@ double __dec2num(const decimal* d) {
       *i -= '0';
     dec.exp += dec.sig.length - 1;
     exponent = dec.exp;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
     {
       decimal max;
       __str2dec(&max, "179769313486231580793728714053034151", 308);
       if (__less_dec(&max, &dec))
         return copysign((double)INFINITY, d->sgn == 0 ? 1.0 : -1.0);
     }
-#endif
 #endif
     i = dec.sig.text;
     first_guess = *i++;

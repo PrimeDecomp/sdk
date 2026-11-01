@@ -19,8 +19,7 @@ void __VIGetCurrentPosition(s16* x, s16* y);
 u32 VIGetDTVStatus(void);
 
 // These use types that only the SDK vitypes.h defines
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
 BOOL VIEnableDimming(BOOL enable);
 VITimeToDIM VISetTimeToDimming(VITimeToDIM time);
 BOOL VIResetDimmingCount(void);
@@ -56,7 +55,6 @@ void __VISetRevolutionModeSimple(void);
 
 s32 __VISendI2CData(u8 slaveAddr, u8* pData, s32 nBytes);
 void WaitMicroTime(s32 usec);
-#endif
 #endif
 
 #ifdef __cplusplus

@@ -16,10 +16,8 @@ static OSInterruptMask InterruptPrioTable[] = {
     OS_INTERRUPTMASK_MEM,
     OS_INTERRUPTMASK_PI_RSW,
     OS_INTERRUPTMASK_PI_VI,
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
     OS_INTERRUPTMASK_PI_ACR,
-#endif
 #endif
     OS_INTERRUPTMASK_PI_PE,
     OS_INTERRUPTMASK_PI_HSP,
@@ -105,10 +103,8 @@ void __OSInterruptInit(void) {
   *(OSInterruptMask*)OSPhysicalToCached(0x00C8) = 0;
 
   __PIRegs[1] = 0xf0;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
   ((vu32*)0xCD000034)[0] = 0x40000000;
-#endif
 #endif
 
   __OSMaskInterrupts(OS_INTERRUPTMASK_MEM | OS_INTERRUPTMASK_DSP | OS_INTERRUPTMASK_AI |
@@ -213,10 +209,8 @@ u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current) {
   case __OS_INTERRUPT_PI_PE_TOKEN:
   case __OS_INTERRUPT_PI_PE_FINISH:
   case __OS_INTERRUPT_PI_HSP:
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
   case __OS_INTERRUPT_PI_ACR:
-#endif
 #endif
     reg = 0xF0;
 
@@ -250,12 +244,10 @@ u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current) {
     if (!(current & OS_INTERRUPTMASK_PI_HSP)) {
       reg |= 0x2000;
     }
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
     if (!(current & OS_INTERRUPTMASK_PI_ACR)) {
       reg |= 0x4000;
     }
-#endif
 #endif
     __PIRegs[1] = reg;
     mask &= ~OS_INTERRUPTMASK_PI;
@@ -331,10 +323,8 @@ volatile u32 __OSLastInterruptSrr0;
 void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
   u32 intsr;
   u32 reg;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
   u32 piMask;
-#endif
 #endif
   OSInterruptMask cause;
   OSInterruptMask unmasked;
@@ -342,10 +332,8 @@ void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
   __OSInterrupt interrupt;
   __OSInterruptHandler handler;
   intsr = __PIRegs[0];
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
   piMask = __PIRegs[1];
-#endif
 #endif
   intsr &= ~0x00010000;
 
@@ -435,11 +423,9 @@ void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
     cause |= OS_INTERRUPTMASK_PI_CP;
   if (intsr & 0x00000001)
     cause |= OS_INTERRUPTMASK_PI_ERROR;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
   if (intsr & 0x00004000)
     cause |= OS_INTERRUPTMASK_PI_ACR;
-#endif
 #endif
 
   unmasked = cause & ~(*(OSInterruptMask*)OSPhysicalToCached(0x00C4) |

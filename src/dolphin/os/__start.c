@@ -107,13 +107,11 @@ _loop:
 	addi r5, r5, ARENAHI_ADDR@l
 	rlwinm r7, r15, 0, 0, 0x1a
 	stw r7, 0(r5)
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
 	lis r5, OS_USABLE_MEM1_END@ha
 	addi r5, r5, OS_USABLE_MEM1_END@l
 	rlwinm r7, r15, 0, 0, 0x1a
 	stw r7, 0(r5)
-#endif
 #endif
 	b _end_of_parseargs
 

@@ -114,10 +114,8 @@ void __DSPHandler(__OSInterrupt, OSContext* context) {
     break;
   case 0xDCD10003:
     if (__DSP_rude_task_pending) {
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
       if (__DSP_curr_task != __DSP_rude_task) {
-#endif
 #endif
       if (__DSP_curr_task->done_cb) {
         (*(__DSP_curr_task->done_cb))((void*)(__DSP_curr_task));
@@ -136,13 +134,11 @@ void __DSPHandler(__OSInterrupt, OSContext* context) {
       __DSP_rude_task_pending = FALSE;
 
       break;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
       }
 
       __DSP_rude_task = NULL;
       __DSP_rude_task_pending = FALSE;
-#endif
 #endif
     }
 

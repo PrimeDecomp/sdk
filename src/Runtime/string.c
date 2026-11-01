@@ -56,10 +56,8 @@ char*(strcpy)(char* dst, const char* src) {
 
   w = *((int*)(fromb));
   t = w + k2;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
   t &= ~w;
-#endif
 #endif
   t &= k1;
   if (t) {
@@ -73,10 +71,8 @@ char*(strcpy)(char* dst, const char* src) {
     w = *(++((int*)(fromb)));
 
     t = w + k2;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
     t &= ~w;
-#endif
 #endif
     t &= k1;
     if (t)
@@ -169,10 +165,8 @@ int strcmp(const char* str1, const char* str2) {
   l1 = *(int*)left;
   r1 = *(int*)right;
   x = l1 + k2;
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
   x &= ~l1;
-#endif
 #endif
   if (x & k1) {
     goto adjust;

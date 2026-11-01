@@ -1201,10 +1201,8 @@ entry __OSEVStart
     mflr    r3
     stw     r3, OS_CONTEXT_LR(r4)
     mfctr   r3
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
 entry __OSDBJUMPDEST
-#endif
 #endif
     stw     r3, OS_CONTEXT_CTR(r4)
     mfxer   r3

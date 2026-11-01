@@ -256,11 +256,7 @@ BOOL EXISync(s32 chan) {
       if (exi->state & STATE_SELECTED) {
         CompleteTransfer(chan);
         if (__OSGetDIConfig() != 0xff
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-          || (OSGetConsoleType() & OS_CONSOLE_MASK) == OS_CONSOLE_TDEV
-#endif
-#else
           || (OSGetConsoleType() & OS_CONSOLE_MASK) == OS_CONSOLE_TDEV
 #endif
           || exi->immLen != 4 ||
@@ -278,10 +274,8 @@ BOOL EXISync(s32 chan) {
   return rc;
 }
 
-#if SDK_VERSION >= SDK_VERSION_G2ME01_00
-#if SDK_VERSION >= SDK_VERSION_R32J01_00
+#if SDK_VERSION >= SDK_VERSION_G2ME01_00 && SDK_VERSION >= SDK_VERSION_R32J01_00
 static
-#endif
 #endif
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext) {
   u32 cpr;
@@ -640,16 +634,10 @@ void EXIInit(void) {
     __OSEnableBarnacle(0, 2);
 #endif
   }
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
-  
-#if SDK_VERSION >= SDK_VERSION_GM8E01_02
+#if SDK_VERSION >= SDK_VERSION_GM8E01_02 && SDK_VERSION < SDK_VERSION_G2ME01_00
   EXIGetID(0, 2, &IDSerialPort1);
-  OSRegisterVersion(__EXIVersion);
 #endif
-#else
-
   OSRegisterVersion(__EXIVersion);
-#endif
 }
 
 BOOL EXILock(s32 chan, u32 dev, EXICallback unlockedCallback) {
@@ -726,14 +714,7 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
   s32 startTime;
   BOOL enabled;
   
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-  if (chan == 0 && dev == 2 && IDSerialPort1 != 0) {
-    *id = IDSerialPort1;
-    return 1;
-  }
-#endif
-#else
   if (chan == 0 && dev == 2 && IDSerialPort1 != 0) {
     *id = IDSerialPort1;
     return 1;
@@ -757,11 +738,7 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
     startTime = __EXIProbeStartTime[chan];
   }
 
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-  enabled = OSDisableInterrupts();
-#endif
-#else
   enabled = OSDisableInterrupts();
 #endif
   err = !EXILock(chan, dev, (chan < 2 && dev == 0) ? UnlockedHandler : NULL);
@@ -777,11 +754,7 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
     }
     EXIUnlock(chan);
   }
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-  OSRestoreInterrupts(enabled);
-#endif
-#else
   OSRestoreInterrupts(enabled);
 #endif
 
@@ -811,14 +784,7 @@ char* EXIGetTypeString(u32 type) {
     return "Memory Card 251";
   case EXI_MEMORY_CARD_507:
     return "Memory Card 507";
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-  case EXI_MEMORY_CARD_1019:
-    return "Memory Card 1019";
-  case EXI_MEMORY_CARD_2043:
-    return "Memory Card 2043";
-#endif
-#else
   case EXI_MEMORY_CARD_1019:
     return "Memory Card 1019";
   case EXI_MEMORY_CARD_2043:
@@ -833,12 +799,7 @@ char* EXIGetTypeString(u32 type) {
     return "Net Card";
   case EXI_ETHER_VIEWER:
     return "Artist Ether";
-#if SDK_VERSION < SDK_VERSION_G2ME01_00
 #if SDK_VERSION >= SDK_VERSION_GM8E01_02
-  case 0x4220000:
-    return "Broadband Adapter";
-#endif
-#else
   case 0x4220000:
     return "Broadband Adapter";
 #endif
