@@ -574,6 +574,13 @@ void OSInit(void) {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
     OSReport("\nDolphin OS $Revision: 58 $.\n");
     OSReport("Kernel built : %s %s\n", "Sep  5 2002", "05:32:39");
+#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+    OSReport("\nDolphin OS\n");
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04_OS_APR
+    OSReport("Kernel built : %s %s\n", "Apr  5 2004", "04:13:58");
+#else
+    OSReport("Kernel built : %s %s\n", "May 21 2004", "09:28:09");
+#endif
 #else
     OSReport("\nDolphin OS $Revision: 60 $.\n");
     OSReport("Kernel built : %s %s\n", "Nov  5 2002", "12:52:29");
