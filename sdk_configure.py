@@ -1269,6 +1269,8 @@ def modules_for(
                 Object(NonMatching, "dolphin/ax/AXSPB.c"),
                 Object(NonMatching, "dolphin/ax/AXVPB.c"),
                 Object(NonMatching, "dolphin/ax/AXProf.c"),
+                Object(NonMatching, "dolphin/ax/AXComp.c"),
+                Object(NonMatching, "dolphin/ax/DSPCode.c"),
             ],
         ),
         DolphinLib(
