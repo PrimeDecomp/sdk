@@ -1276,10 +1276,10 @@ def modules_for(
         DolphinLib(
             "AXFX",
             [
-                Object(NonMatching, "dolphin/axfx/AXFXReverbHi.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/axfx/AXFXReverbHi.c"),
                 Object(NonMatching, "dolphin/axfx/AXFXReverbStd.c"),
-                Object(NonMatching, "dolphin/axfx/AXFXHooks.c"),
-                Object(NonMatching, "dolphin/axfx/AXFXReverbHiDpl2.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/axfx/AXFXHooks.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/axfx/AXFXReverbHiDpl2.c"),
             ],
         ),
         DolphinLib(
