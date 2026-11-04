@@ -8,6 +8,10 @@ vu16 __MEMRegs[64] : 0xCC004000;
 extern OSErrorHandler __OSErrorTable[16];
 
 #if SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+u32 OSGetPhysicalMemSize() { return *(u32*)(OSPhysicalToCached(0x0028)); }
+#endif
+
 static BOOL OnReset(BOOL final);
 
 static OSResetFunctionInfo ResetFunctionInfo = {
@@ -23,7 +27,9 @@ static BOOL OnReset(BOOL final) {
   return TRUE;
 }
 
+#if SDK_VERSION != SDK_VERSION_RVL_2005_11
 u32 OSGetPhysicalMemSize() { return *(u32*)(OSPhysicalToCached(0x0028)); }
+#endif
 
 u32 OSGetConsoleSimulatedMemSize() { return *(u32*)(OSPhysicalToCached(0x00F0)); }
 #else
