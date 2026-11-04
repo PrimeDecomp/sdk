@@ -102,7 +102,7 @@ void DSPHalt(void) {
 
 u32 DSPGetDMAStatus(void) { return __DSPRegs[5] & 0x200; }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
 BOOL DSPCheckInit(void) { return __DSP_init_flag; }
 
 #endif
@@ -129,7 +129,17 @@ DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task) {
   return task;
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
+void DSPAssertInt(void) {
+  u32 oldInt;
+  u16 reg;
+  oldInt = OSDisableInterrupts();
+  reg = __DSPRegs[5];
+  reg = (reg & ~0xA8) | 2;
+  __DSPRegs[5] = reg;
+  OSRestoreInterrupts(oldInt);
+}
+
 DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task) {
   u32 oldInt;
   u16 reg;
@@ -144,10 +154,7 @@ DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task) {
     __DSP_rude_task_pending = TRUE;
     __DSP_rude_task = task;
     if (__DSP_curr_task->state == DSP_TASK_STATE_RUN) {
-      u32 oldInt2 = OSDisableInterrupts();
-      reg = __DSPRegs[5];
-      __DSPRegs[5] = (reg & ~0xA8) | 2;
-      OSRestoreInterrupts(oldInt2);
+      DSPAssertInt();
     }
     OSRestoreInterrupts(oldInt);
     return task;

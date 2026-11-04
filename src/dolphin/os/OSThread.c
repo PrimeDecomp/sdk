@@ -223,7 +223,7 @@ static void UpdatePriority(OSThread* thread) {
   } while (thread);
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
 void __OSPromoteThread(OSThread* thread, OSPriority priority) {
   do {
     if (0 < thread->suspend) {
@@ -647,7 +647,7 @@ s32 OSCheckActiveThreads(void) {
                           thread == thread->linkActive.prev->linkActive.next);
     CheckReport(1531, *(thread->stackEnd) == OS_THREAD_STACK_MAGIC);
     CheckReport(1534,
-                OS_PRIORITY_MIN <= thread->priority && thread->priority <= OS_PRIORITY_MAX + 1);
+                OS_PRIORITY_MIN <= thread->priority && thread->priority <= OS_PRIORITY_MAX+1);
     CheckReport(1535, 0 <= thread->suspend);
     CheckReport(1536, CheckThreadQueue(&thread->queueJoin));
 
