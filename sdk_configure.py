@@ -1261,14 +1261,16 @@ def modules_for(
         DolphinLib(
             "AX",
             [
-                Object(NonMatching, "dolphin/ax/AX.c"),
-                Object(NonMatching, "dolphin/ax/AXAlloc.c"),
-                Object(NonMatching, "dolphin/ax/AXAux.c"),
-                Object(NonMatching, "dolphin/ax/AXCL.c"),
-                Object(NonMatching, "dolphin/ax/AXOut.c"),
-                Object(NonMatching, "dolphin/ax/AXSPB.c"),
-                Object(NonMatching, "dolphin/ax/AXVPB.c"),
-                Object(NonMatching, "dolphin/ax/AXProf.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AX.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXAlloc.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXAux.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXCL.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXOut.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXSPB.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXVPB.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXProf.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXComp.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/DSPCode.c"),
             ],
         ),
         DolphinLib(
@@ -1349,7 +1351,7 @@ def modules_for(
         DolphinLib(
             "MIX",
             [
-                Object(NonMatching, "dolphin/mix/mix.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/mix/mix.c"),
             ],
         ),
         DolphinLib(
