@@ -1267,7 +1267,7 @@ def modules_for(
                 Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXCL.c"),
                 Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXOut.c"),
                 Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXSPB.c"),
-                Object(NonMatching, "dolphin/ax/AXVPB.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXVPB.c"),
                 Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXProf.c"),
                 Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXComp.c"),
                 Object(MatchingFor("RVL_2005_11"), "dolphin/ax/DSPCode.c"),
