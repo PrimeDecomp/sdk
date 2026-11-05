@@ -49,10 +49,10 @@ static const char* __OSVersion =
     "<< Dolphin SDK - OS\trelease build: May 21 2004 09:28:09 (0x2301) >>";
 #endif
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char* __OSVersion = "<< RVL_SDK - OS \trelease build: Jan 30 2008 01:38:43 (0x4199_60831) >>";
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 const char* __OSVersion = "<< RVL_SDK - OS \trelease build: Jun 15 2007 09:21:11 (0x4199_60831) >>";
+#else
+const char* __OSVersion = "<< RVL_SDK - OS \trelease build: Jan 30 2008 01:38:43 (0x4199_60831) >>";
 #endif
 #endif
 extern char _db_stack_end[];
@@ -797,10 +797,10 @@ static void ReportOSInfo(void) {
   u32 tdev;
 
   OSReport("\nRevolution OS\n");
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-  OSReport("Kernel built : %s %s\n", "Jan 30 2008", "01:38:43");
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
   OSReport("Kernel built : %s %s\n", "Jun 15 2007", "09:21:11");
+#else
+  OSReport("Kernel built : %s %s\n", "Jan 30 2008", "01:38:43");
 #endif
 
   OSReport("Console Type : ");

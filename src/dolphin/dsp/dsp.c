@@ -17,14 +17,14 @@ static const char* __DSPVersion =
 #define DSP_BUILD_DATE "Apr  5 2004"
 #define DSP_BUILD_TIME "04:15:32"
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char* __DSPVersion = "<< RVL_SDK - DSP \trelease build: Aug  8 2007 01:59:06 (0x4199_60831) >>";
-#define DSP_BUILD_DATE "Aug  8 2007"
-#define DSP_BUILD_TIME "01:59:06"
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 const char* __DSPVersion = "<< RVL_SDK - DSP \trelease build: Nov 30 2006 03:26:46 (0x4199_60831) >>";
 #define DSP_BUILD_DATE "Nov 30 2006"
 #define DSP_BUILD_TIME "03:26:46"
+#else
+const char* __DSPVersion = "<< RVL_SDK - DSP \trelease build: Aug  8 2007 01:59:06 (0x4199_60831) >>";
+#define DSP_BUILD_DATE "Aug  8 2007"
+#define DSP_BUILD_TIME "01:59:06"
 #endif
 #endif
 

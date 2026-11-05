@@ -30,12 +30,12 @@ static DVDBB2 BB2 ATTRIBUTE_ALIGN(32);
 static DVDDiskID CurrDiskID ATTRIBUTE_ALIGN(32);
 static DVDDiskID *IDShouldBe;
 static OSBootInfo *bootInfo;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char *__DVDVersion =
-    "<< RVL_SDK - DVD 	release build: Aug  8 2007 01:59:13 (0x4199_60831) >>";
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 const char *__DVDVersion =
     "<< RVL_SDK - DVD 	release build: Apr 24 2007 11:44:29 (0x4199_60831) >>";
+#else
+const char *__DVDVersion =
+    "<< RVL_SDK - DVD 	release build: Aug  8 2007 01:59:13 (0x4199_60831) >>";
 #endif
 static BOOL autoInvalidation = TRUE;
 

@@ -1,10 +1,10 @@
 #include <revolution/sc.h>
 #include <string.h>
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char *__SCVersion = "<< RVL_SDK - SC \trelease build: Aug  8 2007 02:09:03 (0x4199_60831) >>";
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 const char *__SCVersion = "<< RVL_SDK - SC \trelease build: Nov 30 2006 03:33:00 (0x4199_60831) >>";
+#else
+const char *__SCVersion = "<< RVL_SDK - SC \trelease build: Aug  8 2007 02:09:03 (0x4199_60831) >>";
 #endif
 
 static void __SCFlushSyncCallback(u32 result);

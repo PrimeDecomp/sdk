@@ -71,10 +71,10 @@ void __VIGetCurrentPosition(s16* x, s16* y);
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 const char* __VIVersion = "<< Dolphin SDK - VI	release build: Apr  7 2004 04:13:59 (0x2301) >>";
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char* __VIVersion = "<< RVL_SDK - VI 	release build: Aug  8 2007 02:07:17 (0x4199_60831) >>";
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 const char* __VIVersion = "<< RVL_SDK - VI 	release build: Nov 30 2006 03:31:49 (0x4199_60831) >>";
+#else
+const char* __VIVersion = "<< RVL_SDK - VI 	release build: Aug  8 2007 02:07:17 (0x4199_60831) >>";
 #endif
 #endif
 

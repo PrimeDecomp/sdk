@@ -2,10 +2,10 @@
 #include <dolphin/hw_regs.h>
 #include <dolphin/os.h>
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char *__AIVersion = "<< RVL_SDK - AI \trelease build: Aug  8 2007 01:58:12 (0x4199_60831) >>";
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 const char *__AIVersion = "<< RVL_SDK - AI \trelease build: Nov 30 2006 03:26:11 (0x4199_60831) >>";
+#else
+const char *__AIVersion = "<< RVL_SDK - AI \trelease build: Aug  8 2007 01:58:12 (0x4199_60831) >>";
 #endif
 
 static AIDCallback __AID_Callback;

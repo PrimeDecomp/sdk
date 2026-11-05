@@ -6,12 +6,12 @@ vu32 __SIRegs[64] : 0xCD006400;
 
 extern OSTime __OSGetSystemTime();
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
-const char *__SIVersion =
-    "<< RVL_SDK - SI 	release build: Aug  8 2007 02:07:10 (0x4199_60831) >>";
-#else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
 const char *__SIVersion =
     "<< RVL_SDK - SI 	release build: Nov 30 2006 03:31:44 (0x4199_60831) >>";
+#else
+const char *__SIVersion =
+    "<< RVL_SDK - SI 	release build: Aug  8 2007 02:07:10 (0x4199_60831) >>";
 #endif
 
 typedef struct SIControl {
