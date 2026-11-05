@@ -45,7 +45,7 @@ static u32 CurrTvMode;
 static u32 NextBufAddr;
 static u32 CurrBufAddr;
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 #include "dolphin/dvd.h"
 
 extern volatile u32 Vdac_Flag_Changed;
@@ -71,7 +71,11 @@ void __VIGetCurrentPosition(s16* x, s16* y);
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 const char* __VIVersion = "<< Dolphin SDK - VI	release build: Apr  7 2004 04:13:59 (0x2301) >>";
 #else
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+const char* __VIVersion = "<< RVL_SDK - VI 	release build: Nov 30 2006 03:31:49 (0x4199_60831) >>";
+#else
 const char* __VIVersion = "<< RVL_SDK - VI 	release build: Aug  8 2007 02:07:17 (0x4199_60831) >>";
+#endif
 #endif
 
 typedef struct {
@@ -216,7 +220,7 @@ static VITiming timing[] = {
     { 12, 480, 44, 44, 10, 10, 24, 24, 24, 24, 1038, 1038, 1038, 1038, 1050, 429, 64, 71, 105, 168, 379, 122, 412 },
     { 6, 241, 24, 25, 1, 0, 12, 13, 12, 13, 520, 519, 520, 519, 525, 429, 64, 71, 105, 159, 370, 122, 412 },
     { 12, 480, 48, 48, 6, 6, 24, 24, 24, 24, 1038, 1038, 1038, 1038, 1050, 429, 64, 71, 105, 180, 391, 122, 412 },
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     { 10, 576, 62, 62, 6, 6, 20, 20, 20, 20, 1240, 1240, 1240, 1240, 1250, 432, 64, 75, 106, 172, 380, 122, 412 }
 #endif
 };
@@ -295,7 +299,7 @@ static u32 getCurrentFieldEvenOdd();
 static void getEncoderType(void) {
   // UNUSED FUNCTION
 #else
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 GXRenderModeObj GXPal528Prog = {
     VI_TVMODE_PAL_PROG,
     640,
@@ -389,7 +393,7 @@ static BOOL OnShutdown(BOOL final, u32 event) {
 
 // prototypes
 static u32 getCurrentFieldEvenOdd(void);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 static void GetCurrentDisplayPosition(u32* hct, u32* vct);
 #endif
 VITiming* __VISetExtraTiming(VITiming* t);
@@ -550,7 +554,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
         PreCB(retraceCount);
     }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     if (vsync_timing_test_flag) {
         u32 hcount, vcount;
 
@@ -569,7 +573,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
         }
     }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     now_dtvStatus = VIGetDTVStatus();
     if (now_dtvStatus != old_dtvStatus) {
         __VISetYUVSEL((VIBool)now_dtvStatus);
@@ -670,7 +674,7 @@ static void __VIRetraceHandler(__OSInterrupt unused, OSContext* context) {
     OSClearContext(&exceptionContext);
     OSSetCurrentContext(context);
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     if (__VIDimming_All_Clear == TRUE) {
         if (__OSSetVIForceDimming(FALSE, 0, 0) == TRUE) {
             __VIDimming_All_Clear = FALSE;
@@ -976,7 +980,7 @@ void VIInit(void) {
     shdwChangeMode = 0;
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
     flushFlag = 0;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     flushFlag3in1 = 0;
 #endif
 
@@ -1062,7 +1066,7 @@ void VIInit(void) {
     PostCB = NULL;
     __OSSetInterruptHandler(0x18, __VIRetraceHandler);
     __OSUnmaskInterrupts(0x80);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     OSRegisterShutdownFunction(&ShutdownFunctionInfo);
 
     switch (VIGetTvFormat()) {
@@ -2637,7 +2641,7 @@ u32 VIGetTvFormat(void) {
     case VI_DEBUG:
     case 6:
     case 7:
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     case 8:
 #endif
         format = VI_NTSC;
@@ -2677,7 +2681,7 @@ u32 VIGetScanMode(void) {
     return scanMode;
 }
 
-#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION >= SDK_VERSION_RVL_2007_06
 u32 VIGetScanMode(void) {
     u32 scanMode;
     BOOL enabled;
@@ -2914,7 +2918,7 @@ int __VIGetLatchPosition(u32 port, s16* px, s16* py) {
     }
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 BOOL __VIResetDev0Idle(void) {
     __VIDimmingFlag_DEV_IDLE[0] = 0;
     return TRUE;

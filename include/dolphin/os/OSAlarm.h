@@ -21,7 +21,7 @@ struct OSAlarm {
   OSAlarm* next;
   OSTime period;
   OSTime start;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   void* userData;
 #endif
 };
@@ -34,7 +34,7 @@ void OSSetPeriodicAlarm(OSAlarm* alarm, OSTime start, OSTime period, OSAlarmHand
 void OSCreateAlarm(OSAlarm* alarm);
 void OSCancelAlarm(OSAlarm* alarm);
 void OSCancelAlarms(u32 tag);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 void OSSetAlarmUserData(OSAlarm* alarm, void* userData);
 void* OSGetAlarmUserData(const OSAlarm* alarm);
 #endif

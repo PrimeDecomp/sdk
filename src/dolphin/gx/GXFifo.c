@@ -907,7 +907,7 @@ void GXEnableBreakPt(void *break_pt)
     __GXFifoReadDisable();
     GX_SET_CP_REG(30, (u32)break_pt);
     GX_SET_CP_REG(31, ((u32)break_pt >> 16) & 0x3FFF);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     SOME_SET_REG_MACRO(__GXData->cpEnable, 1, 1, 0);
     SOME_SET_REG_MACRO(__GXData->cpEnable, 1, 5, 0);
     GX_SET_CP_REG(1, __GXData->cpEnable);

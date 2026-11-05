@@ -1,7 +1,11 @@
 #include <dolphin/thp.h>
 #pragma optimizewithasm on
 
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+const char* __THPVersion = "<< RVL_SDK - THP \trelease build: Nov 30 2006 03:09:42 (0x4199_60831) >>";
+#else
 const char* __THPVersion = "<< RVL_SDK - THP \trelease build: Aug  8 2007 01:31:54 (0x4199_60831) >>";
+#endif
 
 static THPHuffmanTab* Ydchuff ATTRIBUTE_ALIGN(32);
 static THPHuffmanTab* Udchuff ATTRIBUTE_ALIGN(32);

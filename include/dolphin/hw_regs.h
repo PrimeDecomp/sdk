@@ -146,7 +146,7 @@ vu32 __AIRegs[8] : 0xCC006C00;
 #else
 vu32 __AIRegs[8] : 0xCD006C00;
 #endif
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 vu32 __IPCRegs[256] : 0xCD800000;
 #endif
 
@@ -171,7 +171,7 @@ vu32 __IPCRegs[256] : 0xCD800000;
 #else
 #define __AIRegs ((vu32*)0xCD006C00)
 #endif
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 #define __IPCRegs ((vu32*)0xCD800000)
 #endif
 #endif

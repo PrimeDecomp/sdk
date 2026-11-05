@@ -243,7 +243,7 @@ static BOOL OnReset(BOOL final, u32 event) {
   return TRUE;
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 void OSSetAlarmUserData(OSAlarm* alarm, void* userData) { alarm->userData = userData; }
 
 void* OSGetAlarmUserData(const OSAlarm* alarm) { return alarm->userData; }

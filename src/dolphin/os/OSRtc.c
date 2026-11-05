@@ -514,7 +514,7 @@ void OSSetGbsMode(u16 mode) {
   __OSUnlockSramEx(TRUE);
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 BOOL __OSGetRTCFlags(u32* out) {
   BOOL err;
   u32 cmd;

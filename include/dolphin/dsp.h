@@ -59,7 +59,7 @@ u32 DSPGetDMAStatus();
 
 DSPTaskInfo* DSPAddTask(DSPTaskInfo* task);
 DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task);
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 BOOL DSPCheckInit(void);
 DSPTaskInfo* DSPAssertTask(DSPTaskInfo* task);
 #endif

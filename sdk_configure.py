@@ -25,7 +25,7 @@ def modules_for(
     # sdk_version is one of the SDK_VERSION_* values of SDKVersion.h, chosen by the game's
     # configure.py, which defines the same value as SDK_VERSION when building.
     is_prime = sdk_version < SDK["DOLPHIN_2003_04"]
-    is_wii = sdk_version >= SDK["RVL_2008_01"]
+    is_wii = sdk_version >= SDK["RVL_2007_06"]
 
     def flags_if(cond: bool, *flags: str) -> List[str]:
         return list(flags) if cond else []
@@ -271,7 +271,7 @@ def modules_for(
                     "Runtime/__va_arg.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01"),
                     "Runtime/global_destructor_chain.c",
                 ),
                 Object(
@@ -297,7 +297,7 @@ def modules_for(
                     "Runtime/runtime.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01"),
                     "Runtime/__init_cpp_exceptions.cpp",
                 ),
                 Object(

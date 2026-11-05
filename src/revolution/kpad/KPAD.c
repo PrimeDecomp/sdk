@@ -6,8 +6,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#if SDK_VERSION < SDK_VERSION_RVL_2008_01
+const char *__KPADVersion =
+    "<< RVL_SDK - KPAD \trelease build: May 17 2007 15:52:00 (0x4199_60831) >>";
+#else
 const char *__KPADVersion =
     "<< RVL_SDK - KPAD \trelease build: Aug  8 2007 02:05:53 (0x4199_60831) >>";
+#endif
 
 static Vec2 icenter_org = {0.000f, 0.000f};
 static f32 idist_org = 1.000f;

@@ -16,7 +16,7 @@ static OSInterruptMask InterruptPrioTable[] = {
     OS_INTERRUPTMASK_MEM,
     OS_INTERRUPTMASK_PI_RSW,
     OS_INTERRUPTMASK_PI_VI,
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     OS_INTERRUPTMASK_PI_ACR,
 #endif
     OS_INTERRUPTMASK_PI_PE,
@@ -98,7 +98,7 @@ void __OSInterruptInit(void) {
   *(OSInterruptMask*)OSPhysicalToCached(0x00C8) = 0;
 
   __PIRegs[1] = 0xf0;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   ((vu32*)0xCD000034)[0] = 0x40000000;
 #endif
 
@@ -204,7 +204,7 @@ u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current) {
   case __OS_INTERRUPT_PI_PE_TOKEN:
   case __OS_INTERRUPT_PI_PE_FINISH:
   case __OS_INTERRUPT_PI_HSP:
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   case __OS_INTERRUPT_PI_ACR:
 #endif
     reg = 0xF0;
@@ -239,7 +239,7 @@ u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current) {
     if (!(current & OS_INTERRUPTMASK_PI_HSP)) {
       reg |= 0x2000;
     }
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     if (!(current & OS_INTERRUPTMASK_PI_ACR)) {
       reg |= 0x4000;
     }
@@ -318,7 +318,7 @@ volatile u32 __OSLastInterruptSrr0;
 void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
   u32 intsr;
   u32 reg;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   u32 piMask;
 #endif
   OSInterruptMask cause;
@@ -327,7 +327,7 @@ void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
   __OSInterrupt interrupt;
   __OSInterruptHandler handler;
   intsr = __PIRegs[0];
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   piMask = __PIRegs[1];
 #endif
   intsr &= ~0x00010000;
@@ -414,7 +414,7 @@ void __OSDispatchInterrupt(__OSException exception, OSContext* context) {
     cause |= OS_INTERRUPTMASK_PI_CP;
   if (intsr & 0x00000001)
     cause |= OS_INTERRUPTMASK_PI_ERROR;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   if (intsr & 0x00004000)
     cause |= OS_INTERRUPTMASK_PI_ACR;
 #endif

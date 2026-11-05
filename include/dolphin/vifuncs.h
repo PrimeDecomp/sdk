@@ -23,7 +23,7 @@ void* VIGetNextFrameBuffer(void);
 void* VIGetCurrentFrameBuffer(void);
 
 // These use types that only the SDK vitypes.h defines
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 BOOL VIEnableDimming(BOOL enable);
 VITimeToDIM VISetTimeToDimming(VITimeToDIM time);
 BOOL VIResetDimmingCount(void);

@@ -205,7 +205,7 @@ static asm void Config48MB() {
   // clang-format on
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 static asm void ConfigMEM2_52MB() {
     // clang-format off
     nofralloc
