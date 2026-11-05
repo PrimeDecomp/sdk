@@ -24,7 +24,7 @@ void __OSBootDol(u32 doloffset, u32 restartCode, const char** argv);
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 ATTRIBUTE_ALIGN_DECL(32, static ApploaderHeader Header);
-#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION >= SDK_VERSION_RVL_2007_06
 extern u32 __OSNextPartitionType;
 vu32 __OSLaunchPartitionType : (OS_BASE_CACHED | 0x3194);
 #endif
@@ -82,7 +82,7 @@ asm void Run(void *entrypoint) {
   OSSetCurrentContext(&exceptionContext);
 #endif
   argvToPass = NULL;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   __OSNextPartitionType = __OSLaunchPartitionType;
 #endif
   __OSBootDol(bootDol, resetCode | 0x80000000, &argvToPass);

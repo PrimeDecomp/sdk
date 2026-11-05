@@ -14,7 +14,11 @@ static const char* __EXIVersion =
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Apr  5 2004 04:14:14 (0x2301) >>";
 #else
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:22 (0x4199_60831) >>";
+#else
+const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Nov 30 2006 03:26:56 (0x4199_60831) >>";
+#endif
 #endif
 
 #define MAX_DEV 3
@@ -65,7 +69,7 @@ static u32 IDSerialPort1 = 0;
 
 s32 __EXIProbeStartTime[2] : (OS_BASE_CACHED | 0x30C0);
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 static u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext);
 #endif
 
@@ -242,7 +246,7 @@ BOOL EXISync(s32 chan) {
   return rc;
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 static
 #endif
 u32 EXIClearInterrupts(s32 chan, BOOL exi, BOOL tc, BOOL ext) {

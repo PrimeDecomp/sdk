@@ -1098,7 +1098,7 @@ void GXSetChanCtrl(GXChannelID chan, GXBool enable, GXColorSrc amb_src,
     __GXData->bpSentNot = 1;
 }
 
-#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION >= SDK_VERSION_RVL_2007_06
 void GXSetNumChans(u8 nChans)
 {
     __GXData->genMode = __rlwimi(__GXData->genMode, nChans, 4, 25, 27);

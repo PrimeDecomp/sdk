@@ -5,8 +5,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 const char *__NANDVersion =
     "<< RVL_SDK - NAND 	release build: Dec 11 2007 01:35:48 (0x4199_60831) >>";
+#else
+const char *__NANDVersion =
+    "<< RVL_SDK - NAND 	release build: Nov 30 2006 03:32:57 (0x4199_60831) >>";
+#endif
 enum LibState { STATE_NOT_INITIALIZED, STATE_WORKING, STATE_INITIALIZED };
 
 static enum LibState s_libState = STATE_NOT_INITIALIZED;

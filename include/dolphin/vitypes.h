@@ -130,7 +130,7 @@ typedef struct VIPositionInfo {
   u32 rbfbb;            // _50
   VITimingInfo* timing; // _54
 } VIPositionInfo;
-#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION >= SDK_VERSION_RVL_2007_06
 #define VI_TVMODE_PAL_PROG ((VITVMode)6)
 
 typedef u8 VIBool;

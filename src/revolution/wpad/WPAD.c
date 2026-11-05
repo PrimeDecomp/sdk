@@ -8,8 +8,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
 static const char *__WPADVersion =
     "<< RVL_SDK - WPAD \trelease build: Dec 11 2007 01:35:07 (0x4199_60831) >>";
+#else
+static const char *__WPADVersion =
+    "<< RVL_SDK - WPAD \trelease build: May 17 2007 01:52:03 (0x4199_60831) >>";
+#endif
 
 extern volatile BOOL __OSIsReturnToIdle;
 

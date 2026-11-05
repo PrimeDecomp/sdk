@@ -54,7 +54,7 @@ char*(strcpy)(char* dst, const char* src) {
 
   w = *((int*)(fromb));
   t = w + k2;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   t &= ~w;
 #endif
   t &= k1;
@@ -69,7 +69,7 @@ char*(strcpy)(char* dst, const char* src) {
     w = *(++((int*)(fromb)));
 
     t = w + k2;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     t &= ~w;
 #endif
     t &= k1;
@@ -163,7 +163,7 @@ int strcmp(const char* str1, const char* str2) {
   l1 = *(int*)left;
   r1 = *(int*)right;
   x = l1 + k2;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
   x &= ~l1;
 #endif
   if (x & k1) {

@@ -630,7 +630,7 @@ double __dec2num(const decimal* d) {
       *i -= '0';
     dec.exp += dec.sig.length - 1;
     exponent = dec.exp;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
     {
       decimal max;
       __str2dec(&max, "179769313486231580793728714053034151", 308);

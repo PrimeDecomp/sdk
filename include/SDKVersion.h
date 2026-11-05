@@ -35,7 +35,13 @@
 // Revolution SDK (Wii)
 #define SDK_VERSION_RVL_2005_11 7 // Apr 2004 Dolphin libraries with the Nov 2005 pre-release
                                   // Revolution KPAD and WPAD. Corruption prototype.
-#define SDK_VERSION_RVL_2008_01 8 // RVL_SDK 0x4199_60831 builds, with the Jan 30 2008 OS.
+#define SDK_VERSION_RVL_2007_06 8 // RVL_SDK 0x4199_60831 builds of Nov 2006 to Jun 2007: the Nov 30 2006
+                                  // AI, DSP, EXI, SI, VI and THP, the Apr 24 2007 DVD, the May 17 2007
+                                  // KPAD and WPAD and the Jun 15 2007 OS. GX (Nov 29 2006) and NWC24
+                                  // (May 10 2007) are the same builds as in the next version.
+                                  // Metroid Prime 3: Corruption, all retail versions.
+#define SDK_VERSION_RVL_2008_01 9 // RVL_SDK 0x4199_60831 builds of Aug 2007 to Jan 2008, with the
+                                  // Jan 30 2008 OS.
                                   // New Play Controls and Trilogy, for both Prime and Echoes.
 
 #ifndef SDK_VERSION

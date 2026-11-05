@@ -103,7 +103,7 @@ double fabs(double x);
 double pow(double x, double y);
 _MATH_INLINE float powf(float __x, float __y) { return pow(__x, __y); }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 int __fpclassifyd(double x);
 int __signbitd(double x);
 #endif
@@ -316,7 +316,7 @@ double nextafter(double, double);
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
 // MSL C++ float overload; the GC retail binary calls it out of line.
 float sqrt(float x);
-#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION >= SDK_VERSION_RVL_2007_06
 inline float sqrt(float x) { return sqrtf(x); }
 #endif
 float msl_sqrtf(float x); // Guessed name

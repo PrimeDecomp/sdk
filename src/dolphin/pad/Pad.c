@@ -687,7 +687,7 @@ u32 PADRead(PADStatus* status) {
         } else {
           MakeStatus(chan, status, data);
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
           // Any noticeable stick, trigger or button change counts as user activity.
           {
             s32 threshold;

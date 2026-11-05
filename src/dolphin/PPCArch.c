@@ -588,7 +588,7 @@ asm void PPCSetFpNonIEEEMode (void)
 }
 // clang-format on
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 #include "dolphin/os.h"
 
 #define HID4 1011

@@ -546,7 +546,7 @@ void OSWakeupThread(OSThreadQueue* queue) {
   OSRestoreInterrupts(enabled);
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 static void SleepAlarmHandler(OSAlarm* alarm, OSContext* context) {
   OSResumeThread((OSThread*)OSGetAlarmUserData(alarm));
 }
@@ -703,7 +703,7 @@ void OSClearStack(u8 val) {
   }
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 // IdleThread has no users but lives on in the retail binary
 extern void fake_function(...);
 void FORCEACTIVE_OSThread_c(void);

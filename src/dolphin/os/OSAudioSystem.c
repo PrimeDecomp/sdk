@@ -22,7 +22,7 @@ static u8 DSPInitCode[128] = {
 
 #define __DSPWorkBuffer (void*)0x81000000
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 #define IPC_DIFLAGS (0x180 / 4)
 #define IPC_GPIO2DIR (0x1CC / 4)
 #define IPC_GPIO2IN (0x1D0 / 4)
@@ -83,7 +83,7 @@ void __OSInitAudioSystem(void) {
   u16 r3;
 
   u32 padding;
-#if SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#if SDK_VERSION >= SDK_VERSION_RVL_2007_06
 
   if (!__OSInIPL) {
     __AIClockInit(TRUE);

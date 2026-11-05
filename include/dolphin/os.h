@@ -234,7 +234,7 @@ void OSFatal(GXColor fg, GXColor bg, const char* msg);
 
 
 u32 OSGetStackPointer(void);
-#elif SDK_VERSION >= SDK_VERSION_RVL_2008_01
+#elif SDK_VERSION >= SDK_VERSION_RVL_2007_06
 
 typedef struct OSIOSRev {
   u8 idHi;
