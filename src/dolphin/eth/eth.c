@@ -834,7 +834,7 @@ static BOOL ETHGetLinkState(void) {
     return ret;
 }
 
-static BOOL linkStateAsyncMain(BOOL* linkstateptr) {
+static BOOL linkStateAsyncMain(s32* linkstateptr) {
     if (EXILock(0, 2, NULL)) {
         *linkstateptr = linkState();
         unlock();
@@ -844,7 +844,7 @@ static BOOL linkStateAsyncMain(BOOL* linkstateptr) {
     return FALSE;
 }
 
-BOOL ETHGetLinkStateAsync(BOOL* status) {
+BOOL ETHGetLinkStateAsync(s32* status) {
     ASSERTLINE(1104, status);
     return linkStateAsyncMain(status);
 }

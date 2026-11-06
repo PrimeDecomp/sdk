@@ -42,7 +42,7 @@ void ETHSendAsync(void* addr, s32 length, void (*callback2)(u8));
 void ETHGetMACAddr(u8* macaddr);
 void ETHSetMACAddr(u8* macaddr);
 void ETHSetRecvCallback(void* (*cb0)(u16, s32, u8), void (*cb1)(u8*, s32));
-BOOL ETHGetLinkStateAsync(BOOL* status);
+BOOL ETHGetLinkStateAsync(s32* status);
 s32 ETHGetNWAYMode(void);
 void ETHSetProtoType(u16* array, s32 num);
 void ETHGetStatus(ETHStat* stat);
