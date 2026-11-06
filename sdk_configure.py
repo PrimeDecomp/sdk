@@ -1345,7 +1345,7 @@ def modules_for(
         DolphinLib(
             "MD5",
             [
-                Object(NonMatching, "dolphin/eth/md5.c"),
+                Object(MatchingFor("RVL_2005_11"), "dolphin/eth/md5.c"),
             ],
         ),
         DolphinLib(
