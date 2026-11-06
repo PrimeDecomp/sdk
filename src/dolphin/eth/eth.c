@@ -3,11 +3,7 @@
 #include <dolphin/os.h>
 #include <dolphin/hw_regs.h>
 
-#ifdef DEBUG
-const char* __ETHVersion = "<< Dolphin SDK - ETH\tdebug build: Mar  9 2004 12:30:57 (0x2301) >>";
-#else
-const char* __ETHVersion = "<< Dolphin SDK - ETH\trelease build: Mar  9 2004 12:57:22 (0x2301) >>";
-#endif
+const char* __ETHVersion = "<< Dolphin SDK - ETH	release build: Aug  6 2003 04:30:56 (0x2301) >>";
 
 static u8 broadcastheader[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 static u8 private_macaddr[6];
