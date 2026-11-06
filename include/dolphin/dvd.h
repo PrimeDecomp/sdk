@@ -139,7 +139,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
 }
 #endif
 
-#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 
 #include "types.h"
 

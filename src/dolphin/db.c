@@ -15,7 +15,7 @@ void DBInit(void) {
   DBVerbose = TRUE;
 }
 
-#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 BOOL DBIsDebuggerPresent(void) {
   if (__DBInterface == NULL) {
     return FALSE;

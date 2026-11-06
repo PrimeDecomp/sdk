@@ -223,7 +223,7 @@ static void UpdatePriority(OSThread* thread) {
   } while (thread);
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 void __OSPromoteThread(OSThread* thread, OSPriority priority) {
   do {
     if (0 < thread->suspend) {
@@ -325,7 +325,7 @@ void OSYieldThread(void) {
   SelectThread(TRUE);
   OSRestoreInterrupts(enabled);
 }
-#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 
 BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stack,
                     u32 stackSize, OSPriority priority, u16 attr) {
@@ -370,7 +370,7 @@ BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* s
   if (__OSErrorTable[OS_ERROR_FPE]) {
     thread->context.srr1 |= 0x900;
     thread->context.state |= 1;
-#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION < SDK_VERSION_RVL_2007_06
     thread->context.fpscr = (__OSFpscrEnableBits & 0xF8) | 4;
 #else
     thread->context.fpscr = __OSFpscrEnableBits & 0xF8;
@@ -572,7 +572,7 @@ void OSSleepTicks(OSTime ticks) {
   OSRestoreInterrupts(enabled);
 }
 
-#elif SDK_VERSION == SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 static BOOL CheckThreadQueue(OSThreadQueue* queue) {
   OSThread* thread;
 

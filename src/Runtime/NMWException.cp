@@ -7,6 +7,41 @@
 #pragma exceptions on
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
+#ifdef RVL_PROTO_RUNTIME
+void operator delete(void* ptr) throw();
+
+namespace std {
+typedef void (*terminate_handler)();
+typedef void (*unexpected_handler)();
+typedef void (*new_handler)();
+
+void terminate();
+void unexpected();
+
+class exception {
+public:
+  exception() throw() {}
+  virtual ~exception() throw();
+  virtual const char* what() const throw();
+};
+
+class bad_alloc : public exception {
+public:
+  bad_alloc() throw() {}
+  virtual ~bad_alloc() throw();
+  virtual const char* what() const throw();
+};
+
+static void dthandler();
+static void duhandler();
+
+static terminate_handler thandler = dthandler;
+static unexpected_handler uhandler = duhandler;
+} // namespace std
+
+// Guessed name: the global new-handler slot, zero-initialised.
+std::new_handler __new_handler;
+#else
 namespace std {
 typedef void (*terminate_handler)();
 typedef void (*unexpected_handler)();
@@ -26,6 +61,7 @@ void terminate() { thandler(); }
 
 void unexpected() { uhandler(); }
 } // namespace std
+#endif
 
 extern "C" char __throw_catch_compare(const char* throwtype, const char* catchtype,
                                       long* offset_result) {
@@ -157,3 +193,43 @@ extern "C" void __destroy_arr(void* block, void* dtor, size_t size, size_t n) {
     DTORCALL_COMPLETE(dtor, p);
   }
 }
+
+#ifdef RVL_PROTO_RUNTIME
+const char* std::bad_alloc::what() const throw() { return "bad_alloc"; }
+
+const char* std::exception::what() const throw() { return "exception"; }
+
+void* operator new(size_t size) {
+  void* p;
+
+  if (size == 0)
+    size = 4;
+  for (;;) {
+    p = malloc(size);
+    if (p)
+      return p;
+    if (!__new_handler)
+      throw std::bad_alloc();
+    __new_handler();
+  }
+}
+
+void operator delete(void* ptr) throw() {
+  if (ptr)
+    free(ptr);
+}
+
+std::exception::~exception() throw() {}
+
+std::bad_alloc::~bad_alloc() throw() {}
+
+namespace std {
+void unexpected() { uhandler(); }
+
+void terminate() { thandler(); }
+
+static void duhandler() { terminate(); }
+
+static void dthandler() { abort(); }
+} // namespace std
+#endif

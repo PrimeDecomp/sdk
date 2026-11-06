@@ -167,7 +167,7 @@ void __ARClearInterrupt(void) {
   tmp = (u16)((tmp & ~(0x00000080 | 0x00000008)) | 0x00000020);
   __DSPRegs[5] = tmp;
 }
-#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #define AR_INT_STATUS_MASK 0x0020
 #else
 #define AR_INT_STATUS_MASK 0x0200
