@@ -215,16 +215,6 @@ static BOOL Go(void) {
     }
 
     switch (datagram->type) {
-        case ETH_IP:
-            len += IPFragment(datagram, ptr, &discard);
-            ptr += len;
-            break;
-        case ETH_PPPoE_SESSION:
-            if (len >= 22 && *(u16*)(SendBuf + 20) == 0x0021) {
-                len += IPFragment(datagram, ptr, &discard);
-                ptr += len;
-                break;
-            }
         default:
             for (vec = datagram->vec, end = &datagram->vec[datagram->nVec]; vec && vec < end; vec++) {
                 memmove(ptr, vec->data, vec->len);

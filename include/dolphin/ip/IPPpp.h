@@ -129,7 +129,6 @@ void PPPTimeout(OSAlarm* alarm, OSContext* context);
 u16 PPPDeleteOpt(u8* data, u16 len, LCPOpt* opt);
 u16 PPPInsertOpt(u8* data, u16 len, LCPOpt* at, LCPOpt* opt);
 int PPPInit(IPInterface* interface, PPPConf* lcp, PPPConf* ipcp, const char* peerid, const char* password);
-char* PPPGetMessage(void);
 
 // IPLcp.c
 void PPPDumpLCP(LCPHeader* lcp);

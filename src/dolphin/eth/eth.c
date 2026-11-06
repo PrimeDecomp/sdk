@@ -474,8 +474,6 @@ static void readbuffer1(s32 chan, OSContext* context) {
     __ETHInterruptTime = OSGetTime() - __OSLastInterruptTime;
 }
 
-#include <dolphin/types.h>
-
 static u32 hashfunc(u32 seccode) {
     u8 p;
     u8 q;

@@ -25,7 +25,6 @@ extern "C" {
 
 #define IP_INET 2
 
-// TODO: where does this go? IPEth? IPArp?
 #define ETH_IP 0x0800
 
 /* Supported IP protocols */

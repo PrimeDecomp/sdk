@@ -45,7 +45,6 @@ typedef struct IPHole {
 
 s32 IPSetReassemblyBuffer(void* buffer, s32 len, s32 mtu);
 IPHeader* IPReassemble(IPInterface* interface, IPHeader* frag, u32 flag);
-int IPFragment(IFDatagram* datagram, u8* ptr, BOOL* discard);
 
 #ifdef __cplusplus
 }

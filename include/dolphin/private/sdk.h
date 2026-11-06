@@ -1,8 +1,7 @@
 #ifndef __DOLPHIN_PRIVATE_SDK_H__
 #define __DOLPHIN_PRIVATE_SDK_H__
 
-// Declarations used by this library that the dolsdk2004 headers
-// (dolphin/include, not tracked here) don't provide.
+// Declarations used by the network libraries that the other SDK headers don't provide.
 
 #include <dolphin/types.h>
 #include <dolphin/os.h>
