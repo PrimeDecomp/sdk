@@ -11,7 +11,7 @@ extern "C" {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static const char* __DSPVersion =
     "<< Dolphin SDK - DSP\trelease build: Sep  5 2002 05:35:13 (0x2301) >>";
-#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static const char* __DSPVersion =
     "<< Dolphin SDK - DSP\trelease build: Apr  5 2004 04:15:32 (0x2301) >>";
 #define DSP_BUILD_DATE "Apr  5 2004"
@@ -108,7 +108,7 @@ void DSPHalt(void) {
 
 u32 DSPGetDMAStatus(void) { return __DSPRegs[5] & 0x200; }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 BOOL DSPCheckInit(void) { return __DSP_init_flag; }
 
 #endif
@@ -135,7 +135,7 @@ DSPTaskInfo* DSPCancelTask(DSPTaskInfo* task) {
   return task;
 }
 
-#if SDK_VERSION >= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 void DSPAssertInt(void) {
   u32 oldInt;
   u16 reg;

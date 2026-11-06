@@ -10,7 +10,7 @@ static const char* __EXIVersion =
 #elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Nov 11 2002 05:21:45 (0x2301) >>";
-#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static const char* __EXIVersion =
     "<< Dolphin SDK - EXI\trelease build: Apr  5 2004 04:14:14 (0x2301) >>";
 #else
@@ -38,7 +38,7 @@ const char* __EXIVersion = "<< RVL_SDK - EXI \trelease build: Aug  8 2007 01:59:
 #define EXI_0CR(tstart, dma, rw, tlen)                                                             \
   ((((u32)(tstart)) << 0) | (((u32)(dma)) << 1) | (((u32)(rw)) << 2) | (((u32)(tlen)) << 4))
 
-#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 #define DMA_ADDR_MASK 0x3ffffe0
 #else
 #define DMA_ADDR_MASK 0xffffffe0
@@ -104,7 +104,7 @@ static void SetExiInterruptMask(s32 chan, EXIControl* exi) {
 
 static void CompleteTransfer(s32 chan) {
   EXIControl* exi = &Ecb[chan];
-#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
   u8* buf;
   u32 data;
   int i;
@@ -750,7 +750,7 @@ s32 EXIGetID(s32 chan, u32 dev, u32* id) {
   return err ? 0 : !0;
 }
 
-#if SDK_VERSION == SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR
 s32 EXIGetType(s32 chan, u32 dev, u32* type) {
   u32 _type;
   s32 probe;

@@ -224,10 +224,12 @@ typedef union {
 // The Wii compiler (and the Corruption prototype's GX) merges repeated stores to a non-volatile address, so every FIFO write but the
 // last would be lost.
 volatile PPCWGPipe GXWGFifo : GXFIFO_ADDR;
-#elif defined(__MWERKS__) && SDK_VERSION == SDK_VERSION_RVL_2005_11
-volatile PPCWGPipe GXWGFifo : GXFIFO_ADDR;
-#elif defined(__MWERKS__)
+#elif defined(__MWERKS__) && SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04 && !defined(SDK_NO_GX_FIFO_VOLATILE_HACK)
+// Matching hack for the GameCube games, whose GX does not need the volatile. The SDK declares it
+// volatile; define SDK_NO_GX_FIFO_VOLATILE_HACK to keep it, as the Corruption prototype does.
 /*volatile*/ PPCWGPipe GXWGFifo : GXFIFO_ADDR;
+#elif defined(__MWERKS__)
+volatile PPCWGPipe GXWGFifo : GXFIFO_ADDR;
 #else
 #define GXWGFifo (*(volatile PPCWGPipe*)GXFIFO_ADDR)
 #endif

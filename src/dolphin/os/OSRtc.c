@@ -359,7 +359,7 @@ void OSSetEuRgb60Mode(u32 mode) {
   sram->ntd |= mode;
   __OSUnlockSram(TRUE);
 }
-#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 u32 OSGetSoundMode() {
   OSSram* sram;
   u32 mode;

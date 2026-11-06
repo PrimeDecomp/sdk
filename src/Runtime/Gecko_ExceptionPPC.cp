@@ -29,9 +29,19 @@ public:
 class bad_exception : public exception {
 public:
   bad_exception() throw() {}
+#ifdef RVL_PROTO_RUNTIME
+  virtual ~bad_exception() throw();
+  virtual const char* what() const throw();
+};
+
+bad_exception::~bad_exception() throw() {}
+
+const char* bad_exception::what() const throw() { return "bad_exception"; }
+#else
   virtual ~bad_exception() throw() {}
   virtual const char* what() const throw() { return "bad_exception"; }
 };
+#endif
 } // namespace std
 
 union MWE_GeckoVector64 {
@@ -1000,4 +1010,151 @@ asm void __throw(char* throwtype, void* location, void* dtor) {
   /* clang-format on */
 }
 
+#endif
+
+#ifdef RVL_PROTO_RUNTIME
+extern "C" {
+
+asm int __setjmp(register unsigned long* env) {
+  nofralloc
+  mflr r5
+  mfcr r6
+  stw r5, 0(r3)
+  stw r6, 4(r3)
+  stw SP, 8(r3)
+  stw RTOC, 12(r3)
+  stmw r13, 20(r3)
+  mffs fp0
+  stfd fp14, 96(r3)
+  la r4, 104(r3)
+  psq_stx fp14, 0, r4, 0, 0
+  stfd fp15, 112(r3)
+  la r4, 120(r3)
+  psq_stx fp15, 0, r4, 0, 0
+  stfd fp16, 128(r3)
+  la r4, 136(r3)
+  psq_stx fp16, 0, r4, 0, 0
+  stfd fp17, 144(r3)
+  la r4, 152(r3)
+  psq_stx fp17, 0, r4, 0, 0
+  stfd fp18, 160(r3)
+  la r4, 168(r3)
+  psq_stx fp18, 0, r4, 0, 0
+  stfd fp19, 176(r3)
+  la r4, 184(r3)
+  psq_stx fp19, 0, r4, 0, 0
+  stfd fp20, 192(r3)
+  la r4, 200(r3)
+  psq_stx fp20, 0, r4, 0, 0
+  stfd fp21, 208(r3)
+  la r4, 216(r3)
+  psq_stx fp21, 0, r4, 0, 0
+  stfd fp22, 224(r3)
+  la r4, 232(r3)
+  psq_stx fp22, 0, r4, 0, 0
+  stfd fp23, 240(r3)
+  la r4, 248(r3)
+  psq_stx fp23, 0, r4, 0, 0
+  stfd fp24, 256(r3)
+  la r4, 264(r3)
+  psq_stx fp24, 0, r4, 0, 0
+  stfd fp25, 272(r3)
+  la r4, 280(r3)
+  psq_stx fp25, 0, r4, 0, 0
+  stfd fp26, 288(r3)
+  la r4, 296(r3)
+  psq_stx fp26, 0, r4, 0, 0
+  stfd fp27, 304(r3)
+  la r4, 312(r3)
+  psq_stx fp27, 0, r4, 0, 0
+  stfd fp28, 320(r3)
+  la r4, 328(r3)
+  psq_stx fp28, 0, r4, 0, 0
+  stfd fp29, 336(r3)
+  la r4, 344(r3)
+  psq_stx fp29, 0, r4, 0, 0
+  stfd fp30, 352(r3)
+  la r4, 360(r3)
+  psq_stx fp30, 0, r4, 0, 0
+  stfd fp31, 368(r3)
+  la r4, 376(r3)
+  psq_stx fp31, 0, r4, 0, 0
+  stfd fp0, 384(r3)
+  li r3, 0
+  blr
+}
+
+asm void longjmp(register unsigned long* env, register int value) {
+  nofralloc
+  lwz r5, 0(r3)
+  lwz r6, 4(r3)
+  mtlr r5
+  mtcr r6
+  lwz SP, 8(r3)
+  lwz RTOC, 12(r3)
+  lmw r13, 20(r3)
+  lfd fp14, 96(r3)
+  la r7, 104(r3)
+  psq_lx fp14, 0, r7, 0, 0
+  lfd fp15, 112(r3)
+  la r7, 120(r3)
+  psq_lx fp15, 0, r7, 0, 0
+  lfd fp16, 128(r3)
+  la r7, 136(r3)
+  psq_lx fp16, 0, r7, 0, 0
+  lfd fp17, 144(r3)
+  la r7, 152(r3)
+  psq_lx fp17, 0, r7, 0, 0
+  lfd fp18, 160(r3)
+  la r7, 168(r3)
+  psq_lx fp18, 0, r7, 0, 0
+  lfd fp19, 176(r3)
+  la r7, 184(r3)
+  psq_lx fp19, 0, r7, 0, 0
+  lfd fp20, 192(r3)
+  la r7, 200(r3)
+  psq_lx fp20, 0, r7, 0, 0
+  lfd fp21, 208(r3)
+  la r7, 216(r3)
+  psq_lx fp21, 0, r7, 0, 0
+  lfd fp22, 224(r3)
+  la r7, 232(r3)
+  psq_lx fp22, 0, r7, 0, 0
+  lfd fp23, 240(r3)
+  la r7, 248(r3)
+  psq_lx fp23, 0, r7, 0, 0
+  lfd fp24, 256(r3)
+  la r7, 264(r3)
+  psq_lx fp24, 0, r7, 0, 0
+  lfd fp25, 272(r3)
+  la r7, 280(r3)
+  psq_lx fp25, 0, r7, 0, 0
+  lfd fp26, 288(r3)
+  la r7, 296(r3)
+  psq_lx fp26, 0, r7, 0, 0
+  lfd fp27, 304(r3)
+  la r7, 312(r3)
+  psq_lx fp27, 0, r7, 0, 0
+  lfd fp28, 320(r3)
+  la r7, 328(r3)
+  psq_lx fp28, 0, r7, 0, 0
+  lfd fp29, 336(r3)
+  la r7, 344(r3)
+  psq_lx fp29, 0, r7, 0, 0
+  lfd fp30, 352(r3)
+  la r7, 360(r3)
+  psq_lx fp30, 0, r7, 0, 0
+  lfd fp31, 368(r3)
+  la r7, 376(r3)
+  psq_lx fp31, 0, r7, 0, 0
+  lfd fp0, 384(r3)
+  cmpwi r4, 0
+  mr r3, r4
+  mtfsf 255, fp0
+  bnelr
+  li r3, 1
+  blr
+}
+
+}
 #endif

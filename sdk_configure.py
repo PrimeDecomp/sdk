@@ -19,6 +19,7 @@ def modules_for(
     cflags_base: list[str],
     sdk_dir: str = "extern/sdk",
     non_matching: bool = False,
+    prototype: bool = False,
 ) -> list[dict]:
     src_dir = f"{sdk_dir}/src"
     SDK = sdk_versions(sdk_dir)
@@ -162,7 +163,9 @@ def modules_for(
 
     # Object is only matching for specific versions
     def MatchingFor(*versions):
-        return sdk_version in [SDK[v] for v in versions]
+        if prototype:
+            return "PROTO" in versions
+        return sdk_version in [SDK[v] for v in versions if v != "PROTO"]
 
     def EquivalentFor(*versions):
         return MatchingFor(*versions) and non_matching
@@ -539,13 +542,13 @@ def modules_for(
         DolphinLib(
             "dsp",
             [
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2005_11"), "dolphin/dsp/dsp.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"), "dolphin/dsp/dsp.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/dsp/dsp_debug.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"), "dolphin/dsp/dsp_task.c"
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"), "dolphin/dsp/dsp_task.c"
                 ),
             ],
         ),
@@ -558,17 +561,17 @@ def modules_for(
         DolphinLib(
             "dvd",
             [
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/dvd/dvdlow.c"),
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/dvd/dvdfs.c"),
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/dvd/dvd.c"),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/dvd/dvdqueue.c"),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/dvd/dvderror.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/dvd/dvdlow.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/dvd/dvdfs.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/dvd/dvd.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/dvd/dvdqueue.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/dvd/dvderror.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "dolphin/dvd/dvdidutils.c",
                 ),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/dvd/dvdfatal.c"),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/dvd/fstload.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/dvd/dvdfatal.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/dvd/fstload.c"),
             ],
             gc_only=True,
         ),
@@ -1043,7 +1046,7 @@ def modules_for(
             [
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "dolphin/pad/PadClamp.c"),
                 # Only the Corruption prototype's splits name these so far.
-                Object(MatchingFor("RVL_2005_11"), "dolphin/pad/PadFallback.c"),
+                Object(MatchingFor("PROTO"), "dolphin/pad/PadFallback.c"),
                 Object(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01"),
                     "dolphin/pad/Pad.c",
@@ -1055,7 +1058,7 @@ def modules_for(
             "vi",
             [
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"),
                     "dolphin/vi/vi.c",
                     extra_cflags=IPA_FILE,
                 ),
@@ -1098,49 +1101,49 @@ def modules_for(
         DolphinLib(
             "ar",
             [
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/ar/ar.c"),
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/ar/arq.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/ar/ar.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/ar/arq.c"),
             ],
         ),
         DolphinLib(
             "card",
             [
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/card/CARDBios.c"),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/card/CARDUnlock.c"),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/card/CARDRdwr.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/card/CARDBios.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/card/CARDUnlock.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/card/CARDRdwr.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "dolphin/card/CARDBlock.c",
                 ),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/card/CARDDir.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/card/CARDDir.c"),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"),
                     "dolphin/card/CARDCheck.c",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"),
                     "dolphin/card/CARDMount.c",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"),
                     "dolphin/card/CARDFormat.c",
                 ),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/card/CARDOpen.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/card/CARDOpen.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "dolphin/card/CARDCreate.c",
                 ),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/card/CARDRead.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/card/CARDRead.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "dolphin/card/CARDWrite.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "dolphin/card/CARDDelete.c",
                 ),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/card/CARDStat.c"),
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/card/CARDNet.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/card/CARDStat.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/card/CARDNet.c"),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "dolphin/card/CARDRename.c"),
                 Object(MatchingFor("DOLPHIN_2004_04"), "dolphin/card/CARDStatEx.c"),
                 Object(MatchingFor("DOLPHIN_2004_04"), "dolphin/card/CARDRaw.c"),
@@ -1162,78 +1165,78 @@ def modules_for(
             "os",
             [
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"),
                     "dolphin/os/OS.c",
                     extra_cflags=IPA_FILE,
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSAlarm.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSArena.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSAudioSystem.c",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2005_11"), "dolphin/os/OSCache.c"
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"), "dolphin/os/OSCache.c"
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSContext.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSError.c",
                 ),
-                Object(MatchingFor("DOLPHIN_2004_04", "RVL_2005_11"), "dolphin/os/OSExec.c"),
+                Object(MatchingFor("DOLPHIN_2004_04", "PROTO"), "dolphin/os/OSExec.c"),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2005_11"), "dolphin/os/OSFatal.c"
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"), "dolphin/os/OSFatal.c"
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "dolphin/os/OSFont.c",
                     extra_cflags=CHAR_UNSIGNED,
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSInterrupt.c",
                     extra_cflags=IPA_FILE,
                 ),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/os/OSLink.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/os/OSLink.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSMemory.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSMutex.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSReboot.c",
                 ),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/os/OSReset.c"),
-                Object(MatchingFor(*GC_VERSIONS, "RVL_2005_11"), "dolphin/os/OSResetSW.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/os/OSReset.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/os/OSResetSW.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSRtc.c",
                     extra_cflags=IPA_FILE,
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSSync.c",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSThread.c",
                     extra_cflags=IPA_FILE,
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2005_11"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/OSTime.c",
                 ),
                 Object(
@@ -1246,8 +1249,8 @@ def modules_for(
                 ),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02"), "dolphin/os/OSMessage.c"),
                 # Only the Corruption prototype's splits name these so far.
-                Object(MatchingFor("RVL_2005_11"), "dolphin/os/OSAlloc.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/os/OSSem.c"),
+                Object(MatchingFor("PROTO"), "dolphin/os/OSAlloc.c"),
+                Object(MatchingFor("PROTO"), "dolphin/os/OSSem.c"),
             ],
         ),
         # Libraries that only the Corruption prototype has. Without splits naming them, no other
@@ -1261,25 +1264,25 @@ def modules_for(
         DolphinLib(
             "AX",
             [
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AX.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXAlloc.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXAux.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXCL.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXOut.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXSPB.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXVPB.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXProf.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/AXComp.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/ax/DSPCode.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AX.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXAlloc.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXAux.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXCL.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXOut.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXSPB.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXVPB.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXProf.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/AXComp.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ax/DSPCode.c"),
             ],
         ),
         DolphinLib(
             "AXFX",
             [
-                Object(MatchingFor("RVL_2005_11"), "dolphin/axfx/AXFXReverbHi.c"),
+                Object(MatchingFor("PROTO"), "dolphin/axfx/AXFXReverbHi.c"),
                 Object(NonMatching, "dolphin/axfx/AXFXReverbStd.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/axfx/AXFXHooks.c"),
-                Object(MatchingFor("RVL_2005_11"), "dolphin/axfx/AXFXReverbHiDpl2.c"),
+                Object(MatchingFor("PROTO"), "dolphin/axfx/AXFXHooks.c"),
+                Object(MatchingFor("PROTO"), "dolphin/axfx/AXFXReverbHiDpl2.c"),
             ],
         ),
         DolphinLib(
@@ -1345,13 +1348,13 @@ def modules_for(
         DolphinLib(
             "MD5",
             [
-                Object(MatchingFor("RVL_2005_11"), "dolphin/eth/md5.c"),
+                Object(MatchingFor("PROTO"), "dolphin/eth/md5.c"),
             ],
         ),
         DolphinLib(
             "MIX",
             [
-                Object(MatchingFor("RVL_2005_11"), "dolphin/mix/mix.c"),
+                Object(MatchingFor("PROTO"), "dolphin/mix/mix.c"),
             ],
         ),
         DolphinLib(
@@ -1375,10 +1378,7 @@ def modules_for(
         ),
     ]
 
-    if sdk_version == SDK["RVL_2005_11"]:
-        # The Corruption prototype's MetroTRK and Metrowerks runtime differ from every other
-        # build's in nearly every file, so they live in their own source tree.
-        corruption_src_dir = f"{src_dir}/RVL_2005_11"
+    if prototype:
         libs = [
             lib
             for lib in libs
@@ -1388,8 +1388,8 @@ def modules_for(
         libs += [
             {
                 # The MetroTRK build of Mario Party 4, whose sources and headers it borrows.
-                "lib": "MetroTRK",
-                "src_dir": corruption_src_dir,
+                "lib": "TRK_MINNOW_DOLPHIN",
+                "src_dir": src_dir,
                 "mw_version": "GC/1.3",
                 "cflags": [
                     *cflags_base,
@@ -1405,44 +1405,47 @@ def modules_for(
                 ],
                 "progress_category": "sdk",
                 "objects": [
-                    Object(NonMatching, "MetroTRK/mainloop.c"),
-                    Object(NonMatching, "MetroTRK/nubevent.c"),
-                    Object(NonMatching, "MetroTRK/nubinit.c"),
-                    Object(NonMatching, "MetroTRK/msg.c"),
-                    Object(NonMatching, "MetroTRK/msgbuf.c"),
-                    Object(NonMatching, "MetroTRK/serpoll.c"),
-                    Object(NonMatching, "MetroTRK/usr_put.c"),
-                    Object(NonMatching, "MetroTRK/dispatch.c"),
-                    Object(NonMatching, "MetroTRK/msghndlr.c"),
-                    Object(NonMatching, "MetroTRK/support.c"),
-                    Object(NonMatching, "MetroTRK/mutex_TRK.c"),
-                    Object(NonMatching, "MetroTRK/notify.c"),
-                    Object(NonMatching, "MetroTRK/flush_cache.c"),
-                    Object(NonMatching, "MetroTRK/mem_TRK.c"),
-                    Object(NonMatching, "MetroTRK/targimpl.c"),
-                    Object(NonMatching, "MetroTRK/targsupp.s"),
-                    Object(NonMatching, "MetroTRK/mpc_7xx_603e.c"),
-                    Object(NonMatching, "MetroTRK/dolphin_trk.c"),
-                    Object(NonMatching, "MetroTRK/main_TRK.c"),
-                    Object(NonMatching, "MetroTRK/dolphin_trk_glue.c"),
-                    Object(NonMatching, "MetroTRK/targcont.c"),
-                    Object(NonMatching, "MetroTRK/target_options.c"),
-                    Object(NonMatching, "MetroTRK/mslsupp.c"),
-                    Object(MatchingFor("RVL_2005_11"), "MetroTRK/udp_cc.c"),
-                    Object(NonMatching, "MetroTRK/ddh_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
-                    Object(NonMatching, "MetroTRK/circle_buffer.c"),
-                    Object(NonMatching, "MetroTRK/gdev_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
-                    Object(MatchingFor("RVL_2005_11"), "MetroTRK/MWTrace.c"),
-                    Object(NonMatching, "MetroTRK/critical_section.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/mainloop.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/nubevent.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/nubinit.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/msg.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/msgbuf.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/serpoll.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/usr_put.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/dispatch.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/msghndlr.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/support.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/mutex_TRK.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/notify.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/flush_cache.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/mem_TRK.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/targimpl.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/targsupp.s"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/mpc_7xx_603e.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/dolphin_trk.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/main_TRK.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/dolphin_trk_glue.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/targcont.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/target_options.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/mslsupp.c"),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/udp_cc.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/ddh_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/circle_buffer.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/gdev_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/MWTrace.c"),
+                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/critical_section.c"),
 
                 ],
             },
             {
                 "lib": "Runtime",
-                "src_dir": corruption_src_dir,
+                "src_dir": src_dir,
                 "mw_version": "GC/1.3.2",
                 "cflags": [
                     *cflags_base,
+                    # The prototype's runtime folds New into NMWException, the setjmp pair into the
+                    # Gecko exception unit and defines getenv in uart_console_io.
+                    "-DRVL_PROTO_RUNTIME",
                     "-use_lmw_stmw on",
                     "-str reuse,pool,readonly",
                     "-gccinc",
@@ -1454,11 +1457,11 @@ def modules_for(
                     Object(NonMatching, "Runtime/__va_arg.c"),
                     Object(NonMatching, "Runtime/global_destructor_chain.c"),
                     Object(NonMatching, "Runtime/CPlusLibPPC.cpp"),
-                    Object(NonMatching, "Runtime/NMWException.cpp"),
-                    Object(MatchingFor("RVL_2005_11"), "Runtime/ptmf.c"),
+                    Object(NonMatching, "Runtime/NMWException.cp"),
+                    Object(MatchingFor("PROTO"), "Runtime/ptmf.c"),
                     Object(NonMatching, "Runtime/runtime.c"),
                     Object(NonMatching, "Runtime/__init_cpp_exceptions.cpp"),
-                    Object(NonMatching, "Runtime/Gecko_ExceptionPPC.cpp"),
+                    Object(NonMatching, "Runtime/Gecko_ExceptionPPC.cp"),
                     Object(NonMatching, "Runtime/abort_exit.c"),
                     Object(NonMatching, "Runtime/alloc.c"),
                     Object(NonMatching, "Runtime/ansi_files.c"),
@@ -1526,7 +1529,7 @@ def modules_for(
                     Object(NonMatching, "Runtime/w_pow.c"),
                     Object(NonMatching, "Runtime/e_sqrt.c"),
                     Object(NonMatching, "Runtime/math_ppc.c"),
-                    Object(NonMatching, "Runtime/w_sqrt.c"),
+                    Object(NonMatching, "Runtime/w_sqrt.c", extra_cflags=["-DMSL_NO_INLINE_SQRT"]),
                     Object(NonMatching, "Runtime/stricmp.c"),
                 ],
             },

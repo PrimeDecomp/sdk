@@ -30,11 +30,10 @@
 #define SDK_VERSION_DOLPHIN_2004_04_OS_APR 5 // Apr 5 2004 release (0x2301), with the Apr 5 2004 OS.
                                               // Metroid Prime 2: Echoes demo discs (D84P01).
 #define SDK_VERSION_DOLPHIN_2004_04 6 // Apr 5 2004 release (0x2301), with the May 21 2004 OS.
-                                      // Metroid Prime 2: Echoes, all retail GameCube versions.
+                                      // Metroid Prime 2: Echoes, all retail GameCube versions, and the
+                                      // Corruption prototype.
 
 // Revolution SDK (Wii)
-#define SDK_VERSION_RVL_2005_11 7 // Apr 2004 Dolphin libraries with the Nov 2005 pre-release
-                                  // Revolution KPAD and WPAD. Corruption prototype.
 #define SDK_VERSION_RVL_2007_06 8 // RVL_SDK 0x4199_60831 builds of Nov 2006 to Jun 2007: the Nov 30 2006
                                   // AI, DSP, EXI, SI, VI and THP, the Apr 24 2007 DVD, the May 17 2007
                                   // KPAD and WPAD and the Jun 15 2007 OS. GX (Nov 29 2006) and NWC24

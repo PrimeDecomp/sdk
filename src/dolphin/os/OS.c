@@ -37,7 +37,7 @@ static __OSExceptionHandler* OSExceptionTable;
 OSTime __OSStartTime;
 BOOL __OSInIPL;
 #else
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 #if SDK_VERSION == SDK_VERSION_DOLPHIN_2003_04
 static const char* __OSVersion =
     "<< Dolphin SDK - OS\trelease build: May 20 2004 18:01:28 (0x2301) >>";
@@ -65,7 +65,7 @@ extern char _db_stack_end[];
 extern char* __OSResetSWInterruptHandler[];
 
 vu16 __OSDeviceCode : (OS_BASE_CACHED | 0x30E6);
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 static DVDDriveInfo DriveInfo ATTRIBUTE_ALIGN(32);
 static DVDCommandBlock DriveBlock;
 
@@ -285,7 +285,7 @@ void ClearArena(void) {
     }
   }
 }
-#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 u32 OSGetConsoleType() {
   if (BootInfo == NULL || BootInfo->consoleType == 0) {
     return OS_CONSOLE_ARTHUR;
@@ -578,7 +578,7 @@ void OSInit(void) {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2002_09
     OSReport("\nDolphin OS $Revision: 58 $.\n");
     OSReport("Kernel built : %s %s\n", "Sep  5 2002", "05:32:39");
-#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
     OSReport("\nDolphin OS\n");
 #if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04_OS_APR
     OSReport("Kernel built : %s %s\n", "Apr  5 2004", "04:13:58");
@@ -658,7 +658,7 @@ void OSInit(void) {
     }
   }
 }
-#elif SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 void OSInit(void) {
   u32 consoleType;
   void* bi2StartAddr;
@@ -1174,7 +1174,7 @@ static asm void __OSDBJump(void){
 
     nofralloc
 entry __OSDBJUMPSTART
-#if SDK_VERSION <= SDK_VERSION_RVL_2005_11
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
     bla     OS_DBJUMPPOINT_ADDR
 #else
     bl      __OSDBJUMPDEST
