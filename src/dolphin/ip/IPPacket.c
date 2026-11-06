@@ -162,16 +162,3 @@ void IPCancel(IFDatagram* datagram) {
         ASSERTLINE(1119, datagram->interface == NULL);
     }
 }
-
-void IFInitDatagram(IFDatagram* datagram, u16 type, int nVec) {
-    datagram->interface = NULL;
-    datagram->queue = NULL;
-    datagram->type = type;
-    datagram->offset = 0;
-    datagram->prefixLen = 0;
-    datagram->flag = 0;
-    datagram->callback = NULL;
-    datagram->param = NULL;
-    datagram->nVec = nVec;
-    memset(datagram->vec, 0, nVec * sizeof(IFVec));
-}

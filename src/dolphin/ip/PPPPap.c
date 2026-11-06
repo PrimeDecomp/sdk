@@ -62,24 +62,8 @@ static int ReceiveAuthenticateRequest(PPPConf* conf /* unused */, PAPHeader* pap
     return TRUE;
 }
 
-// Range: 0x1F0 -> 0x274
-static void GetAuthenticateMessage(PAPHeader* pap /* r1+0x8 */) {
-    // Local variables
-    char* msg; // r31
-
-    // References
-    // -> PPPAuth __PPPAuth;
-
-    msg = (char*)(pap + 1);
-    __PPPAuth.messageLen = *msg;
-    msg++;
-    memcpy(__PPPAuth.message, msg, __PPPAuth.messageLen);
-    __PPPAuth.message[__PPPAuth.messageLen] = '\0';
-}
-
 // Range: 0x274 -> 0x2C8
 static int ReceiveAuthenticateAck(PPPConf* conf /* r31 */, PAPHeader* pap /* r1+0xC */) {
-    GetAuthenticateMessage(pap);
     PPPInitializeRestartCount(conf);
     PPPSetState(conf, PPP_STATE_OPENED);
     PPPLayerUp(conf);
@@ -88,7 +72,6 @@ static int ReceiveAuthenticateAck(PPPConf* conf /* r31 */, PAPHeader* pap /* r1+
 
 // Range: 0x2C8 -> 0x320
 static int ReceiveAuthenticateNak(PPPConf* conf /* r31 */, PAPHeader* pap /* r1+0xC */) {
-    GetAuthenticateMessage(pap);
     IPSetConfigError(NULL, -108);
     PPPSetState(conf, PPP_STATE_CLOSED);
     PPPLayerFinished(conf);
@@ -282,8 +265,6 @@ static int Down() {
     // References
     // -> PPPAuth __PPPAuth;
 
-    __PPPAuth.messageLen = 0;
-    __PPPAuth.message[0] = '\0';
     return TRUE;
 }
 

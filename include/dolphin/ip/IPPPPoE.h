@@ -58,7 +58,6 @@ typedef struct PPPoEConf {
 } PPPoEConf;
 
 void PPPoEDumpPacket(PPPoEHeader* pppoe);
-void PPPoEInit(IPInterface* interface, const char* serviceName);
 BOOL PPPoEOpen(IPInterface* interface);
 void PPPoETerminate(IPInterface* interface);
 void PPPoEIn(IPInterface* interface, ETHHeader* eh, s32 len, u32 flag);

@@ -240,11 +240,6 @@ static void Out(IPInterface* interface /* r25 */, IFDatagram* datagram /* r31 */
     OSRestoreInterrupts(enabled);
 }
 
-// Range: 0x7B0 -> 0x7B8
-void PPPoEInit(IPInterface* interface /* r3 */, const char* serviceName /* r4 */) {
-    interface->serviceName = serviceName;
-}
-
 // Range: 0x7B8 -> 0x8F8
 BOOL PPPoEOpen(IPInterface* interface /* r30 */) {
     // Local variables
@@ -263,14 +258,7 @@ BOOL PPPoEOpen(IPInterface* interface /* r30 */) {
     }
     interface = interface ? interface : &__IFDefault;
     PPPLcpConf.mru = 1492;
-    if (interface->serviceName) {
-        len = strlen(interface->serviceName);
-        if (len > 1474) {
-            len = 0;
-        }
-    } else {
-        len = 0;
-    }
+    len = 0;
     conf->code = PPPoE_PADI;
     conf->len = len + sizeof(PPPoETag);
     conf->session = 0;
@@ -286,9 +274,6 @@ BOOL PPPoEOpen(IPInterface* interface /* r30 */) {
     tag = (PPPoETag*)(pppoe + 1);
     tag->type = PPPoE_TAG_SERVICE_NAME;
     tag->len = len;
-    if (len) {
-        memmove(tag + 1, interface->serviceName, len);
-    }
 
     conf->interface = interface;
     conf->out = interface->out;

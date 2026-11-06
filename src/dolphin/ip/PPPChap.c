@@ -28,64 +28,6 @@ static void CHAPOut(IPInterface* interface /* r29 */, CHAPHeader* chap /* r30 */
     OSRestoreInterrupts(enabled);
 }
 
-// Range: 0xB8 -> 0x1B0
-static int ReceiveChallenge(PPPConf* conf /* r29 */, CHAPHeader* chap /* r31 */) {
-    // Local variables
-    u32 challengelen; // r30
-    MD5Context context; // r1+0x10
-
-    conf->id = chap->id;
-    challengelen = *((u8*)chap + 4);
-    if (chap->len < sizeof(CHAPHeader) + 1 + challengelen) {
-        return FALSE;
-    }
-
-    chap->code = 2;
-    chap->len = sizeof(CHAPHeader) + 1 + 16 + __PPPAuth.peerIdLen;
-    *((u8*)chap + 4) = 16;
-    MD5Init(&context);
-    MD5Update(&context, &chap->id, 1);
-    MD5Update(&context, (u8*)__PPPAuth.password, __PPPAuth.passwordLen);
-    MD5Update(&context, (u8*)chap + 5, challengelen);
-    MD5Final((u8*)chap + 5, &context);
-    memmove((u8*)chap + 5 + 16, __PPPAuth.peerId, __PPPAuth.peerIdLen);
-    CHAPOut(conf->interface, chap);
-    return TRUE;
-}
-
-// Range: 0x1B0 -> 0x1B8
-static int ReceiveResponse(PPPConf* conf /* unused */, CHAPHeader* chap /* unused */) {
-    return TRUE;
-}
-
-// Range: 0x1B8 -> 0x250
-static void GetAuthenticateMessage(CHAPHeader* chap /* r31 */) {
-    // Local variables
-    char* msg; // r30
-
-    msg = (char*)(chap+1);
-    __PPPAuth.messageLen = (chap->len - 4) > 255 ? 255 : (chap->len - 4);
-    memcpy(__PPPAuth.message, msg, __PPPAuth.messageLen);
-    __PPPAuth.message[__PPPAuth.messageLen] = '\0';
-}
-
-// Range: 0x250 -> 0x29C
-static int ReceiveSuccess(PPPConf* conf /* r31 */, CHAPHeader* chap /* r1+0xC */) {
-    GetAuthenticateMessage(chap);
-    PPPSetState(conf, PPP_STATE_OPENED);
-    PPPLayerUp(conf);
-    return TRUE;
-}
-
-// Range: 0x29C -> 0x2F4
-static int ReceiveFailure(PPPConf* conf /* r31 */, CHAPHeader* chap /* r1+0xC */) {
-    GetAuthenticateMessage(chap);
-    IPSetConfigError(NULL, -108);
-    PPPSetState(conf, PPP_STATE_CLOSED);
-    PPPLayerFinished(conf);
-    return TRUE;
-}
-
 // Range: 0x2F4 -> 0x370
 void CHAPOpen(PPPConf* conf /* r31 */) {
     switch (conf->state) {
@@ -225,27 +167,43 @@ int CHAPTimeout(PPPConf* conf /* r31 */) {
 
 // Range: 0x5F0 -> 0x6DC
 void CHAPIn(PPPConf* conf /* r30 */, CHAPHeader* chap /* r31 */, s32 len /* r29 */, u32) {
+    u32 challengelen;
+    MD5Context context;
+
     if (len < 4 || len < chap->len || chap->len < sizeof(CHAPHeader)) {
         return;
     }
 
     switch (chap->code) {
         case 1:
-            ReceiveChallenge(conf, chap);
-            break;
-        case 2:
-            if (conf->id == chap->id) {
-                ReceiveResponse(conf, chap);
+            conf->id = chap->id;
+            challengelen = *((u8*)chap + 4);
+            if (chap->len < sizeof(CHAPHeader) + 1 + challengelen) {
+                break;
             }
+
+            chap->code = 2;
+            chap->len = sizeof(CHAPHeader) + 1 + 16 + __PPPAuth.peerIdLen;
+            *((u8*)chap + 4) = 16;
+            MD5Init(&context);
+            MD5Update(&context, &chap->id, 1);
+            MD5Update(&context, (u8*)__PPPAuth.password, __PPPAuth.passwordLen);
+            MD5Update(&context, (u8*)chap + 5, challengelen);
+            MD5Final((u8*)chap + 5, &context);
+            memmove((u8*)chap + 5 + 16, __PPPAuth.peerId, __PPPAuth.peerIdLen);
+            CHAPOut(conf->interface, chap);
             break;
         case 3:
             if (conf->id == chap->id) {
-                ReceiveSuccess(conf, chap);
+                PPPSetState(conf, PPP_STATE_OPENED);
+                PPPLayerUp(conf);
             }
             break;
         case 4:
             if (conf->id == chap->id) {
-                ReceiveFailure(conf, chap);
+                IPSetConfigError(NULL, -108);
+                PPPSetState(conf, PPP_STATE_CLOSED);
+                PPPLayerFinished(conf);
             }
             break;
     }
@@ -258,8 +216,6 @@ static int Up() {
 
 // Range: 0x6E4 -> 0x70C
 static int Down() {
-    __PPPAuth.messageLen = 0;
-    __PPPAuth.message[0] = '\0';
     return TRUE;
 }
 

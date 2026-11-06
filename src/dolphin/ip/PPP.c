@@ -1011,16 +1011,6 @@ int PPPInit(IPInterface* interface /* r31 */, PPPConf* lcp /* r25 */, PPPConf* i
         strncpy(__PPPAuth.password, password, 256);
     }
 
-    __PPPAuth.messageLen = 0;
-    __PPPAuth.message[0] = '\0';
     PPPOpen(ipcp);
     return TRUE;
-}
-
-// Range: 0x1CD8 -> 0x1CE8
-char* PPPGetMessage(void) {
-    // References
-    // -> PPPAuth __PPPAuth;
-
-    return __PPPAuth.message;
 }

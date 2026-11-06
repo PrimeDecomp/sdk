@@ -59,13 +59,11 @@ struct PPPConf {
 };
 
 typedef struct PPPAuth {
-    // total size: 0x303
+    // total size: 0x202
     u8 peerIdLen; // offset 0x0, size 0x1
     u8 passwordLen; // offset 0x1, size 0x1
-    u8 messageLen; // offset 0x2, size 0x1
-    char peerId[256]; // offset 0x3, size 0x100
-    char password[256]; // offset 0x103, size 0x100
-    char message[256]; // offset 0x203, size 0x100
+    char peerId[256]; // offset 0x2, size 0x100
+    char password[256]; // offset 0x102, size 0x100
 } PPPAuth;
 
 #define PPP_STATE_INITIAL 0

@@ -381,7 +381,6 @@ int SOStartup(const SOConfig* config) {
     if (!LowInitialized) {
         if ((Flag & 2) != 0) {
             Flag &= ~0x8001;
-            PPPoEInit(&__IFDefault, config->serviceName);
             if (PPPInit(&__IFDefault, &PPPLcpConf, &PPPIpcpConf, config->peerid, config->passwd) == 0) {
                 goto fail;
             }

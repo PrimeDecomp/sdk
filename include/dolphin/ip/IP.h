@@ -68,13 +68,13 @@ typedef struct IFDatagram {
     IPInterface* interface; // offset 0x0, size 0x4
     IFQueue* queue; // offset 0x4, size 0x4
     IFLink link; // offset 0x8, size 0x8
-    u8 hwAddr[6]; // offset 0x10, size 0x6
-    u16 type; // offset 0x16, size 0x2
-    u16 offset; // offset 0x18, size 0x2
-    u8 dst[4]; // offset 0x1A, size 0x4
-    u8 prefix[8]; // offset 0x1E, size 0x8
-    u8 prefixLen; // offset 0x26, size 0x1
-    u8 flag; // offset 0x27, size 0x1
+    u16 type; // offset 0x10, size 0x2
+    u8 hwAddr[6]; // offset 0x12, size 0x6
+    u8 dst[4]; // offset 0x18, size 0x4
+    u8 prefix[8]; // offset 0x1C, size 0x8
+    u8 unk_24; // offset 0x24, size 0x1
+    u8 prefixLen; // offset 0x25, size 0x1
+    u8 flag; // offset 0x26, size 0x1
     void (*callback)(void*, s32); // offset 0x28, size 0x4
     void* param; // offset 0x2C, size 0x4
     s32 nVec; // offset 0x30, size 0x4
@@ -118,7 +118,6 @@ struct IPInterface {
     u8 gateway[4]; // offset 0x50, size 0x4
     u8 alias[4]; // offset 0x54, size 0x4
     IFQueue ppp; // offset 0x58, size 0x8
-    const char* serviceName; // offset 0x60, size 0x4
     void (*out)(IPInterface*, IFDatagram*); // offset 0x64, size 0x4
     void (*cancel)(IPInterface*, IFDatagram*); // offset 0x68, size 0x4
     void* (*alloc)(IPInterface*, s32); // offset 0x6C, size 0x4
@@ -144,7 +143,14 @@ typedef struct IPHeader {
 } IPHeader;
 
 char* IPNtoA(const u8* addr);
-void IFInitDatagram(IFDatagram* datagram, u16 type, int nVec);
+static inline void IFInitDatagram(IFDatagram* datagram, u16 type, int nVec) {
+    datagram->queue = NULL;
+    datagram->type = type;
+    datagram->prefixLen = 0;
+    datagram->callback = NULL;
+    datagram->param = NULL;
+    datagram->nVec = nVec;
+}
 s32 IPOut(IFDatagram* datagram);
 u16 IPCheckSum(IPHeader* ip);
 void IPIn(IPInterface* interface, IPHeader* ip, s32 len, u32 flag);

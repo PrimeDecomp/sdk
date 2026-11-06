@@ -375,7 +375,6 @@ void ETHOut(IPInterface* interface /* r27 */, IFDatagram* datagram /* r31 */) {
     ASSERTLINE(696, 0 < datagram->nVec && datagram->nVec <= IF_MAX_VEC);
     datagram->queue = NULL;
     datagram->interface = interface;
-    datagram->offset = 0;
     switch (datagram->type) {
         case ETH_ARP:
         case ETH_PPPoE_DISCOVERY:
