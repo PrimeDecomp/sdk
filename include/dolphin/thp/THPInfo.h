@@ -8,36 +8,36 @@ extern "C" {
 #endif
 
 // Size 0xC
-typedef struct THPVideoInfo {
-  u32 mXSize;     // _00
-  u32 mYSize;     // _04
-  u32 mVideoType; // _08
+typedef struct {
+  u32 xSize;
+  u32 ySize;
+  u32 videoType;
 } THPVideoInfo;
 
 typedef struct THPVideoInfoOld {
-  u32 mXSize; // _00
-  u32 mYSize; // _04
+  u32 xSize;
+  u32 ySize;
 } THPVideoInfoOld;
 
 // Size 0x10
 typedef struct THPAudioInfo {
-  u32 mSndChannels;   // _00
-  u32 mSndFrequency;  // _04
-  u32 mSndNumSamples; // _08
-  u32 mSndNumTracks;  // _0C
+  u32 sndChannels;
+  u32 sndFrequency;
+  u32 sndNumSamples;
+  u32 sndNumTracks;
 } THPAudioInfo;
 
 // Size 0xC
 typedef struct THPAudioInfoOld {
-  u32 mSndChannels;   // _00
-  u32 mSndFrequency;  // _04
-  u32 mSndNumSamples; // _08
+  u32 sndChannels;
+  u32 sndFrequency;
+  u32 sndNumSamples;
 } THPAudioInfoOld;
 
 // Size 0x14
 typedef struct THPFrameCompInfo {
-  u32 mNumComponents; // _00
-  u8 mFrameComp[16];  // _04
+  u32 numComponents;
+  u8 frameComp[16];
 } THPFrameCompInfo;
 
 #ifdef __cplusplus
