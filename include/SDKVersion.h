@@ -41,7 +41,9 @@
                                   // Metroid Prime 3: Corruption, all retail versions.
 #define SDK_VERSION_RVL_2008_01 9 // RVL_SDK 0x4199_60831 builds of Aug 2007 to Jan 2008, with the
                                   // Jan 30 2008 OS.
-                                  // New Play Controls and Trilogy, for both Prime and Echoes.
+                                  // New Play Controls and NTSC Trilogy.
+#define SDK_VERSION_RVL_2008_12 10 // PAL Trilogy, with the Sep 11 2008 KPAD, Oct 2 2008 OS
+                                   // and Dec 1 2008 WPAD release builds.
 
 #ifndef SDK_VERSION
 #error "SDK_VERSION is not defined: the game's build configuration must define it to one of the SDK_VERSION_* values"

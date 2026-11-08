@@ -274,7 +274,7 @@ def modules_for(
                     "Runtime/__va_arg.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01", "RVL_2008_12"),
                     "Runtime/global_destructor_chain.c",
                 ),
                 Object(
@@ -300,7 +300,7 @@ def modules_for(
                     "Runtime/runtime.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01", "RVL_2008_12"),
                     "Runtime/__init_cpp_exceptions.cpp",
                 ),
                 Object(
