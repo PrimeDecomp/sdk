@@ -304,7 +304,9 @@ def modules_for(
                     "Runtime/__init_cpp_exceptions.cpp",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02") or EquivalentFor("DOLPHIN_2004_04"),
+                    is_wii
+                    or MatchingFor("DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02")
+                    or EquivalentFor("DOLPHIN_2004_04"),
                     "Runtime/Gecko_ExceptionPPC.cp",
                     extra_cflags=[*CPP_EXCEPTIONS, *flags_if(not is_prime, "-str nopool")],
                     extab_padding=[0x02, 0x55] if not is_prime else None,
