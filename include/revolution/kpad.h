@@ -138,6 +138,14 @@ typedef union KPADEXStatus {
     f32 ltrigger;
     f32 rtrigger;
   } cl;
+#if SDK_VERSION >= SDK_VERSION_RVL_2008_12
+  struct {
+    f64 totalWeight;
+    f64 sensorWeights[4];
+    f64 filteredSensorWeights[4];
+    s32 result;
+  } balanceBoard;
+#endif
 } KPADEXStatus;
 
 typedef struct KPADStatus {
