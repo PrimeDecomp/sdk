@@ -136,21 +136,29 @@ typedef void (*NANDAsyncCallback)(s32 result, struct NANDCommandBlock* block);
 s32 NANDInit(void);
 
 s32 NANDCreate(const char*, u8, u8);
+s32 NANDCreateAsync(const char*, u8, u8, NANDCallback, NANDCommandBlock*);
 s32 NANDPrivateCreate(const char*, u8, u8);
 
 s32 NANDOpen(const char*, NANDFileInfo*, u8);
 s32 NANDPrivateOpen(const char*, NANDFileInfo*, u8);
 s32 NANDOpenAsync(const char*, NANDFileInfo*, u8, NANDCallback, NANDCommandBlock*);
 s32 NANDPrivateOpenAsync(const char*, NANDFileInfo*, const u8, NANDCallback, NANDCommandBlock*);
+s32 NANDPrivateSafeOpenAsync(const char*, NANDFileInfo*, u8, void*, u32, NANDCallback,
+                             NANDCommandBlock*);
 
 s32 NANDClose(NANDFileInfo*);
 s32 NANDCloseAsync(NANDFileInfo*, NANDCallback, NANDCommandBlock*);
+s32 NANDSafeClose(NANDFileInfo*);
+s32 NANDSafeCloseAsync(NANDFileInfo*, NANDCallback, NANDCommandBlock*);
 s32 NANDRead(NANDFileInfo*, void*, u32);
 s32 NANDReadAsync(NANDFileInfo*, void*, u32, NANDCallback, NANDCommandBlock*);
 
 s32 NANDGetLength(NANDFileInfo*, u32*);
+s32 NANDGetLengthAsync(NANDFileInfo*, u32*, NANDCallback, NANDCommandBlock*);
+s32 NANDTellAsync(NANDFileInfo*, u32*, NANDCallback, NANDCommandBlock*);
 
 s32 NANDDelete(const char*);
+s32 NANDDeleteAsync(const char*, NANDCallback, NANDCommandBlock*);
 
 s32 NANDMove(const char*, const char*);
 
@@ -159,7 +167,11 @@ s32 NANDCheck(u32, u32, u32*);
 s32 NANDWrite(NANDFileInfo*, const void*, u32);
 s32 NANDWriteAsync(NANDFileInfo*, const void*, u32, NANDCallback, NANDCommandBlock*);
 
+s32 NANDSeek(NANDFileInfo*, s32, s32);
 s32 NANDSeekAsync(NANDFileInfo*, s32, s32, NANDCallback, NANDCommandBlock*);
+
+void NANDSetUserData(NANDCommandBlock*, void*);
+void* NANDGetUserData(const NANDCommandBlock*);
 
 BOOL nandIsInitialized(void);
 s32 nandConvertErrorCode(const ISFSError);
