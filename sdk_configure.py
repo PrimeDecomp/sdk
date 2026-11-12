@@ -240,11 +240,11 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "MetroTRK/exception.s"),
                 Object(NonMatching, "MetroTRK/dolphin_trk.c"),
                 Object(MatchingFor("RVL_2008_01"), "MetroTRK/dolphin_trk_glue.c"),
-                Object(MatchingFor("RVL_2008_01"), "MetroTRK/flush_cache.c"),
-                Object(MatchingFor("RVL_2008_01"), "MetroTRK/main_TRK.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "MetroTRK/flush_cache.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "MetroTRK/main_TRK.c"),
                 Object(MatchingFor("RVL_2008_01"), "MetroTRK/mainloop.c"),
                 Object(NonMatching, "MetroTRK/mem_TRK.c"),
-                Object(MatchingFor("RVL_2008_01"), "MetroTRK/mpc_7xx_603e.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "MetroTRK/mpc_7xx_603e.c"),
                 Object(MatchingFor("RVL_2008_01"), "MetroTRK/msg.c"),
                 Object(MatchingFor("RVL_2008_01"), "MetroTRK/msgbuf.c"),
                 Object(MatchingFor("RVL_2008_01"), "MetroTRK/msghndlr.c"),
@@ -270,7 +270,7 @@ def modules_for(
             "progress_category": "sdk",
             "objects": [
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/__va_arg.c",
                 ),
                 Object(
@@ -292,7 +292,7 @@ def modules_for(
                     extra_cflags=CPP_EXCEPTIONS,
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/ptmf.c",
                 ),
                 Object(
@@ -304,7 +304,7 @@ def modules_for(
                     "Runtime/__init_cpp_exceptions.cpp",
                 ),
                 Object(
-                    is_wii
+                    MatchingFor("RVL_2008_01", "RVL_2008_12")
                     or MatchingFor("DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02")
                     or EquivalentFor("DOLPHIN_2004_04"),
                     "Runtime/Gecko_ExceptionPPC.cp",
@@ -341,7 +341,7 @@ def modules_for(
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "Runtime/ansi_files.c"),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "Runtime/ansi_fp.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/arith.c",
                 ),
                 Object(
@@ -358,7 +358,7 @@ def modules_for(
                 ),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "Runtime/locale.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/direct_io.c",
                 ),
                 Object(
@@ -374,20 +374,20 @@ def modules_for(
                     "Runtime/mbstring.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/mem.c",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2007_06"),
                     "Runtime/mem_funcs.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/misc_io.c",
                 ),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "Runtime/printf.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/qsort.c",
                 ),
                 Object(
@@ -399,7 +399,7 @@ def modules_for(
                     "Runtime/float.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/sscanf.c",
                 ),
                 Object(
@@ -412,10 +412,10 @@ def modules_for(
                 ),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "Runtime/strtold.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/wchar_io.c",
                 ),
-                Object(MatchingFor("RVL_2008_01"), "Runtime/wstring.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "Runtime/wstring.c"),
                 Object(MatchingFor("RVL_2008_01"), "Runtime/wctype.c"),
                 Object(
                     MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
@@ -447,11 +447,11 @@ def modules_for(
                 ),
                 Object(MatchingFor(*GC_VERSIONS), "Runtime/e_pow.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/e_rem_pio2.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/k_cos.c",
                 ),
                 Object(
@@ -459,7 +459,7 @@ def modules_for(
                     "Runtime/k_rem_pio2.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/k_sin.c",
                 ),
                 Object(
@@ -471,31 +471,31 @@ def modules_for(
                     "Runtime/s_atan.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/s_copysign.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/s_cos.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/s_floor.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/s_frexp.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/s_ldexp.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/s_modf.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/s_sin.c",
                 ),
                 Object(
@@ -507,15 +507,15 @@ def modules_for(
                     "Runtime/w_acos.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/w_asin.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/w_atan2.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/w_fmod.c",
                 ),
                 Object(
@@ -523,11 +523,11 @@ def modules_for(
                     "Runtime/w_log10.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/w_pow.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "Runtime/e_sqrt.c",
                 ),
                 Object(MatchingFor(*GC_VERSIONS), "Runtime/math_ppc.c"),
@@ -546,7 +546,7 @@ def modules_for(
             [
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"), "dolphin/dsp/dsp.c"),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO", "RVL_2007_06"),
                     "dolphin/dsp/dsp_debug.c",
                 ),
                 Object(
@@ -596,7 +596,7 @@ def modules_for(
                 Object(EquivalentFor("DOLPHIN_2004_04"), "revolution/dvd/dvd.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/dvd/dvdqueue.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/dvd/dvderror.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/dvd/dvdidutils.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/dvd/dvdidutils.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/dvd/dvdFatal.c"),
                 Object(EquivalentFor("DOLPHIN_2004_04"), "revolution/dvd/dvdDeviceError.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/dvd/dvd_broadway.c"),
@@ -606,7 +606,7 @@ def modules_for(
             "NdevExi2AD",
             [
                 Object(MatchingFor("RVL_2008_01"), "revolution/NdevExi2AD/DebuggerDriver.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/NdevExi2AD/exi2.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/NdevExi2AD/exi2.c"),
             ],
         ),
         RevolutionLib(
@@ -624,7 +624,7 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/os/OSFont.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/os/OSExec.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/os/OSReset.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/os/OSLink.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/os/OSLink.c"),
             ],
         ),
         RevolutionLib(
@@ -644,7 +644,7 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/wpad/WPADHIDParser.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/wpad/WPADMem.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/wpad/WPADEncrypt.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/wpad/debug_msg.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/wpad/debug_msg.c"),
             ],
         ),
         RevolutionLib(
@@ -664,7 +664,7 @@ def modules_for(
             [
                 Object(MatchingFor("RVL_2008_01"), "revolution/ipc/ipcMain.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/ipc/ipcclt.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/ipc/memory.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/ipc/memory.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/ipc/ipcProfile.c"),
             ],
         ),
@@ -695,15 +695,15 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_hh_cfg.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_sys_cfg.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bte_hcisu.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/bte_init.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/bte_init.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bte_logmsg.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bte_main.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btu_task1.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bd.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_sys_conn.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/bta_sys_conn.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_sys_main.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/ptim.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/utl.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/ptim.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/utl.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_dm_act.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_dm_api.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_dm_main.c"),
@@ -713,7 +713,7 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_hh_main.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/bta_hh_utils.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btm_acl.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/btm_dev.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/btm_dev.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btm_devctl.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btm_discovery.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btm_inq.c"),
@@ -723,15 +723,15 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btm_sec.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btu_hcif.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/btu_init.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/wbt_ext.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/wbt_ext.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/gap_api.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/gap_conn.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/gap_utils.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/hcicmds.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/hidd_api.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/hidd_conn.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/hidd_api.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/hidd_conn.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/hidd_mgmt.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/hidd_pm.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/hidd_pm.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/hidh_api.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/hidh_conn.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/l2c_api.c"),
@@ -739,21 +739,21 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/l2c_link.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/l2c_main.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/l2c_utils.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/port_api.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/port_api.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/port_rfc.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/port_utils.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/port_utils.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/rfc_l2cap_if.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/rfc_mx_fsm.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/rfc_mx_fsm.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/rfc_port_fsm.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/rfc_port_if.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/rfc_ts_frames.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/rfc_utils.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/sdp_api.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/sdp_db.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/sdp_api.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/sdp_db.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/sdp_discovery.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/bte/sdp_main.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/sdp_server.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/bte/sdp_utils.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/sdp_server.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/bte/sdp_utils.c"),
             ],
             extra_cflags=BTE_CFLAGS,
         ),
@@ -766,7 +766,7 @@ def modules_for(
                     extra_cflags=FP_SOFT,
                 ),
                 Object(MatchingFor("RVL_2008_01"), "revolution/wud/WUDHidHost.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/wud/debug_msg.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/wud/debug_msg.c"),
             ],
         ),
         RevolutionLib(
@@ -779,8 +779,8 @@ def modules_for(
             "mem",
             [
                 Object(MatchingFor("RVL_2008_01"), "revolution/mem/mem_heapCommon.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/mem/mem_expHeap.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/mem/mem_list.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/mem/mem_expHeap.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/mem/mem_list.c"),
             ],
         ),
         RevolutionLib(
@@ -809,7 +809,7 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/ax/AXVPB.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/ax/AXComp.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/ax/DSPCode.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/ax/AXProf.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/ax/AXProf.c"),
             ],
         ),
         RevolutionLib(
@@ -828,13 +828,13 @@ def modules_for(
         RevolutionLib(
             "tpl",
             [
-                Object(MatchingFor("RVL_2008_01"), "revolution/tpl/TPL.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/tpl/TPL.c"),
             ],
         ),
         RevolutionLib(
             "nwc24",
             [
-                Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24StdAPI.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/nwc24/NWC24StdAPI.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24FileAPI.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24Config.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24Utils.c"),
@@ -845,7 +845,7 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24Parser.c"),
                 Object(EquivalentFor("DOLPHIN_2004_04"), "revolution/nwc24/NWC24MsgCommit.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24Schedule.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24DateParser.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/nwc24/NWC24DateParser.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24FriendList.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24SecretFList.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/nwc24/NWC24Time.c"),
@@ -858,26 +858,26 @@ def modules_for(
         RevolutionLib(
             "vf",
             [
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_clib.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_clib.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_code.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_service.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_service.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_str.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_w_clib.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_driver.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pdm_bpb.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pdm_disk.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pdm_partition.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pdm_mbr.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_w_clib.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_driver.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pdm_bpb.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pdm_disk.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pdm_partition.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pdm_mbr.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pdm_dskmng.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_cache.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_cluster.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_dir.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_cluster.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_dir.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_entry.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_entry_iterator.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fat.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fat12.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fat16.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fat32.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fat12.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fat16.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fat32.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fatfs.c"),
                 Object(
                     EquivalentFor("DOLPHIN_2004_04"),
@@ -888,20 +888,20 @@ def modules_for(
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_sector.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_volume.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_cp932.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_api_util.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_attach.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_detach.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_errnum.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fclose.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_finfo.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fopen.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fread.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fseek.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_fwrite.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_getdev.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_api_util.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_attach.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_detach.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_errnum.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fclose.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_finfo.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fopen.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fread.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fseek.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_fwrite.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_getdev.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_init_prfile2.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_remove.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_unmount.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_remove.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/pf_unmount.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_filelock.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/pf_system.c"),
                 Object(
@@ -915,7 +915,7 @@ def modules_for(
                     extra_cflags=FP_SOFT,
                 ),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/d_hash.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/vf/d_time.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/vf/d_time.c"),
                 Object(MatchingFor("RVL_2008_01"), "revolution/vf/d_common.c"),
                 Object(
                     MatchingFor("RVL_2008_01"),
@@ -1005,7 +1005,7 @@ def modules_for(
                     extra_cflags=FP_CONTRACT_OFF,
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "RVL_2007_06"),
                     "dolphin/gx/GXDisplayList.c",
                 ),
                 Object(
@@ -1028,7 +1028,7 @@ def modules_for(
                     "dolphin/mtx/mtx.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
                     "dolphin/mtx/mtxvec.c",
                 ),
                 Object(
@@ -1097,7 +1097,7 @@ def modules_for(
             "thp",
             [
                 Object(MatchingFor("RVL_2008_01"), "revolution/thp/THPDec.c"),
-                Object(MatchingFor("RVL_2008_01"), "revolution/thp/THPAudio.c"),
+                Object(MatchingFor("RVL_2008_01", "RVL_2007_06"), "revolution/thp/THPAudio.c"),
             ],
         ),
         DolphinLib(
@@ -1229,7 +1229,7 @@ def modules_for(
                     extra_cflags=IPA_FILE,
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO", "RVL_2007_06"),
                     "dolphin/os/OSSync.c",
                 ),
                 Object(
