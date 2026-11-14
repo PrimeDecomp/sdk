@@ -15,10 +15,10 @@ int atoi(const char* str);
 void srand(unsigned int seed);
 int rand(void);
 int abs(int n);
-#ifdef __MWERKS__
+long labs(long n);
+#if defined(__MWERKS__) && defined(MSL_ABS_INTRINSIC) // Corruption prototype
 #define abs(n) __abs(n)
 #endif
-long labs(long n);
 void exit(int status);
 void abort(void);
 void* malloc(size_t size);
