@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_DB
 #define _DOLPHIN_DB
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

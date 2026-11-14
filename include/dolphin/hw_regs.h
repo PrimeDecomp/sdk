@@ -119,7 +119,7 @@ volatile u32 __AIRegs[8]      : 0xCC006C00;
 #ifndef _DOLPHIN_HW_REGS
 #define _DOLPHIN_HW_REGS
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

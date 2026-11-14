@@ -1,6 +1,6 @@
 #ifndef METROTRK_DEBUGGER_PORTABLE_UART_H
 #define METROTRK_DEBUGGER_PORTABLE_UART_H
-#include <types.h>
+#include <dolphin/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

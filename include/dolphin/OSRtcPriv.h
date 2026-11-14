@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_OSRTCPRIV
 #define _DOLPHIN_OSRTCPRIV
 
-#include <types.h>
+#include <dolphin/types.h>
 
 typedef struct OSSram {
   u16 checkSum;

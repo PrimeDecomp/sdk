@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#include "types.h"
+#include <dolphin/types.h>
 #include "dolphin/os.h"
 #include "dolphin/hw_regs.h"
 

@@ -1,6 +1,6 @@
 #ifndef _TRKINIT
 #define _TRKINIT
-#include <types.h>
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

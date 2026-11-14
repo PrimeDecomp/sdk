@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_AR
 #define _DOLPHIN_AR
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

@@ -59,7 +59,7 @@ char *OSGetFontTexel(char *string, void *image, s32 pos, s32 stride, s32 *width)
 #ifndef _DOLPHIN_OSFONT
 #define _DOLPHIN_OSFONT
 
-#include <types.h>
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

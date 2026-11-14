@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_OSERROR
 #define _DOLPHIN_OSERROR
 
-#include <types.h>
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

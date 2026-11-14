@@ -4,7 +4,7 @@
 #include <SDKVersion.h>
 
 #include "dolphin/db.h"
-#include "types.h"
+#include <dolphin/types.h>
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 
 #ifdef __MWERKS__

@@ -1,6 +1,6 @@
 #ifndef METROTRK_DEBUGGER_OS_DOLPHIN_DOLPHIN_TRK_H
 #define METROTRK_DEBUGGER_OS_DOLPHIN_DOLPHIN_TRK_H
-#include <types.h>
+#include <dolphin/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif

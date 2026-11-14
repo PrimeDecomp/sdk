@@ -3,7 +3,7 @@
 
 #include <dolphin/dvd.h>
 #include <dolphin/hw_regs.h>
-#include <types.h>
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

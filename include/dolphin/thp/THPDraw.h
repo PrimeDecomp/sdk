@@ -1,7 +1,7 @@
 #ifndef _THP_THPDRAW_H
 #define _THP_THPDRAW_H
 
-#include "types.h"
+#include <dolphin/types.h>
 #include "Dolphin/GX/GXTypes.h"
 
 #ifdef __cplusplus

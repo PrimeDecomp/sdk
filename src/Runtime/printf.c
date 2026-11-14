@@ -1002,7 +1002,7 @@ static int __pformatter(void* (*WriteProc)(void*, const char*, size_t), void* Wr
       } else if (format.argument_options == long_long_argument) {
         long_long_num = va_arg(arg, s64);
       } else {
-        long_num = va_arg(arg, uint);
+        long_num = va_arg(arg, unsigned int);
       }
 
       if (format.argument_options == short_argument) {
