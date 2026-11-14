@@ -3,7 +3,7 @@
 
 #include <SDKVersion.h>
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #include "dolphin/ar.h"
 

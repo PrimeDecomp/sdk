@@ -1,7 +1,7 @@
 #ifndef _STDIO
 #define _STDIO
 
-#include "types.h"
+#include "dolphin/types.h"
 #include <SDKVersion.h>
 #include <stdarg.h>
 #include <stddef.h>

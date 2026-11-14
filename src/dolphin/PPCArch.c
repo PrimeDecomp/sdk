@@ -1,5 +1,5 @@
 #include <SDKVersion.h>
-#include "types.h"
+#include <dolphin/types.h>
 #include "asm_types.h"
 // clang-format off
 

@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_OSMUTEX
 #define _DOLPHIN_OSMUTEX
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #include "dolphin/os/OSThread.h"
 

@@ -1,5 +1,5 @@
 #include "ansi_files.h"
-#include "types.h"
+#include <dolphin/types.h>
 
 #if SDK_VERSION < SDK_VERSION_DOLPHIN_2003_04
 #pragma dont_inline on

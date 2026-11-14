@@ -1,6 +1,6 @@
 #ifndef METROTRK_DEBUGGER_PORTABLE_NUBEVENT_H
 #define METROTRK_DEBUGGER_PORTABLE_NUBEVENT_H
-#include <types.h>
+#include <dolphin/types.h>
 
 #include <MetroTRK/debugger/portable/dserror.h>
 #ifdef __cplusplus

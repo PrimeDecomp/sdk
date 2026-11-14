@@ -7,7 +7,7 @@
 // The Revolution SDK DVD library is separate from the Dolphin one.
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -141,7 +141,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
 
 #elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

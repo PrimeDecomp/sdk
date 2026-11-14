@@ -6,7 +6,7 @@
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 #include <dolphin/hw_regs.h>
 #else
-#include <types.h>
+#include <dolphin/types.h>
 #endif
 
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04

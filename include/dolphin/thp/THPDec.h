@@ -1,6 +1,6 @@
 #ifndef _DOLPHIN_THPDEC
 #define _DOLPHIN_THPDEC
-#include "types.h"
+#include <dolphin/types.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
