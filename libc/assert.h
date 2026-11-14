@@ -1,15 +1,13 @@
 #ifndef _ASSERT_H_
 #define _ASSERT_H_
 
-#include <SDKVersion.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef NDEBUG
 #define assert(condition) ((void)0)
-#elif SDK_VERSION < SDK_VERSION_RVL_2007_06
+#elif defined(MSL_ASSERT_ABORT) // Corruption prototype
 #include <stdlib.h>
 #define assert(condition) ((condition) ? (void)0 : abort())
 #else
