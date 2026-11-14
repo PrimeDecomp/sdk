@@ -25,9 +25,11 @@ int __flush_all();
 
 extern FILE __files[4];
 
+#ifndef stdin
 #define stdin &(__files[0])
 #define stdout &(__files[1])
 #define stderr &(__files[2])
+#endif
 
 #ifdef __cplusplus
 };

@@ -1,13 +1,19 @@
 #ifndef _FLOAT_H_
 #define _FLOAT_H_
 
+#include <SDKVersion.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 extern int __float_max[];
 
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
+#define FLT_MAX (*(float*)__float_max)
+#else
 #define FLT_MAX 3.402823466e+38f
+#endif
 #define FLT_EPSILON 1.192092896e-07f
 #define FLT_MIN 1.175494351e-38f
 

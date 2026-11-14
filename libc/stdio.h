@@ -120,6 +120,26 @@ enum __ReadProcActions { __GetChar, __UngetChar, __CheckForError };
 #define _IOFBF 2
 
 int puts(const char* s);
+extern FILE __files[];
+#define stdin (&__files[0])
+#define stdout (&__files[1])
+#define stderr (&__files[2])
+#ifdef MSL_NO_DISK_FILE_SUPPORT
+static inline FILE* fopen(const char* path, const char* mode) { return NULL; }
+#else
+FILE* fopen(const char* path, const char* mode);
+#endif
+FILE* freopen(const char* path, const char* mode, FILE* stream);
+int fclose(FILE* stream);
+int fputs(const char* str, FILE* stream);
+char* fgets(char* str, int count, FILE* stream);
+int fputc(int ch, FILE* stream);
+int fwide(FILE* stream, int mode);
+int __getc(FILE* stream);
+#define getc(stream)                                                                                 (fwide((stream), -1) >= 0 ? -1                                                                                               : ((stream)->buffer_len-- ? *(stream)->buffer_ptr++ : __getc(stream)))
+int ungetc(int ch, FILE* stream);
+#define feof(stream) ((stream)->state.eof)
+#define ferror(stream) ((stream)->state.error)
 int printf(const char*, ...);
 int fprintf(FILE* file, const char* format, ...);
 int sprintf(char* s, const char* format, ...);

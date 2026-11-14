@@ -1,12 +1,17 @@
 #ifndef _ASSERT_H_
 #define _ASSERT_H_
 
+#include <SDKVersion.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #ifdef NDEBUG
 #define assert(condition) ((void)0)
+#elif SDK_VERSION < SDK_VERSION_RVL_2007_06
+#include <stdlib.h>
+#define assert(condition) ((condition) ? (void)0 : abort())
 #else
 void __assertion_failed(const char* condition, const char* file, const char* function, int line);
 #define assert(condition) \
