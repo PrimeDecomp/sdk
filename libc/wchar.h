@@ -27,7 +27,9 @@ static inline int iswupper(wint_t ch) { return ch < 256 ? __wctype_map[ch] & 0x8
 static inline int iswxdigit(wint_t ch) { return ch < 256 ? __wctype_map[ch] & 0x20 : 0; }
 extern unsigned short __wlower_map[];
 static inline wint_t towlower(wint_t ch) { return ch >= 256 ? ch : __wlower_map[ch]; }
-wint_t towupper(wint_t ch);
+// Guessed name
+extern unsigned short __wupper_map[];
+static inline wint_t towupper(wint_t ch) { return ch >= 256 ? ch : __wupper_map[ch]; }
 
 #ifdef __cplusplus
 }
