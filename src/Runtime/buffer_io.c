@@ -41,3 +41,35 @@ int __flush_buffer(FILE* file, size_t* bytes_flushed) {
 
   return 0;
 }
+
+int __load_buffer(FILE* file, size_t* bytes_loaded, int alignment) { // Guessed name
+  int result;
+
+  __prep_buffer(file);
+  if (alignment == __dont_align_buffer)
+    file->buffer_len = file->buffer_size;
+
+  result = (*file->read_proc)(file->handle, file->buffer, (size_t*)&file->buffer_len,
+                            file->idle_proc);
+  if (result == __io_EOF)
+    file->buffer_len = 0;
+  if (bytes_loaded)
+    *bytes_loaded = file->buffer_len;
+  if (result)
+    return result;
+
+  file->position += file->buffer_len;
+  if (!file->mode.binary_io) {
+    ptrdiff_t count = file->buffer_len;
+    unsigned char* p = file->buffer;
+
+    while (count--) {
+      if (*p++ == '\n')
+        file->position++;
+    }
+  }
+  if (!file->mode.binary_io)
+    __convert_to_newlines(file->buffer, (size_t*)&file->buffer_len);
+
+  return __no_io_error;
+}

@@ -1485,7 +1485,6 @@ def modules_for(
                     Object(NonMatching, "Runtime/rand.c"),
                     Object(NonMatching, "Runtime/sscanf.c"),
                     Object(NonMatching, "Runtime/signal.c"),
-                    Object(NonMatching, "Runtime/strerror.c"),
                     Object(NonMatching, "Runtime/string.c"),
                     Object(NonMatching, "Runtime/strtold.c"),
                     Object(MatchingFor("PROTO"), "Runtime/strtoul.c"),
