@@ -177,6 +177,27 @@ public:
   }
 };
 
+extern "C" void* __construct_new_array(void* block, void* ctor, void* dtor, size_t size,
+                                       size_t n) {
+  char* ptr;
+
+  if ((ptr = (char*)block) != 0) {
+    *(size_t*)ptr = size;
+    *(size_t*)(ptr + 4) = n;
+    ptr += 0x10;
+
+    if (ctor) {
+      __partial_array_destructor pad(ptr, size, n, dtor);
+      char* p;
+
+      for (pad.i = 0, p = ptr; pad.i < n; pad.i++, p += size)
+        CTORCALL_COMPLETE(ctor, p);
+    }
+  }
+
+  return ptr;
+}
+
 extern "C" void __construct_array(void* ptr, void* ctor, void* dtor, size_t size, size_t n) {
   __partial_array_destructor pad(ptr, size, n, dtor);
   char* p;

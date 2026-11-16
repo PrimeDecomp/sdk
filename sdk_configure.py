@@ -1199,7 +1199,10 @@ def modules_for(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"), "dolphin/os/OSFatal.c"
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "PROTO"),
+                    MatchingFor(
+                        "DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02",
+                        "DOLPHIN_2004_04_OS_APR", "DOLPHIN_2004_04", "PROTO",
+                    ),
                     "dolphin/os/OSFont.c",
                     extra_cflags=CHAR_UNSIGNED,
                 ),
