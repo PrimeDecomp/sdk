@@ -91,8 +91,54 @@ int wctomb(char* s, wchar_t wchar) { return (unicode_to_UTF8(s, wchar)); }
 #else
 #include <locale.h>
 
+#if defined(RVL_PROTO_RUNTIME)
+// Guessed name
+static int is_utf8_complete(const char* s, size_t n);
+#endif
+
 int mbtowc(wchar_t *dst, const char *src, size_t n) {
+#if defined(RVL_PROTO_RUNTIME)
+  wchar_t wide_char = 0;
+  int bytes, expected;
+  const unsigned char* p;
+
+  if (!src)
+    return 0;
+  if (!n)
+    return -1;
+
+  bytes = is_utf8_complete(src, n);
+  if (bytes < 0)
+    return -1;
+
+  p = (const unsigned char*)src;
+  switch (bytes) {
+  case 3:
+    wide_char = (*p++ & 0x0f) << 6;
+  case 2:
+    wide_char = (wide_char | (*p++ & 0x3f)) << 6;
+  case 1:
+    wide_char |= *p & 0x7f;
+  }
+
+  if (!wide_char)
+    expected = 0;
+  else if (wide_char < 0x80)
+    expected = 1;
+  else if (wide_char < 0x800)
+    expected = 2;
+  else
+    expected = 3;
+
+  if (expected != bytes)
+    return -1;
+
+  if (dst)
+    *dst = wide_char;
+  return bytes;
+#else
   return _current_locale.ctype_cmpt_ptr->decode_mb(dst, src, n);
+#endif
 }
 
 // Guessed name
@@ -238,3 +284,28 @@ size_t wcstombs(char* s, const wchar_t* pwcs, size_t n) {
 
   return (chars_written);
 }
+
+#if defined(RVL_PROTO_RUNTIME)
+size_t mbstowcs(wchar_t* dest, const char* src, size_t count) {
+  size_t remaining = strlen(src);
+  int written = 0;
+
+  if (dest) {
+    const char* p = src;
+    while (written < count) {
+      if (*p) {
+        int result = mbtowc(dest++, p, remaining);
+        if (result <= 0)
+          return -1;
+        p += result;
+        remaining -= result;
+        ++written;
+      } else {
+        *dest = 0;
+        break;
+      }
+    }
+  }
+  return written;
+}
+#endif

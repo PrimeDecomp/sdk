@@ -16,7 +16,7 @@ void srand(unsigned int seed);
 int rand(void);
 int abs(int n);
 long labs(long n);
-#if defined(__MWERKS__) && defined(MSL_ABS_INTRINSIC) // Corruption prototype
+#if defined(__MWERKS__) && defined(MSL_ABS_INTRINSIC)
 #define abs(n) __abs(n)
 #endif
 void exit(int status);
@@ -30,6 +30,8 @@ char* getenv(const char* name);
 #define EXIT_FAILURE 1
 void free(void* ptr);
 size_t wcstombs(char* dest, const wchar_t* src, size_t max);
+size_t mbstowcs(wchar_t* dest, const char* src, size_t max);
+int mbtowc(wchar_t* dest, const char* src, size_t max);
 
 typedef int (*_compare_function)(const void*, const void*);
 void qsort(void*, size_t, size_t, _compare_function);
