@@ -20,6 +20,7 @@ typedef struct DBInterface
 extern DBInterface* __DBInterface;
 
 void DBInit(void);
+BOOL DBIsDebuggerPresent(void);
 void DBInitComm(int* inputFlagPtr, int* mtrCallback);
 static void __DBExceptionDestination(void);
 void DBPrintf(char* format, ...);
