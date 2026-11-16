@@ -1488,7 +1488,7 @@ def modules_for(
                     Object(NonMatching, "Runtime/strerror.c"),
                     Object(NonMatching, "Runtime/string.c"),
                     Object(NonMatching, "Runtime/strtold.c"),
-                    Object(NonMatching, "Runtime/strtoul.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/strtoul.c"),
                     Object(NonMatching, "Runtime/wstrtold.c"),
                     Object(NonMatching, "Runtime/wstrtoul.c"),
                     Object(NonMatching, "Runtime/wmem.c"),
