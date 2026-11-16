@@ -162,8 +162,8 @@ unsigned long long __strtoull(int base, int max_width,
   if (!(scan_state & (leading_zero | digit_loop | finished))) {
     value = *chars_scanned = 0;
   } else {
-    count += spaces;
-    *chars_scanned = count - 1;
+    --count;
+    *chars_scanned = count + spaces;
   }
   UNFETCH(c);
   return value;
@@ -274,8 +274,8 @@ unsigned long __strtoul(int base, int max_width,
   if (!(scan_state & (leading_zero | digit_loop | finished))) {
     value = *chars_scanned = 0;
   } else {
-    count += spaces;
-    *chars_scanned = count - 1;
+    --count;
+    *chars_scanned = count + spaces;
   }
   UNFETCH(c);
   return value;
