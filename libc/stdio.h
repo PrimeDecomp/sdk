@@ -150,7 +150,7 @@ int vsprintf(char* s, const char* format, va_list arg);
 int vsnprintf(char* s, size_t n, const char* format, va_list arg);
 
 int __StringRead(void* isc, int ch, int Action);
-size_t fread(const void*, size_t memb_size, size_t num_memb, FILE*);
+size_t fread(void*, size_t memb_size, size_t num_memb, FILE*);
 size_t fwrite(const void*, size_t memb_size, size_t num_memb, FILE*);
 int _fseek(FILE* file, fpos_t offset, int mode);
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
@@ -162,6 +162,7 @@ static inline int fseek(FILE* file, long offset, int mode) {
 }
 #endif
 size_t __fwrite(const void*, size_t, size_t, FILE*);
+size_t __fread(void*, size_t, size_t, FILE*); // Guessed name
 
 #ifdef __cplusplus
 }
