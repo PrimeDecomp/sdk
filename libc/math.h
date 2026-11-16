@@ -89,6 +89,7 @@ double acos(double x);
 _MATH_INLINE float asinf(float x) { return (float)asin((double)x); }
 _MATH_INLINE float acosf(float x) { return (float)acos((double)x); }
 double log(double x);
+_MATH_INLINE float logf(float x) { return (float)log((double)x); }
 double log10(double x);
 double exp(double x);
 
