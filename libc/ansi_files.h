@@ -22,6 +22,7 @@ extern "C" {
 int __flush_buffer(FILE* file, size_t* length);
 void __prep_buffer(FILE* file);
 int __flush_all();
+int __flush_line_buffered_output_files(void); // Guessed name
 
 extern FILE __files[4];
 

@@ -129,3 +129,19 @@ int __flush_all() {
   };
   return retval;
 }
+
+int __flush_line_buffered_output_files(void) { // Guessed name
+  int result = 0;
+  FILE* p = &__files[0];
+
+  while (p != NULL) {
+    if (p->mode.file_kind != __closed_file && (p->mode.buffer_mode & _IOLBF) &&
+        p->state.io_state == __writing) {
+      if (fflush(p))
+        result = EOF;
+    }
+    p = p->next_file_struct;
+  }
+
+  return result;
+}
