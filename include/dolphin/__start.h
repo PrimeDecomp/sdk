@@ -29,6 +29,7 @@
 #define MSR_FP 0x2000
 
 extern void InitMetroTRK();
+extern void InitMetroTRK_BBA(void);
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 u16 Pad3Button : PAD3_BUTTON_ADDR;
