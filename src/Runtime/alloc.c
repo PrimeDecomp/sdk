@@ -124,14 +124,35 @@ static inline void SubBlock_split(SubBlock *ths, unsigned long size) {
   }
 }
 
+static void Block_link(Block *, SubBlock *);
+
+#ifdef RVL_PROTO_RUNTIME
+static void Block_construct(Block *ths, unsigned long size) {
+#else
+static inline void Block_construct(Block *ths, unsigned long size) {
+#endif
+  SubBlock *sb = (SubBlock *)((char *)ths + sizeof(Block));
+
+  ths->size = size | 3;
+  *(unsigned long *)((char *)ths + size - 8) = ths->size;
+  SubBlock_construct(sb, ths, size - sizeof(Block) - 8, 0, 0);
+  ths->max_size = size - sizeof(Block) - 8;
+  Block_start(ths) = 0;
+  Block_link(ths, sb);
+}
+
 static SubBlock *Block_subBlock(Block *ths, unsigned long size) {
   SubBlock *start = Block_start(ths);
   SubBlock *sb;
   unsigned long cur_size;
   unsigned long max_size;
 
-  if (start == 0)
+  if (start == 0) {
+#ifdef RVL_PROTO_RUNTIME
+    ths->max_size = 0;
+#endif
     return 0;
+  }
 
   sb = start;
   cur_size = SubBlock_size(sb);
@@ -244,17 +265,6 @@ static void SubBlock_merge_next(SubBlock *pBlock, SubBlock **pStart) {
   }
 }
 
-static inline void Block_construct(Block *ths, unsigned long size) {
-  SubBlock *sb = (SubBlock *)((char *)ths + sizeof(Block));
-
-  ths->size = size | 3;
-  *(unsigned long *)((char *)ths + size - 8) = ths->size;
-  SubBlock_construct(sb, ths, size - sizeof(Block) - 8, 0, 0);
-  ths->max_size = size - sizeof(Block) - 8;
-  Block_start(ths) = 0;
-  Block_link(ths, sb);
-}
-
 static inline Block *__link(__mem_pool_obj *pool_obj, unsigned long size) {
   Block *bp;
   size = (size + sizeof(Block) + 8 + 7) & ~7;
@@ -335,11 +345,73 @@ allocated:
   return (char *)sb + 8;
 }
 
+static inline Block *__unlink(__mem_pool_obj *pool_obj, Block *bp) {
+  Block *result = bp->next;
+  if (result == bp) {
+    result = 0;
+  }
+
+  if (pool_obj->start_ == bp) {
+    pool_obj->start_ = result;
+  }
+
+  if (result != 0) {
+    result->prev = bp->prev;
+    result->prev->next = result;
+  }
+
+  bp->next = 0;
+  bp->prev = 0;
+  return result;
+}
+
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+static inline void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
+#else
+static void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
+#endif
+  SubBlock *sb = SubBlock_from_pointer(ptr);
+  SubBlock *_sb;
+
+  Block *bp = SubBlock_block(sb);
+  Block_link(bp, sb);
+
+  if (Block_empty(bp)) {
+    __unlink(pool_obj, bp);
+    __sys_free(bp);
+  }
+}
+
 static inline void FixSubBlock_construct(FixSubBlock *sb, FixBlock *block, FixSubBlock *next) {
   sb->block_ = block;
   sb->next_ = next;
 }
 
+#ifdef RVL_PROTO_RUNTIME
+static void FixBlock_construct(FixBlock *ths, FixBlock *prev, FixBlock *next, unsigned long pool,
+                               unsigned long size) {
+  unsigned long stride = fix_pool_sizes[pool] + 4;
+  const unsigned long count = size / stride;
+  char *cursor = (char *)(ths + 1);
+  unsigned long i = 0;
+
+  ths->prev_ = prev;
+  ths->next_ = next;
+  prev->next_ = ths;
+  next->prev_ = ths;
+  ths->client_size_ = fix_pool_sizes[pool];
+
+  for (; i < count - 1; ++i) {
+    char *next = cursor + stride;
+    FixSubBlock_construct((FixSubBlock *)cursor, ths, (FixSubBlock *)next);
+    cursor = next;
+  }
+
+  FixSubBlock_construct((FixSubBlock *)cursor, ths, 0);
+  ths->start_ = (FixSubBlock *)(ths + 1);
+  ths->n_allocated_ = 0;
+}
+#else
 static void FixBlock_construct(FixBlock *ths, FixBlock *prev, FixBlock *next, unsigned long pool,
                                void *buffer, unsigned long size) {
   unsigned long stride = fix_pool_sizes[pool] + 4;
@@ -363,6 +435,7 @@ static void FixBlock_construct(FixBlock *ths, FixBlock *prev, FixBlock *next, un
   ths->start_ = (FixSubBlock *)buffer;
   ths->n_allocated_ = 0;
 }
+#endif
 
 void *allocate_from_fixed_pools(__mem_pool_obj *pool_obj, unsigned long size) {
   unsigned long i = 0;
@@ -401,8 +474,12 @@ void *allocate_from_fixed_pools(__mem_pool_obj *pool_obj, unsigned long size) {
       fs->head_ = b;
       fs->tail_ = b;
     }
+#ifdef RVL_PROTO_RUNTIME
+    FixBlock_construct(b, fs->tail_, fs->head_, i, size - sizeof(FixBlock));
+#else
     FixBlock_construct(b, fs->tail_, fs->head_, i, (char *)b + sizeof(FixBlock),
                        size - sizeof(FixBlock));
+#endif
     fs->head_ = b;
   }
 
@@ -414,43 +491,6 @@ void *allocate_from_fixed_pools(__mem_pool_obj *pool_obj, unsigned long size) {
     fs->tail_ = fs->tail_->next_;
   }
   return (char *)p + 4;
-}
-
-static inline Block *__unlink(__mem_pool_obj *pool_obj, Block *bp) {
-  Block *result = bp->next;
-  if (result == bp) {
-    result = 0;
-  }
-
-  if (pool_obj->start_ == bp) {
-    pool_obj->start_ = result;
-  }
-
-  if (result != 0) {
-    result->prev = bp->prev;
-    result->prev->next = result;
-  }
-
-  bp->next = 0;
-  bp->prev = 0;
-  return result;
-}
-
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-static inline void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
-#else
-static void deallocate_from_var_pools(__mem_pool_obj *pool_obj, void *ptr) {
-#endif
-  SubBlock *sb = SubBlock_from_pointer(ptr);
-  SubBlock *_sb;
-
-  Block *bp = SubBlock_block(sb);
-  Block_link(bp, sb);
-
-  if (Block_empty(bp)) {
-    __unlink(pool_obj, bp);
-    __sys_free(bp);
-  }
 }
 
 inline void __init_pool_obj(__mem_pool *pool_obj) { memset(pool_obj, 0, sizeof(__mem_pool_obj)); }
@@ -466,6 +506,9 @@ static inline __mem_pool *get_malloc_pool(void) {
   return &protopool;
 }
 
+#ifdef RVL_PROTO_RUNTIME
+static
+#endif
 void deallocate_from_fixed_pools(__mem_pool_obj *pool_obj, void *ptr, unsigned long size) {
   unsigned long i = 0;
   FixSubBlock *p;
@@ -522,6 +565,23 @@ void deallocate_from_fixed_pools(__mem_pool_obj *pool_obj, void *ptr, unsigned l
   }
 }
 
+#ifdef RVL_PROTO_RUNTIME
+static void *__pool_alloc(__mem_pool *pool, unsigned long size) {
+#else
+static inline void *__pool_alloc(__mem_pool *pool, unsigned long size) {
+#endif
+  void *ptr;
+  if (size == 0)
+    return 0;
+  if (size > 0xFFFFFFCF)
+    return 0;
+  if (size <= 68)
+    ptr = allocate_from_fixed_pools((__mem_pool_obj *)pool, size);
+  else
+    ptr = allocate_from_var_pools((__mem_pool_obj *)pool, size);
+  return ptr;
+}
+
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 static inline void __pool_free(__mem_pool *pool, void *ptr) {
 #else
@@ -544,6 +604,24 @@ void __pool_free(__mem_pool *pool, void *ptr) {
   }
 }
 
+#ifdef RVL_PROTO_RUNTIME
+// Guessed name
+static void *__pool_calloc(__mem_pool *pool, unsigned long size) {
+  void *ptr = __pool_alloc(pool, size);
+  if (ptr != 0)
+    memset(ptr, 0, size);
+  return ptr;
+}
+
+void *malloc(size_t size) {
+  void *ptr;
+  __begin_critical_region(malloc_pool_access);
+  ptr = __pool_alloc(get_malloc_pool(), size);
+  __end_critical_region(malloc_pool_access);
+  return ptr;
+}
+#endif
+
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void free(void *ptr) { __pool_free(get_malloc_pool(), ptr); }
 #else
@@ -554,20 +632,14 @@ void free(void *ptr) {
 }
 #endif
 
-static inline void *__pool_alloc(__mem_pool *pool, unsigned long size) {
-  void *ptr;
-  if (size == 0)
-    return 0;
-  if (size > 0xFFFFFFCF)
-    return 0;
-  if (size <= 68)
-    ptr = allocate_from_fixed_pools((__mem_pool_obj *)pool, size);
-  else
-    ptr = allocate_from_var_pools((__mem_pool_obj *)pool, size);
-  return ptr;
-}
-
 void *calloc(size_t nmemb, size_t size) {
+#ifdef RVL_PROTO_RUNTIME
+  void *ptr;
+  __begin_critical_region(malloc_pool_access);
+  ptr = __pool_calloc(get_malloc_pool(), size * nmemb);
+  __end_critical_region(malloc_pool_access);
+  return ptr;
+#else
   __mem_pool *pool = get_malloc_pool();
   void *ptr;
   size *= nmemb;
@@ -575,4 +647,5 @@ void *calloc(size_t nmemb, size_t size) {
   if (ptr != 0)
     memset(ptr, 0, size);
   return ptr;
+#endif
 }
