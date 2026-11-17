@@ -1245,12 +1245,12 @@ def modules_for(
                     "dolphin/os/OSTime.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
                     "dolphin/os/__start.c",
                     extra_cflags=flags_if(prototype, "-DSDK_USE_METROTRK_BBA"),
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
                     "dolphin/os/__ppc_eabi_init.cpp",
                     extra_cflags=flags_if(prototype, "-DSDK_USE_METROTRK_BBA"),
                 ),
