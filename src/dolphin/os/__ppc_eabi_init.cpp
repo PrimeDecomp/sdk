@@ -56,11 +56,15 @@ loop:
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 void __init_user() { __init_cpp(); }
 #elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#ifndef SDK_USE_METROTRK_BBA
 __declspec(weak) void InitMetroTRK_BBA() { return; }
+#endif
 
 void __init_user() { __init_cpp(); }
 #else
+#ifndef SDK_USE_METROTRK_BBA
 __declspec(weak) void InitMetroTRK_BBA() { return; }
+#endif
 
 asm void __init_user() {
   // clang-format off

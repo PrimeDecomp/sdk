@@ -18,7 +18,9 @@ static u8 __get_debug_bba(void) {
     return Debug_BBA;
 }
 
+#ifndef SDK_USE_METROTRK_BBA
 __declspec(weak) void InitMetroTRK_BBA() {}
+#endif
 #endif
 
 __declspec(weak) asm void __start(void) {

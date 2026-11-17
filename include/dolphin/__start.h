@@ -29,6 +29,7 @@
 #define MSR_FP 0x2000
 
 extern void InitMetroTRK();
+extern void InitMetroTRK_BBA(void);
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 u16 Pad3Button : PAD3_BUTTON_ADDR;
@@ -54,7 +55,7 @@ extern void __OSPSInit(void);
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 __declspec(section ".init") extern void __check_pad3(void);
 __declspec(section ".init") extern void __start(void);
-__declspec(section ".init") extern void __init_registers(void);
+__declspec(section ".init") static void __init_registers(void);
 __declspec(section ".init") extern void __init_data(void);
 __declspec(section ".init") extern void __init_hardware(void);
 __declspec(section ".init") extern void __flush_cache(void* address, unsigned int size);
@@ -63,7 +64,7 @@ DECL_SECTION(".init") extern void __check_pad3(void);
 DECL_SECTION(".init") static void __set_debug_bba(void);
 DECL_SECTION(".init") static u8 __get_debug_bba(void);
 DECL_SECTION(".init") extern void __start(void);
-DECL_SECTION(".init") extern void __init_registers(void);
+DECL_SECTION(".init") static void __init_registers(void);
 DECL_SECTION(".init") extern void __init_data(void);
 DECL_SECTION(".init") extern void __init_hardware(void);
 DECL_SECTION(".init") extern void __flush_cache(void* address, unsigned int size);

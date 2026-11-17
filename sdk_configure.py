@@ -1247,10 +1247,12 @@ def modules_for(
                 Object(
                     MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
                     "dolphin/os/__start.c",
+                    extra_cflags=flags_if(prototype, "-DSDK_USE_METROTRK_BBA"),
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
                     "dolphin/os/__ppc_eabi_init.cpp",
+                    extra_cflags=flags_if(prototype, "-DSDK_USE_METROTRK_BBA"),
                 ),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02"), "dolphin/os/OSMessage.c"),
                 # Only the Corruption prototype's splits name these so far.
@@ -1459,6 +1461,7 @@ def modules_for(
                 ],
                 "progress_category": "sdk",
                 "objects": [
+                    Object(NonMatching, "Runtime/__mem.c"),
                     Object(NonMatching, "Runtime/__va_arg.c"),
                     Object(NonMatching, "Runtime/global_destructor_chain.c"),
                     Object(NonMatching, "Runtime/CPlusLibPPC.cpp"),
