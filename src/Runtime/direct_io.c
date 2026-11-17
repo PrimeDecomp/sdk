@@ -4,17 +4,18 @@
 #include <critical_regions.h>
 #endif
 #include <stdio.h>
-#ifdef RVL_PROTO_RUNTIME
 #include <buffer_io.h>
-#endif
 
-#ifdef RVL_PROTO_RUNTIME
 size_t fread(void* ptr, size_t memb_size, size_t num_memb, FILE* file) {
   size_t retval;
 
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __begin_critical_region(files_access);
+#endif
   retval = __fread(ptr, memb_size, num_memb, file);
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   __end_critical_region(files_access);
+#endif
 
   return retval;
 }
@@ -133,7 +134,6 @@ size_t __fread(void* ptr, size_t memb_size, size_t num_memb, FILE* file) { // Gu
 
   return bytes_read / memb_size;
 }
-#endif
 
 size_t fwrite(const void* ptr, size_t memb_size, size_t num_memb, FILE* file) {
   size_t retval;

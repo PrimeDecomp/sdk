@@ -130,7 +130,6 @@ int __flush_all() {
   return retval;
 }
 
-#ifdef RVL_PROTO_RUNTIME
 int __flush_line_buffered_output_files(void) { // Guessed name
   int result = 0;
   FILE* p = &__files[0];
@@ -146,4 +145,3 @@ int __flush_line_buffered_output_files(void) { // Guessed name
 
   return result;
 }
-#endif
