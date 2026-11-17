@@ -1476,7 +1476,7 @@ def modules_for(
                     Object(NonMatching, "Runtime/__init_cpp_exceptions.cpp"),
                     Object(NonMatching, "Runtime/Gecko_ExceptionPPC.cp", cflags=cflags_proto_runtime_early),
                     Object(NonMatching, "Runtime/abort_exit.c"),
-                    Object(NonMatching, "Runtime/alloc.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/alloc.c"),
                     Object(NonMatching, "Runtime/ansi_files.c"),
                     Object(NonMatching, "Runtime/ansi_fp.c"),
                     Object(NonMatching, "Runtime/arith.c"),
