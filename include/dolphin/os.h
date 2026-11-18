@@ -62,6 +62,7 @@ u32 OSUncachedToCached(void* ucaddr);
 #define OSDiffTick(tick1, tick0) ((s32)(tick1) - (s32)(tick0))
 
 #define OSRoundUp32B(v) (((u32)(v + 31) & ~31))
+#define OSRoundDown32B(v) ((u32)(v) & ~31)
 
 void* OSGetArenaHi(void);
 void* OSGetArenaLo(void);

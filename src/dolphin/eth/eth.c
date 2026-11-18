@@ -86,7 +86,8 @@ static void waitexilock(void) {
 }
 
 static u16 swap16(u16 val) {
-    return __lhbrx(&val, 0);
+    u16 ret = __lhbrx(&val, 0);
+    return ret;
 }
 
 static void waitmicro(s32 usec) {
@@ -261,46 +262,6 @@ static u16 PhyRead(unsigned int regNo) {
     return value;
 }
 
-static void PhyWrite(unsigned int regNo, u16 value) {
-    int i;
-
-    /* Clear command */
-    for (i = 0; i < 32; i++) {
-        StaOutput(1);
-    }
-
-    /* Enter write mode */
-    StaOutput(0);
-    StaOutput(1);
-    StaOutput(0);
-    StaOutput(1);
-    StaOutput(0);
-    StaOutput(0);
-    StaOutput(0);
-    StaOutput(0);
-    StaOutput(0);
-    
-    /* Set register */
-    StaOutput((regNo >> 4) & 1);
-    StaOutput((regNo >> 3) & 1);
-    StaOutput((regNo >> 2) & 1);
-    StaOutput((regNo >> 1) & 1);
-    StaOutput((regNo >> 0) & 1);
-
-    StaOutput(1);
-    StaOutput(0);
-
-    /* Write value */
-    for (i = 0; i < 16; i++) {
-        StaOutput((u8)((value >> (15 - i)) & 1));
-    }
-
-    /* Clear command */
-    for (i = 0; i < 32; i++) {
-        StaOutput(1);
-    }
-}
-
 static void reset(void) {
     writecmd(0x0060, 0);
     waitmicro(10000);
@@ -308,22 +269,18 @@ static void reset(void) {
     waitmicro(10000);
     writecmd(0x0000, 1);
     writecmd(0x0000, 0);
-    PhyWrite(0x1F, 0x0080);
-    PhyWrite(0x11, 0x0030);
-    PhyWrite(0x1F, 0x0000);
-    writecmd(0x0060, 0x10);
 }
 
 static void recvinit(void) {
     u8 ncrb;
     u16 swapped;
 
-    swapped = swap16(0x0001);
+    swapped = 0x0100;
     writecmdLong(0x000A, &swapped, sizeof(swapped));
     writecmdLong(0x0016, &swapped, sizeof(swapped));
     writecmdLong(0x0018, &swapped, sizeof(swapped));
 
-    swapped = swap16(0x000F);
+    swapped = 0x0F00;
     writecmdLong(0x001A, &swapped, sizeof(swapped));
 
     ncrb = readcmd(0x0001);
@@ -465,6 +422,7 @@ static void readbuffer1(s32 chan, OSContext* context) {
             memcpy(recvaddr + recvlen0, tmppool1, recvlen1);
         }
 
+        __ETHFilter(recvaddr, d2.packetlength);
         (*recvcallback1)(recvaddr, d2.packetlength);
     }
 
@@ -674,7 +632,7 @@ static void exiinthandler(s32 chan, OSContext* context) {
             if (sendcbflag) {
                 callback = __sendcallback;
                 __sendcallback = NULL;
-                (*callback)(ltps);
+                __ETHPostSend(ltps, callback, __sendadr);
             }
 
             __ETHInterruptTime = OSGetTime() - __OSLastInterruptTime;

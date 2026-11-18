@@ -19,6 +19,9 @@ extern "C" {
 
 void OSProtectRange(u32 chan, void* addr, u32 nBytes, u32 control);
 
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+u32 OSGetPhysicalMemSize(void);
+#endif
 u32 OSGetPhysicalMem1Size(void);
 u32 OSGetPhysicalMem2Size(void);
 u32 OSGetConsoleSimulatedMem1Size(void);

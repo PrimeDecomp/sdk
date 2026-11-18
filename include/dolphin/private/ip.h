@@ -19,6 +19,9 @@ extern TCPStatistics TCPStat;
 extern int __TCPMaxPersist;
 extern PPPAuth __PPPAuth;
 
+char* __IPEncodeToBase64(const void* src, s32 len, char* dst);
+void* __IPDecodeFromBase64(const char* src, s32 len, void* dst);
+
 #ifdef __cplusplus
 }
 #endif
