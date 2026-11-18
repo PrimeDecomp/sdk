@@ -129,6 +129,27 @@ char* strcat(char* dst, const char* src) {
   return dst;
 }
 
+#ifdef RVL_PROTO_RUNTIME
+char* strncat(char* dst, const char* src, size_t count) {
+  const unsigned char* p = (const unsigned char*)src - 1;
+  unsigned char* q = (unsigned char*)dst - 1;
+
+  while (*++q)
+    ;
+  q--;
+  count++;
+  while (--count) {
+    if (!(*++q = *++p)) {
+      q--;
+      break;
+    }
+  }
+  *++q = 0;
+
+  return dst;
+}
+#endif
+
 int strcmp(const char* str1, const char* str2) {
   unsigned char* left = (unsigned char*)str1;
   unsigned char* right = (unsigned char*)str2;
@@ -246,25 +267,6 @@ char* strchr(const char* str, int chr) {
 }
 
 #ifdef RVL_PROTO_RUNTIME
-char* strncat(char* dst, const char* src, size_t count) {
-  const unsigned char* p = (const unsigned char*)src - 1;
-  unsigned char* q = (unsigned char*)dst - 1;
-
-  while (*++q)
-    ;
-  q--;
-  count++;
-  while (--count) {
-    if (!(*++q = *++p)) {
-      q--;
-      break;
-    }
-  }
-  *++q = 0;
-
-  return dst;
-}
-
 int strcoll(const char* str1, const char* str2) {
   return strcmp(str1, str2);
 }
@@ -367,6 +369,14 @@ char* strstr(const char* str, const char* pattern) {
     }
   }
   return NULL;
+}
+
+char* __strerror(int error, char* str); // Guessed name
+
+char* strerror(int error) {
+  static char error_string[40];
+
+  return __strerror(error, error_string);
 }
 
 char* __strerror(int error, char* str) { // Guessed name
@@ -503,11 +513,5 @@ char* __strerror(int error, char* str) { // Guessed name
   }
 
   return str;
-}
-
-char* strerror(int error) {
-  static char error_string[40];
-
-  return __strerror(error, error_string);
 }
 #endif
