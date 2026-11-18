@@ -1,5 +1,6 @@
 #include <dolphin/ip.h>
 #include <dolphin/ip/IPArp.h>
+#include <dolphin/os/OSPriv.h>
 #include <dolphin/private/ip.h>
 
 #define ROUTE_TABLE_SIZE 32
@@ -8,19 +9,277 @@
 #define ROUTE_DYNAMIC  0x2
 #define ROUTE_MODIFIED 0x4
 
-static BOOL Initialized; // size: 0x4, address: 0x0
-static IFQueue Up; // size: 0x8, address: 0x4
-static IFQueue Free; // size: 0x8, address: 0xC
-static IPRoute RoutingTable[ROUTE_TABLE_SIZE]; // size: 0x500, address: 0x0
+static BOOL Initialized;
+static IFQueue Up;
+static IFQueue Free;
+static IPRoute RoutingTable[ROUTE_TABLE_SIZE];
 
-// Range: 0xAC0 -> 0xB9C
-IPInterface* IPGetRoute(const u8* addr /* r28 */, u8* dst /* r29 */) {
-    // Local variables
-    IPRoute* route; // r31
-    IPRoute* next; // r30
+static int CountBits(const u8* addr) {
+    int count;
+    int i;
+    u8 mask;
 
-    // References
-    // -> static struct IFQueue Up;
+    count = 0;
+    for (i = 0; i < IP_ALEN; i++) {
+        for (mask = 0x80; mask; mask >>= 1) {
+            if (addr[i] & mask) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+void IPGetMacAddr(IPInterface* interface, u8* macAddr) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(macAddr, interface->mac, 6);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetBroadcastAddr(IPInterface* interface, u8* broadcastAddr) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(broadcastAddr, interface->broadcast, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetNetmask(IPInterface* interface, u8* netmask) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(netmask, interface->netmask, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetAddr(IPInterface* interface, u8* addr) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(addr, interface->addr, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetGateway(IPInterface* interface, u8* gateway) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(gateway, interface->gateway, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetAlias(IPInterface* interface, u8* alias) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(alias, interface->alias, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetMtu(IPInterface* interface, s32* mtu) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    *mtu = interface->mtu;
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetLinkState(IPInterface* interface, BOOL* up) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    *up = interface->up;
+    OSRestoreInterrupts(enabled);
+}
+
+void IPGetInterfaceStat(IPInterface* interface, IPInterfaceStat* stat) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    if (stat) {
+        enabled = OSDisableInterrupts();
+        memmove(stat, &interface->stat, sizeof(IPInterfaceStat));
+        OSRestoreInterrupts(enabled);
+    }
+}
+
+void IPClearInterfaceStat(IPInterface* interface) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memset(&interface->stat, 0, sizeof(IPInterfaceStat));
+    OSRestoreInterrupts(enabled);
+}
+
+void IPSetBroadcastAddr(IPInterface* interface, const u8* broadcastAddr) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(interface->broadcast, broadcastAddr ? broadcastAddr : IPLimited, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPSetNetmask(IPInterface* interface, const u8* netmask) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(interface->netmask, netmask ? netmask : IPAddrAny, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPSetAddr(IPInterface* interface, const u8* addr) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(interface->addr, addr ? addr : IPAddrAny, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPSetGateway(IPInterface* interface, const u8* gateway) {
+    BOOL enabled;
+
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(interface->gateway, gateway ? gateway : IPAddrAny, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPSetAlias(IPInterface* interface, const u8* alias) {
+    BOOL enabled;
+
+    ASSERTLINE(273, alias == NULL || alias[0] == 169 && alias[1] == 254 || IP_ADDR_EQ(alias, IPAddrAny));
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    memcpy(interface->alias, alias ? alias : IPAddrAny, IP_ALEN);
+    OSRestoreInterrupts(enabled);
+}
+
+void IPSetMtu(IPInterface* interface, s32 mtu) {
+    BOOL enabled;
+
+    ASSERTLINE(284, 68 <= mtu);
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    interface->mtu = (mtu < 68) ? 68 : mtu;
+    OSRestoreInterrupts(enabled);
+}
+
+void IPPrintRoutingTable(void) {
+    IPRoute* route;
+    IPRoute* next;
+
+    OSReport("IP Routing table\n");
+    OSReport("Destination        Netmask            Gateway            Flags\n");
+    IFQueueIterator(IPRoute*, &Up, route, next) {
+        OSReport("%3d.%3d.%3d.%3d    %3d.%3d.%3d.%3d    %3d.%3d.%3d.%3d    ",
+                 route->dst[0], route->dst[1], route->dst[2], route->dst[3],
+                 route->netmask[0], route->netmask[1], route->netmask[2], route->netmask[3],
+                 route->gateway[0], route->gateway[1], route->gateway[2], route->gateway[3]);
+        if (route->flag & ROUTE_GATEWAY) {
+            OSReport("G");
+        }
+        if (route->flag & ROUTE_DYNAMIC) {
+            OSReport("D");
+        }
+        if (route->flag & ROUTE_MODIFIED) {
+            OSReport("M");
+        }
+        OSReport("\n");
+    }
+}
+
+static BOOL Hit(const u8* dst, const u8* addr, const u8* netmask) {
+    int i;
+
+    for (i = 0; i < IP_ALEN; i++) {
+        if (dst[i] != (addr[i] & netmask[i])) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+BOOL IPIsBroadcastAddr(IPInterface* interface, const u8* addr) {
+    u32 netmask;
+    u32 netid;
+    u32 ipaddr;
+
+    interface = interface ? interface : &__IFDefault;
+    if (IP_CLASSD(addr) || IP_CLASSE(addr)) {
+        return FALSE;
+    }
+    if (IPEQ(addr, IPLimited) || IPEQ(addr, IPAddrAny) || IPEQ(addr, interface->broadcast)) {
+        return TRUE;
+    }
+
+    ipaddr = IPU32(addr);
+    netmask = IPU32(interface->netmask);
+    netid = IPU32(interface->addr) & netmask;
+    if (netid != 0) {
+        if (netid == (ipaddr & netmask) && ~netmask == (ipaddr & ~netmask)) {
+            return TRUE;
+        }
+        if (IP_CLASSA(interface->addr)) {
+            netmask = 0xFF000000;
+        } else if (IP_CLASSB(interface->addr)) {
+            netmask = 0xFFFF0000;
+        } else if (IP_CLASSC(interface->addr)) {
+            netmask = 0xFFFFFF00;
+        }
+        if ((IPU32(interface->addr) & netmask) == (ipaddr & netmask) && ~netmask == (ipaddr & ~netmask)) {
+            return TRUE;
+        }
+    }
+
+    netmask = 0xFFFF0000;
+    netid = IPU32(interface->alias) & netmask;
+    if (netid != 0 && netid == (ipaddr & netmask) && (ipaddr & ~netmask) == ~netmask) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+BOOL IPIsLoopbackAddr(IPInterface*, const u8* addr) {
+    return (addr[0] == 127) ? TRUE : FALSE;
+}
+
+BOOL IPIsLocalAddr(IPInterface* interface, const u8* addr) {
+    u8 classB[4] = { 255, 255, 0, 0 };
+    BOOL enabled;
+    BOOL rc;
+
+    rc = FALSE;
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    if (IPNEQ(interface->addr, IPAddrAny) &&
+        (IPU32(addr) & IPU32(interface->netmask)) == (IPU32(interface->addr) & IPU32(interface->netmask))) {
+        rc = TRUE;
+    }
+    if (IPNEQ(interface->alias, IPAddrAny) && (IPU32(addr) & IPU32(classB)) == (IPU32(interface->alias) & IPU32(classB))) {
+        rc = TRUE;
+    }
+    OSRestoreInterrupts(enabled);
+    return rc;
+}
+
+IPInterface* IPGetRoute(const u8* addr, u8* dst) {
+    IPRoute* route;
+    IPRoute* next;
+
     IFQueueIterator(IPRoute*, &Up, route, next) {
         if (Hit(route->dst, addr, route->netmask)) {
             if (dst) {
@@ -37,24 +296,13 @@ IPInterface* IPGetRoute(const u8* addr /* r28 */, u8* dst /* r29 */) {
     return NULL;
 }
 
-// Range: 0xB9C -> 0xF6C
-static BOOL AddRoute(const u8* dst /* r20 */, const u8* netmask /* r22 */, const u8* gateway /* r21 */, u32 flag /* r23 */) {
-    // Local variables
-    IPRoute* route; // r31
-    IPRoute* next; // r27
-    IPRoute* ent; // r30
-    int i; // r24
-    int bits; // r19
-    // IFQueue* ___next; // r29 (IFQueueDequeueEntry)
-    // IFQueue* ___prev; // r28 (IFQueueDequeueEntry)
-    // IFQueue* ___next; // r26 (IFQueueDequeueHead)
-    // IFQueue* ___prev; // r25 (IFQueueEnqueueTail)
+static BOOL AddRoute(const u8* dst, const u8* netmask, const u8* gateway, u32 flag) {
+    IPRoute* route;
+    IPRoute* next;
+    IPRoute* ent;
+    int i;
+    int bits;
 
-    // References
-    // -> static struct IFQueue Up;
-    // -> struct IPInterface __IFDefault;
-    // -> static struct IFQueue Free;
-    // -> unsigned char IPAddrAny[4];
     if (!Hit(dst, dst, netmask)) {
         return FALSE;
     }
@@ -107,36 +355,9 @@ static BOOL AddRoute(const u8* dst /* r20 */, const u8* netmask /* r22 */, const
             return FALSE;
         }
 
-        do {
-            register IFQueue* ___next;
-            register IFQueue* ___prev;
-
-            ___next = ent->link.next;
-            ___prev = ent->link.prev;
-            if (___next == NULL) {
-                Up.prev = ___prev;
-            } else {
-                ((IPRoute*)___next)->link.prev = ___prev;
-            }
-            if (___prev == NULL) {
-                Up.next = ___next;
-            } else {
-                ((IPRoute*)___prev)->link.next = ___next;
-            }
-        } while (0);
+        IFQueueDequeueEntry(IPRoute*, &Up, ent);
     } else {
-        do {
-            register IFQueue* ___next;
-
-            ent = (IPRoute*)Free.next;
-            ___next = ((IPRoute*)ent)->link.next;
-            if (___next == NULL) {
-                Free.prev = NULL;
-            } else {
-                ((IPRoute*)___next)->link.prev = NULL;
-            }
-            Free.next = ___next;
-        } while (0);
+        IFQueueDequeueHead(IPRoute*, &Free, ent);
     }
 
     memmove(ent->dst, dst, IP_ALEN);
@@ -162,32 +383,14 @@ static BOOL AddRoute(const u8* dst /* r20 */, const u8* netmask /* r22 */, const
         }
     }
 
-    do {
-        register IFQueue* ___prev;
-
-        ___prev = Up.prev;
-        if (___prev == NULL) {
-            Up.next = (IFQueue*)ent;
-        } else {
-            ((IPRoute*)___prev)->link.next = (IFQueue*)ent;
-        }
-        ent->link.prev = ___prev;
-        ent->link.next = NULL;
-        Up.prev = (IFQueue*)ent;
-    } while (0);
+    IFQueueEnqueueTail(IPRoute*, &Up, ent);
     return TRUE;
 }
 
-// Range: 0xF6C -> 0x10A4
-BOOL IPRedirect(const u8* dst /* r28 */, const u8* gateway /* r31 */, const u8* router /* r29 */) {
-    // Local variables
-    IPInterface* interface; // r30
-    u8 addr[4]; // r1+0x14
+BOOL IPRedirect(const u8* dst, const u8* gateway, const u8* router) {
+    IPInterface* interface;
+    u8 addr[4];
 
-    // References
-    // -> unsigned char IPLimited[4];
-    // -> struct IPInterface __IFDefault;
-    // -> unsigned char IPAddrAny[4];
     if (IPEQ(gateway, IPAddrAny)) {
         return FALSE;
     }
@@ -217,11 +420,9 @@ BOOL IPRedirect(const u8* dst /* r28 */, const u8* gateway /* r31 */, const u8* 
     return AddRoute(dst, IPLimited, gateway, ROUTE_GATEWAY | ROUTE_DYNAMIC | ROUTE_MODIFIED);
 }
 
-// Range: 0x10A4 -> 0x1100
-BOOL IPAddRoute(const u8* dst /* r1+0x8 */, const u8* netmask /* r1+0xC */, const u8* gateway /* r1+0x10 */) {
-    // Local variables
-    BOOL enabled; // r31
-    BOOL rc; // r30
+BOOL IPAddRoute(const u8* dst, const u8* netmask, const u8* gateway) {
+    BOOL enabled;
+    BOOL rc;
 
     enabled = OSDisableInterrupts();
     rc = AddRoute(dst, netmask, gateway, 0);
@@ -229,57 +430,20 @@ BOOL IPAddRoute(const u8* dst /* r1+0x8 */, const u8* netmask /* r1+0xC */, cons
     return rc;
 }
 
-// Range: 0x1100 -> 0x125C
-BOOL IPRemoveRoute(const u8* dst /* r1+0x8 */, const u8* netmask /* r23 */, const u8* gateway /* r24 */) {
-    // Local variables
-    BOOL enabled; // r25
-    BOOL rc; // r27
-    IPRoute* route; // r31
-    IPRoute* next; // r26
-    // IFQueue* ___next; // r30 (IFQueueDequeueEntry)
-    // IFQueue* ___prev; // r29 (IFQueueDequeueEntry)
-    // IFQueue* ___next; // r28 (IFQueueEnqueueHead)
+BOOL IPRemoveRoute(const u8* dst, const u8* netmask, const u8* gateway) {
+    BOOL enabled;
+    BOOL rc;
+    IPRoute* route;
+    IPRoute* next;
 
-    // References
-    // -> static struct IFQueue Free;
-    // -> static struct IFQueue Up;
-    // -> unsigned char IPAddrAny[4];
     enabled = OSDisableInterrupts();
     rc = FALSE;
     IFQueueReverseIterator(IPRoute*, &Up, route, next) {
         if (IPEQ(dst, route->dst) && (IPEQ(netmask, IPAddrAny) || IPEQ(netmask, route->netmask)) &&
             (IPEQ(gateway, IPAddrAny) || IPEQ(gateway, route->gateway))) {
-            do {
-                register IFQueue* ___next;
-                register IFQueue* ___prev;
+            IFQueueDequeueEntry(IPRoute*, &Up, route);
 
-                ___next = route->link.next;
-                ___prev = route->link.prev;
-                if (___next == NULL) {
-                    Up.prev = ___prev;
-                } else {
-                    ((IPRoute*)___next)->link.prev = ___prev;
-                }
-                if (___prev == NULL) {
-                    Up.next = ___next;
-                } else {
-                    ((IPRoute*)___prev)->link.next = ___next;
-                }
-            } while (0);
-
-            do {
-                register IFQueue* ___next;
-
-                ___next = Free.next;
-                if (___next == NULL) {
-                    Free.prev = (IFQueue*)route;
-                } else {
-                    ((IPRoute*)___next)->link.prev = (IFQueue*)route;
-                }
-                route->link.next = ___next;
-                route->link.prev = NULL;
-                Free.next = (IFQueue*)route;
-            } while (0);
+            IFQueueEnqueueHead(IPRoute*, &Free, route);
 
             rc = TRUE;
             break;
@@ -289,26 +453,13 @@ BOOL IPRemoveRoute(const u8* dst /* r1+0x8 */, const u8* netmask /* r23 */, cons
     return rc;
 }
 
-// Range: 0x125C -> 0x1478
-BOOL IPInitRoute(const u8* addr /* r1+0x8 */, const u8* netmask /* r1+0xC */, const u8* gateway /* r1+0x10 */) {
-    // Local variables
-    BOOL enabled; // r25
-    IPRoute* route; // r29
-    IPRoute* end; // r24
-    IPInterface* interface; // r31
-    int prefix; // r26
-    // IFQueue* ___prev; // r30 (IFQueueEnqueueTail)
-    u8 broadcast[4]; // r1+0x14
-    int i; // r28
+BOOL IPInitRoute(const u8* addr, const u8* netmask, const u8* gateway) {
+    BOOL enabled;
+    IPRoute* route;
+    IPRoute* end;
+    u8 broadcast[IP_ALEN];
+    int i;
 
-    // References
-    // -> unsigned char IPAddrAny[4];
-    // -> static struct IFQueue Free;
-    // -> static struct IPRoute RoutingTable[32];
-    // -> static struct IFQueue Up;
-    // -> static int Initialized;
-    // -> struct IPInterface __IFDefault;
-    interface = &__IFDefault;
     enabled = OSDisableInterrupts();
     if (!Initialized) {
         Initialized = TRUE;
@@ -317,76 +468,40 @@ BOOL IPInitRoute(const u8* addr /* r1+0x8 */, const u8* netmask /* r1+0xC */, co
         IFQueueInit(&Free);
         end = &RoutingTable[ROUTE_TABLE_SIZE];
         for (route = RoutingTable; route < end; ++route) {
-            do {
-                register IFQueue* ___prev;
-
-                ___prev = Free.prev;
-                if (___prev == NULL) {
-                    Free.next = (IFQueue*)route;
-                } else {
-                    ((IPRoute*)___prev)->link.next = (IFQueue*)route;
-                }
-                route->link.prev = ___prev;
-                route->link.next = NULL;
-                Free.prev = (IFQueue*)route;
-            } while (0);
+            IFQueueEnqueueTail(IPRoute*, &Free, route);
         }
     }
     OSRestoreInterrupts(enabled);
 
-    IPSetAddr(interface, addr);
-    IPSetNetmask(interface, netmask);
-    IPSetGateway(interface, gateway);
-    IPSetBroadcastAddr(interface, NULL);
+    IPSetAddr(&__IFDefault, addr);
+    IPSetNetmask(&__IFDefault, netmask);
+    IPSetGateway(&__IFDefault, gateway);
 
-    prefix = CountBits(interface->netmask);
-    if (prefix < 31) {
+    if (addr && netmask) {
         for (i = 0; i < IP_ALEN; i++) {
-            broadcast[i] = interface->addr[i] & interface->netmask[i];
-            broadcast[i] |= ~interface->netmask[i];
+            broadcast[i] = addr[i] & netmask[i];
+            broadcast[i] |= ~netmask[i];
         }
-        IPSetBroadcastAddr(interface, broadcast);
-    }
-
-    if (IPIsBroadcastAddr(interface, interface->addr) || IPEQ(interface->gateway, interface->addr) ||
-        (IPNEQ(interface->gateway, IPAddrAny) &&
-         (IPIsBroadcastAddr(interface, interface->gateway) ||
-          (prefix != 32 && (IPU32(interface->gateway) & IPU32(interface->netmask)) != (IPU32(interface->addr) & IPU32(interface->netmask)))))) {
-        IPSetAddr(interface, NULL);
-        IPSetNetmask(interface, NULL);
-        IPSetGateway(interface, NULL);
-        IPSetBroadcastAddr(interface, NULL);
+        IPSetBroadcastAddr(&__IFDefault, broadcast);
     }
 
     return IPRefreshRoute();
 }
 
-// Range: 0x1478 -> 0x16AC
-BOOL IPRefreshRoute() {
-    // Local variables
-    BOOL enabled; // r21
-    IPRoute* route; // r31
-    IPRoute* next; // r24
-    u8* addr; // r26
-    u8* netmask; // r23
-    u8* gateway; // r22
-    u8* alias; // r25
-    u8 loopback[4] = { 127, 0, 0, 0 }; // r1+0x14
-    u8 classA[4] = { 255, 0, 0, 0 }; // r1+0x10
-    u8 classB[4] = { 255, 255, 0, 0 }; // r1+0xC
-    u8 netid[4]; // r1+0x8
-    int i; // r30
-    // IFQueue* ___next; // r29 (IFQueueDequeueEntry)
-    // IFQueue* ___prev; // r28 (IFQueueDequeueEntry)
-    // IFQueue* ___next; // r27 (IFQueueEnqueueHead)
+BOOL IPRefreshRoute(void) {
+    BOOL enabled;
+    IPRoute* route;
+    IPRoute* next;
+    u8* addr;
+    u8* netmask;
+    u8* gateway;
+    u8* alias;
+    u8 loopback[4] = { 127, 0, 0, 0 };
+    u8 classA[4] = { 255, 0, 0, 0 };
+    u8 classB[4] = { 255, 255, 0, 0 };
+    u8 netid[4];
+    int i;
 
-    // References
-    // -> struct IPInterface __IFDefault;
-    // -> unsigned char IPAddrAny[4];
-    // -> unsigned char IPLoopbackAddr[4];
-    // -> unsigned char IPLimited[4];
-    // -> static struct IFQueue Free;
-    // -> static struct IFQueue Up;
     enabled = OSDisableInterrupts();
     addr = __IFDefault.addr;
     netmask = __IFDefault.netmask;
@@ -394,37 +509,9 @@ BOOL IPRefreshRoute() {
     alias = __IFDefault.alias;
 
     IFQueueIterator(IPRoute*, &Up, route, next) {
-        do {
-            register IFQueue* ___next;
-            register IFQueue* ___prev;
+        IFQueueDequeueEntry(IPRoute*, &Up, route);
 
-            ___next = route->link.next;
-            ___prev = route->link.prev;
-            if (___next == NULL) {
-                Up.prev = ___prev;
-            } else {
-                ((IPRoute*)___next)->link.prev = ___prev;
-            }
-            if (___prev == NULL) {
-                Up.next = ___next;
-            } else {
-                ((IPRoute*)___prev)->link.next = ___next;
-            }
-        } while (0);
-
-        do {
-            register IFQueue* ___next;
-
-            ___next = Free.next;
-            if (___next == NULL) {
-                Free.prev = (IFQueue*)route;
-            } else {
-                ((IPRoute*)___next)->link.prev = (IFQueue*)route;
-            }
-            route->link.next = ___next;
-            route->link.prev = NULL;
-            Free.next = (IFQueue*)route;
-        } while (0);
+        IFQueueEnqueueHead(IPRoute*, &Free, route);
     }
 
     IPAddRoute(IPLimited, IPLimited, IPAddrAny);
@@ -451,36 +538,13 @@ BOOL IPRefreshRoute() {
     return TRUE;
 }
 
-// Range: 0x16AC -> 0x17E0
-static void DecayRoute(IPRoute* dead /* r31 */) {
-    // Local variables
-    int bits; // r25
-    IPRoute* route; // r30
-    IPRoute* next; // r26
-    // IFQueue* ___next; // r29 (IFQueueDequeueEntry)
-    // IFQueue* ___prev; // r28 (IFQueueDequeueEntry)
-    // IFQueue* ___next; // r27 (IFQueueEnqueueHead)
+static void DecayRoute(IPRoute* dead) {
+    int bits;
+    IPRoute* route;
+    IPRoute* next;
 
-    // References
-    // -> static struct IFQueue Up;
     bits = CountBits(dead->netmask);
-    do {
-        register IFQueue* ___next;
-        register IFQueue* ___prev;
-
-        ___next = dead->link.next;
-        ___prev = dead->link.prev;
-        if (___next == NULL) {
-            Up.prev = ___prev;
-        } else {
-            ((IPRoute*)___next)->link.prev = ___prev;
-        }
-        if (___prev == NULL) {
-            Up.next = ___next;
-        } else {
-            ((IPRoute*)___prev)->link.next = ___next;
-        }
-    } while (0);
+    IFQueueDequeueEntry(IPRoute*, &Up, dead);
 
     IFQueueReverseIterator(IPRoute*, &Up, route, next) {
         if (bits <= CountBits(route->netmask)) {
@@ -496,30 +560,13 @@ static void DecayRoute(IPRoute* dead /* r31 */) {
         }
     }
 
-    do {
-        register IFQueue* ___next;
-
-        ___next = Up.next;
-        if (___next == NULL) {
-            Up.prev = (IFQueue*)dead;
-        } else {
-            ((IPRoute*)___next)->link.prev = (IFQueue*)dead;
-        }
-        dead->link.next = ___next;
-        dead->link.prev = NULL;
-        Up.next = (IFQueue*)dead;
-    } while (0);
+    IFQueueEnqueueHead(IPRoute*, &Up, dead);
 }
 
-// Range: 0x17E0 -> 0x193C
-BOOL IPRecoverGateway(const u8* dst /* r29 */) {
-    // Local variables
-    IPRoute* route; // r31
-    IPRoute* next; // r30
+BOOL IPRecoverGateway(const u8* dst) {
+    IPRoute* route;
+    IPRoute* next;
 
-    // References
-    // -> static struct IFQueue Up;
-    // -> unsigned char IPAddrAny[4];
     if (IPEQ(dst, IPAddrAny) || dst[0] == 127) {
         return FALSE;
     }
