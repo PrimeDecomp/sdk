@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#undef abs
+
 int abs(int n) {
   if (n < 0)
     return (-n);

@@ -1483,7 +1483,7 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "Runtime/alloc.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_files.c"),
                     Object(NonMatching, "Runtime/ansi_fp.c"),
-                    Object(NonMatching, "Runtime/arith.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/arith.c"),
                     Object(NonMatching, "Runtime/buffer_io.c"),
                     Object(NonMatching, "Runtime/char_io.c"),
                     Object(MatchingFor("PROTO"), "Runtime/critical_regions.gamecube.c"),
