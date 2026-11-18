@@ -4,7 +4,9 @@
 #include <stdint.h>
 #include <SDKVersion.h>
 
+// Preserve the includer's language across the temporary cplusplus pragma.
 #ifdef __cplusplus
+#define _MATH_H_CPLUSPLUS
 extern "C" {
 #endif
 
@@ -237,7 +239,7 @@ static inline float sqrtf(float x) {
   return x;
 }
 #elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
-#ifndef __cplusplus
+#ifndef _MATH_H_CPLUSPLUS
 static inline float sqrtf(float x) {
   const double _half = .5;
   const double _three = 3.0;
@@ -340,5 +342,7 @@ inline float sqrtf(float x) {
 inline float sqrt(float x) { return sqrtf(x); }
 #endif
 #endif
+
+#undef _MATH_H_CPLUSPLUS
 
 #endif
