@@ -1367,7 +1367,7 @@ def modules_for(
         DolphinLib(
             "OdemuExi2",
             [
-                Object(NonMatching, "dolphin/odemuexi2/DebuggerDriver.c"),
+                Object(MatchingFor("PROTO"), "dolphin/odemuexi2/DebuggerDriver.c"),
             ],
         ),
         DolphinLib(
