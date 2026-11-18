@@ -1,0 +1,10 @@
+#ifndef _CMATH_
+#define _CMATH_
+
+#include <math.h>
+
+#if defined(__cplusplus) && SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+inline float sqrt(float x) { return sqrtf(x); }
+#endif
+
+#endif
