@@ -977,9 +977,9 @@ def modules_for(
             "gx",
             [
                 Object(
-                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01"),
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"),
                     "dolphin/gx/GXInit.c",
-                    extra_cflags=IPA_FILE,
+                    extra_cflags=[*IPA_FILE, *flags_if(prototype, "-DSDK_GX_SHUTDOWN_DRAW_DONE_FIRST")],
                 ),
                 Object(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"),
@@ -993,7 +993,10 @@ def modules_for(
                     "dolphin/gx/GXGeometry.c",
                     extra_cflags=IPA_FILE,
                 ),
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "dolphin/gx/GXFrameBuf.c"),
+                Object(
+                    MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"),
+                    "dolphin/gx/GXFrameBuf.c",
+                ),
                 Object(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01"),
                     "dolphin/gx/GXLight.c",
