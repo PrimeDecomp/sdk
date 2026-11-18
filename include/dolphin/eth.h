@@ -53,6 +53,9 @@ void ETHChangeIntPriority(BOOL flag);
 u32 ETHGetREVID(void);
 void ETHClearMulticastAddresses(void);
 
+BOOL __ETHFilter(u8* buf, s32 len);
+BOOL __ETHPostSend(u8 ltps, void (*callback)(u8), void* prev);
+
 #ifdef __cplusplus
 }
 #endif

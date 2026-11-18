@@ -1299,16 +1299,12 @@ def modules_for(
             ],
         ),
         DolphinLib(
-            "Base64",
-            [
-                Object(NonMatching, "dolphin/eth/base64.c"),
-            ],
-        ),
-        DolphinLib(
             "ETH",
             [
-                Object(NonMatching, "dolphin/eth/eth.c"),
-                Object(NonMatching, "dolphin/eth/ethAuth.c"),
+                Object(MatchingFor("PROTO"), "dolphin/eth/eth.c"),
+                Object(MatchingFor("PROTO"), "dolphin/eth/ethsec.c"),
+                Object(MatchingFor("PROTO"), "dolphin/eth/md5.c"),
+                Object(MatchingFor("PROTO"), "dolphin/eth/base64.c"),
             ],
         ),
         DolphinLib(
@@ -1355,12 +1351,6 @@ def modules_for(
                 Object(MatchingFor("PROTO"), "dolphin/mcc/mcc.c"),
                 Object(MatchingFor("PROTO"), "dolphin/mcc/fio.c"),
                 Object(MatchingFor("PROTO"), "dolphin/mcc/tty.c"),
-            ],
-        ),
-        DolphinLib(
-            "MD5",
-            [
-                Object(MatchingFor("PROTO"), "dolphin/eth/md5.c"),
             ],
         ),
         DolphinLib(

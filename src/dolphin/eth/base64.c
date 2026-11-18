@@ -1,67 +1,60 @@
-#include <dolphin/types.h>
+#include <dolphin/private/ip.h>
 #include <string.h>
 
-// Names are guessed from the operation; this file has no reference source.
-static const char base64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+static const char Base64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-u8* Base64Encode(const u8* in, int len, u8* out) {
-    int rem = len % 3;
-    int full = len - rem;
-    int i = 0;
-    int groups = (full + 2) / 3;
-    const char* t = base64_table;
+__declspec(weak) char* __IPEncodeToBase64(const void* _src, s32 len, char* dst) {
+    const u8* src = _src;
+    int i;
+    char* p = dst;
 
-    while (groups-- > 0) {
-        out[0] = t[in[i] >> 2];
-        out[1] = t[((in[i] & 3) << 4) | (in[i + 1] >> 4)];
-        out[2] = t[((in[i + 1] & 15) << 2) | (in[i + 2] >> 6)];
-        out[3] = t[in[i + 2] & 63];
-        out += 4;
-        i += 3;
+    for (i = 0; i < len - len % 3; i += 3) {
+        *p++ = Base64[(src[i] >> 2) & 0x3F];
+        *p++ = Base64[((src[i] & 3) << 4) | ((src[i + 1] >> 4) & 0xF)];
+        *p++ = Base64[((src[i + 1] & 15) << 2) | ((src[i + 2] >> 6) & 3)];
+        *p++ = Base64[src[i + 2] & 63];
     }
-
-    switch (rem) {
-        case 2:
-            out[0] = t[in[full] >> 2];
-            out[1] = t[((in[full] & 3) << 4) | (in[full + 1] >> 4)];
-            out[2] = t[(in[full + 1] & 15) << 2];
-            out[3] = '=';
-            out += 4;
-            break;
-        case 1:
-            out[0] = t[in[full] >> 2];
-            out[1] = t[(in[full] & 3) << 4];
-            out[2] = '=';
-            out[3] = '=';
-            out += 4;
-            break;
+    i = len - len % 3;
+    switch (len % 3) {
+    case 2:
+        *p++ = Base64[(src[i] >> 2) & 0x3F];
+        *p++ = Base64[((src[i] & 3) << 4) | ((src[i + 1] >> 4) & 0xF)];
+        *p++ = Base64[(src[i + 1] & 15) << 2];
+        *p++ = '=';
+        break;
+    case 1:
+        *p++ = Base64[(src[i] >> 2) & 0x3F];
+        *p++ = Base64[(src[i] & 3) << 4];
+        *p++ = '=';
+        *p++ = '=';
+        break;
     }
-    return out;
+    return p;
 }
 
-u8* Base64Decode(const char* in, int len, u8* out) {
-    const char* t = base64_table;
-    int i = 0;
-    int a;
-    int b;
-    int c;
-    int d;
+__declspec(weak) void* __IPDecodeFromBase64(const char* src, s32 len, void* _dst) {
+    u8* dst = _dst;
+    int i;
+    u8* p = dst;
+    int n0;
+    int n1;
+    int n2;
+    int n3;
 
-    while (i < len) {
-        a = strchr(t, in[i]) - t;
-        b = strchr(t, in[i + 1]) - t;
-        *out++ = (a << 2) | ((b >> 4) & 3);
-        if (in[i + 2] == '=') {
+    for (i = 0; i < len; i += 4) {
+        n0 = strchr(Base64, src[i]) - Base64;
+        n1 = strchr(Base64, src[i + 1]) - Base64;
+        *p++ = (n0 << 2) | ((n1 >> 4) & 3);
+        if (src[i + 2] == '=') {
             break;
         }
-        c = strchr(t, in[i + 2]) - t;
-        *out++ = ((b & 15) << 4) | ((c >> 2) & 15);
-        if (in[i + 3] == '=') {
+        n2 = strchr(Base64, src[i + 2]) - Base64;
+        *p++ = ((n1 & 15) << 4) | ((n2 >> 2) & 15);
+        if (src[i + 3] == '=') {
             break;
         }
-        d = strchr(t, in[i + 3]) - t;
-        *out++ = (d & 63) | (c << 6);
-        i += 4;
+        n3 = strchr(Base64, src[i + 3]) - Base64;
+        *p++ = ((n2 & 3) << 6) | (n3 & 63);
     }
-    return out;
+    return p;
 }
