@@ -30,7 +30,6 @@ extern "C" {
 #ifdef __LITTLE_ENDIAN__
 #define __IEEE_LITTLE_ENDIAN
 #endif
-
 #endif
 
 #ifndef __IEEE_BIG_ENDIAN
@@ -238,6 +237,7 @@ static inline float sqrtf(float x) {
   return x;
 }
 #elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#ifndef __cplusplus
 static inline float sqrtf(float x) {
   const double _half = .5;
   const double _three = 3.0;
@@ -253,6 +253,7 @@ static inline float sqrtf(float x) {
   }
   return x;
 }
+#endif
 #else
 static inline float sqrtf(float x) {
   const double _three = 3.;
@@ -314,13 +315,30 @@ double nextafter(double, double);
 #ifdef __cplusplus
 }
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2004_04_OS_APR && SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
 // MSL C++ float overload; the GC retail binary calls it out of line.
 float sqrt(float x);
+inline float sqrtf(float x) {
+  const double _half = .5;
+  const double _three = 3.;
+
+  if (x > 0.0f) {
+    double guess = __frsqrte(x);
+    guess = _half * guess * (_three - guess * guess * x);
+    guess = _half * guess * (_three - guess * guess * x);
+    guess = _half * guess * (_three - guess * guess * x);
+    return x * guess;
+  }
+  if (x < 0.) {
+    x = NAN;
+  } else if (isnan(x)) {
+    x = NAN;
+  }
+  return x;
+}
 #elif SDK_VERSION >= SDK_VERSION_RVL_2007_06
 inline float sqrt(float x) { return sqrtf(x); }
 #endif
-float msl_sqrtf(float x); // Guessed name
 #endif
 
 #endif
