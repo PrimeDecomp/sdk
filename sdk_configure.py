@@ -1394,6 +1394,7 @@ def modules_for(
             # Gecko exception unit and defines getenv in uart_console_io.
             "-DRVL_PROTO_RUNTIME",
             "-DMSL_OLD_FP_CLASSIFY",
+            "-DMSL_NO_INLINE_SQRT",
         ]
         cflags_proto_runtime_early = [
             *cflags_runtime_common,
@@ -1542,7 +1543,7 @@ def modules_for(
                     Object(NonMatching, "Runtime/w_pow.c"),
                     Object(NonMatching, "Runtime/e_sqrt.c"),
                     Object(NonMatching, "Runtime/math_ppc.c"),
-                    Object(NonMatching, "Runtime/w_sqrt.c", extra_cflags=["-DMSL_NO_INLINE_SQRT"]),
+                    Object(NonMatching, "Runtime/w_sqrt.c"),
                     Object(MatchingFor("PROTO"), "Runtime/stricmp.c"),
                 ],
             },
