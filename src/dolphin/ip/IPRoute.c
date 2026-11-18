@@ -589,3 +589,42 @@ BOOL IPRecoverGateway(const u8* dst) {
     }
     return FALSE;
 }
+
+s32 IPGetConfigError(IPInterface* interface /* r3 */) {
+    // References
+    // -> struct IPInterface __IFDefault;
+    interface = interface ? interface : &__IFDefault;
+    return interface->err;
+}
+
+// Range: 0x1958 -> 0x19C0
+s32 IPSetConfigError(IPInterface* interface /* r31 */, s32 err /* r1+0xC */) {
+    // Local variables
+    BOOL enabled; // r30
+
+    // References
+    // -> struct IPInterface __IFDefault;
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    if (interface->err == 0) {
+        interface->err = err;
+    }
+    OSRestoreInterrupts(enabled);
+    return interface->err;
+}
+
+// Range: 0x19C0 -> 0x1A1C
+s32 IPClearConfigError(IPInterface* interface /* r31 */) {
+    // Local variables
+    BOOL enabled; // r30
+    s32 prev; // r29
+
+    // References
+    // -> struct IPInterface __IFDefault;
+    interface = interface ? interface : &__IFDefault;
+    enabled = OSDisableInterrupts();
+    prev = interface->err;
+    interface->err = 0;
+    OSRestoreInterrupts(enabled);
+    return prev;
+}

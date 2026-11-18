@@ -1,7 +1,7 @@
 #include <dolphin/ip.h>
 #include <dolphin/private/ip.h>
 
-static u16 Port = 49152; // size: 0x2, address: 0x0
+static u16 Port = 1024;
 IFQueue UDPInfoQueue; // size: 0x8, address: 0x0
 
 // Range: 0x0 -> 0xF8
@@ -406,7 +406,7 @@ s32 UDPSendAsync(UDPInfo* info /* r31 */, void* data /* r20 */, s32 len /* r27 *
         }
     }
 
-    if (len < 0 || 65535 - IP_MIN_HLEN - UDP_HLEN < len) {
+    if (len < 0 || 65535 - UDP_HLEN < len) {
         rc = -17;
         goto error;
     }
@@ -440,7 +440,6 @@ s32 UDPSendAsync(UDPInfo* info /* r31 */, void* data /* r20 */, s32 len /* r27 *
         ip = (IPHeader*)info->header;
         udp = (UDPHeader*)(info->header + IP_MIN_HLEN);
         datagram = &info->datagram;
-        IFInitDatagram(datagram, ETH_IP, 2);
         info->sendCallback = callback ? callback : NullCallback;
         info->sendResult = result;
         if (result) {
@@ -452,7 +451,6 @@ s32 UDPSendAsync(UDPInfo* info /* r31 */, void* data /* r20 */, s32 len /* r27 *
         ip = (IPHeader*)info->header;
         udp = (UDPHeader*)(info->header + IP_MIN_HLEN);
         datagram = &info->datagram;
-        IFInitDatagram(datagram, ETH_IP, 2);
         memmove(info->sendData, data, len);
         info->sendUsed = len;
         datagram->vec[1].data = info->sendData;
@@ -465,11 +463,13 @@ s32 UDPSendAsync(UDPInfo* info /* r31 */, void* data /* r20 */, s32 len /* r27 *
             rc = -7;
             goto error;
         }
-        IFInitDatagram(datagram, ETH_IP, 2);
         ip = (IPHeader*)((u8*)datagram + sizeof(IFDatagram) + sizeof(IFVec));
         udp = (UDPHeader*)((u8*)ip + IP_MIN_HLEN);
         memmove((u8*)udp + UDP_HLEN, data, len);
         datagram->vec[1].data = (u8*)udp + UDP_HLEN;
+        datagram->callback = NULL;
+        datagram->queue = NULL;
+        datagram->interface = NULL;
     }
 
     ip->verlen = 0x45;
@@ -499,10 +499,12 @@ s32 UDPSendAsync(UDPInfo* info /* r31 */, void* data /* r20 */, s32 len /* r27 *
         memmove(ip->src, __IFDefault.addr, IP_ALEN);
     }
 
+    datagram->nVec = 2;
     datagram->vec[0].data = ip;
     datagram->vec[0].len = IP_HLEN(ip) + UDP_HLEN;
     datagram->vec[1].len = len;
     datagram->param = info;
+    datagram->flag = 0;
     rc = IPOut(datagram);
     if (rc < 0) {
         if (result) {
@@ -668,42 +670,37 @@ s32 UDPReceive(UDPInfo* info /* r1+0x8 */, void* data /* r1+0xC */, s32 len /* r
 
 // Range: 0x1490 -> 0x15C0
 static void Cancel(UDPInfo* info /* r31 */, s32 result /* r30 */) {
-    // Local variables
-    UDPCallback sendCallback; // r27
-    UDPCallback recvCallback; // r26
-    s32* sendResult; // r29
-    s32* recvResult; // r28
+    UDPCallback callback;
 
     IPCancel(&info->datagram);
-    sendCallback = info->sendCallback;
-    recvCallback = info->recvCallback;
-    sendResult = info->sendResult;
-    recvResult = info->recvResult;
-    info->sendResult = NULL;
-    info->recvResult = NULL;
-    if (result == -8) {
+    callback = info->sendCallback;
+    if (callback) {
         info->sendCallback = NullCallback;
+        if (info->sendResult) {
+            if (*info->sendResult == IP_ERR_BUSY) {
+                *info->sendResult = result;
+            }
+            result = *info->sendResult;
+            info->sendResult = NULL;
+        }
+        callback(info, result);
+    }
+
+    callback = info->recvCallback;
+    if (callback) {
         info->recvCallback = NullCallback;
-    } else {
-        info->sendCallback = NULL;
-        info->recvCallback = NULL;
+        if (info->recvResult) {
+            if (*info->recvResult == IP_ERR_BUSY) {
+                *info->recvResult = result;
+            }
+            result = *info->recvResult;
+            info->recvResult = NULL;
+        }
+        callback(info, result);
     }
 
-    if (sendCallback) {
-        if (sendResult) {
-            ASSERTLINE(1028, *sendResult == IP_ERR_BUSY);
-            *sendResult = result;
-        }
-        sendCallback(info, result);
-    }
-
-    if (recvCallback) {
-        if (recvResult) {
-            ASSERTLINE(1038, *recvResult == IP_ERR_BUSY);
-            *recvResult = result;
-        }
-        recvCallback(info, result);
-    }
+    info->sendCallback = NULL;
+    info->recvCallback = NULL;
 
     if (0 < info->pair.poll) {
         __IPWakeupPollingThreads();

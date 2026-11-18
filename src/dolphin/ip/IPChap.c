@@ -17,11 +17,16 @@ static void CHAPOut(IPInterface* interface /* r29 */, CHAPHeader* chap /* r30 */
 
     datagram = (IFDatagram*)interface->alloc(interface, sizeof(IFDatagram) + sizeof(u16) + chap->len);
     if (datagram != NULL) {
-        IFInitDatagram(datagram, 0x8864, 1);
         *(u16*)((u8*)datagram + sizeof(IFDatagram)) = 0xC223;
         memmove((u8*)datagram + sizeof(IFDatagram) + 2, chap, chap->len);
+        datagram->nVec = 1;
         datagram->vec[0].data = (u8*)datagram + sizeof(IFDatagram);
         datagram->vec[0].len = chap->len + 2;
+        datagram->callback = NULL;
+        datagram->param = NULL;
+        datagram->type = ETH_PPPoE_SESSION;
+        datagram->flag = 0;
+        datagram->queue = NULL;
         interface->out(interface, datagram);
     }
 
@@ -167,7 +172,7 @@ int CHAPTimeout(PPPConf* conf /* r31 */) {
 
 // Range: 0x5F0 -> 0x6DC
 void CHAPIn(PPPConf* conf /* r30 */, CHAPHeader* chap /* r31 */, s32 len /* r29 */, u32) {
-    u32 challengelen;
+    u8 challengelen;
     MD5Context context;
 
     if (len < 4 || len < chap->len || chap->len < sizeof(CHAPHeader)) {

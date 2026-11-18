@@ -13,9 +13,9 @@ static BOOL OnReset(BOOL final);
 static void GoCallback(u8 ltps);
 
 #ifdef DEBUG
-const char* __IPVersion = "<< Dolphin SDK - IP\tdebug build: Mar  9 2004 12:31:05 (0x2301) >>";
+const char* __IPVersion = "<< Dolphin SDK - IP\tdebug build: Sep 25 2003 11:32:21 (0x2301) >>";
 #else
-const char* __IPVersion = "<< Dolphin SDK - IP\trelease build: Mar  9 2004 12:57:37 (0x2301) >>";
+const char* __IPVersion = "<< Dolphin SDK - IP\trelease build: Sep 25 2003 11:47:11 (0x2301) >>";
 #endif
 
 static OSResetFunctionInfo ResetFunctionInfo = { OnReset, 111, NULL, NULL }; // size: 0x10, address: 0x44
@@ -140,8 +140,6 @@ static BOOL Go(void) {
     IFVec* end; // r22
     BOOL loopback; // r21
     BOOL eth; // r19
-    BOOL discard; // r1+0x8
-    int dlen; // r18
 
     // References
     // -> static unsigned char SendBuf[1518];
@@ -189,9 +187,6 @@ static BOOL Go(void) {
     datagram = (IFDatagram*)SendQueue.next;
     ASSERTLINE(419, datagram->queue == &SendQueue);
     ASSERTLINE(420, datagram->interface == &__IFDefault);
-    Sending = datagram;
-    dlen = sizeof(IFDatagram) + ((datagram->nVec > 1) ? (datagram->nVec - 1) * sizeof(IFVec) : 0);
-    memmove(&Current.datagram, datagram, dlen);
 #ifdef DEBUG
     if (datagram->type == ETH_IP) {
         IPHeader* ip; // r17
@@ -201,45 +196,37 @@ static BOOL Go(void) {
     }
 #endif
 
+    IFQueueDequeueHead(IFDatagram*, &SendQueue, datagram);
+    datagram->queue = NULL;
+    Sending = datagram;
+    len = sizeof(IFDatagram) + ((datagram->nVec > 1) ? (datagram->nVec - 1) * sizeof(IFVec) : 0);
+    memcpy(&Current.datagram, datagram, len);
+    IFFifoFree(&SendFifo, datagram, len);
+    datagram = &Current.datagram;
+
     eh = (ETHHeader*)SendBuf;
     eh->type = datagram->type;
     memmove(eh->dst, datagram->hwAddr, 6);
     memmove(eh->src, __IFDefault.mac, 6);
     len = sizeof(ETHHeader);
     ptr = SendBuf + sizeof(ETHHeader);
-    if (datagram->prefixLen) {
-        ASSERTLINE(446, datagram->type == ETH_PPPoE_SESSION);
+    if (datagram->type == ETH_PPPoE_SESSION && datagram->prefixLen != 0) {
         memmove(ptr, datagram->prefix, datagram->prefixLen);
         len += datagram->prefixLen;
         ptr += datagram->prefixLen;
     }
 
-    switch (datagram->type) {
-        default:
-            for (vec = datagram->vec, end = &datagram->vec[datagram->nVec]; vec && vec < end; vec++) {
-                memmove(ptr, vec->data, vec->len);
-                len += vec->len;
-                ptr += vec->len;
-            }
-            discard = TRUE;
-            break;
+    for (vec = datagram->vec, end = &datagram->vec[datagram->nVec]; vec < end; vec++) {
+        memmove(ptr, vec->data, vec->len);
+        len += vec->len;
+        ptr += vec->len;
+        IFFifoFree(&SendFifo, vec->data, vec->len);
     }
 
     if (len < 60) {
         memset(ptr, 0, 60 - len);
     }
 
-    if (discard) {
-        IFQueueDequeueHead(IFDatagram*, &SendQueue, datagram);
-        datagram->queue = NULL;
-        IFFifoFree(&SendFifo, datagram, dlen);
-        datagram = &Current.datagram;
-        for (vec = datagram->vec, end = &datagram->vec[datagram->nVec]; vec && vec < end; vec++) {
-            IFFifoFree(&SendFifo, vec->data, vec->len);
-        }
-    } else {
-        datagram->callback = NULL;
-    }
     ASSERTLINE(517, !IFIsEmptyQueue(&SendQueue) || SendFifo.used == 0);
 
     datagram->flag &= ~1;
@@ -412,12 +399,12 @@ static void Cancel(IPInterface* interface /* r1+0x8 */, IFDatagram* datagram /* 
     ASSERTLINE(765, datagram->interface == interface);
     if (Sending == datagram) {
         Sending = (IFDatagram*)-1;
-    }
-    if (datagram->queue) {
+        datagram->interface = NULL;
+    } else if (datagram->queue) {
         IFQueueDequeueEntry(IFDatagram*, datagram->queue, datagram);
         datagram->queue = NULL;
+        datagram->interface = NULL;
     }
-    datagram->interface = NULL;
     OSRestoreInterrupts(enabled);
 }
 
@@ -570,10 +557,10 @@ static BOOL OnReset(BOOL final /* r31 */) {
     // -> static struct IFDatagram * Sending;
     // -> static long Reset;
     Reset = TRUE;
+    IGMPOnReset(final);
     if (final) {
         UDPOnReset(final);
         TCPOnReset(final);
-        IGMPOnReset(final);
         return TRUE;
     }
 

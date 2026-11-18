@@ -84,7 +84,7 @@ typedef struct TCPInfo TCPInfo;
 typedef void (*TCPCallback)(TCPInfo*, s32);
 
 struct TCPInfo {
-    // total size: 0x360
+    // total size: 0x330
     IPInfo pair; // offset 0x0, size 0x20
     OSThreadQueue queueThread; // offset 0x20, size 0x8
     IPInterface* interface; // offset 0x28, size 0x4
@@ -154,31 +154,28 @@ struct TCPInfo {
     OSAlarm rxmitAlarm; // offset 0x258, size 0x28
     s32 cWin; // offset 0x280, size 0x4
     s32 ssThresh; // offset 0x284, size 0x4
-    OSAlarm dackAlarm; // offset 0x288, size 0x28
-    BOOL rttTiming; // offset 0x2B0, size 0x4
-    s32 rttSeq; // offset 0x2B4, size 0x4
-    OSTime rtt; // offset 0x2B8, size 0x8
-    OSTime srtt; // offset 0x2C0, size 0x8
-    OSTime rttDe; // offset 0x2C8, size 0x8
-    OSTime rttMin; // offset 0x2D0, size 0x8
-    OSTime rttMax; // offset 0x2D8, size 0x8
-    TCPInfo* listening; // offset 0x2E0, size 0x4
-    IPSocket* local; // offset 0x2E4, size 0x4
-    IPSocket* remote; // offset 0x2E8, size 0x4
-    IFQueue queueListen; // offset 0x2EC, size 0x8
-    IFLink linkListen; // offset 0x2F4, size 0x8
-    TCPCallback openCallback; // offset 0x2FC, size 0x4
-    s32* openResult; // offset 0x300, size 0x4
-    int linger; // offset 0x304, size 0x4
-    OSAlarm lingerAlarm; // offset 0x308, size 0x28
-    int sendLowat; // offset 0x330, size 0x4
-    int recvLowat; // offset 0x334, size 0x4
-    TCPInfo* logging; // offset 0x338, size 0x4
-    IFQueue queueBacklog; // offset 0x33C, size 0x8
-    IFQueue queueCompleted; // offset 0x344, size 0x8
-    IFLink linkLog; // offset 0x34C, size 0x8
-    s32 accepting; // offset 0x354, size 0x4
-    void* node; // offset 0x358, size 0x4
+    BOOL rttTiming; // offset 0x288, size 0x4
+    s32 rttSeq; // offset 0x28C, size 0x4
+    OSTime rtt; // offset 0x290, size 0x8
+    OSTime srtt; // offset 0x298, size 0x8
+    OSTime rttDe; // offset 0x2A0, size 0x8
+    OSTime rttMin; // offset 0x2A8, size 0x8
+    OSTime rttMax; // offset 0x2B0, size 0x8
+    TCPInfo* listening; // offset 0x2B8, size 0x4
+    IPSocket* local; // offset 0x2BC, size 0x4
+    IPSocket* remote; // offset 0x2C0, size 0x4
+    IFQueue queueListen; // offset 0x2C4, size 0x8
+    IFLink linkListen; // offset 0x2CC, size 0x8
+    TCPCallback openCallback; // offset 0x2D4, size 0x4
+    s32* openResult; // offset 0x2D8, size 0x4
+    BOOL linger; // offset 0x2DC, size 0x4
+    OSAlarm lingerAlarm; // offset 0x2E0, size 0x28
+    TCPInfo* logging; // offset 0x308, size 0x4
+    IFQueue queueBacklog; // offset 0x30C, size 0x8
+    IFQueue queueCompleted; // offset 0x314, size 0x8
+    IFLink linkLog; // offset 0x31C, size 0x8
+    s32 accepting; // offset 0x324, size 0x4
+    void* node; // offset 0x328, size 0x4
 };
 
 // IPTcp.c
@@ -189,8 +186,8 @@ s32 TCPGetSegmentLength(IPHeader* ip, TCPHeader* tcp);
 void TCPRespond(IPInterface* interface, TCPInfo* info, u8* dstAddr, u16 dst, u8* srcAddr, u16 src, s32 seq, s32 ack, u16 flag, u16 win);
 void TCPIn(IPInterface * interface /* r28 */, IPHeader * ip /* r29 */, u32 flag);
 s32 TCPSendIn(TCPInfo* info, BOOL nonblock);
-s32 TCPPeekOut(TCPInfo* info, void* ptr, s32 len, BOOL peek, BOOL* urgent);
-s32 TCPRecvOut(TCPInfo* info, BOOL* urgent);
+s32 TCPPeekOut(TCPInfo* info, void* ptr, s32 len, BOOL peek);
+s32 TCPRecvOut(TCPInfo* info);
 void TCPNotify(IPHeader* ip, const u8* gateway, s32 err);
 void TCPSourceQuench(IPHeader* ip, const u8* gateway);
 void TCPDeleteSackHoles(TCPInfo* info, TCPHeader* tcp);

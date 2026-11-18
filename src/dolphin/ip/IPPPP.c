@@ -131,7 +131,6 @@ static void LCPOut(PPPConf* conf /* r26 */, u8 code /* r25 */, u8 id /* r1+0xD *
 
     datagram = (IFDatagram*)interface->alloc(interface, sizeof(IFDatagram) + sizeof(u16) + sizeof(LCPHeader) + len);
     if (datagram != NULL) {
-        IFInitDatagram(datagram, 0x8864, 1);
         proto = (u16*)(datagram + 1);
         *proto = conf->protocol;
         lcp = (LCPHeader*)(proto + 1);
@@ -139,8 +138,14 @@ static void LCPOut(PPPConf* conf /* r26 */, u8 code /* r25 */, u8 id /* r1+0xD *
         lcp->id = id;
         lcp->len = len + sizeof(LCPHeader);
         memmove(lcp + 1, data, len);
+        datagram->nVec = 1;
         datagram->vec[0].data = proto;
         datagram->vec[0].len = len + sizeof(u16) + sizeof(LCPHeader);
+        datagram->callback = NULL;
+        datagram->param = NULL;
+        datagram->type = ETH_PPPoE_SESSION;
+        datagram->flag = 0;
+        datagram->queue = NULL;
         interface->out(interface, datagram);
     }
 

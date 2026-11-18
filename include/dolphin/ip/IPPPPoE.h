@@ -58,7 +58,7 @@ typedef struct PPPoEConf {
 } PPPoEConf;
 
 void PPPoEDumpPacket(PPPoEHeader* pppoe);
-BOOL PPPoEOpen(IPInterface* interface);
+BOOL PPPoEInit(IPInterface* interface);
 void PPPoETerminate(IPInterface* interface);
 void PPPoEIn(IPInterface* interface, ETHHeader* eh, s32 len, u32 flag);
 int PPPoEGetACName(IPInterface* interface, char* acname);

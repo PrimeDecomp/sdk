@@ -110,7 +110,9 @@ static void IGMPOut(u8 type /* r25 */, u8* addr /* r26 */) {
         return;
     }
 
-    IFInitDatagram(datagram, ETH_IP, 1);
+    datagram->callback = NULL;
+    datagram->queue = NULL;
+    datagram->interface = NULL;
     ip = (IPHeader*)(datagram + 1);
     igmp = (IGMP*)(ip + 1);
 
@@ -133,7 +135,7 @@ static void IGMPOut(u8 type /* r25 */, u8* addr /* r26 */) {
             memmove(ip->dst, addr, IP_ALEN);
             break;
         default:
-            OSPanic(__FILE__, 176, "IGMPOut() fatal error.");
+            OSPanic(__FILE__, 169, "IGMPOut() fatal error.");
             break;
     }
 
@@ -145,8 +147,11 @@ static void IGMPOut(u8 type /* r25 */, u8* addr /* r26 */) {
         memmove(ip->src, interface->addr, IP_ALEN);
     }
 
+    datagram->nVec = 1;
     datagram->vec[0].data = ip;
     datagram->vec[0].len = IP_HLEN(ip) + sizeof(IGMP);
+    datagram->param = NULL;
+    datagram->flag = 0;
     if (IPOut(datagram) < 0) {
         interface->free(interface, datagram, sizeof(IFDatagram) + sizeof(IPHeader) + sizeof(IGMP));
     }
@@ -222,9 +227,12 @@ BOOL IGMPOnReset(BOOL final /* r1+0x8 */) {
     // References
     // -> static struct IGMPInfo IgmpTable[4];
     // -> unsigned char IPAddrAny[4];
-    if (final) {
+    if (!final) {
         for (info = IgmpTable; info < &IgmpTable[IGMP_TABLE_SIZE]; ++info) {
-            ASSERTLINE(322, memcmp(info->addr, IPAddrAny, IP_ALEN) == 0);
+            if (IPNEQ(info->addr, IPAddrAny)) {
+                OSCancelAlarm(&info->alarm);
+                memmove(info->addr, IPAddrAny, IP_ALEN);
+            }
         }
     }
     return TRUE;

@@ -71,9 +71,8 @@ typedef struct IFDatagram {
     u8 hwAddr[6]; // offset 0x12, size 0x6
     u8 dst[4]; // offset 0x18, size 0x4
     u8 prefix[8]; // offset 0x1C, size 0x8
-    u8 unk_24; // offset 0x24, size 0x1
-    u8 prefixLen; // offset 0x25, size 0x1
-    u8 flag; // offset 0x26, size 0x1
+    u8 prefixLen; // offset 0x24, size 0x1
+    u8 flag; // offset 0x25, size 0x1
     void (*callback)(void*, s32); // offset 0x28, size 0x4
     void* param; // offset 0x2C, size 0x4
     s32 nVec; // offset 0x30, size 0x4
@@ -145,7 +144,7 @@ char* IPNtoA(const u8* addr);
 static inline void IFInitDatagram(IFDatagram* datagram, u16 type, int nVec) {
     datagram->queue = NULL;
     datagram->type = type;
-    datagram->prefixLen = 0;
+    datagram->flag = 0;
     datagram->callback = NULL;
     datagram->param = NULL;
     datagram->nVec = nVec;

@@ -49,10 +49,6 @@ s32 IPSetReassemblyBuffer(void* buffer /* r27 */, s32 len /* r28 */, s32 mtu /* 
     size = mtu + 0x54;
     size = OSRoundUp32B(size);
     if (buffer == NULL || len < size) {
-        if (Control.flag & 1) {
-            OSCancelAlarm(&Control.alarm);
-            Control.flag &= ~1;
-        }
         return -12;
     }
 
@@ -231,7 +227,7 @@ IPHeader* IPReassemble(IPInterface* interface /* r24 */, IPHeader* frag /* r30 *
 
             header = Reassemble(header, frag, Control.mtu);
             if (header) {
-                header->frag &= ~(IP_DF | IP_MF | IP_FRAG_BITS);
+                header->frag &= ~(IP_MF | IP_FRAG_BITS);
                 header->tos = packet->first.tos;
                 header->ttl = packet->first.ttl;
                 header->sum = 0;

@@ -1,4 +1,5 @@
 #include <dolphin/ip.h>
+#include <dolphin/os/OSPriv.h>
 #include <dolphin/private/ip.h>
 
 #define TCP_TIMEWAIT_EXPIRE 240
