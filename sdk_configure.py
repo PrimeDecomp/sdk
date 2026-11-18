@@ -1094,8 +1094,8 @@ def modules_for(
         DolphinLib(
             "thp",
             [
-                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "dolphin/thp/THPDec.c"),
-                Object(MatchingFor(*GC_VERSIONS), "dolphin/thp/THPAudio.c"),
+                Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "PROTO"), "dolphin/thp/THPDec.c"),
+                Object(MatchingFor(*GC_VERSIONS, "PROTO"), "dolphin/thp/THPAudio.c"),
             ],
             gc_only=True,
         ),
