@@ -10,7 +10,7 @@ const char* __TTYVersion = "<< Dolphin SDK - TTY\tdebug build: Apr  5 2004 03:57
 const char* __TTYVersion = "<< Dolphin SDK - TTY\trelease build: Apr  5 2004 04:15:50 (0x2301) >>";
 #endif
 
-volatile static u8 gBuf[0x2000];
+volatile static u8 gBuf[0x2000] ATTRIBUTE_ALIGN(32);
 
 static u32 gOldEvent;
 volatile static MCC_CHANNEL gChID;
