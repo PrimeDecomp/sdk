@@ -10,7 +10,7 @@ const char* __FIOVersion = "<< Dolphin SDK - FIO\tdebug build: Apr  5 2004 03:57
 const char* __FIOVersion = "<< Dolphin SDK - FIO\trelease build: Apr  5 2004 04:15:50 (0x2301) >>";
 #endif
 
-static u8 gBuf[0x2000];
+static u8 gBuf[0x2000] ATTRIBUTE_ALIGN(32);
 static u8 gPrintBuf[0x400];
 
 static u8 gmSizeOfBlocks = 1;

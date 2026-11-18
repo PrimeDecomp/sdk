@@ -1314,7 +1314,7 @@ def modules_for(
         DolphinLib(
             "HIO",
             [
-                Object(NonMatching, "dolphin/hio/hio.c"),
+                Object(MatchingFor("PROTO"), "dolphin/hio/hio.c"),
             ],
         ),
         DolphinLib(
@@ -1353,9 +1353,9 @@ def modules_for(
         DolphinLib(
             "MCC",
             [
-                Object(NonMatching, "dolphin/mcc/mcc.c"),
-                Object(NonMatching, "dolphin/mcc/fio.c"),
-                Object(NonMatching, "dolphin/mcc/tty.c"),
+                Object(MatchingFor("PROTO"), "dolphin/mcc/mcc.c"),
+                Object(MatchingFor("PROTO"), "dolphin/mcc/fio.c"),
+                Object(MatchingFor("PROTO"), "dolphin/mcc/tty.c"),
             ],
         ),
         DolphinLib(
