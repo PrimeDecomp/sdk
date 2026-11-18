@@ -12,113 +12,6 @@ void __stdio_atexit(void);
                                ? (int)(*(file)->buffer_ptr++ = (unsigned char)(c))                  \
                                : __put_char((c), (file)))
 
-int puts(const char* s) {
-  int c;
-  int result = 0;
-  FILE* file = stdout;
-
-  __begin_critical_region(files_access);
-  while ((c = *s++) != 0) {
-    if (__putc(c, file) == EOF) {
-      result = EOF;
-      break;
-    }
-  }
-  if (result != EOF)
-    result = __putc('\n', file);
-  __end_critical_region(files_access);
-
-  return result;
-}
-
-int fputs(const char* s, FILE* file) {
-  int c;
-  int result = 0;
-
-  __begin_critical_region(files_access);
-  while ((c = *s++) != 0) {
-    if (__putc(c, file) == EOF) {
-      result = EOF;
-      break;
-    }
-  }
-  __end_critical_region(files_access);
-
-  return result;
-}
-
-int __put_char(int c, FILE* file) {
-  int kind = file->mode.file_kind;
-
-  file->buffer_len = 0;
-  if (file->state.error || kind == __closed_file)
-    return EOF;
-
-  if (kind == __console_file)
-    __stdio_atexit();
-
-  if (file->state.io_state == __neutral) {
-    if (file->mode.io_mode & __write) {
-      if (file->mode.io_mode & __append) {
-        if (fseek(file, 0, SEEK_END))
-          return 0;
-      }
-      file->state.io_state = __writing;
-      __prep_buffer(file);
-    }
-  }
-
-  if (file->state.io_state != __writing) {
-    set_error(file);
-    return EOF;
-  }
-
-  if (file->mode.buffer_mode == _IOFBF || file->buffer_ptr - file->buffer == file->buffer_size) {
-    if (__flush_buffer(file, NULL)) {
-      set_error(file);
-      return EOF;
-    }
-  }
-
-  file->buffer_len--;
-  *file->buffer_ptr++ = c;
-
-  if (file->mode.buffer_mode != _IOFBF) {
-    if (file->mode.buffer_mode == _IONBF || c == '\n') {
-      if (__flush_buffer(file, NULL)) {
-        set_error(file);
-        return EOF;
-      }
-    }
-    file->buffer_len = 0;
-  }
-
-  return (unsigned char)c;
-}
-
-int ungetc(int c, FILE* file) {
-  int state = file->state.io_state;
-
-  if (fwide(file, -1) >= 0)
-    return EOF;
-  if (state == __writing || state == __rereading + __ungetc_buffer_size - 1 || c == EOF)
-    return EOF;
-
-  __begin_critical_region(files_access);
-  if (state < __rereading) {
-    file->saved_buffer_len = file->buffer_len;
-    file->buffer_len = 0;
-    state = file->state.io_state = __rereading;
-  } else {
-    state = ++file->state.io_state;
-  }
-  file->ungetc_buffer[state - __rereading] = c;
-  file->state.eof = 0;
-  __end_critical_region(files_access);
-
-  return (unsigned char)c;
-}
-
 int __getc(FILE* file) {
   int state, result;
 
@@ -180,4 +73,111 @@ char* fgets(char* s, int count, FILE* file) {
 
   *p = 0;
   return s;
+}
+
+int ungetc(int c, FILE* file) {
+  int state = file->state.io_state;
+
+  if (fwide(file, -1) >= 0)
+    return EOF;
+  if (state == __writing || state == __rereading + __ungetc_buffer_size - 1 || c == EOF)
+    return EOF;
+
+  __begin_critical_region(files_access);
+  if (state < __rereading) {
+    file->saved_buffer_len = file->buffer_len;
+    file->buffer_len = 0;
+    state = file->state.io_state = __rereading;
+  } else {
+    state = ++file->state.io_state;
+  }
+  file->ungetc_buffer[state - __rereading] = c;
+  file->state.eof = 0;
+  __end_critical_region(files_access);
+
+  return (unsigned char)c;
+}
+
+int __put_char(int c, FILE* file) {
+  int kind = file->mode.file_kind;
+
+  file->buffer_len = 0;
+  if (file->state.error || kind == __closed_file)
+    return EOF;
+
+  if (kind == __console_file)
+    __stdio_atexit();
+
+  if (file->state.io_state == __neutral) {
+    if (file->mode.io_mode & __write) {
+      if (file->mode.io_mode & __append) {
+        if (fseek(file, 0, SEEK_END))
+          return 0;
+      }
+      file->state.io_state = __writing;
+      __prep_buffer(file);
+    }
+  }
+
+  if (file->state.io_state != __writing) {
+    set_error(file);
+    return EOF;
+  }
+
+  if (file->mode.buffer_mode == _IOFBF || file->buffer_ptr - file->buffer == file->buffer_size) {
+    if (__flush_buffer(file, NULL)) {
+      set_error(file);
+      return EOF;
+    }
+  }
+
+  file->buffer_len--;
+  *file->buffer_ptr++ = c;
+
+  if (file->mode.buffer_mode != _IOFBF) {
+    if (file->mode.buffer_mode == _IONBF || c == '\n') {
+      if (__flush_buffer(file, NULL)) {
+        set_error(file);
+        return EOF;
+      }
+    }
+    file->buffer_len = 0;
+  }
+
+  return (unsigned char)c;
+}
+
+int fputs(const char* s, FILE* file) {
+  int c;
+  int result = 0;
+
+  __begin_critical_region(files_access);
+  while ((c = *s++) != 0) {
+    if (__putc(c, file) == EOF) {
+      result = EOF;
+      break;
+    }
+  }
+  __end_critical_region(files_access);
+
+  return result;
+}
+
+int puts(const char* s) {
+  int c;
+  int result = 0;
+  FILE* file = stdout;
+
+  __begin_critical_region(files_access);
+  while ((c = *s++) != 0) {
+    if (__putc(c, file) == EOF) {
+      result = EOF;
+      break;
+    }
+  }
+  if (result != EOF)
+    result = __putc('\n', file);
+  __end_critical_region(files_access);
+
+  return result;
 }

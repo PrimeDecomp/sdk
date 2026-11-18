@@ -4,33 +4,17 @@
 
 extern void* memcpy(void* dst, const void* src, unsigned long n);
 
-int CircleBufferReadBytes(CircleBuffer* cb, u8* dst, u32 len)
+u32 CBGetBytesAvailableForRead(CircleBuffer* cb) { return cb->readableBytes; }
+
+void CircleBufferInitialize(CircleBuffer* cb, u8* buf, u32 size)
 {
-	u32 first;
-
-	if (len > cb->readableBytes)
-		return -1;
-
-	MWEnterCriticalSection(&cb->critical);
-
-	first = cb->size - (cb->readPtr - cb->start);
-	if (len < first) {
-		memcpy(dst, cb->readPtr, len);
-		cb->readPtr += len;
-	} else {
-		memcpy(dst, cb->readPtr, first);
-		memcpy(dst + first, cb->start, len - first);
-		cb->readPtr = cb->start + len - first;
-	}
-
-	if (cb->size == (u32)(cb->readPtr - cb->start))
-		cb->readPtr = cb->start;
-
-	cb->writableBytes += len;
-	cb->readableBytes -= len;
-
-	MWExitCriticalSection(&cb->critical);
-	return 0;
+	cb->start = buf;
+	cb->size = size;
+	cb->readPtr = cb->start;
+	cb->writePtr = cb->start;
+	cb->readableBytes = 0;
+	cb->writableBytes = cb->size;
+	MWInitializeCriticalSection(&cb->critical);
 }
 
 int CircleBufferWriteBytes(CircleBuffer* cb, const u8* src, u32 len)
@@ -62,15 +46,31 @@ int CircleBufferWriteBytes(CircleBuffer* cb, const u8* src, u32 len)
 	return 0;
 }
 
-void CircleBufferInitialize(CircleBuffer* cb, u8* buf, u32 size)
+int CircleBufferReadBytes(CircleBuffer* cb, u8* dst, u32 len)
 {
-	cb->start = buf;
-	cb->size = size;
-	cb->readPtr = cb->start;
-	cb->writePtr = cb->start;
-	cb->readableBytes = 0;
-	cb->writableBytes = cb->size;
-	MWInitializeCriticalSection(&cb->critical);
-}
+	u32 first;
 
-u32 CBGetBytesAvailableForRead(CircleBuffer* cb) { return cb->readableBytes; }
+	if (len > cb->readableBytes)
+		return -1;
+
+	MWEnterCriticalSection(&cb->critical);
+
+	first = cb->size - (cb->readPtr - cb->start);
+	if (len < first) {
+		memcpy(dst, cb->readPtr, len);
+		cb->readPtr += len;
+	} else {
+		memcpy(dst, cb->readPtr, first);
+		memcpy(dst + first, cb->start, len - first);
+		cb->readPtr = cb->start + len - first;
+	}
+
+	if (cb->size == (u32)(cb->readPtr - cb->start))
+		cb->readPtr = cb->start;
+
+	cb->writableBytes += len;
+	cb->readableBytes -= len;
+
+	MWExitCriticalSection(&cb->critical);
+	return 0;
+}
