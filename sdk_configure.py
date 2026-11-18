@@ -979,7 +979,7 @@ def modules_for(
                 Object(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01", "PROTO"),
                     "dolphin/gx/GXInit.c",
-                    extra_cflags=[*IPA_FILE, *flags_if(prototype, "-DSDK_GX_SHUTDOWN_DRAW_DONE_FIRST")],
+                    extra_cflags=IPA_FILE,
                 ),
                 Object(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"),

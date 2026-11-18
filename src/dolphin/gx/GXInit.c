@@ -308,13 +308,8 @@ static BOOL __GXShutdown(BOOL final, u32 event) {
 
     } else {
         GXSetBreakPtCallback(NULL);
-#if defined(SDK_GX_SHUTDOWN_DRAW_DONE_FIRST)
-        GXSetDrawDoneCallback(NULL);
-        GXSetDrawSyncCallback(NULL);
-#else
         GXSetDrawSyncCallback(NULL);
         GXSetDrawDoneCallback(NULL);
-#endif
 
         GX_WRITE_U32(0);
         GX_WRITE_U32(0);
