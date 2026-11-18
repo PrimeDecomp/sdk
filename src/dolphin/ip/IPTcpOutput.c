@@ -292,17 +292,6 @@ static BOOL DoSwsAvoidance(TCPInfo* info /* r3 */, s32 sendSize /* r4 */, s32 ef
     return TRUE;
 }
 
-// Range: 0x96C -> 0x9B8
-static void DackHandler(OSAlarm* alarm /* r1+0x8 */, OSContext*) {
-    // Local variables
-    TCPInfo* info; // r31
-
-    info = (TCPInfo*)((u8*)alarm - offsetof(TCPInfo, dackAlarm));
-    if (SEQ_GT(info->recvNext, info->recvAcked)) {
-        TCPOutput(info, TCP_FLAG_ACK);
-    }
-}
-
 // Range: 0x9B8 -> 0xA4C
 static void TCPOutputCallback(TCPInfo* info /* r31 */, s32 result /* r29 */) {
     ASSERTLINE(568, info->datagram.interface == NULL);
@@ -395,10 +384,6 @@ void TCPOutput(TCPInfo* info /* r31 */, u16 flag /* r1+0xC */) {
         if (sendSize > 0) {
             TCPStartRxmitTimer(info);
         }
-        if (SEQ_GT(info->recvNext, info->recvAcked)) {
-            OSCancelAlarm(&info->dackAlarm);
-            OSSetAlarm(&info->dackAlarm, OSMillisecondsToTicks((OSTime)200), DackHandler);
-        }
         return;
     }
 
@@ -426,7 +411,6 @@ void TCPOutput(TCPInfo* info /* r31 */, u16 flag /* r1+0xC */) {
     }
 
     ip->len = IP_HLEN(ip);
-    OSCancelAlarm(&info->dackAlarm);
     if (info->state != 2) {
         flag |= TCP_FLAG_ACK;
     }

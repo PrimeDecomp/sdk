@@ -27,11 +27,6 @@ static void TCPRxmitTimeOut(OSAlarm* alarm /* r1+0x8 */, OSContext*) {
     if (info->rxmitCount >= 16) {
         info->rxmitCount = 16;
     }
-    info->rto *= 2;
-    if (info->rttMax < info->rto) {
-        info->rto = info->rttMax;
-    }
-
     if (!(info->flag & 0x200)) {
         if (info->rxmitCount == 4 && info->state >= 4) {
             header = (IPHeader*)info->header;
@@ -84,7 +79,7 @@ static void TCPRxmitTimeOut(OSAlarm* alarm /* r1+0x8 */, OSContext*) {
     info->rttTiming = FALSE;
     info->ssThresh = ((info->cWin < info->sendWin) ? info->cWin : info->sendWin) / 2;
     info->ssThresh = (info->ssThresh > 2 * info->mss) ? info->ssThresh : 2 * info->mss;
-    info->cWin = 2 * info->mss;
+    info->cWin = info->mss;
     info->dupAcks = 0;
     info->sendHoles = 0;
     info->sendFack = info->sendUna;
@@ -97,10 +92,14 @@ static void TCPRxmitTimeOut(OSAlarm* alarm /* r1+0x8 */, OSContext*) {
 // Range: 0x380 -> 0x3E8
 void TCPStartRxmitTimer(TCPInfo* info /* r31 */) {
     if (info->rxmitAlarm.handler == (OSAlarmHandler)NULL) {
+        OSTime rto = (1 << info->rxmitCount) * info->rto;
+        if (OSSecondsToTicks((OSTime)240) < rto) {
+            rto = OSSecondsToTicks((OSTime)240);
+        }
         if (info->rxmitCount == 0) {
             info->r0 = OSGetTime();
         }
-        OSSetAlarm(&info->rxmitAlarm, info->rto, TCPRxmitTimeOut);
+        OSSetAlarm(&info->rxmitAlarm, rto, TCPRxmitTimeOut);
     }
 }
 
@@ -180,7 +179,7 @@ void TCPInitRtt(TCPInfo* info /* r31 */) {
     info->rtt = 0;
     info->srtt = 0;
     info->rttDe = OSMillisecondsToTicks((OSTime)750);
-    info->rttMin = OSMillisecondsToTicks((OSTime)1000);
+    info->rttMin = OSMillisecondsToTicks((OSTime)200);
     info->rttMax = OSSecondsToTicks((OSTime)240);
     CalcRto(info);
 }

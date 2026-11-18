@@ -12,6 +12,10 @@ static void Out(IPInterface* interface, IFDatagram* datagram);
 
 static PPPoEConf Conf = { 0, 0xFFFF, 0xFFFF }; // size: 0x628, address: 0x0
 
+PPPConf PPPLcpConf;
+PPPConf PPPIpcpConf;
+PPPConf PPPAuthConf;
+
 // Range: 0x0 -> 0x1C8
 static void DumpTags(PPPoEHeader* pppoe /* r29 */) {
     // Local variables
@@ -118,14 +122,19 @@ static void OutPADT(IPInterface* interface /* r29 */, u8* mac /* r1+0xC */, u16 
     datagram = interface->alloc(interface, sizeof(IFDatagram) + sizeof(PPPoEHeader));
     pppoe = (PPPoEHeader*)(datagram + 1);
     if (datagram) {
-        IFInitDatagram(datagram, ETH_PPPoE_DISCOVERY, 1);
         pppoe->vertype = 0x11;
         pppoe->code = PPPoE_PADT;
         pppoe->session = session;
         pppoe->len = 0;
+        datagram->nVec = 1;
         datagram->vec[0].data = pppoe;
         datagram->vec[0].len = sizeof(PPPoEHeader);
+        datagram->callback = NULL;
+        datagram->param = NULL;
+        datagram->type = ETH_PPPoE_DISCOVERY;
+        datagram->flag = 0;
         memmove(datagram->hwAddr, mac, 6);
+        datagram->queue = NULL;
         conf->out(interface, datagram);
     }
     OSRestoreInterrupts(enabled);
@@ -150,10 +159,15 @@ static void PPPoEOut(IPInterface* interface /* r28 */, PPPoEConf* conf /* r31 */
         pppoe->session = conf->session;
         pppoe->len = conf->len;
         if (datagram) {
-            IFInitDatagram(datagram, ETH_PPPoE_DISCOVERY, 1);
+            datagram->nVec = 1;
             datagram->vec[0].data = pppoe;
             datagram->vec[0].len = conf->len + sizeof(PPPoEHeader);
+            datagram->callback = NULL;
+            datagram->param = NULL;
+            datagram->type = ETH_PPPoE_DISCOVERY;
+            datagram->flag = 0;
             memmove(datagram->hwAddr, conf->mac, 6);
+            datagram->queue = NULL;
             conf->out(interface, datagram);
         }
     }
@@ -241,7 +255,7 @@ static void Out(IPInterface* interface /* r25 */, IFDatagram* datagram /* r31 */
 }
 
 // Range: 0x7B8 -> 0x8F8
-BOOL PPPoEOpen(IPInterface* interface /* r30 */) {
+BOOL PPPoEInit(IPInterface* interface /* r30 */) {
     // Local variables
     PPPoEHeader* pppoe; // r28
     PPPoETag* tag; // r27
@@ -476,7 +490,3 @@ exit:
     OSRestoreInterrupts(enabled);
     return rc;
 }
-
-PPPConf PPPLcpConf; // size: 0xA0, address: 0x0
-PPPConf PPPAuthConf; // size: 0xA0, address: 0xA0
-PPPConf PPPIpcpConf; // size: 0xA0, address: 0x140

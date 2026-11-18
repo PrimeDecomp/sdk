@@ -323,7 +323,7 @@ static int Down(PPPConf* conf /* r3 */) {
 
 // Range: 0x7DC -> 0x808
 static int Started(PPPConf* conf /* r1+0x8 */) {
-    return PPPoEOpen(conf->interface);
+    return PPPoEInit(conf->interface);
 }
 
 // Range: 0x808 -> 0x838

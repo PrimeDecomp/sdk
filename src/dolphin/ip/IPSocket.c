@@ -212,7 +212,7 @@ static void PutNode(SONode* node) {
                 SOFree(0, tcp, sizeof(TCPInfo));
                 break;
             default:
-                OSPanic(__FILE__, 569, "PutNode: unknown proto");
+                OSPanic(__FILE__, 537, "PutNode: unknown proto");
                 break;
         }
     }

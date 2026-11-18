@@ -27,7 +27,6 @@ static void PAPOut(PPPConf* conf /* r26 */) {
 
     datagram = (IFDatagram*)interface->alloc(interface, sizeof(IFDatagram) + sizeof(u16) + sizeof(PAPHeader) + len);
     if (datagram != NULL) {
-        IFInitDatagram(datagram, 0x8864, 1);
         *(u16*)((u8*)datagram + sizeof(IFDatagram)) = PPP_PAP;
         pap = (PAPHeader*)((u8*)datagram + sizeof(IFDatagram) + sizeof(u16));
         pap->code = 1;
@@ -39,8 +38,14 @@ static void PAPOut(PPPConf* conf /* r26 */) {
         data += __PPPAuth.peerIdLen;
         *data++ = __PPPAuth.passwordLen;
         memmove(data, __PPPAuth.password, __PPPAuth.passwordLen);
+        datagram->nVec = 1;
         datagram->vec[0].data = (u8*)datagram + sizeof(IFDatagram);
         datagram->vec[0].len = len + 6;
+        datagram->callback = NULL;
+        datagram->param = NULL;
+        datagram->type = ETH_PPPoE_SESSION;
+        datagram->flag = 0;
+        datagram->queue = NULL;
         interface->out(interface, datagram);
     }
 

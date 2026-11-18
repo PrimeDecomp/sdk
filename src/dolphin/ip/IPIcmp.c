@@ -42,7 +42,6 @@ static void DoEchoRequest(IPInterface* interface /* r28 */, IPHeader* ip /* r31 
     IFDatagram* datagram; // r29
     IPHeader* res; // r30
     ICMPHeader* icmp; // r27
-    void* data; // r1+0x14
 
     if (ip->dst[0] == 127 || IPEQ(ip->dst, interface->addr) || IPEQ(ip->dst, interface->alias)) {
         if ((flag & 3) || IPIsBroadcastAddr(interface, ip->src) || IP_CLASSD(ip->src) || IP_CLASSE(ip->src)) {
@@ -54,8 +53,7 @@ static void DoEchoRequest(IPInterface* interface /* r28 */, IPHeader* ip /* r31 
             return;
         }
 
-        IFInitDatagram(datagram, ETH_IP, 1);
-        datagram->vec[0].data = data = datagram + 1;
+        datagram->vec[0].data = datagram + 1;
         datagram->vec[0].len = ip->len;
         res = datagram->vec[0].data;
         memmove(res, ip, IP_HLEN(ip));
@@ -73,6 +71,11 @@ static void DoEchoRequest(IPInterface* interface /* r28 */, IPHeader* ip /* r31 
         icmp->type = 0;
         icmp->sum = 0;
         icmp->sum = ICMPCheckSum(icmp, res->len - IP_HLEN(res));
+        datagram->nVec = 1;
+        datagram->callback = NULL;
+        datagram->param = NULL;
+        datagram->queue = NULL;
+        datagram->flag = 0;
         if (IPOut(datagram) < 0) {
             interface->free(interface, datagram, ip->len + sizeof(IFDatagram));
         }
@@ -122,7 +125,7 @@ static void DoUnreachable(IPInterface* interface /* r26 */, IPHeader* ip /* r24 
                         goto again;
                     }
                     tcpInfo->mss = mtu - 40;
-                    tcpInfo->cWin = tcpInfo->mss * 2;
+                    tcpInfo->cWin = tcpInfo->mss;
                 }
             }
             if (org->proto == IP_PROTO_TCP) {
@@ -261,7 +264,6 @@ s32 ICMPSendError(ICMPHeader* icmp /* r27 */, IPInterface* interface /* r29 */, 
     IPHeader* res; // r30
     s32 len; // r26
     s32 rc; // r25
-    void* data; // r1+0x18
     ICMPHeader* icmpRcvd; // r24
 
     if (icmp == NULL || !ICMPIsErrorMessage(icmp->type) || ip == NULL || IP_HLEN(ip) < 20 ||
@@ -300,8 +302,7 @@ s32 ICMPSendError(ICMPHeader* icmp /* r27 */, IPInterface* interface /* r29 */, 
         return -7;
     }
 
-    IFInitDatagram(datagram, ETH_IP, 1);
-    datagram->vec[0].data = data = datagram + 1;
+    datagram->vec[0].data = datagram + 1;
     datagram->vec[0].len = len;
     res = datagram->vec[0].data;
     res->verlen = 0x45;
@@ -317,6 +318,11 @@ s32 ICMPSendError(ICMPHeader* icmp /* r27 */, IPInterface* interface /* r29 */, 
     icmp = (ICMPHeader*)((u8*)res + sizeof(IPHeader));
     icmp->sum = 0;
     icmp->sum = ICMPCheckSum(icmp, res->len - IP_HLEN(res));
+    datagram->nVec = 1;
+    datagram->callback = NULL;
+    datagram->param = NULL;
+    datagram->queue = NULL;
+    datagram->flag = 0;
     rc = IPOut(datagram);
     if (rc < 0) {
         interface->free(interface, datagram, len + (s32)sizeof(IFDatagram));

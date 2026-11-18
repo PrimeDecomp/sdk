@@ -479,11 +479,13 @@ void ARPOut(IPInterface* interface /* r29 */, u16 opCode /* r1+0xC */, const u8*
 
         memmove(ARPHeader2PrAddr(arp), srcPrAddr, 4);
         memmove(ARPHeader2MACAddr(arp), interface->mac, 6);
-        IFInitDatagram(datagram, ETH_IP | 6, 1);
+        datagram->nVec = 1;
         datagram->vec[0].data = arp;
         datagram->vec[0].len = sizeof(cache->arp);
         datagram->callback = cache ? (void (*)(void *, s32))SendCallback : NULL;
         datagram->param = cache;
+        datagram->type = ETH_ARP;
+        datagram->flag = 0;
         
         if (dstHwAddr && (srcPrAddr[0] != 169 || srcPrAddr[1] != 254)) {
             memmove(datagram->hwAddr, dstHwAddr, 6);
@@ -491,6 +493,7 @@ void ARPOut(IPInterface* interface /* r29 */, u16 opCode /* r1+0xC */, const u8*
             memmove(datagram->hwAddr, HwBroadcastAddr, 6);
         }
 
+        datagram->queue = NULL;
         interface->out(interface, datagram);
     }
 
