@@ -1,87 +1,121 @@
-#include <dolphin/db.h>
+#include <OdemuExi2/odemuexi/DebuggerDriver.h>
 #include <dolphin/exi.h>
 #include <dolphin/hw_regs.h>
-#include <dolphin/os.h>
 
-typedef void (*DBGCallback)(s32);
+// Guessed name
+typedef void (*DBGInterruptCallback)(s32 interrupt, OSContext* context);
 
+static __OSInterruptHandler sCommCallback;
+static DBGInterruptCallback sIntCallback;
 static u32 sLastMailbox;
-static u32 sReadLength;
-static u32 sCommInputFlag;
-static u8 sRxPending;
-static u8 sSendCount = 0;
-static DBGCallback sCommCallback;
-static DBGCallback sIntCallback;
-
-#define DBG_CSR_SELECT()   (__EXIRegs[10] = ((__EXIRegs[10] & 0x405) | 0xC0))
-#define DBG_CSR_RELEASE()  (__EXIRegs[10] &= 0x405)
+static s32 sReadLength;
+static volatile u8* sCommInputFlag;
+static volatile u8 sRxPending;
+static u8 sSendCount = 0x80;
 
 void DBGInterrupt(__OSInterrupt interrupt, OSContext* context);
-void DBGCommInterrupt(s32 interrupt);
-static BOOL DBGReadStatus(u32* status);
-BOOL DBGWriteBlock(u32 addr, void* buf, s32 len);
+void DBGCommInterrupt(s32 interrupt, OSContext* context);
+static inline BOOL DBGReadStatus(u32* status);
+BOOL DBGWriteBlock(u32 addr, const void* buf, s32 len);
 BOOL DBGReadBlock(u32 addr, void* buf, s32 len);
 static BOOL DBGReadMailbox(u32* mailbox);
-static BOOL DBGEXIImm(void* buf, s32 len, s32 rw);
+static BOOL DBGEXIImm(void* buf, s32 len, u32 rw);
+
+// Guessed name
+static inline BOOL DBGEXISelect(u32 speed) {
+    u32 csr = __EXIRegs[10];
+    csr &= 0x405;
+    csr |= 0x80 | (speed << 4);
+    __EXIRegs[10] = csr;
+    return TRUE;
+}
+
+// Guessed name
+static inline BOOL DBGEXIDeselect(void) {
+    __EXIRegs[10] &= 0x405;
+    return TRUE;
+}
+
+// Guessed name
+static inline BOOL DBGEXISync(void) {
+    while (__EXIRegs[13] & 1) {}
+    return TRUE;
+}
+
+// Guessed name
+static inline BOOL DBGWriteMailbox(u32 mailbox) {
+    BOOL error = FALSE;
+    u32 word;
+
+    if (!DBGEXISelect(4)) {
+        return FALSE;
+    }
+    word = (mailbox & 0x1FFFFFFF) | 0xC0000000;
+    error |= !DBGEXIImm(&word, sizeof(word), EXI_WRITE);
+    error |= !DBGEXISync();
+    error |= !DBGEXIDeselect();
+    return !error;
+}
+
+// Guessed name
+static inline BOOL DBGReadCommand(u32 command, u32* result) {
+    BOOL error = FALSE;
+    u32 word;
+
+    if (!DBGEXISelect(4)) {
+        return FALSE;
+    }
+    word = command;
+    error |= !DBGEXIImm(&word, 2, EXI_WRITE);
+    error |= !DBGEXISync();
+    error |= !DBGEXIImm(result, sizeof(*result), EXI_READ);
+    error |= !DBGEXISync();
+    error |= !DBGEXIDeselect();
+    return !error;
+}
 
 void DBClose(void) {}
 
 void DBOpen(void) {}
 
-BOOL DBWrite(void* buf, s32 len) {
+int DBWrite(const void* buf, u32 len) {
     BOOL enabled;
-    u32 cmd;
     u32 status;
     u32 header;
-    u32 addr;
-    BOOL ok;
-
+    u32 offset;
     enabled = OSDisableInterrupts();
 
     do {
-        DBGReadStatus(&status);
+        DBGReadCommand(0x40000000, &status);
     } while (status & 2);
 
     sSendCount++;
-    addr = 0x1C000;
-    if (sSendCount & 1) {
-        addr |= 0x1000;
-    }
+    offset = (sSendCount & 1) ? 0x1000 : 0;
+    while (!DBGWriteBlock(offset | 0x1C000, buf, (len + 3) & ~3)) {}
 
     do {
-        ok = DBGWriteBlock(addr, buf, (len + 3) & ~3);
-    } while (!ok);
-
-    do {
-        DBGReadStatus(&status);
+        DBGReadCommand(0x40000000, &status);
     } while (status & 2);
 
-    header = 0xC0000000 | ((((u32)sSendCount << 16) | 0x1F000000 | (u32)len) & 0x1FFFFFFF);
-    do {
-        DBG_CSR_SELECT();
-        ok = DBGEXIImm(&header, 4, 1);
-        DBG_CSR_RELEASE();
-    } while (!ok);
+    header = ((u32)sSendCount << 16) | 0x1F000000 | len;
+    while (!DBGWriteMailbox(header)) {}
 
     do {
-        ok = DBGReadStatus(&status);
-    } while (!ok || (status & 2));
+        while (!DBGReadCommand(0x40000000, &status)) {}
+    } while (status & 2);
 
     OSRestoreInterrupts(enabled);
     return 0;
 }
 
-BOOL DBRead(void* buf, s32 len) {
+int DBRead(void* buf, u32 len) {
     BOOL enabled;
-    u32 addr;
+    u32 offset;
 
     enabled = OSDisableInterrupts();
 
-    addr = 0x1E000;
-    if (sLastMailbox & 0x10000) {
-        addr |= 0x1000;
-    }
-    DBGReadBlock(addr, buf, (len + 3) & ~3);
+    offset = (sLastMailbox & 0x10000) ? 0x1000 : 0;
+    DBGReadBlock(offset + 0x1E000, buf, (len + 3) & ~3);
 
     sReadLength = 0;
     sRxPending = 0;
@@ -93,7 +127,6 @@ BOOL DBRead(void* buf, s32 len) {
 u32 DBQueryData(void) {
     BOOL enabled;
     u32 status;
-    u32 mailbox;
 
     sRxPending = 0;
 
@@ -102,12 +135,12 @@ u32 DBQueryData(void) {
 
         DBGReadStatus(&status);
         if (status & 1) {
-            DBGReadMailbox(&mailbox);
-            mailbox &= 0x1FFFFFFF;
+            DBGReadMailbox(&status);
+            status &= 0x1FFFFFFF;
 
-            if ((mailbox & 0x1F000000) == 0x1F000000) {
-                sLastMailbox = mailbox;
-                sReadLength = mailbox & 0x7FFF;
+            if ((status & 0x1F000000) == 0x1F000000) {
+                sLastMailbox = status;
+                sReadLength = status & 0x7FFF;
                 sRxPending = 1;
             }
         }
@@ -119,129 +152,125 @@ u32 DBQueryData(void) {
 }
 
 void DBInitInterrupts(void) {
-    __OSMaskInterrupts(0x18000);
-    __OSMaskInterrupts(0x40);
+    __OSMaskInterrupts(OS_INTERRUPTMASK_EXI_2);
+    __OSMaskInterrupts(OS_INTERRUPTMASK_PI_DEBUG);
     sIntCallback = DBGCommInterrupt;
-    __OSSetInterruptHandler(0x19, DBGInterrupt);
-    __OSUnmaskInterrupts(0x40);
+    __OSSetInterruptHandler(__OS_INTERRUPT_PI_DEBUG, DBGInterrupt);
+    __OSUnmaskInterrupts(OS_INTERRUPTMASK_PI_DEBUG);
 }
 
-void DBInitComm(int* inputFlagPtr, int* mtrCallback) {
+void DBInitComm(volatile u8** inputFlagPtr, __OSInterruptHandler mtrCallback) {
     BOOL enabled;
 
     enabled = OSDisableInterrupts();
-
-    sRxPending = 0;
-    sCommInputFlag = 0;
+    sCommInputFlag = &sRxPending;
     *inputFlagPtr = sCommInputFlag;
-    sCommCallback = (DBGCallback)mtrCallback;
+    sCommCallback = mtrCallback;
 
-    __OSMaskInterrupts(0x18000);
+    __OSMaskInterrupts(OS_INTERRUPTMASK_EXI_2);
     __EXIRegs[10] = 0;
 
     OSRestoreInterrupts(enabled);
 }
 
-// Guessed name: debugger interrupt entry; acknowledges the PI debugger bit
-// and forwards the interrupt number to the registered interrupt callback.
+// Guessed name
 void DBGInterrupt(__OSInterrupt interrupt, OSContext* context) {
-    __PIRegs[0] = 0x1000;
+    __PIRegs[0] = 1 << 12;
     if (sIntCallback) {
-        sIntCallback((s16)interrupt);
+        sIntCallback(interrupt, context);
     }
 }
 
-// Guessed name: sets the comm-ready flag and forwards to the MW callback.
-void DBGCommInterrupt(s32 interrupt) {
+// Guessed name
+void DBGCommInterrupt(s32 interrupt, OSContext* context) {
     sRxPending = 1;
     if (sCommCallback) {
-        sCommCallback(0);
+        sCommCallback(0, context);
     }
 }
 
-static BOOL DBGReadStatus(u32* status) {
-    u32 cmd = 0x40000000;
-    BOOL cmdErr;
-    BOOL readErr;
-
-    DBG_CSR_SELECT();
-    cmdErr = !DBGEXIImm(&cmd, 2, 1);
-    readErr = !DBGEXIImm(status, 4, 0);
-    DBG_CSR_RELEASE();
-
-    return !(cmdErr | readErr);
+static inline BOOL DBGReadStatus(u32* status) {
+    return DBGReadCommand(0x40000000, status);
 }
 
-// Guessed name: writes len bytes to debugger memory at addr via a write command.
-BOOL DBGWriteBlock(u32 addr, void* buf, s32 len) {
-    u32 cmd = ((addr << 8) & 0x01FFFC00) | 0xA0000000;
+// Guessed name
+BOOL DBGWriteBlock(u32 addr, const void* buf, s32 len) {
+    BOOL err = FALSE;
+    const u32* src = buf;
+    u32 cmd;
     u32 word;
-    u32* src = buf;
-    BOOL err;
 
-    DBG_CSR_SELECT();
-    err = !DBGEXIImm(&cmd, 4, 1);
-    for (; len > 0; len -= 4) {
-        word = *src++;
-        err |= !DBGEXIImm(&word, 4, 1);
+    if (!DBGEXISelect(4)) {
+        return FALSE;
     }
-    DBG_CSR_RELEASE();
-
+    cmd = ((addr << 8) & 0x01FFFC00) | 0xA0000000;
+    err |= !DBGEXIImm(&cmd, sizeof(cmd), EXI_WRITE);
+    err |= !DBGEXISync();
+    while (len != 0) {
+        word = *src++;
+        err |= !DBGEXIImm(&word, sizeof(word), EXI_WRITE);
+        err |= !DBGEXISync();
+        len -= 4;
+        if (len < 0) {
+            len = 0;
+        }
+    }
+    err |= !DBGEXIDeselect();
     return !err;
 }
 
-// Guessed name: reads len bytes from debugger memory at addr via a read command.
+// Guessed name
 BOOL DBGReadBlock(u32 addr, void* buf, s32 len) {
-    u32 cmd = ((addr << 8) & 0x01FFFC00) | 0x20000000;
-    u32 word;
+    BOOL err = FALSE;
     u32* dst = buf;
-    BOOL err;
+    u32 cmd;
+    u32 word;
 
-    DBG_CSR_SELECT();
-    err = !DBGEXIImm(&cmd, 4, 1);
-    for (; len > 0; len -= 4) {
-        err |= !DBGEXIImm(&word, 4, 0);
-        *dst++ = word;
+    if (!DBGEXISelect(4)) {
+        return FALSE;
     }
-    DBG_CSR_RELEASE();
-
+    cmd = ((addr << 8) & 0x01FFFC00) | 0x20000000;
+    err |= !DBGEXIImm(&cmd, sizeof(cmd), EXI_WRITE);
+    err |= !DBGEXISync();
+    while (len != 0) {
+        err |= !DBGEXIImm(&word, sizeof(word), EXI_READ);
+        err |= !DBGEXISync();
+        *dst++ = word;
+        len -= 4;
+        if (len < 0) {
+            len = 0;
+        }
+    }
+    err |= !DBGEXIDeselect();
     return !err;
 }
 
 static BOOL DBGReadMailbox(u32* mailbox) {
-    u32 cmd = 0x60000000;
-    BOOL cmdErr;
-    BOOL readErr;
-
-    DBG_CSR_SELECT();
-    cmdErr = !DBGEXIImm(&cmd, 2, 1);
-    readErr = !DBGEXIImm(mailbox, 4, 0);
-    DBG_CSR_RELEASE();
-
-    return !(cmdErr | readErr);
+    return DBGReadCommand(0x60000000, mailbox);
 }
 
-// Immediate EXI transfer on the debugger channel. Packs a word big-endian
-// for writes and unpacks one for reads. Callers transfer at most one word.
-static BOOL DBGEXIImm(void* buf, s32 len, s32 rw) {
-    u8* p = buf;
-    u32 word = 0;
-    s32 i;
+static BOOL DBGEXIImm(void* buf, s32 len, u32 rw) {
+    u32 writeWord;
+    u32 readWord;
+    int i;
 
     if (rw) {
-        for (i = 0; i < len && i < 4; i++) {
-            word |= (u32)p[i] << ((3 - i) * 8);
+        writeWord = 0;
+        for (i = 0; i < len; ++i) {
+            const u8* byte = (const u8*)buf + i;
+            writeWord |= (u32)*byte << ((3 - i) << 3);
         }
-        __EXIRegs[14] = word;
+        __EXIRegs[14] = writeWord;
     }
 
-    __EXIRegs[13] = ((u32)(len - 1) << 4) | ((u32)rw << 2) | 1;
-    while (__EXIRegs[13] & 1) {}
+    __EXIRegs[13] = 1 | (rw << 2) | ((len - 1U) << 4);
+    DBGEXISync();
 
     if (!rw) {
-        word = __EXIRegs[14];
-        for (i = 0; i < len && i < 4; i++) {
-            p[i] = (u8)(word >> ((3 - i) * 8));
+        u8* bytes = buf;
+        readWord = __EXIRegs[14];
+        for (i = 0; i < len; ++i) {
+            *bytes++ = (u8)(readWord >> ((3 - i) << 3));
         }
     }
 
