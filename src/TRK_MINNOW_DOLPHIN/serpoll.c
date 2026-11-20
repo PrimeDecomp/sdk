@@ -11,45 +11,6 @@ static TRKFramingState gTRKFramingState;
 
 void* gTRKInputPendingPtr;
 
-DSError TRKTerminateSerialHandler(void) { return DS_NoError; }
-
-DSError TRKInitializeSerialHandler(void)
-{
-    gTRKFramingState.msgBufID     = -1;
-    gTRKFramingState.receiveState = DSRECV_Wait;
-    gTRKFramingState.isEscape     = FALSE;
-
-    MWTRACE(1, "TRK_Packet_Header \t    %ld bytes\n", 0x40);
-    MWTRACE(1, "TRK_CMD_ReadMemory     %ld bytes\n", 0x40);
-    MWTRACE(1, "TRK_CMD_WriteMemory    %ld bytes\n", 0x40);
-    MWTRACE(1, "TRK_CMD_Connect \t    %ld bytes\n", 0x40);
-    MWTRACE(1, "TRK_CMD_ReplyAck\t    %ld bytes\n", 0x40);
-    MWTRACE(1, "TRK_CMD_ReadRegisters\t%ld bytes\n", 0x40);
-
-    return DS_NoError;
-}
-
-void TRKProcessInput(int bufferIdx)
-{
-    TRKEvent event;
-
-    TRKConstructEvent(&event, NUBEVENT_Request);
-    gTRKFramingState.msgBufID = -1;
-    event.msgBufID            = bufferIdx;
-    TRKPostEvent(&event);
-}
-
-void TRKGetInput(void)
-{
-    MessageBufferID id;
-
-    id = TRKTestForPacket();
-    if (id != -1) {
-        TRKGetBuffer(id);
-        TRKProcessInput(id);
-    }
-}
-
 MessageBufferID TRKTestForPacket(void)
 {
     int err;
@@ -87,3 +48,42 @@ MessageBufferID TRKTestForPacket(void)
     MWTRACE(1, "TestForPacket returning %ld\n", err);
     return err;
 }
+
+void TRKGetInput(void)
+{
+    MessageBufferID id;
+
+    id = TRKTestForPacket();
+    if (id != -1) {
+        TRKGetBuffer(id);
+        TRKProcessInput(id);
+    }
+}
+
+void TRKProcessInput(int bufferIdx)
+{
+    TRKEvent event;
+
+    TRKConstructEvent(&event, NUBEVENT_Request);
+    gTRKFramingState.msgBufID = -1;
+    event.msgBufID            = bufferIdx;
+    TRKPostEvent(&event);
+}
+
+DSError TRKInitializeSerialHandler(void)
+{
+    gTRKFramingState.msgBufID     = -1;
+    gTRKFramingState.receiveState = DSRECV_Wait;
+    gTRKFramingState.isEscape     = FALSE;
+
+    MWTRACE(1, "TRK_Packet_Header \t    %ld bytes\n", 0x40);
+    MWTRACE(1, "TRK_CMD_ReadMemory     %ld bytes\n", 0x40);
+    MWTRACE(1, "TRK_CMD_WriteMemory    %ld bytes\n", 0x40);
+    MWTRACE(1, "TRK_CMD_Connect \t    %ld bytes\n", 0x40);
+    MWTRACE(1, "TRK_CMD_ReplyAck\t    %ld bytes\n", 0x40);
+    MWTRACE(1, "TRK_CMD_ReadRegisters\t%ld bytes\n", 0x40);
+
+    return DS_NoError;
+}
+
+DSError TRKTerminateSerialHandler(void) { return DS_NoError; }
