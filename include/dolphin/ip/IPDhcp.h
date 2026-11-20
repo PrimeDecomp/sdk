@@ -11,20 +11,23 @@ extern "C" {
 #define DHCP_OPT_DNS 6
 
 typedef struct DHCPInfo {
-    // total size: 0x22C
     u8 ipaddr[4]; // offset 0x0, size 0x4
     u8 netmask[4]; // offset 0x4, size 0x4
     u8 router[4]; // offset 0x8, size 0x4
     u8 dns1[4]; // offset 0xC, size 0x4
     u8 dns2[4]; // offset 0x10, size 0x4
-    char host[256]; // offset 0x14, size 0x100
-    char domain[256]; // offset 0x114, size 0x100
-    u16 mtu; // offset 0x214, size 0x2
-    u8 broadcast[4]; // offset 0x216, size 0x4
-    u32 lease; // offset 0x21C, size 0x4
-    u8 server[4]; // offset 0x220, size 0x4
-    u32 renewal; // offset 0x224, size 0x4
-    u32 rebinding; // offset 0x228, size 0x4
+#ifdef SDK_DOLPHIN_IP_2003_09
+    u8 domain[256];
+#else
+    char host[256];
+    char domain[256];
+#endif
+    u16 mtu;
+    u8 broadcast[4];
+    u32 lease;
+    u8 server[4];
+    u32 renewal;
+    u32 rebinding;
 } DHCPInfo;
 
 typedef struct DHCPHeader {
@@ -46,7 +49,6 @@ typedef struct DHCPHeader {
 } DHCPHeader;
 
 typedef struct DHCPControl {
-    // total size: 0x938
     UDPInfo udp; // offset 0x0, size 0xF0
     int state; // offset 0xF0, size 0x4
     u32 xid; // offset 0xF4, size 0x4
@@ -62,16 +64,22 @@ typedef struct DHCPControl {
     OSAlarm expire; // offset 0x3A0, size 0x28
     s64 t2Time; // offset 0x3C8, size 0x8
     s64 expireTime; // offset 0x3D0, size 0x8
-    DHCPInfo info; // offset 0x3D8, size 0x22C
-    DHCPInfo tempInfo; // offset 0x604, size 0x22C
-    void (*callback)(int); // offset 0x830, size 0x4
-    char hostName[256]; // offset 0x834, size 0x100
+    DHCPInfo info; // offset 0x3D8
+    DHCPInfo tempInfo;
+    void (*callback)(int);
+#ifndef SDK_DOLPHIN_IP_2003_09
+    char hostName[256];
+#endif
 } DHCPControl;
 
 void DHCPDump(DHCPHeader* dhcp, s32 optlen);
 int DHCPProcessOptions(DHCPHeader* dhcp, int mlen, DHCPInfo* info);
+#ifdef SDK_DOLPHIN_IP_2003_09
+int DHCPStartupEx(void (*callback)(int), int rxmitMax);
+#else
 int DHCPStartupEx(void (*callback)(int), int rxmitMax, const char* hostName);
 int DHCPGetOpt(int opt, void* buf, int len);
+#endif
 BOOL DHCPGetStatus(DHCPInfo * info /* r28 */);
 BOOL DHCPReboot(void);
 BOOL DHCPAuto(BOOL enable);

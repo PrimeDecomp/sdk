@@ -1,12 +1,14 @@
-// The header declares the reference's DNSOpen/DNSClose on its own DNSInfo layout; hide those declarations.
+#ifdef SDK_DOLPHIN_IP_2003_09
+#include <dolphin/private/ip.h>
+
+typedef DNSInfo DNSCtx;
+#else
 #define DNSOpen DNSOpen_Reference
 #define DNSClose DNSClose_Reference
 #include <dolphin/private/ip.h>
 #undef DNSOpen
 #undef DNSClose
 
-// The prototype's resolver is an earlier, smaller layout than the reference's DNSInfo
-// (alarm at 0x108, flag at 0x130, the pending count at 0x550), so it is described here.
 typedef struct DNSCtx {
     UDPInfo udp; // offset 0x0
     IPSocket socket; // offset 0xF0
@@ -16,9 +18,10 @@ typedef struct DNSCtx {
     u8 unk_134[0x40C]; // offset 0x134
     u16 id; // offset 0x540
     u8 unk_542[0xE]; // offset 0x542
-    s32 pending; // offset 0x550
+    s32 ref; // offset 0x550
     OSThreadQueue queueThread; // offset 0x554
 } DNSCtx;
+#endif
 
 s32 DNSOpen(DNSCtx* info, const u8* dns) {
     s32 result;
@@ -28,7 +31,7 @@ s32 DNSOpen(DNSCtx* info, const u8* dns) {
     enabled = OSDisableInterrupts();
     result = UDPOpen(&info->udp, NULL, 0);
     if (0 <= result) {
-        memset(&info->socket, 0, sizeof(DNSCtx) - 0xF0);
+        memset(&info->socket, 0, sizeof(*info) - sizeof(info->udp));
         info->id = (u16)(OSGetTime() / (OS_TIMER_CLOCK / 250000));
         OSCreateAlarm(&info->alarm);
         info->socket.len = IP_SOCKLEN;
@@ -57,7 +60,7 @@ s32 DNSClose(DNSCtx* info) {
     BOOL enabled;
 
     enabled = OSDisableInterrupts();
-    if (info->pending > 0) {
+    if (info->ref > 0) {
         result = -1;
     } else {
         result = UDPClose(&info->udp);

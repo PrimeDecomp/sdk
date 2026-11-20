@@ -59,20 +59,22 @@ typedef struct SOHostEnt {
 } SOHostEnt;
 
 typedef struct SOResolver {
-    // total size: 0x790
     DNSInfo info; // offset 0x0, size 0x560
     SOHostEnt ent; // offset 0x560, size 0x10
     char name[256]; // offset 0x570, size 0x100
     char* zero; // offset 0x670, size 0x4
     u8 addrList[140]; // offset 0x674, size 0x8C
     u8* ptrList[36]; // offset 0x700, size 0x90
+#ifdef SDK_DOLPHIN_IP_2003_09
+    u8 dns1[4];
+    u8 dns2[4];
+#endif
 } SOResolver;
 
 typedef void* (*SOAllocFunc)(u32, s32);
 typedef void (*SOFreeFunc)(u32, void*, s32);
 
 typedef struct SOConfig {
-    // total size: 0x60
     u16 vendor; // offset 0x0, size 0x2
     u16 version; // offset 0x2, size 0x2
     SOAllocFunc alloc; // offset 0x4, size 0x4
@@ -91,10 +93,16 @@ typedef struct SOConfig {
     const char* peerid; // offset 0x40, size 0x4
     const char* passwd; // offset 0x44, size 0x4
     const char* serviceName; // offset 0x48, size 0x4
+#ifdef SDK_DOLPHIN_IP_2003_09
+    const char* acName; // offset 0x4C, size 0x4
+#else
     const char* hostName; // offset 0x4C, size 0x4
+#endif
     s32 rdhcp; // offset 0x50, size 0x4
+#ifndef SDK_DOLPHIN_IP_2003_09
     s32 udpSendBuff; // offset 0x54, size 0x4
     s32 udpRecvBuff; // offset 0x58, size 0x4
+#endif
 } SOConfig;
 
 typedef struct SOLinger {

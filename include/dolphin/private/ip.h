@@ -9,7 +9,9 @@ extern "C" {
 #endif
 
 extern IPInterface __IFDefault;
+#ifndef SDK_DOLPHIN_IP_2003_09
 extern SOResolver __SOResolver;
+#endif
 extern PPPConf PPPLcpConf;
 extern PPPConf PPPIpcpConf;
 extern PPPConf PPPAuthConf;
