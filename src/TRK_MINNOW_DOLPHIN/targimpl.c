@@ -998,7 +998,7 @@ DSError TRKTargetSupportRequest(void) {
     u32 position;
     TRKEvent event;
 
-    commandId = (u8) gTRKCPUState.Default.GPR[3];
+    commandId = gTRKCPUState.Default.GPR[3];
     if (commandId != DSMSG_ReadFile && commandId != DSMSG_WriteFile && commandId != DSMSG_OpenFile && commandId != DSMSG_CloseFile && commandId != DSMSG_PositionFile) {
         TRKConstructEvent(&event, NUBEVENT_Exception);
         TRKPostEvent(&event);
@@ -1211,23 +1211,39 @@ static inline DSError TRKPPCAccessSpecialReg(void* value, u32* access_func, BOOL
     return DS_NoError;
 }
 
-#pragma dont_inline on
-void ReadFPSCR(register f64* fp)
+asm void ReadFPSCR(register f64*)
 {
-    asm {
-        mffs fp31
-        stfd fp31, 0(fp)
-    }
+#ifdef __MWERKS__ // clang-format off
+    nofralloc
+    stwu r1, -0x40(r1)
+    stfd f31, 0x10(r1)
+    psq_st f31, 0x20(r1), 0, 0
+    mffs f31
+    stfd f31, 0(r3)
+    psq_l f31, 0x20(r1), 0, 0
+    lfd f31, 0x10(r1)
+    addi r1, r1, 0x40
+    blr
+#endif // clang-format on
 }
 
-void WriteFPSCR(register f64* fp)
+asm void WriteFPSCR(register f64*)
 {
-    asm {
-        lfd fp31, 0(fp)
-        mtfsf 255, fp31
-    }
+#ifdef __MWERKS__ // clang-format off
+    nofralloc
+    stwu r1, -0x40(r1)
+    stfd f31, 0x10(r1)
+    psq_st f31, 0x20(r1), 0, 0
+    lfd f31, 0(r3)
+    mtfsf 255, f31
+    psq_l f31, 0x20(r1), 0, 0
+    lfd f31, 0x10(r1)
+    addi r1, r1, 0x40
+    blr
+#endif // clang-format on
 }
-#pragma dont_inline reset
+
+void TRKTargetSetInputPendingPtr(void* ptr) { gTRKState.inputPendingPtr = ptr; }
 
 DSError TRKTargetAccessARAM(u32 data, u32 start, u32* length, BOOL read)
 {
@@ -1249,5 +1265,3 @@ DSError TRKTargetAccessARAM(u32 data, u32 start, u32* length, BOOL read)
     gTRKExceptionStatus = tempExceptionStatus;
     return error;
 }
-
-void TRKTargetSetInputPendingPtr(void* ptr) { gTRKState.inputPendingPtr = ptr; }
