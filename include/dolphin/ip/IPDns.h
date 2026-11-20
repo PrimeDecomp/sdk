@@ -79,6 +79,23 @@ struct DNSInfo {
     // total size: 0x560
     UDPInfo udp; // offset 0x0, size 0xF0
     IPSocket socket; // offset 0xF0, size 0x8
+#ifdef SDK_DOLPHIN_IP_2003_09
+    DNSCallback callback;
+    OSTime rxmit;
+    OSAlarm alarm;
+    u32 flag;
+    u8 query[512];
+    s32 queryLen;
+    u8 response[512];
+    s32 responseLen;
+    vs32* result;
+    u16 id;
+    int func;
+    u8* data;
+    s32 datalen;
+    int ref;
+    OSThreadQueue queueThread;
+#else
     OSTime rxmit; // offset 0xF8, size 0x8
     OSAlarm alarm; // offset 0x100, size 0x28
     u32 flag; // offset 0x128, size 0x4
@@ -95,11 +112,14 @@ struct DNSInfo {
     int retry; // offset 0x554, size 0x4
     u8 dns1[4]; // offset 0x558, size 0x4
     u8 dns2[4]; // offset 0x55C, size 0x4
+#endif
 };
 
 s32 DNSClose(DNSInfo * info /* r31 */);
 s32 DNSOpen(DNSInfo * info /* r1+0x8 */, const unsigned char * addr /* r1+0xC */);
+#ifndef SDK_DOLPHIN_IP_2003_09
 s32 DNSOpen2(DNSInfo * info /* r31 */, const unsigned char * dns1 /* r27 */, const unsigned char * dns2 /* r28 */);
+#endif
 void DNSDumpPacket(DNSHeader* dns);
 void DNSGo(DNSInfo* info, DNSCommand* cmd);
 s32 DNSGetAddrAsync(DNSInfo* info, const char* name, u8* addr, s32 addrLen, DNSCallback callback, s32* result);

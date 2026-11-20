@@ -24,8 +24,12 @@ static u32 Flag = 0;
 static s32 Mtu = 0;
 static s32 Rwin = 0;
 static OSTime R2 = 0;
+#ifdef SDK_DOLPHIN_IP_2003_09
+enum { UdpSendBuff = 1458, UdpRecvBuff = 4096 };
+#else
 static s32 UdpSendBuff = 0;
 static s32 UdpRecvBuff = 0;
+#endif
 
 static OSThreadQueue CleaningQueue;
 static OSThreadQueue PollingQueue;
@@ -218,16 +222,33 @@ static void PutNode(SONode* node) {
     }
 }
 
+#ifdef SDK_DOLPHIN_IP_2003_09
+static SOResolver Resolver;
+#else
 SOResolver __SOResolver;
+#define Resolver __SOResolver
+#endif
 
 int SOSetResolver(const SOInAddr* dns1, const SOInAddr* dns2) {
     if (State != 1) {
         return -39;
     }
 
-    DNSClose(&__SOResolver.info);
-    DNSOpen2(&__SOResolver.info, (const u8*)dns1, (const u8*)dns2);
-    __SOResolver.info.flag |= 0x4;
+#ifdef SDK_DOLPHIN_IP_2003_09
+    memmove(Resolver.dns1, dns1 ? (const u8*)dns1 : IPAddrAny, IP_ALEN);
+    memmove(Resolver.dns2, dns2 ? (const u8*)dns2 : IPAddrAny, IP_ALEN);
+#endif
+    DNSClose(&Resolver.info);
+#ifdef SDK_DOLPHIN_IP_2003_09
+    if (IPNEQ(Resolver.dns1, IPAddrAny)) {
+        DNSOpen(&Resolver.info, Resolver.dns1);
+    } else if (IPNEQ(Resolver.dns2, IPAddrAny)) {
+        DNSOpen(&Resolver.info, Resolver.dns2);
+    }
+#else
+    DNSOpen2(&Resolver.info, (const u8*)dns1, (const u8*)dns2);
+#endif
+    Resolver.info.flag |= 0x4;
     return 0;
 }
 
@@ -240,11 +261,19 @@ int SOGetResolver(SOInAddr* dns1, SOInAddr* dns2) {
         rc = -39;
     } else {
         if (dns1 != NULL) {
-            memcpy(dns1, __SOResolver.info.dns1, sizeof(__SOResolver.info.dns1));
+#ifdef SDK_DOLPHIN_IP_2003_09
+            memcpy(dns1, Resolver.dns1, sizeof(Resolver.dns1));
+#else
+            memcpy(dns1, Resolver.info.dns1, sizeof(Resolver.info.dns1));
+#endif
         }
 
         if (dns2 != NULL) {
-            memcpy(dns2, __SOResolver.info.dns2, sizeof(__SOResolver.info.dns2));
+#ifdef SDK_DOLPHIN_IP_2003_09
+            memcpy(dns2, Resolver.dns2, sizeof(Resolver.dns2));
+#else
+            memcpy(dns2, Resolver.info.dns2, sizeof(Resolver.info.dns2));
+#endif
         }
 
         rc = 0;
@@ -260,16 +289,28 @@ static void LcpHandler(PPPConf* conf) {
 }
 
 static void DhcpHandler(int state) {
+#ifdef SDK_DOLPHIN_IP_2003_09
+    DHCPInfo info;
+#endif
     u8 prev1[4];
     u8 prev2[4];
+#ifndef SDK_DOLPHIN_IP_2003_09
     u8 dns[8];
+#endif
 
     switch (state) {
         case 3:
+#ifdef SDK_DOLPHIN_IP_2003_09
+            DHCPGetStatus(&info);
+#endif
             if (SOGetResolver((SOInAddr*)prev1, (SOInAddr*)prev2) == 0) {
                 if (IPEQ(prev1, IPAddrAny) && IPEQ(prev2, IPAddrAny)) {
+#ifdef SDK_DOLPHIN_IP_2003_09
+                    SOSetResolver((SOInAddr*)info.dns1, (SOInAddr*)info.dns2);
+#else
                     DHCPGetOpt(DHCP_OPT_DNS, dns, sizeof(dns));
                     SOSetResolver((SOInAddr*)dns, (SOInAddr*)&dns[4]);
+#endif
                 } else {
                     SOSetResolver((SOInAddr*)prev1, (SOInAddr*)prev2);
                 }
@@ -301,7 +342,7 @@ void SOInit(void) {
 }
 
 int SOStartup(const SOConfig* config) {
-    SOHostEnt* ent = &__SOResolver.ent;
+    SOHostEnt* ent = &Resolver.ent;
     s32 mtu;
 
     if (config->vendor != 0 || config->version != 0x0100) {
@@ -337,6 +378,7 @@ int SOStartup(const SOConfig* config) {
         R2 = OSSecondsToTicks((OSTime)100); // default timeout is 100 seconds
     }
 
+#ifndef SDK_DOLPHIN_IP_2003_09
     UdpSendBuff = config->udpSendBuff;
     if (UdpSendBuff <= 0) {
         UdpSendBuff = 1472;
@@ -354,6 +396,7 @@ int SOStartup(const SOConfig* config) {
     if (UdpRecvBuff < 556) {
         UdpRecvBuff = 556;
     }
+#endif
 
     OSInitThreadQueue(&CleaningQueue);
     OSInitThreadQueue(&PollingQueue);
@@ -372,7 +415,11 @@ int SOStartup(const SOConfig* config) {
         if (config->reassemblyBuffer) {
             ReassemblyBufferSize = config->reassemblyBuffer;
             ReassemblyBuffer = SOAlloc(7, ReassemblyBufferSize);
+#ifdef SDK_DOLPHIN_IP_2003_09
+            IPSetReassemblyBuffer(ReassemblyBuffer, ReassemblyBufferSize, mtu);
+#else
             IPSetReassemblyBuffer(ReassemblyBuffer, ReassemblyBufferSize, UdpSendBuff + 20);
+#endif
         }
 
         IPClearConfigError(0);
@@ -386,7 +433,11 @@ int SOStartup(const SOConfig* config) {
             }
             PPPLcpConf.callback = &LcpHandler;
         } else if ((Flag & 1) != 0) {
+#ifdef SDK_DOLPHIN_IP_2003_09
+            if (DHCPStartupEx(&DhcpHandler, config->rdhcp) == 0) {
+#else
             if (DHCPStartupEx(&DhcpHandler, config->rdhcp, config->hostName) == 0) {
+#endif
                 LowInitialized = TRUE;
             }
 
@@ -411,15 +462,20 @@ int SOStartup(const SOConfig* config) {
     }
 
     LingerQueue.next = LingerQueue.prev = NULL;
-    memset(&__SOResolver, 0, sizeof(__SOResolver));
-    __SOResolver.zero = NULL;
-    ent->name = __SOResolver.name;
-    ent->aliases = &__SOResolver.zero;
+    memset(&Resolver, 0, sizeof(Resolver));
+    Resolver.zero = NULL;
+    ent->name = Resolver.name;
+    ent->aliases = &Resolver.zero;
     ent->addrType = 2;
     ent->length = 4;
-    ent->addrList = __SOResolver.ptrList;
+    ent->addrList = Resolver.ptrList;
+#ifdef SDK_DOLPHIN_IP_2003_09
+    SOSetResolver(&config->dns1, &config->dns2);
+    State = 1;
+#else
     State = 1;
     SOSetResolver(&config->dns1, &config->dns2);
+#endif
     return 0;
 
 fail:
@@ -484,7 +540,7 @@ int SOCleanup(void) {
         IPAutoStop();
     }
 
-    DNSClose(&__SOResolver.info);
+    DNSClose(&Resolver.info);
 
     if (!LowInitialized) {
         if ((Flag & 2) != 0) {
@@ -512,7 +568,9 @@ int SOCleanup(void) {
     }
 
     if (ReassemblyBuffer != NULL) {
+#ifndef SDK_DOLPHIN_IP_2003_09
         IPSetReassemblyBuffer(NULL, 0, UdpSendBuff + 20);
+#endif
         SOFree(7, ReassemblyBuffer, ReassemblyBufferSize);
     }
 
@@ -603,8 +661,8 @@ int SOSocket(int af, int type, int protocol) {
         case 2:
             udp = (UDPInfo*)SOAlloc(3, sizeof(UDPInfo));
             sendbuf = SOAlloc(4, UdpSendBuff);
-            recvbuf = SOAlloc(5, UdpRecvBuff);
-            rc = (0, UDPOpen(udp, recvbuf, UdpRecvBuff)); // permuter: comma expression fixes release regalloc (type/sendbuf swap)
+            rc = (recvbuf = SOAlloc(5, UdpRecvBuff),
+                  UDPOpen(udp, recvbuf, UdpRecvBuff));
             if (rc >= 0) {
                 rc = UDPSetSendBuff(udp, sendbuf, UdpSendBuff);
             }
@@ -1087,10 +1145,18 @@ int SOConnect(int s, void* sockAddr) {
             if ((node->flag & 0x4) == 0) {
                 rc = TCPConnect(tcp, (IPSocket*)sockAddr);
             } else {
+#ifdef SDK_DOLPHIN_IP_2003_09
+                s32 result;
+                rc = TCPConnectAsync(tcp, (IPSocket*)sockAddr, NULL, &result);
+                if (rc == 0) {
+                    rc = result;
+                }
+#else
                 rc = TCPConnectAsync(tcp, (IPSocket*)sockAddr, NULL, 0);
                 if (rc == 0 && tcp->openCallback != NULL) {
                     rc = -1;
                 }
+#endif
             }
             break;
         default:
@@ -1883,14 +1949,14 @@ SOHostEnt* SOGetHostByName(const char* name) {
         return SOGetHostByAddr(&inaddr, 4, 2);
     }
 
-    strncpy(__SOResolver.name, name, 256);
-    rc = DNSGetAddr(&__SOResolver.info, name, __SOResolver.addrList, sizeof(__SOResolver.addrList));
+    strncpy(Resolver.name, name, 256);
+    rc = DNSGetAddr(&Resolver.info, name, Resolver.addrList, sizeof(Resolver.addrList));
     if (0 <= rc) {
-        for (ptr = __SOResolver.ptrList, addr = __SOResolver.addrList; 0 < rc; rc -= 4, ptr++, addr += 4) {
+        for (ptr = Resolver.ptrList, addr = Resolver.addrList; 0 < rc; rc -= 4, ptr++, addr += 4) {
             *ptr = addr;
         }
         *ptr = NULL;
-        return &__SOResolver.ent;
+        return &Resolver.ent;
     }
 
     return NULL;
@@ -1904,14 +1970,14 @@ SOHostEnt* SOGetHostByAddr(void* addr, int len, int type) {
         return NULL;
     }
 
-    memcpy(__SOResolver.addrList, addr, 4);
-    ptr = __SOResolver.ptrList;
-    *ptr = __SOResolver.addrList;
+    memcpy(Resolver.addrList, addr, 4);
+    ptr = Resolver.ptrList;
+    *ptr = Resolver.addrList;
     ptr++;
     *ptr = NULL;
-    rc = DNSGetName(&__SOResolver.info, (const u8*)addr, __SOResolver.name);
+    rc = DNSGetName(&Resolver.info, (const u8*)addr, Resolver.name);
     if (0 <= rc) {
-        return &__SOResolver.ent;
+        return &Resolver.ent;
     }
 
     return NULL;
