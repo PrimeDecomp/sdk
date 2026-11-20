@@ -11,7 +11,7 @@
 #if __MWERKS__
 #pragma exceptions on
 #endif
-#ifdef RVL_PROTO_RUNTIME
+
 extern "C" {
 
 asm int __setjmp(register unsigned long* env) {
@@ -156,7 +156,6 @@ asm void longjmp(register unsigned long* env, register int value) {
 }
 
 }
-#endif
 
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 

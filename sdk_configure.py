@@ -1382,8 +1382,7 @@ def modules_for(
 
     if prototype:
         cflags_proto_runtime_defines = [
-            # The prototype's runtime folds New into NMWException, the setjmp pair into the
-            # Gecko exception unit and defines getenv in uart_console_io.
+            # The prototype's runtime folds New into NMWException and defines getenv in uart_console_io.
             "-DRVL_PROTO_RUNTIME",
             "-DMSL_OLD_FP_CLASSIFY",
             "-DMSL_NO_INLINE_SQRT",
