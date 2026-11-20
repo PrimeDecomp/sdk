@@ -15,7 +15,7 @@ void __TRK_reset(void);
 void SetUseSerialIO(u8 enable);
 void usr_puts_serial(const char* str);
 
-BOOL IsTRKConnected;
+static BOOL IsTRKConnected;
 
 // Layout of a request as it sits in TRKBuffer::data.
 typedef struct TRKRequest {
@@ -123,13 +123,12 @@ DSError TRKDoReadMemory(TRKBuffer* buffer)
 {
 	TRKRequest* req = (TRKRequest*)buffer->data;
 	DSError error;
-	DSReplyError replyError;
 	u8 tmpBuffer[0x820] __attribute__((aligned(32)));
-	u32 start;
-	u16 msgLength;
-	u32 length;
-	u8 options;
 	BOOL aram;
+	u16 msgLength;
+	u32 start;
+	u8 options;
+	u32 length;
 
 	start     = req->u.mem.start;
 	msgLength = req->u.mem.length;
@@ -170,6 +169,8 @@ DSError TRKDoReadMemory(TRKBuffer* buffer)
 	}
 
 	if (error != DS_NoError) {
+		DSReplyError replyError;
+
 		switch (error) {
 		case DS_CWDSException:
 			replyError = DSREPLY_CWDSException;
@@ -206,10 +207,10 @@ DSError TRKDoWriteMemory(TRKBuffer* buffer)
 	DSError error;
 	DSReplyError replyError;
 	u8 tmpBuffer[0x820] __attribute__((aligned(32)));
-	u32 start;
 	u16 msgLength;
-	u32 length;
+	u32 start;
 	u8 options;
+	u32 length;
 
 	start     = req->u.mem.start;
 	msgLength = req->u.mem.length;
