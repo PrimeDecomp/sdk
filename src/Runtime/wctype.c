@@ -1,5 +1,32 @@
 #include <locale.h>
 
+#ifdef RVL_PROTO_RUNTIME
+#include <ctype.h>
+#include <wchar.h>
+
+#define ctrl __control_char
+#define motn __motion_char
+#define spac __space_char
+#define punc __punctuation
+#define lowc __lower_case
+#define uppc __upper_case
+#define dhex (__hex_digit | __digit)
+#define uhex (__hex_digit | __upper_case)
+#define lhex (__hex_digit | __lower_case)
+
+unsigned short __wctype_map[256] = {
+    // clang-format off
+    ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, motn, motn, motn, motn, motn, ctrl, ctrl,
+    ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl, ctrl,
+    spac, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc, punc,
+    dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, dhex, punc, punc, punc, punc, punc, punc,
+    punc, uhex, uhex, uhex, uhex, uhex, uhex, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc,
+    uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, uppc, punc, punc, punc, punc, punc,
+    punc, lhex, lhex, lhex, lhex, lhex, lhex, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc,
+    lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, lowc, punc, punc, punc, punc, ctrl,
+    // clang-format on
+};
+#else
 // Guessed name
 const unsigned short __wctype_mapC[256] = {
     0x0004, 0x0004, 0x0004, 0x0004, 0x0004, 0x0004, 0x0004, 0x0004, 0x0004, 0x0106, 0x0104, 0x0104,
@@ -25,9 +52,14 @@ const unsigned short __wctype_mapC[256] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0000,
 };
+#endif
 
+#ifdef RVL_PROTO_RUNTIME
+unsigned short __wlower_map[256] = {
+#else
 // Guessed name
 const unsigned short __wlower_mapC[256] = {
+#endif
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B,
     0x000C, 0x000D, 0x000E, 0x000F, 0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x0015, 0x0016, 0x0017,
     0x0018, 0x0019, 0x001A, 0x001B, 0x001C, 0x001D, 0x001E, 0x001F, 0x0020, 0x0021, 0x0022, 0x0023,
@@ -52,8 +84,12 @@ const unsigned short __wlower_mapC[256] = {
     0x00FC, 0x00FD, 0x00FE, 0x00FF,
 };
 
+#ifdef RVL_PROTO_RUNTIME
+unsigned short __wupper_map[256] = {
+#else
 // Guessed name
 const unsigned short __wupper_mapC[256] = {
+#endif
     0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000A, 0x000B,
     0x000C, 0x000D, 0x000E, 0x000F, 0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x0015, 0x0016, 0x0017,
     0x0018, 0x0019, 0x001A, 0x001B, 0x001C, 0x001D, 0x001E, 0x001F, 0x0020, 0x0021, 0x0022, 0x0023,
