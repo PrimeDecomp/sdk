@@ -39,7 +39,7 @@ unsigned long wcstoul(const wchar_t* str, wchar_t** end, int base) {
   return value;
 }
 
-unsigned long __wcstoul(int base, int max_width,
+unsigned long __wcstoul(int initial_base, int max_width,
                        wint_t (*read_proc)(void*, wint_t, int), void* read_arg,
                        int* chars_scanned, int* negative, int* overflow) {
   int scan_state = start;
@@ -47,6 +47,7 @@ unsigned long __wcstoul(int base, int max_width,
   unsigned long value = 0;
   unsigned long value_max = 0;
   wint_t c;
+  int base = initial_base;
 
   *negative = *overflow = 0;
   if (base < 0 || base == 1 || base > 36 || max_width < 1) {
