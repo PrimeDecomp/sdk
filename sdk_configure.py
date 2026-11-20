@@ -1439,7 +1439,7 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/mpc_7xx_603e.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/dolphin_trk.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/main_TRK.c"),
-                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/dolphin_trk_glue.c"),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/dolphin_trk_glue.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/targcont.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/target_options.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/mslsupp.c"),
