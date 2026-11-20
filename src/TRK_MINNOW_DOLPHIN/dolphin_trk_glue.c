@@ -52,51 +52,10 @@ lbl_80371C20:
 #endif // clang-format on
 }
 
-void TRKUARTInterruptHandler() { }
-
-void InitializeProgramEndTrap(void)
+void TRKEXICallBack(__OSInterrupt param_0, OSContext* ctx)
 {
-    static const u32 EndofProgramInstruction = 0x00454E44;
-    u8* ppcHalt = (u8*)PPCHalt;
-
-    TRK_memcpy(ppcHalt + 4, &EndofProgramInstruction, 4);
-    ICInvalidateRange(ppcHalt + 4, 4);
-    DCFlushRange(ppcHalt + 4, 4);
-}
-
-void TRK_board_display(char* str) { OSReport("%s\n", str); }
-
-void UnreserveEXI2Port(void) { gDBCommTable.pre_continue_func(); }
-
-void ReserveEXI2Port(void) { gDBCommTable.post_stop_func(); }
-
-UARTError TRKWriteUARTN(const void* bytes, u32 length)
-{
-    int writeErr = gDBCommTable.write_func(bytes, length);
-    return writeErr == 0 ? 0 : -1;
-}
-
-UARTError TRKReadUARTN(void* bytes, u32 length)
-{
-    int readErr = gDBCommTable.read_func(bytes, length);
-    return readErr == 0 ? 0 : -1;
-}
-
-int TRKPollUART(void) { return gDBCommTable.peek_func(); }
-
-void EnableEXI2Interrupts(void)
-{
-    if (!TRK_Use_BBA && gDBCommTable.init_interrupts_func != NULL) {
-        gDBCommTable.init_interrupts_func();
-    }
-}
-
-DSError TRKInitializeIntDrivenUART(u32 param_0, u32 param_1, u32 param_2,
-                                   volatile u8** param_3)
-{
-    gDBCommTable.initialize_func(param_3, TRKEXICallBack);
-    gDBCommTable.open_func();
-    return DS_NoError;
+    OSEnableScheduler();
+    TRKLoadContext(ctx, 0x500);
 }
 
 int InitMetroTRKCommTable(int hwId)
@@ -158,8 +117,49 @@ int InitMetroTRKCommTable(int hwId)
     return result;
 }
 
-void TRKEXICallBack(__OSInterrupt param_0, OSContext* ctx)
+DSError TRKInitializeIntDrivenUART(u32 param_0, u32 param_1, u32 param_2,
+                                   volatile u8** param_3)
 {
-    OSEnableScheduler();
-    TRKLoadContext(ctx, 0x500);
+    gDBCommTable.initialize_func(param_3, TRKEXICallBack);
+    gDBCommTable.open_func();
+    return DS_NoError;
 }
+
+void EnableEXI2Interrupts(void)
+{
+    if (!TRK_Use_BBA && gDBCommTable.init_interrupts_func != NULL) {
+        gDBCommTable.init_interrupts_func();
+    }
+}
+
+int TRKPollUART(void) { return gDBCommTable.peek_func(); }
+
+UARTError TRKReadUARTN(void* bytes, u32 length)
+{
+    int readErr = gDBCommTable.read_func(bytes, length);
+    return readErr == 0 ? 0 : -1;
+}
+
+UARTError TRKWriteUARTN(const void* bytes, u32 length)
+{
+    int writeErr = gDBCommTable.write_func(bytes, length);
+    return writeErr == 0 ? 0 : -1;
+}
+
+void ReserveEXI2Port(void) { gDBCommTable.post_stop_func(); }
+
+void UnreserveEXI2Port(void) { gDBCommTable.pre_continue_func(); }
+
+void TRK_board_display(char* str) { OSReport("%s\n", str); }
+
+void InitializeProgramEndTrap(void)
+{
+    static const u32 EndofProgramInstruction = 0x00454E44;
+    u8* ppcHalt = (u8*)PPCHalt;
+
+    TRK_memcpy(ppcHalt + 4, &EndofProgramInstruction, 4);
+    ICInvalidateRange(ppcHalt + 4, 4);
+    DCFlushRange(ppcHalt + 4, 4);
+}
+
+void TRKUARTInterruptHandler() { }
