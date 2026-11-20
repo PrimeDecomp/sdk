@@ -222,17 +222,19 @@ const char* std::exception::what() const throw() { return "exception"; }
 
 void* operator new(size_t size) {
   void* p;
-
   if (size == 0)
     size = 4;
   for (;;) {
     p = malloc(size);
     if (p)
-      return p;
-    if (!__new_handler)
+      break;
+    std::new_handler handler = __new_handler;
+    if (handler)
+      handler();
+    else
       throw std::bad_alloc();
-    __new_handler();
   }
+  return p;
 }
 
 void operator delete(void* ptr) throw() {
