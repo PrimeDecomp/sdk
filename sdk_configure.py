@@ -1393,6 +1393,12 @@ def modules_for(
             *cflags_proto_runtime_defines,
             "-inline auto",
         ]
+        cflags_proto_exceptions = [
+            *cflags_runtime_common,
+            *cflags_proto_runtime_defines,
+            "-RTTI on",
+            "-str nopool",
+        ]
         libs = [
             lib
             for lib in libs
@@ -1463,11 +1469,20 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "Runtime/__va_arg.c"),
                     Object(MatchingFor("PROTO"), "Runtime/global_destructor_chain.c"),
                     Object(MatchingFor("PROTO"), "Runtime/CPlusLibPPC.cpp"),
-                    Object(NonMatching, "Runtime/NMWException.cp", cflags=cflags_proto_runtime_early),
+                    Object(
+                        NonMatching,
+                        "Runtime/NMWException.cp",
+                        cflags=[*cflags_proto_exceptions, "-inline auto"],
+                    ),
                     Object(MatchingFor("PROTO"), "Runtime/ptmf.c"),
-                    Object(NonMatching, "Runtime/runtime.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/runtime.c"),
                     Object(MatchingFor("PROTO"), "Runtime/__init_cpp_exceptions.cpp"),
-                    Object(NonMatching, "Runtime/Gecko_ExceptionPPC.cp", cflags=cflags_proto_runtime_early),
+                    Object(
+                        MatchingFor("PROTO"),
+                        "Runtime/Gecko_ExceptionPPC.cp",
+                        cflags=[*cflags_proto_exceptions, "-inline deferred,auto"],
+                        extab_padding=[0x02, 0x55],
+                    ),
                     Object(MatchingFor("PROTO"), "Runtime/abort_exit.c"),
                     Object(MatchingFor("PROTO"), "Runtime/alloc.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_files.c"),
