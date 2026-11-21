@@ -56,6 +56,15 @@ typedef struct TRKReply {
 	/* 0x09 */ u8 _09[0x37];
 } TRKReply;
 
+static inline DSError TRKSendACK(TRKBuffer* buffer)
+{
+	DSError error;
+	MWTRACE(1, "SendACK : Calling MessageSend\n");
+	error = TRKMessageSend((TRK_Msg*)buffer);
+	MWTRACE(1, "MessageSend err : %ld\n", error);
+	return error;
+}
+
 static inline void TRKSendReply(u8 error)
 {
 	TRKReply reply;
@@ -195,10 +204,7 @@ DSError TRKDoReadMemory(TRKBuffer* buffer)
 		return DS_NoError;
 	}
 
-	MWTRACE(1, "SendACK : Calling MessageSend\n");
-	error = TRKMessageSend((TRK_Msg*)buffer);
-	MWTRACE(1, "MessageSend err : %ld\n", error);
-	return error;
+	return TRKSendACK(buffer);
 }
 
 DSError TRKDoWriteMemory(TRKBuffer* buffer)
@@ -272,10 +278,7 @@ DSError TRKDoWriteMemory(TRKBuffer* buffer)
 		return DS_NoError;
 	}
 
-	MWTRACE(1, "SendACK : Calling MessageSend\n");
-	error = TRKMessageSend((TRK_Msg*)buffer);
-	MWTRACE(1, "MessageSend err : %ld\n", error);
-	return error;
+	return TRKSendACK(buffer);
 }
 
 DSError TRKDoReadRegisters(TRKBuffer* buffer)
@@ -350,10 +353,7 @@ DSError TRKDoReadRegisters(TRKBuffer* buffer)
 		return DS_NoError;
 	}
 
-	MWTRACE(1, "SendACK : Calling MessageSend\n");
-	error = TRKMessageSend((TRK_Msg*)buffer);
-	MWTRACE(1, "MessageSend err : %ld\n", error);
-	return error;
+	return TRKSendACK(buffer);
 }
 
 DSError TRKDoWriteRegisters(TRKBuffer* buffer)
@@ -441,10 +441,7 @@ DSError TRKDoWriteRegisters(TRKBuffer* buffer)
 		return DS_NoError;
 	}
 
-	MWTRACE(1, "SendACK : Calling MessageSend\n");
-	error = TRKMessageSend((TRK_Msg*)buffer);
-	MWTRACE(1, "MessageSend err : %ld\n", error);
-	return error;
+	return TRKSendACK(buffer);
 }
 
 static DSError TRKDoFlushCache(TRKBuffer* buffer)
