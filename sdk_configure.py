@@ -1406,10 +1406,9 @@ def modules_for(
         ]
         libs += [
             {
-                # The MetroTRK build of Mario Party 4, whose sources and headers it borrows.
                 "lib": "TRK_MINNOW_DOLPHIN",
                 "src_dir": src_dir,
-                "mw_version": "GC/1.3",
+                "mw_version": "GC/1.3.2",
                 "cflags": [
                     *cflags_base,
                     "-char signed",
@@ -1426,10 +1425,10 @@ def modules_for(
                 "objects": [
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/mainloop.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/nubevent.c"),
-                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/nubinit.c"),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/nubinit.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/msg.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/msgbuf.c"),
-                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/serpoll.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/serpoll.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/usr_put.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/dispatch.c"),
                     Object(NonMatching, "TRK_MINNOW_DOLPHIN/msghndlr.c"),
@@ -1449,9 +1448,9 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/target_options.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/mslsupp.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/udp_cc.c"),
-                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/ddh_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/ddh_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/circle_buffer.c"),
-                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/gdev_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/gdev_cc.c", extra_cflags=["-sdata 8", "-sdata2 8", "-sdatathreshold 8"]),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/MWTrace.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/critical_section.c"),
 
