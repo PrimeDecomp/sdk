@@ -134,6 +134,7 @@ DSError TRKDoReadMemory(TRKBuffer* buffer)
 	DSError error;
 	u8 tmpBuffer[0x820] __attribute__((aligned(32)));
 	BOOL aram;
+	DSReplyError replyError;
 	u16 msgLength;
 	u32 start;
 	u8 options;
@@ -178,8 +179,6 @@ DSError TRKDoReadMemory(TRKBuffer* buffer)
 	}
 
 	if (error != DS_NoError) {
-		DSReplyError replyError;
-
 		switch (error) {
 		case DS_CWDSException:
 			replyError = DSREPLY_CWDSException;
