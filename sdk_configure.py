@@ -1459,7 +1459,7 @@ def modules_for(
             {
                 "lib": "Runtime",
                 "src_dir": src_dir,
-                "mw_version": "GC/1.3.2",
+                "mw_version": "GC/2.7",
                 "cflags": [*cflags_runtime, *cflags_proto_runtime_defines],
                 "progress_category": "sdk",
                 "objects": [
