@@ -33,24 +33,6 @@ enum scan_states {
 #define FETCH() (count++, read_proc(read_arg, 0, __GetChar))
 #define UNFETCH(c) read_proc(read_arg, c, __UngetChar)
 
-double wcstod(const wchar_t* str, wchar_t** end) {
-  long double value, abs_value;
-  int count, overflow;
-  __wInStrCtrl input;
-  input.NextChar = str;
-  input.NullCharDetected = 0;
-
-  value = __wcstold(INT_MAX, __wStringRead, &input, &count, &overflow);
-  if (end != NULL) {
-    *end = (wchar_t*)str + count;
-  }
-  abs_value = fabs(value);
-  if (overflow || (value != 0.0 && (abs_value < DBL_MIN || abs_value > DBL_MAX))) {
-    errno = ERANGE;
-  }
-  return value;
-}
-
 long double __wcstold(int max_width, wint_t (*read_proc)(void*, wint_t, int), void* read_arg,
                      int* chars_scanned, int* overflow) {
   int scan_state = start;
@@ -250,4 +232,22 @@ long double __wcstold(int max_width, wint_t (*read_proc)(void*, wint_t, int), vo
     result = -result;
   }
   return result;
+}
+
+double wcstod(const wchar_t* str, wchar_t** end) {
+  long double value, abs_value;
+  int count, overflow;
+  __wInStrCtrl input;
+  input.NextChar = str;
+  input.NullCharDetected = 0;
+
+  value = __wcstold(INT_MAX, __wStringRead, &input, &count, &overflow);
+  if (end != NULL) {
+    *end = (wchar_t*)str + count;
+  }
+  abs_value = fabs(value);
+  if (overflow || (value != 0.0 && (abs_value < DBL_MIN || abs_value > DBL_MAX))) {
+    errno = ERANGE;
+  }
+  return value;
 }

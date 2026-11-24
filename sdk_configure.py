@@ -1386,11 +1386,6 @@ def modules_for(
             "-DMSL_OLD_FP_CLASSIFY",
             "-DMSL_NO_INLINE_SQRT",
         ]
-        cflags_proto_runtime_early = [
-            *cflags_runtime_common,
-            *cflags_proto_runtime_defines,
-            "-inline auto",
-        ]
         cflags_proto_runtime = [*cflags_runtime, *cflags_proto_runtime_defines]
         cflags_proto_exceptions = [
             *cflags_proto_runtime,
@@ -1502,12 +1497,12 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "Runtime/string.c"),
                     Object(MatchingFor("PROTO"), "Runtime/float.c"),
                     Object(MatchingFor("PROTO"), "Runtime/strtold.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/strtoul.c", cflags=cflags_proto_runtime_early),
-                    Object(MatchingFor("PROTO"), "Runtime/wstrtold.c", cflags=cflags_proto_runtime_early),
-                    Object(MatchingFor("PROTO"), "Runtime/wstrtoul.c", cflags=cflags_proto_runtime_early),
+                    Object(MatchingFor("PROTO"), "Runtime/strtoul.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/wstrtold.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/wstrtoul.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wctype.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/wmem.c", cflags=cflags_proto_runtime_early),
-                    Object(NonMatching, "Runtime/wprintf.c", cflags=cflags_proto_runtime_early),
+                    Object(MatchingFor("PROTO"), "Runtime/wmem.c"),
+                    Object(NonMatching, "Runtime/wprintf.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wscanf.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wstring.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wchar_io.c"),
