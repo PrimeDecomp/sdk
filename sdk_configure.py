@@ -1474,6 +1474,7 @@ def modules_for(
                     ),
                     Object(MatchingFor("PROTO"), "Runtime/abort_exit.c"),
                     Object(MatchingFor("PROTO"), "Runtime/alloc.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/errno.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_files.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_fp.c"),
                     Object(MatchingFor("PROTO"), "Runtime/arith.c"),

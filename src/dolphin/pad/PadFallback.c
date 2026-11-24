@@ -1,5 +1,7 @@
 #include <dolphin/pad.h>
 
+u32 __PADSpec;
+
 // PADRecalibrate compatibility fallback; the reset path in main.cpp still calls it as Echoes
 // does, but it does nothing here.
 BOOL PADRecalibrate(u32 mask) { return FALSE; }
