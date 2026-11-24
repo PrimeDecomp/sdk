@@ -525,7 +525,7 @@ static wchar_t* float2wstr(long double num, wchar_t* buff, print_format format) 
 
     q = (char*)dec.sig.text + dec.sig.length;
 
-    for (n = format.precision - frac_digits; n > 0; --n)
+    for (n = 0; n < format.precision - frac_digits; ++n)
       *--p2 = '0';
 
     for (digits = 0; digits < frac_digits && digits < dec.sig.length; ++digits)
@@ -726,7 +726,6 @@ static wchar_t* long2wstr(s32 num, wchar_t* buff, print_format format) {
   u32 unsigned_num, base;
   wchar_t* p;
   int n, digits;
-  wchar_t conversion_char;
   int precision;
   int minus = 0;
   unsigned_num = num;
@@ -768,8 +767,6 @@ static wchar_t* long2wstr(s32 num, wchar_t* buff, print_format format) {
     break;
   }
 
-  conversion_char = format.conversion_char;
-
   do {
     n = unsigned_num % base;
     unsigned_num /= base;
@@ -779,7 +776,7 @@ static wchar_t* long2wstr(s32 num, wchar_t* buff, print_format format) {
     } else {
       n -= 10;
 
-      if (conversion_char == 'x') {
+      if (format.conversion_char == 'x') {
         n += 'a';
       } else {
         n += 'A';

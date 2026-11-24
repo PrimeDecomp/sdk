@@ -98,7 +98,8 @@ static int is_utf8_complete(const char* s, size_t n);
 
 int mbtowc(wchar_t *dst, const char *src, size_t n) {
 #if defined(RVL_PROTO_RUNTIME)
-  wchar_t wide_char = 0;
+  unsigned int decoded = 0;
+  wchar_t wide_char;
   int bytes, expected;
   const unsigned char* p;
 
@@ -114,13 +115,14 @@ int mbtowc(wchar_t *dst, const char *src, size_t n) {
   p = (const unsigned char*)src;
   switch (bytes) {
   case 3:
-    wide_char = (*p++ & 0x0f) << 6;
+    decoded = (*p++ & 0x0f) << 6;
   case 2:
-    wide_char = (wide_char | (*p++ & 0x3f)) << 6;
+    decoded = (decoded | (*p++ & 0x3f)) << 6;
   case 1:
-    wide_char |= *p & 0x7f;
+    decoded |= *p & 0x7f;
   }
 
+  wide_char = (wchar_t)decoded;
   if (!wide_char)
     expected = 0;
   else if (wide_char < 0x80)
@@ -288,23 +290,24 @@ size_t wcstombs(char* s, const wchar_t* pwcs, size_t n) {
 #if defined(RVL_PROTO_RUNTIME)
 size_t mbstowcs(wchar_t* dest, const char* src, size_t count) {
   size_t remaining = strlen(src);
-  int written = 0;
+  int written;
 
   if (dest) {
     const char* p = src;
-    while (written < count) {
+    for (written = 0; written < count; ++written) {
       if (*p) {
         int result = mbtowc(dest++, p, remaining);
         if (result <= 0)
           return -1;
         p += result;
         remaining -= result;
-        ++written;
       } else {
         *dest = 0;
         break;
       }
     }
+  } else {
+    written = 0;
   }
   return written;
 }
