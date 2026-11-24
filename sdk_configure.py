@@ -1382,7 +1382,6 @@ def modules_for(
 
     if prototype:
         cflags_proto_runtime_defines = [
-            # The prototype's runtime folds New into NMWException and defines getenv in uart_console_io.
             "-DRVL_PROTO_RUNTIME",
             "-DMSL_OLD_FP_CLASSIFY",
             "-DMSL_NO_INLINE_SQRT",
@@ -1392,9 +1391,9 @@ def modules_for(
             *cflags_proto_runtime_defines,
             "-inline auto",
         ]
+        cflags_proto_runtime = [*cflags_runtime, *cflags_proto_runtime_defines]
         cflags_proto_exceptions = [
-            *cflags_runtime_common,
-            *cflags_proto_runtime_defines,
+            *cflags_proto_runtime,
             "-RTTI on",
             "-str nopool",
         ]
@@ -1460,25 +1459,22 @@ def modules_for(
                 "lib": "Runtime",
                 "src_dir": src_dir,
                 "mw_version": "GC/2.7",
-                "cflags": [*cflags_runtime, *cflags_proto_runtime_defines],
+                "cflags": cflags_proto_runtime,
                 "progress_category": "sdk",
                 "objects": [
                     Object(MatchingFor("PROTO"), "Runtime/__mem.c"),
                     Object(MatchingFor("PROTO"), "Runtime/__va_arg.c"),
                     Object(MatchingFor("PROTO"), "Runtime/global_destructor_chain.c"),
                     Object(MatchingFor("PROTO"), "Runtime/CPlusLibPPC.cpp"),
-                    Object(
-                        NonMatching,
-                        "Runtime/NMWException.cp",
-                        cflags=[*cflags_proto_exceptions, "-inline auto"],
-                    ),
+                    Object(NonMatching, "Runtime/New.cp", cflags=cflags_proto_exceptions),
+                    Object(MatchingFor("PROTO"), "Runtime/NMWException.cp"),
                     Object(MatchingFor("PROTO"), "Runtime/ptmf.c"),
                     Object(MatchingFor("PROTO"), "Runtime/runtime.c"),
                     Object(MatchingFor("PROTO"), "Runtime/__init_cpp_exceptions.cpp"),
                     Object(
                         MatchingFor("PROTO"),
                         "Runtime/Gecko_ExceptionPPC.cp",
-                        cflags=[*cflags_proto_exceptions, "-inline deferred,auto"],
+                        cflags=cflags_proto_exceptions,
                         extab_padding=[0x02, 0x55],
                     ),
                     Object(MatchingFor("PROTO"), "Runtime/abort_exit.c"),
