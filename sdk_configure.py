@@ -20,10 +20,7 @@ def modules_for(
     sdk_dir: str = "extern/sdk",
     non_matching: bool = False,
     prototype: bool = False,
-    prototype_split_objects: bool = False,
 ) -> list[dict]:
-    # Source linkage for these objects requires the prototype's separate Runtime
-    # allocation and errno splits and the PadFallback state split.
     src_dir = f"{sdk_dir}/src"
     SDK = sdk_versions(sdk_dir)
     # sdk_version is one of the SDK_VERSION_* values of SDKVersion.h, chosen by the game's
@@ -1057,7 +1054,7 @@ def modules_for(
             [
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04"), "dolphin/pad/PadClamp.c"),
                 # Only the Corruption prototype's splits name these so far.
-                Object(prototype_split_objects and MatchingFor("PROTO"), "dolphin/pad/PadFallback.c"),
+                Object(MatchingFor("PROTO"), "dolphin/pad/PadFallback.c"),
                 Object(
                     MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02", "DOLPHIN_2004_04", "RVL_2008_01"),
                     "dolphin/pad/Pad.c",
@@ -1465,7 +1462,7 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "Runtime/global_destructor_chain.c"),
                     Object(MatchingFor("PROTO"), "Runtime/CPlusLibPPC.cpp"),
                     Object(NonMatching, "Runtime/New.cp", cflags=cflags_proto_exceptions),
-                    Object(prototype_split_objects and MatchingFor("PROTO"), "Runtime/NMWException.cp"),
+                    Object(MatchingFor("PROTO"), "Runtime/NMWException.cp"),
                     Object(MatchingFor("PROTO"), "Runtime/ptmf.c"),
                     Object(MatchingFor("PROTO"), "Runtime/runtime.c"),
                     Object(MatchingFor("PROTO"), "Runtime/__init_cpp_exceptions.cpp"),
@@ -1477,7 +1474,7 @@ def modules_for(
                     ),
                     Object(MatchingFor("PROTO"), "Runtime/abort_exit.c"),
                     Object(MatchingFor("PROTO"), "Runtime/alloc.c"),
-                    Object(prototype_split_objects and MatchingFor("PROTO"), "Runtime/errno.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/errno.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_files.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_fp.c"),
                     Object(MatchingFor("PROTO"), "Runtime/arith.c"),
