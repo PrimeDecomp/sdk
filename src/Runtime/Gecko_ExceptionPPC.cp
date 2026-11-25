@@ -161,16 +161,11 @@ asm void longjmp(register unsigned long* env, register int value) {
 
 #define RETURN_ADDRESS 4
 
+#include "Exception.hpp"
+
 namespace std {
 void terminate();
 void unexpected();
-
-class exception {
-public:
-  exception() throw() {}
-  virtual ~exception() throw() {}
-  virtual const char* what() const throw() { return "exception"; }
-};
 
 class bad_exception : public exception {
 public:

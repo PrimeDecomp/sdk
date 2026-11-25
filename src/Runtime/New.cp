@@ -2,31 +2,24 @@
 
 #pragma exceptions on
 
+#include "Exception.hpp"
+
 namespace std {
-class exception {
-public:
-  exception() throw() {}
-  virtual ~exception() throw();
-  virtual const char* what() const throw();
-};
 typedef void (*new_handler)();
+new_handler __new_handler;
 
 class bad_alloc : public exception {
 public:
   bad_alloc() throw() {}
-  virtual ~bad_alloc() throw();
-  virtual const char* what() const throw();
+  bad_alloc(const bad_alloc&) throw() {}
+  virtual ~bad_alloc() throw() {}
+  virtual const char* what() const throw() { return "bad_alloc"; }
 };
+struct nothrow_t {};
+nothrow_t nothrow;
 } // namespace std
 
-// Guessed name: the global new-handler slot, zero-initialised.
-std::new_handler __new_handler;
-
-const char* std::exception::what() const throw() { return "exception"; }
-
-const char* std::bad_alloc::what() const throw() { return "bad_alloc"; }
-
-void* operator new(size_t size) {
+__declspec(weak) void* operator new(size_t size) throw(std::bad_alloc) {
   void* p;
   if (size == 0)
     size = 4;
@@ -34,7 +27,7 @@ void* operator new(size_t size) {
     p = malloc(size);
     if (p)
       break;
-    std::new_handler handler = __new_handler;
+    std::new_handler handler = std::__new_handler;
     if (handler)
       handler();
     else
@@ -43,11 +36,33 @@ void* operator new(size_t size) {
   return p;
 }
 
-void operator delete(void* ptr) throw() {
+__declspec(weak) void* operator new(size_t size, const std::nothrow_t&) throw() {
+  try {
+    return operator new(size);
+  } catch (...) {
+    return 0;
+  }
+}
+
+__declspec(weak) void operator delete(void* ptr) throw() {
   if (ptr)
     free(ptr);
 }
 
-std::exception::~exception() throw() {}
+__declspec(weak) void* operator new[](size_t size) throw(std::bad_alloc) {
+  return operator new(size);
+}
 
-std::bad_alloc::~bad_alloc() throw() {}
+__declspec(weak) void* operator new[](size_t size, const std::nothrow_t& tag) throw() {
+  return operator new(size, tag);
+}
+
+__declspec(weak) void operator delete[](void* ptr) throw() { operator delete(ptr); }
+
+__declspec(weak) void operator delete(void* ptr, const std::nothrow_t&) throw() {
+  operator delete(ptr);
+}
+
+__declspec(weak) void operator delete[](void* ptr, const std::nothrow_t&) throw() {
+  operator delete(ptr);
+}

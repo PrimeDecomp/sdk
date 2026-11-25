@@ -292,7 +292,7 @@ def modules_for(
                     "Runtime/CPlusLibPPC.cpp",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2004_04"),
+                    MatchingFor("DOLPHIN_2004_04", "PROTO"),
                     "Runtime/New.cp",
                 ),
                 Object(
