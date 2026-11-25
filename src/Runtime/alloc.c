@@ -1,3 +1,4 @@
+#include <msl_c_version.h>
 #include <SDKVersion.h>
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #include <critical_regions.h>
@@ -126,7 +127,7 @@ static inline void SubBlock_split(SubBlock *ths, unsigned long size) {
 
 static void Block_link(Block *, SubBlock *);
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 static void Block_construct(Block *ths, unsigned long size) {
 #else
 static inline void Block_construct(Block *ths, unsigned long size) {
@@ -148,7 +149,7 @@ static SubBlock *Block_subBlock(Block *ths, unsigned long size) {
   unsigned long max_size;
 
   if (start == 0) {
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
     ths->max_size = 0;
 #endif
     return 0;
@@ -387,7 +388,7 @@ static inline void FixSubBlock_construct(FixSubBlock *sb, FixBlock *block, FixSu
   sb->next_ = next;
 }
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 static void FixBlock_construct(FixBlock *ths, FixBlock *prev, FixBlock *next, unsigned long pool,
                                unsigned long size) {
   unsigned long stride = fix_pool_sizes[pool] + 4;
@@ -474,7 +475,7 @@ void *allocate_from_fixed_pools(__mem_pool_obj *pool_obj, unsigned long size) {
       fs->head_ = b;
       fs->tail_ = b;
     }
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
     FixBlock_construct(b, fs->tail_, fs->head_, i, size - sizeof(FixBlock));
 #else
     FixBlock_construct(b, fs->tail_, fs->head_, i, (char *)b + sizeof(FixBlock),
@@ -506,7 +507,7 @@ static inline __mem_pool *get_malloc_pool(void) {
   return &protopool;
 }
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 static
 #endif
 void deallocate_from_fixed_pools(__mem_pool_obj *pool_obj, void *ptr, unsigned long size) {
@@ -565,7 +566,7 @@ void deallocate_from_fixed_pools(__mem_pool_obj *pool_obj, void *ptr, unsigned l
   }
 }
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 static void *__pool_alloc(__mem_pool *pool, unsigned long size) {
 #else
 static inline void *__pool_alloc(__mem_pool *pool, unsigned long size) {
@@ -604,7 +605,7 @@ void __pool_free(__mem_pool *pool, void *ptr) {
   }
 }
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 // Guessed name
 static void *__pool_calloc(__mem_pool *pool, unsigned long size) {
   void *ptr = __pool_alloc(pool, size);
@@ -633,7 +634,7 @@ void free(void *ptr) {
 #endif
 
 void *calloc(size_t nmemb, size_t size) {
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
   void *ptr;
   __begin_critical_region(malloc_pool_access);
   ptr = __pool_calloc(get_malloc_pool(), size * nmemb);

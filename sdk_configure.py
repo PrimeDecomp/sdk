@@ -37,7 +37,6 @@ def modules_for(
 
     IPA_FILE = flags_if(is_wii, "-ipa file")
     CHAR_UNSIGNED = flags_if(not is_prime, "-char unsigned")
-    CPP_EXCEPTIONS = flags_if(not is_prime, "-RTTI on", "-Cpp_exceptions on")
     # Prime contracts multiply-adds in its Dolphin libraries, except in a few objects and mtx.
     FP_CONTRACT_OFF = flags_if(is_prime, "-fp_contract off")
     # Prime builds its Dolphin and TRK libraries as Shift-JIS source, but not the runtime ones.
@@ -56,7 +55,6 @@ def modules_for(
 
     # Metrowerks library flags
     wii_runtime = is_wii and not prototype
-    runtime_unpooled_strings = not is_prime and not is_wii
     cflags_runtime_common = [
         *cflags_base,
         "-use_lmw_stmw on",
@@ -70,6 +68,11 @@ def modules_for(
         *cflags_runtime_common,
         "-inline auto" if wii_runtime else "-inline deferred,auto",
         *flags_if(wii_runtime, "-func_align 4"),
+    ]
+    cflags_msl = [
+        *cflags_runtime,
+        *flags_if(not is_prime, "-DMSL_OLD_FP_CLASSIFY", "-DMSL_NO_INLINE_SQRT"),
+        *flags_if(not is_prime and not is_wii, "-D__MSL__=MSL_C_VERSION_8_0"),
     ]
     runtime_mw_version = per_sdk(prime="GC/1.3", echoes="GC/2.7", wii="Wii/1.0RC1")
 
@@ -270,56 +273,53 @@ def modules_for(
             "src_dir": src_dir,
             "mw_version": runtime_mw_version,
             "shift_jis": NOT_SJIS,
-            "cflags": [*cflags_runtime, *flags_if(runtime_unpooled_strings, "-str nopool")],
+            "cflags": [
+                *cflags_runtime,
+                *flags_if(not is_prime, "-RTTI on", "-str nopool"),
+            ],
             "progress_category": "sdk",
             "objects": [
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06", "PROTO"),
                     "Runtime/__va_arg.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01", "RVL_2008_12"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01", "RVL_2008_12", "PROTO"),
                     "Runtime/global_destructor_chain.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "Runtime/CPlusLibPPC.cpp",
                 ),
                 Object(
-                    MatchingFor("DOLPHIN_2004_04"),
+                    MatchingFor("DOLPHIN_2004_04", "PROTO"),
                     "Runtime/New.cp",
-                    extra_cflags=["-RTTI on", "-Cpp_exceptions on"],
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "Runtime/NMWException.cp",
-                    extra_cflags=CPP_EXCEPTIONS,
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "RVL_2007_06", "PROTO"),
                     "Runtime/ptmf.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS),
+                    MatchingFor(*GC_VERSIONS, "PROTO"),
                     "Runtime/runtime.c",
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01", "RVL_2008_12"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2007_06", "RVL_2008_01", "RVL_2008_12", "PROTO"),
                     "Runtime/__init_cpp_exceptions.cpp",
                 ),
                 Object(
-                    MatchingFor("RVL_2008_01", "RVL_2008_12")
+                    MatchingFor("RVL_2008_01", "RVL_2008_12", "PROTO")
                     or MatchingFor("DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02")
                     or EquivalentFor("DOLPHIN_2004_04"),
                     "Runtime/Gecko_ExceptionPPC.cp",
-                    extra_cflags=[
-                        *CPP_EXCEPTIONS,
-                        *flags_if(not is_prime and not runtime_unpooled_strings, "-str nopool"),
-                    ],
                     extab_padding=[0x02, 0x55] if not is_prime else None,
                 ),
                 Object(
-                    MatchingFor(*GC_VERSIONS, "RVL_2008_01"),
+                    MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "Runtime/__mem.c",
                 ),
             ],
@@ -329,10 +329,7 @@ def modules_for(
             "src_dir": src_dir,
             "mw_version": runtime_mw_version,
             "shift_jis": NOT_SJIS,
-            "cflags": [
-                *cflags_runtime,
-                *flags_if(not is_prime, "-DMSL_OLD_FP_CLASSIFY", "-DMSL_NO_INLINE_SQRT"),
-            ],
+            "cflags": cflags_msl,
             "progress_category": "sdk",
             "host": False,
             "objects": [
@@ -1257,18 +1254,17 @@ def modules_for(
                 Object(
                     MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/__start.c",
-                    extra_cflags=flags_if(prototype, "-DSDK_USE_METROTRK_BBA"),
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS, "RVL_2008_01", "PROTO"),
                     "dolphin/os/__ppc_eabi_init.cpp",
-                    extra_cflags=flags_if(prototype, "-DSDK_USE_METROTRK_BBA"),
                 ),
                 Object(MatchingFor("DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02"), "dolphin/os/OSMessage.c"),
                 # Only the Corruption prototype's splits name these so far.
                 Object(MatchingFor("PROTO"), "dolphin/os/OSAlloc.c"),
                 Object(MatchingFor("PROTO"), "dolphin/os/OSSem.c"),
             ],
+            cflags=[*cflags_dolphin, *flags_if(prototype, "-DSDK_USE_METROTRK_BBA")],
         ),
         # Libraries that only the Corruption prototype has. Without splits naming them, no other
         # game builds them, so they are listed for every version but only built for Corruption.
@@ -1347,7 +1343,7 @@ def modules_for(
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPPap.c"),
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPPPPoE.c"),
             ],
-            cflags=[*cflags_dolphin, *flags_if(prototype, "-DSDK_DOLPHIN_IP_2003_09")],
+            cflags=[*cflags_dolphin, *flags_if(prototype, "-DSDK_IP_VERSION=SDK_IP_VERSION_2003_09")],
         ),
         DolphinLib(
             "MCC",
@@ -1385,22 +1381,11 @@ def modules_for(
     ]
 
     if prototype:
-        cflags_proto_runtime_defines = [
-            "-DRVL_PROTO_RUNTIME",
-            "-DMSL_OLD_FP_CLASSIFY",
-            "-DMSL_NO_INLINE_SQRT",
-        ]
-        cflags_proto_runtime = [*cflags_runtime, *cflags_proto_runtime_defines]
-        cflags_proto_exceptions = [
-            *cflags_proto_runtime,
-            "-RTTI on",
-            "-str nopool",
-        ]
         libs = [
             lib
             for lib in libs
             if lib["lib"]
-            not in ("Runtime.PPCEABI.H", "MSL_C.PPCEABI.bare.H", "MetroTRK", "TRK", "TRK_MINNOW_DOLPHIN")
+            not in ("MSL_C.PPCEABI.bare.H", "MetroTRK", "TRK", "TRK_MINNOW_DOLPHIN")
         ]
         libs += [
             {
@@ -1455,27 +1440,12 @@ def modules_for(
                 ],
             },
             {
-                "lib": "Runtime",
+                "lib": "MSL_C.PPCEABI.bare.H",
                 "src_dir": src_dir,
-                "mw_version": "GC/2.7",
-                "cflags": cflags_proto_runtime,
+                "mw_version": runtime_mw_version,
+                "cflags": cflags_msl,
                 "progress_category": "sdk",
                 "objects": [
-                    Object(MatchingFor("PROTO"), "Runtime/__mem.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/__va_arg.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/global_destructor_chain.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/CPlusLibPPC.cpp"),
-                    Object(NonMatching, "Runtime/New.cp", cflags=cflags_proto_exceptions),
-                    Object(MatchingFor("PROTO"), "Runtime/NMWException.cp"),
-                    Object(MatchingFor("PROTO"), "Runtime/ptmf.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/runtime.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/__init_cpp_exceptions.cpp"),
-                    Object(
-                        MatchingFor("PROTO"),
-                        "Runtime/Gecko_ExceptionPPC.cp",
-                        cflags=cflags_proto_exceptions,
-                        extab_padding=[0x02, 0x55],
-                    ),
                     Object(MatchingFor("PROTO"), "Runtime/abort_exit.c"),
                     Object(MatchingFor("PROTO"), "Runtime/alloc.c"),
                     Object(MatchingFor("PROTO"), "Runtime/errno.c"),

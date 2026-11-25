@@ -16,7 +16,7 @@ typedef struct DHCPInfo {
     u8 router[4]; // offset 0x8, size 0x4
     u8 dns1[4]; // offset 0xC, size 0x4
     u8 dns2[4]; // offset 0x10, size 0x4
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     u8 domain[256];
 #else
     char host[256];
@@ -67,14 +67,14 @@ typedef struct DHCPControl {
     DHCPInfo info; // offset 0x3D8
     DHCPInfo tempInfo;
     void (*callback)(int);
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     char hostName[256];
 #endif
 } DHCPControl;
 
 void DHCPDump(DHCPHeader* dhcp, s32 optlen);
 int DHCPProcessOptions(DHCPHeader* dhcp, int mlen, DHCPInfo* info);
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
 int DHCPStartupEx(void (*callback)(int), int rxmitMax);
 #else
 int DHCPStartupEx(void (*callback)(int), int rxmitMax, const char* hostName);

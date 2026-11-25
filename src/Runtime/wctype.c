@@ -1,6 +1,7 @@
+#include <msl_c_version.h>
 #include <locale.h>
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 #include <ctype.h>
 #include <wchar.h>
 
@@ -54,7 +55,7 @@ const unsigned short __wctype_mapC[256] = {
 };
 #endif
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 unsigned short __wlower_map[256] = {
 #else
 // Guessed name
@@ -84,7 +85,7 @@ const unsigned short __wlower_mapC[256] = {
     0x00FC, 0x00FD, 0x00FE, 0x00FF,
 };
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 unsigned short __wupper_map[256] = {
 #else
 // Guessed name

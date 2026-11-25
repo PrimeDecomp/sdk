@@ -1,6 +1,7 @@
+#include <msl_c_version.h>
 #include <stdio.h>
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 #include <critical_regions.h>
 #include <wstring_io.h>
 
