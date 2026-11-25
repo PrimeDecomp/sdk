@@ -287,7 +287,7 @@ def modules_for(
                 Object(
                     MatchingFor("DOLPHIN_2004_04"),
                     "Runtime/New.cp",
-                    extra_cflags=["-RTTI on", "-Cpp_exceptions on"],
+                    extra_cflags=["-RTTI on", "-Cpp_exceptions on", "-str nopool"],
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS),

@@ -19,14 +19,11 @@ public:
 };
 } // namespace std
 
-#ifdef RVL_PROTO_RUNTIME
 // Guessed name: the global new-handler slot, zero-initialised.
 std::new_handler __new_handler;
-#endif
 
 const char* std::exception::what() const throw() { return "exception"; }
 
-#ifdef RVL_PROTO_RUNTIME
 const char* std::bad_alloc::what() const throw() { return "bad_alloc"; }
 
 void* operator new(size_t size) {
@@ -45,7 +42,6 @@ void* operator new(size_t size) {
   }
   return p;
 }
-#endif
 
 void operator delete(void* ptr) throw() {
   if (ptr)
@@ -54,6 +50,4 @@ void operator delete(void* ptr) throw() {
 
 std::exception::~exception() throw() {}
 
-#ifdef RVL_PROTO_RUNTIME
 std::bad_alloc::~bad_alloc() throw() {}
-#endif
