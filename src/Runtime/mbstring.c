@@ -91,10 +91,41 @@ int wctomb(char* s, wchar_t wchar) { return (unicode_to_UTF8(s, wchar)); }
 #else
 #include <locale.h>
 
-#if defined(RVL_PROTO_RUNTIME)
-// Guessed name
-static int is_utf8_complete(const char* s, size_t n);
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2004_04
+static int is_utf8_complete(const char* s, size_t n) {
+  if (n <= 0) /* 0 or fewer characters do not form a valid multibyte character */
+    return (-1);
 
+  if (*s == 0x00)
+    return (0);
+
+  if ((*s & 0x80) == 0x00)
+    return (1);
+  else if ((*s & 0xe0) == 0xc0) /* need 2 bytes */
+    if (n >= 2)
+      if (((*(s + 1) & 0x80) == 0x80))
+        return (2);
+      else
+        return (-1);
+    else
+      return (-2);
+
+  else if ((*s & 0xf0) == 0xe0)
+    if (n >= 3)
+      if (((*(s + 1) & 0x80) == 0x80) && ((*(s + 2) & 0x80) == 0x80))
+        return (3);
+      else
+        return (-1);
+    else if (((n == 2) && ((*(s + 1) & 0x80) == 0x80)) || (n == 1))
+      return (-2);
+    else
+      return (-1);
+  else
+    return (-1);
+}
+#endif
+
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
 static int utf8_to_unicode(wchar_t* dst, const char* src, size_t n) {
   int bytes, expected;
   char* p;
@@ -142,7 +173,7 @@ static int utf8_to_unicode(wchar_t* dst, const char* src, size_t n) {
 #endif
 
 int mbtowc(wchar_t *dst, const char *src, size_t n) {
-#if defined(RVL_PROTO_RUNTIME)
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
   return utf8_to_unicode(dst, src, n);
 #else
   return _current_locale.ctype_cmpt_ptr->decode_mb(dst, src, n);
@@ -190,39 +221,6 @@ typedef struct {
   } __value; /* Value so far.  */
 } mbstate_t;
 
-static int is_utf8_complete(const char* s, size_t n);
-static int is_utf8_complete(const char* s, size_t n) {
-  if (n <= 0) /* 0 or fewer characters do not form a valid multibyte character */
-    return (-1);
-
-  if (*s == 0x00)
-    return (0);
-
-  if ((*s & 0x80) == 0x00)
-    return (1);
-  else if ((*s & 0xe0) == 0xc0) /* need 2 bytes */
-    if (n >= 2)
-      if (((*(s + 1) & 0x80) == 0x80))
-        return (2);
-      else
-        return (-1);
-    else
-      return (-2);
-
-  else if ((*s & 0xf0) == 0xe0)
-    if (n >= 3)
-      if (((*(s + 1) & 0x80) == 0x80) && ((*(s + 2) & 0x80) == 0x80))
-        return (3);
-      else
-        return (-1);
-    else if (((n == 2) && ((*(s + 1) & 0x80) == 0x80)) || (n == 1))
-      return (-2);
-    else
-      return (-1);
-  else
-    return (-1);
-}
-
 static int unicode_to_UTF8(char* s, wchar_t wchar) {
   int number_of_bytes;
   wchar_t wide_char;
@@ -266,6 +264,37 @@ static inline int wctomb(char *dst, wchar_t ch) {
 #endif
 #endif
 
+#if SDK_VERSION == SDK_VERSION_DOLPHIN_2004_04
+size_t mbstowcs(wchar_t* dest, const char* src, size_t count) {
+  int result;
+  const char* p;
+  int written;
+  size_t remaining;
+
+  remaining = strlen(src);
+  if (dest) {
+    p = src;
+    for (written = 0; written < count; ++written) {
+      if (*p) {
+        result = mbtowc(dest++, p, remaining);
+        if (result > 0) {
+          p += result;
+          remaining -= result;
+        } else {
+          return (size_t)-1;
+        }
+      } else {
+        *dest = 0;
+        break;
+      }
+    }
+  } else {
+    written = 0;
+  }
+  return written;
+}
+#endif
+
 size_t wcstombs(char* s, const wchar_t* pwcs, size_t n) {
   int chars_written = 0;
   int result;
@@ -292,29 +321,3 @@ size_t wcstombs(char* s, const wchar_t* pwcs, size_t n) {
 
   return (chars_written);
 }
-
-#if defined(RVL_PROTO_RUNTIME)
-size_t mbstowcs(wchar_t* dest, const char* src, size_t count) {
-  size_t remaining = strlen(src);
-  int written;
-
-  if (dest) {
-    const char* p = src;
-    for (written = 0; written < count; ++written) {
-      if (*p) {
-        int result = mbtowc(dest++, p, remaining);
-        if (result <= 0)
-          return -1;
-        p += result;
-        remaining -= result;
-      } else {
-        *dest = 0;
-        break;
-      }
-    }
-  } else {
-    written = 0;
-  }
-  return written;
-}
-#endif

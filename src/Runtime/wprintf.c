@@ -22,7 +22,6 @@ enum argument_options {
   wchar_argument
 };
 
-// Guessed name
 typedef struct {
   u8 justification_options;
   u8 sign_options;
@@ -34,21 +33,13 @@ typedef struct {
   int precision;
 } print_format;
 
-// Guessed name
 typedef struct {
   wchar_t* dest;
   size_t capacity;
   size_t written;
 } __wOutStrCtrl;
 
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
-static const wchar_t* parse_wformat(const wchar_t* format_string, va_list* arg, print_format* format) {
+static const wchar_t* parse_format(const wchar_t* format_string, va_list* arg, print_format* format) {
   print_format f;
   const wchar_t* s = format_string;
   wchar_t c;
@@ -271,7 +262,7 @@ static const wchar_t* parse_wformat(const wchar_t* format_string, va_list* arg, 
   return ((const wchar_t*)s + 1);
 }
 
-static wchar_t* long2wstr(s32 num, wchar_t* buff, print_format format) {
+static wchar_t* long2str(s32 num, wchar_t* buff, print_format format) {
   u32 unsigned_num, base;
   wchar_t* p;
   int n, digits;
@@ -377,7 +368,7 @@ static wchar_t* long2wstr(s32 num, wchar_t* buff, print_format format) {
   return p;
 }
 
-static wchar_t* longlong2wstr(s64 num, wchar_t* pBuf, print_format fmt) {
+static wchar_t* longlong2str(s64 num, wchar_t* pBuf, print_format fmt) {
   u64 unsigned_num, base;
   wchar_t* p;
   int n, digits;
@@ -481,7 +472,7 @@ static wchar_t* longlong2wstr(s64 num, wchar_t* pBuf, print_format fmt) {
   return p;
 }
 
-static void round_wdecimal(decimal* dec, int new_length) {
+static void round_decimal(decimal* dec, int new_length) {
   char c;
   char* p;
   int carry;
@@ -534,7 +525,7 @@ static void round_wdecimal(decimal* dec, int new_length) {
   dec->sig.length = new_length;
 }
 
-static wchar_t* float2wstr(long double num, wchar_t* buff, print_format format) {
+static wchar_t* float2str(long double num, wchar_t* buff, print_format format) {
   decimal dec;
   decform form;
   char out_buff[512];
@@ -600,7 +591,7 @@ static wchar_t* float2wstr(long double num, wchar_t* buff, print_format format) 
   case 'G':
 
     if (dec.sig.length > format.precision) {
-      round_wdecimal(&dec, format.precision);
+      round_decimal(&dec, format.precision);
     }
 
     if (dec.exp < -4 || dec.exp >= format.precision) {
@@ -634,7 +625,7 @@ static wchar_t* float2wstr(long double num, wchar_t* buff, print_format format) 
   e_format:
 
     if (dec.sig.length > format.precision + 1) {
-      round_wdecimal(&dec, format.precision + 1);
+      round_decimal(&dec, format.precision + 1);
     }
 
     n = dec.exp;
@@ -690,7 +681,7 @@ static wchar_t* float2wstr(long double num, wchar_t* buff, print_format format) 
       frac_digits = 0;
 
     if (frac_digits > format.precision) {
-      round_wdecimal(&dec, dec.sig.length - (frac_digits - format.precision));
+      round_decimal(&dec, dec.sig.length - (frac_digits - format.precision));
 
       if ((frac_digits = -dec.exp + dec.sig.length - 1) < 0)
         frac_digits = 0;
@@ -755,8 +746,10 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
   long double long_double_num;
   wchar_t buff[512];
   wchar_t* buff_ptr;
-  const wchar_t* string_end;
-  wchar_t fill_char = ' ';
+  const wchar_t* wide_end;
+  const char* narrow_end;
+  wchar_t fill_char = L' ';
+  const char* str_ptr;
 
   format_ptr = format_str;
   chars_written = 0;
@@ -782,7 +775,7 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
 
     format_ptr = curr_format;
     // Preserve this runtime's argument-list indirection.
-    format_ptr = parse_wformat(format_ptr, (va_list*)&arg, &format);
+    format_ptr = parse_format(format_ptr, (va_list*)&arg, &format);
 
     switch (format.conversion_char) {
     case 'd':
@@ -801,11 +794,11 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
 
 
       if ((format.argument_options == long_long_argument)) {
-        if (!(buff_ptr = longlong2wstr(long_long_num, buff + 512, format))) {
+        if (!(buff_ptr = longlong2str(long_long_num, buff + 512, format))) {
           goto conversion_error;
         }
       } else {
-        if (!(buff_ptr = long2wstr(long_num, buff + 512, format))) {
+        if (!(buff_ptr = long2str(long_num, buff + 512, format))) {
           goto conversion_error;
         }
       }
@@ -831,11 +824,11 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
 
 
       if ((format.argument_options == long_long_argument)) {
-        if (!(buff_ptr = longlong2wstr(long_long_num, buff + 512, format))) {
+        if (!(buff_ptr = longlong2str(long_long_num, buff + 512, format))) {
           goto conversion_error;
         }
       } else {
-        if (!(buff_ptr = long2wstr(long_num, buff + 512, format))) {
+        if (!(buff_ptr = long2str(long_num, buff + 512, format))) {
           goto conversion_error;
         }
       }
@@ -855,7 +848,7 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
         long_double_num = va_arg(arg, double);
       }
 
-      if (!(buff_ptr = float2wstr(long_double_num, buff + 512, format))) {
+      if (!(buff_ptr = float2str(long_double_num, buff + 512, format))) {
         goto conversion_error;
       }
 
@@ -864,42 +857,41 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
 
     case 's':
       if (format.argument_options == wchar_argument) {
-        wchar_t* wcs_ptr = va_arg(arg, wchar_t*);
+        buff_ptr = va_arg(arg, wchar_t*);
 
-        if (wcs_ptr == NULL) {
-          wcs_ptr = L"";
+        if (buff_ptr == NULL) {
+          buff_ptr = L"";
         }
 
         if (format.alternate_form) {
-          num_chars = (u8)*wcs_ptr++;
+          num_chars = (u8)*buff_ptr++;
           if (format.precision_specified && num_chars > format.precision) {
             num_chars = format.precision;
           }
         } else if (format.precision_specified) {
           num_chars = format.precision;
-          if ((string_end = wmemchr(wcs_ptr, 0, num_chars)) != 0) {
-            num_chars = string_end - wcs_ptr;
+          if ((wide_end = wmemchr(buff_ptr, 0, num_chars)) != 0) {
+            num_chars = wide_end - buff_ptr;
           }
         } else {
-          num_chars = wcslen(wcs_ptr);
+          num_chars = wcslen(buff_ptr);
         }
-        buff_ptr = wcs_ptr;
       } else {
-        const char* str_ptr = va_arg(arg, char*);
+        str_ptr = va_arg(arg, char*);
 
         if (str_ptr == NULL) {
           str_ptr = "";
         }
 
         if (format.alternate_form) {
-          num_chars = (u8)*buff_ptr;
+          num_chars = (u8)*buff_ptr++;
           if (format.precision_specified && num_chars > format.precision) {
             num_chars = format.precision;
           }
         } else if (format.precision_specified) {
           num_chars = format.precision;
-          if ((string_end = memchr(str_ptr, 0, num_chars)) != 0) {
-            num_chars = (const char*)string_end - str_ptr;
+          if ((narrow_end = memchr(str_ptr, 0, num_chars)) != 0) {
+            num_chars = narrow_end - str_ptr;
           }
         } else {
           num_chars = strlen(str_ptr);
@@ -935,11 +927,11 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
     case 'c':
       buff_ptr = buff;
       if (format.argument_options == wchar_argument) {
-        *buff_ptr = va_arg(arg, long);
+        *buff_ptr = va_arg(arg, int);
         num_chars = 1;
       } else {
         char ch = va_arg(arg, int);
-        num_chars = mbtowc(buff_ptr, &ch, 1);
+        num_chars = mbtowc(buff, &ch, 1);
       }
       break;
 
@@ -966,9 +958,9 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
     field_width = num_chars;
 
     if (format.justification_options != left_justification) {
-      fill_char = (format.justification_options == zero_fill) ? '0' : ' ';
+      fill_char = (format.justification_options == zero_fill) ? L'0' : L' ';
 
-      if (((*buff_ptr == '+') || (*buff_ptr == '-') || (*buff_ptr == ' ')) && (fill_char == '0')) {
+      if (((*buff_ptr == L'+') || (*buff_ptr == L'-') || (*buff_ptr == L' ')) && (fill_char == L'0')) {
         if ((*WriteProc)(WriteProcArg, buff_ptr, 1) == 0) {
           return -1;
         }
@@ -1008,7 +1000,7 @@ static int __wpformatter(void* (*WriteProc)(void*, const wchar_t*, size_t), void
   return chars_written;
 }
 
-static void* __wStringWrite(void* control, const wchar_t* data, size_t count) {
+void* __wStringWrite(void* control, const wchar_t* data, size_t count) {
   __wOutStrCtrl* out = control;
   size_t written = out->written;
   size_t capacity = out->capacity;
