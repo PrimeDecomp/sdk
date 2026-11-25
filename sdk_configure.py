@@ -56,6 +56,7 @@ def modules_for(
 
     # Metrowerks library flags
     wii_runtime = is_wii and not prototype
+    runtime_unpooled_strings = not is_prime and not is_wii
     cflags_runtime_common = [
         *cflags_base,
         "-use_lmw_stmw on",
@@ -269,7 +270,7 @@ def modules_for(
             "src_dir": src_dir,
             "mw_version": runtime_mw_version,
             "shift_jis": NOT_SJIS,
-            "cflags": cflags_runtime,
+            "cflags": [*cflags_runtime, *flags_if(runtime_unpooled_strings, "-str nopool")],
             "progress_category": "sdk",
             "objects": [
                 Object(
@@ -287,7 +288,7 @@ def modules_for(
                 Object(
                     MatchingFor("DOLPHIN_2004_04"),
                     "Runtime/New.cp",
-                    extra_cflags=["-RTTI on", "-Cpp_exceptions on", "-str nopool"],
+                    extra_cflags=["-RTTI on", "-Cpp_exceptions on"],
                 ),
                 Object(
                     MatchingFor(*GC_VERSIONS),
@@ -311,7 +312,10 @@ def modules_for(
                     or MatchingFor("DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02")
                     or EquivalentFor("DOLPHIN_2004_04"),
                     "Runtime/Gecko_ExceptionPPC.cp",
-                    extra_cflags=[*CPP_EXCEPTIONS, *flags_if(not is_prime, "-str nopool")],
+                    extra_cflags=[
+                        *CPP_EXCEPTIONS,
+                        *flags_if(not is_prime and not runtime_unpooled_strings, "-str nopool"),
+                    ],
                     extab_padding=[0x02, 0x55] if not is_prime else None,
                 ),
                 Object(
