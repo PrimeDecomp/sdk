@@ -19,26 +19,6 @@ enum scan_states {
 #define FETCH() (count++, read_proc(read_arg, 0, __GetChar))
 #define UNFETCH(c) read_proc(read_arg, c, __UngetChar)
 
-unsigned long wcstoul(const wchar_t* str, wchar_t** end, int base) {
-  unsigned long value;
-  int count, negative, overflow;
-  __wInStrCtrl input;
-  input.NextChar = str;
-  input.NullCharDetected = 0;
-
-  value = __wcstoul(base, INT_MAX, __wStringRead, &input, &count, &negative, &overflow);
-  if (end != NULL) {
-    *end = (wchar_t*)str + count;
-  }
-  if (overflow) {
-    value = ULONG_MAX;
-    errno = ERANGE;
-  } else if (negative) {
-    value = -value;
-  }
-  return value;
-}
-
 unsigned long __wcstoul(int initial_base, int max_width,
                        wint_t (*read_proc)(void*, wint_t, int), void* read_arg,
                        int* chars_scanned, int* negative, int* overflow) {
@@ -146,5 +126,25 @@ unsigned long __wcstoul(int initial_base, int max_width,
   }
   *chars_scanned = count;
   UNFETCH(c);
+  return value;
+}
+
+unsigned long wcstoul(const wchar_t* str, wchar_t** end, int base) {
+  unsigned long value;
+  int count, negative, overflow;
+  __wInStrCtrl input;
+  input.NextChar = str;
+  input.NullCharDetected = 0;
+
+  value = __wcstoul(base, INT_MAX, __wStringRead, &input, &count, &negative, &overflow);
+  if (end != NULL) {
+    *end = (wchar_t*)str + count;
+  }
+  if (overflow) {
+    value = ULONG_MAX;
+    errno = ERANGE;
+  } else if (negative) {
+    value = -value;
+  }
   return value;
 }

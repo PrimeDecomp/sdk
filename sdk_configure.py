@@ -56,6 +56,7 @@ def modules_for(
 
     # Metrowerks library flags
     wii_runtime = is_wii and not prototype
+    runtime_unpooled_strings = not is_prime and not is_wii
     cflags_runtime_common = [
         *cflags_base,
         "-use_lmw_stmw on",
@@ -269,7 +270,7 @@ def modules_for(
             "src_dir": src_dir,
             "mw_version": runtime_mw_version,
             "shift_jis": NOT_SJIS,
-            "cflags": cflags_runtime,
+            "cflags": [*cflags_runtime, *flags_if(runtime_unpooled_strings, "-str nopool")],
             "progress_category": "sdk",
             "objects": [
                 Object(
@@ -311,7 +312,10 @@ def modules_for(
                     or MatchingFor("DOLPHIN_2002_06", "DOLPHIN_2002_09", "DOLPHIN_2002_11", "DOLPHIN_2003_02")
                     or EquivalentFor("DOLPHIN_2004_04"),
                     "Runtime/Gecko_ExceptionPPC.cp",
-                    extra_cflags=[*CPP_EXCEPTIONS, *flags_if(not is_prime, "-str nopool")],
+                    extra_cflags=[
+                        *CPP_EXCEPTIONS,
+                        *flags_if(not is_prime and not runtime_unpooled_strings, "-str nopool"),
+                    ],
                     extab_padding=[0x02, 0x55] if not is_prime else None,
                 ),
                 Object(
@@ -1382,19 +1386,13 @@ def modules_for(
 
     if prototype:
         cflags_proto_runtime_defines = [
-            # The prototype's runtime folds New into NMWException and defines getenv in uart_console_io.
             "-DRVL_PROTO_RUNTIME",
             "-DMSL_OLD_FP_CLASSIFY",
             "-DMSL_NO_INLINE_SQRT",
         ]
-        cflags_proto_runtime_early = [
-            *cflags_runtime_common,
-            *cflags_proto_runtime_defines,
-            "-inline auto",
-        ]
+        cflags_proto_runtime = [*cflags_runtime, *cflags_proto_runtime_defines]
         cflags_proto_exceptions = [
-            *cflags_runtime_common,
-            *cflags_proto_runtime_defines,
+            *cflags_proto_runtime,
             "-RTTI on",
             "-str nopool",
         ]
@@ -1432,7 +1430,7 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/usr_put.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/dispatch.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/msghndlr.c"),
-                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/support.c"),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/support.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/mutex_TRK.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/notify.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/flush_cache.c"),
@@ -1460,29 +1458,27 @@ def modules_for(
                 "lib": "Runtime",
                 "src_dir": src_dir,
                 "mw_version": "GC/2.7",
-                "cflags": [*cflags_runtime, *cflags_proto_runtime_defines],
+                "cflags": cflags_proto_runtime,
                 "progress_category": "sdk",
                 "objects": [
                     Object(MatchingFor("PROTO"), "Runtime/__mem.c"),
                     Object(MatchingFor("PROTO"), "Runtime/__va_arg.c"),
                     Object(MatchingFor("PROTO"), "Runtime/global_destructor_chain.c"),
                     Object(MatchingFor("PROTO"), "Runtime/CPlusLibPPC.cpp"),
-                    Object(
-                        NonMatching,
-                        "Runtime/NMWException.cp",
-                        cflags=[*cflags_proto_exceptions, "-inline auto"],
-                    ),
+                    Object(NonMatching, "Runtime/New.cp", cflags=cflags_proto_exceptions),
+                    Object(MatchingFor("PROTO"), "Runtime/NMWException.cp"),
                     Object(MatchingFor("PROTO"), "Runtime/ptmf.c"),
                     Object(MatchingFor("PROTO"), "Runtime/runtime.c"),
                     Object(MatchingFor("PROTO"), "Runtime/__init_cpp_exceptions.cpp"),
                     Object(
                         MatchingFor("PROTO"),
                         "Runtime/Gecko_ExceptionPPC.cp",
-                        cflags=[*cflags_proto_exceptions, "-inline deferred,auto"],
+                        cflags=cflags_proto_exceptions,
                         extab_padding=[0x02, 0x55],
                     ),
                     Object(MatchingFor("PROTO"), "Runtime/abort_exit.c"),
                     Object(MatchingFor("PROTO"), "Runtime/alloc.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/errno.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_files.c"),
                     Object(MatchingFor("PROTO"), "Runtime/ansi_fp.c"),
                     Object(MatchingFor("PROTO"), "Runtime/arith.c"),
@@ -1494,7 +1490,7 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "Runtime/direct_io.c"),
                     Object(MatchingFor("PROTO"), "Runtime/file_io.c"),
                     Object(MatchingFor("PROTO"), "Runtime/FILE_POS.c"),
-                    Object(NonMatching, "Runtime/mbstring.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/mbstring.c"),
                     Object(MatchingFor("PROTO"), "Runtime/mem.c"),
                     Object(MatchingFor("PROTO"), "Runtime/mem_funcs.c"),
                     Object(MatchingFor("PROTO"), "Runtime/misc_io.c"),
@@ -1506,12 +1502,12 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "Runtime/string.c"),
                     Object(MatchingFor("PROTO"), "Runtime/float.c"),
                     Object(MatchingFor("PROTO"), "Runtime/strtold.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/strtoul.c", cflags=cflags_proto_runtime_early),
-                    Object(MatchingFor("PROTO"), "Runtime/wstrtold.c", cflags=cflags_proto_runtime_early),
-                    Object(MatchingFor("PROTO"), "Runtime/wstrtoul.c", cflags=cflags_proto_runtime_early),
+                    Object(MatchingFor("PROTO"), "Runtime/strtoul.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/wstrtold.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/wstrtoul.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wctype.c"),
-                    Object(MatchingFor("PROTO"), "Runtime/wmem.c", cflags=cflags_proto_runtime_early),
-                    Object(NonMatching, "Runtime/wprintf.c", cflags=cflags_proto_runtime_early),
+                    Object(MatchingFor("PROTO"), "Runtime/wmem.c"),
+                    Object(MatchingFor("PROTO"), "Runtime/wprintf.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wscanf.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wstring.c"),
                     Object(MatchingFor("PROTO"), "Runtime/wchar_io.c"),

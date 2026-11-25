@@ -48,8 +48,6 @@ typedef struct DSFileReply {
 
 extern void MWTRACE(int level, const char* fmt, ...);
 
-void TRKTraceBufferHex(u8* data, int len);
-
 DSError TRKSuppAccessFile(u32 file_handle, u8* data, size_t* count,
                           DSIOResult* io_result, BOOL need_reply, BOOL read)
 {
@@ -167,7 +165,7 @@ DSError TRKRequestSend(TRKBuffer* msgBuf, int* bufferId, u32 p1, u32 p2, int p3)
 
 				buffer = TRKGetBuffer(*bufferId);
 				TRKSetBufferPosition(buffer, 0);
-				TRKTraceBufferHex(buffer->data, buffer->length);
+				OutputData(buffer->data, buffer->length);
 				msg_command = buffer->data[4];
 				MWTRACE(1, "msg_command : 0x%02x hdr->cmdID 0x%02x\n",
 				        msg_command, msg_command);
@@ -318,18 +316,3 @@ DSError HandlePositionFileSupportRequest(u32 handle, u32* offset, u8 whence,
 	TRKReleaseBuffer(bufferId);
 	return error;
 }
-
-// Guessed name: traces a received packet as hex bytes, 16 per line.
-#pragma dont_inline on
-void TRKTraceBufferHex(u8* data, int len)
-{
-	int i;
-	for (i = 0; i < len; i++) {
-		MWTRACE(8, "%02x ", data[i]);
-		if (i % 16 == 15) {
-			MWTRACE(8, "\n");
-		}
-	}
-	MWTRACE(8, "\n");
-}
-#pragma dont_inline reset
