@@ -9,7 +9,6 @@ public:
   virtual ~exception() throw();
   virtual const char* what() const throw();
 };
-#ifdef RVL_PROTO_RUNTIME
 typedef void (*new_handler)();
 
 class bad_alloc : public exception {
@@ -18,7 +17,6 @@ public:
   virtual ~bad_alloc() throw();
   virtual const char* what() const throw();
 };
-#endif
 } // namespace std
 
 #ifdef RVL_PROTO_RUNTIME

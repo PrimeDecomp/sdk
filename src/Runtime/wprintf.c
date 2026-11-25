@@ -41,13 +41,6 @@ typedef struct {
   size_t written;
 } __wOutStrCtrl;
 
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
-// Guessed name
 static const wchar_t* parse_wformat(const wchar_t* format_string, va_list* arg, print_format* format) {
   print_format f;
   const wchar_t* s = format_string;
