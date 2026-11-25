@@ -15,7 +15,7 @@
 #define SEQ_GT(a, b) ((s32)((a) - (b)) > 0)
 #define SEQ_GEQ(a, b) ((s32)((a) - (b)) >= 0)
 
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
 #define TCP_OUTPUT_ASSERT_LINE(early, late) (early)
 #else
 #define TCP_OUTPUT_ASSERT_LINE(early, late) (late)
@@ -103,7 +103,7 @@ int TCPMakeOption(TCPHeader* tcp /* r25 */, TCPInfo* info /* r29 */, u16 flag /*
 }
 
 static s32 TCPCalcSendSize(TCPInfo* info, s32 effSendMss, u16* pflag,
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
                           s32* poffset,
 #endif
                           TCPSackHole* hole) {
@@ -114,7 +114,7 @@ static s32 TCPCalcSendSize(TCPInfo* info, s32 effSendMss, u16* pflag,
     s32 dataLen;
     s32 end;
     s32 sendSize;
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     s32 len;
 #endif
 
@@ -195,7 +195,7 @@ again:
     }
 
     useable = info->sendUna + win - info->sendNext;
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     info->datagram.nVec = 1;
 #endif
     if ((info->flag & 0x2000) && !(info->flag & 0x1000) && dataLen > 0 && SEQ_GT(info->sendRecover, info->sendUna) && info->cWin <= info->sendAwin) {
@@ -215,7 +215,7 @@ again:
         return 0;
     }
 
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     dataLen = sendSize;
     if (flag & TCP_FLAG_SYN) {
         dataLen--;
@@ -247,13 +247,13 @@ again:
 #endif
 
     *pflag = flag;
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     *poffset = offset;
 #endif
     return sendSize;
 }
 
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
 // Range: 0x6B8 -> 0x838
 static s32 TCPPrepareData(TCPInfo* info /* r31 */, IFDatagram* datagram /* r27 */, s32 sendSize /* r1+0x10 */, s32 offset /* r29 */, u16 flag /* r25 */) {
     // Local variables
@@ -294,7 +294,7 @@ static s32 TCPPrepareData(TCPInfo* info /* r31 */, IFDatagram* datagram /* r27 *
 
 static BOOL DoSwsAvoidance(TCPInfo* info, s32 sendSize, s32 effSendMss, u16 flag) {
     BOOL acked;
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     if (MIN(info->recvBuff / 2, effSendMss) <= info->recvBuff - info->recvUser - info->recvWin) {
         info->recvWin = info->recvBuff - info->recvUser;
         return FALSE;
@@ -366,25 +366,25 @@ void TCPOutput(TCPInfo* info, u16 flag) {
     IFVec* vec;
     TCPSackHole* hole;
     s32 onxt;
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     IFDatagram* datagram;
     u8 header[60];
 #endif
     s32 offset;
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     IPInterface* interface;
     s32 win;
     s32 reduction;
 #endif
 
     hole = NULL;
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     interface = NULL;
 #endif
     if (info->state == TCP_STATE_CLOSED) {
         return;
     }
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     if (info->sendBusy == TRUE) {
         return;
     }
@@ -408,7 +408,7 @@ void TCPOutput(TCPInfo* info, u16 flag) {
             }
             break;
         default:
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
             if (SEQ_GT(info->recvNext, info->recvAcked)) {
 #else
             win = info->recvBuff - info->recvUser;
@@ -430,14 +430,14 @@ void TCPOutput(TCPInfo* info, u16 flag) {
     }
 
     if (info->sendUna == info->sendMax && info->lastSend + info->rto < OSGetTime()) {
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
         info->cWin = info->mss;
 #else
         info->cWin = 2 * info->mss;
 #endif
     }
 
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     ip = (IPHeader*)info->header;
     ip->len = IP_HLEN(ip);
     tcp = (TCPHeader*)((u8*)info->header + IP_HLEN(ip));
@@ -446,7 +446,7 @@ void TCPOutput(TCPInfo* info, u16 flag) {
 #endif
     tcp->flag = 0;
     optlen = TCPMakeOption(tcp, info, flag);
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     sendSize = TCPCalcSendSize(info, info->mss - optlen, &flag, hole);
 #else
     sendSize = TCPCalcSendSize(info, info->mss - optlen, &flag, &offset, hole);
@@ -464,7 +464,7 @@ void TCPOutput(TCPInfo* info, u16 flag) {
         return;
     }
 
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     if (!info->sendBusy) {
         datagram = &info->datagram;
         IFInitDatagram(datagram, ETH_IP, 1);
@@ -529,7 +529,7 @@ void TCPOutput(TCPInfo* info, u16 flag) {
     tcp->sum = 0;
 
     ip->len += TCP_HLEN(tcp);
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     for (vec = info->vec; vec < &info->datagram.vec[info->datagram.nVec]; vec++) {
 #else
     for (vec = &datagram->vec[1]; vec < &datagram->vec[datagram->nVec]; vec++) {
@@ -556,7 +556,7 @@ void TCPOutput(TCPInfo* info, u16 flag) {
         TCPStartRxmitTimer(info);
     }
 
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     info->sendBusy = TRUE;
     info->datagram.flag = 0;
     info->datagram.vec[0].data = ip;
@@ -585,13 +585,13 @@ void TCPOutput(TCPInfo* info, u16 flag) {
     info->sendAwin = info->rxmitData + (info->sendNext - info->sendFack);
     info->flag &= ~0x1000;
 
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     result = IPOut(&info->datagram);
 #else
     result = IPOut(datagram);
 #endif
     if (result < 0) {
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
         TCPOutputCallback(info, result);
 #else
         if (interface) {
@@ -611,7 +611,7 @@ void TCPOutput(TCPInfo* info, u16 flag) {
 
 s32 __TCPCalcSendSize(TCPInfo* info, s32 effSendMss, u16* pflag) {
     int size;
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     size = TCPCalcSendSize(info, effSendMss, pflag, NULL);
 #else
     s32 offset;

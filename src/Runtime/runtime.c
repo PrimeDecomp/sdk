@@ -723,7 +723,6 @@ lbl_80389F5C:
   blr
 }
 
-#ifdef RVL_PROTO_RUNTIME
 asm void __cvt_sll_dbl(void) {
   nofralloc
   stwu r1, -0x10(r1)
@@ -775,8 +774,6 @@ cvt_sll_dbl_load:
   addi r1, r1, 0x10
   blr
 }
-#endif
-
 asm void __cvt_sll_flt(void) {
   nofralloc
   stwu r1, -0x10(r1)

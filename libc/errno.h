@@ -1,6 +1,8 @@
 #ifndef _ERRNO_H_
 #define _ERRNO_H_
 
+#include <msl_c_version.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -12,7 +14,7 @@ extern int errno;
 #define ERANGE 34
 #define EFPOS 40
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 #define E2BIG 7
 #define EACCES 13
 #define EAGAIN 11

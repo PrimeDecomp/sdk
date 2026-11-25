@@ -1,6 +1,7 @@
+#include <msl_c_version.h>
 #include <SDKVersion.h>
 #include "string.h"
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 #include <errno.h>
 #include <stdio.h>
 #endif
@@ -129,7 +130,7 @@ char* strcat(char* dst, const char* src) {
   return dst;
 }
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 char* strncat(char* dst, const char* src, size_t count) {
   const unsigned char* p = (const unsigned char*)src - 1;
   unsigned char* q = (unsigned char*)dst - 1;
@@ -266,7 +267,7 @@ char* strchr(const char* str, int chr) {
   return (c ? 0 : (char*)p);
 }
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 int strcoll(const char* str1, const char* str2) {
   return strcmp(str1, str2);
 }

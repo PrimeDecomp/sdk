@@ -1,3 +1,4 @@
+#include <msl_c_version.h>
 #include <SDKVersion.h>
 #include "stdio.h"
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
@@ -11,7 +12,7 @@ enum argument_options {
   char_argument,
   short_argument,
   long_argument,
-#ifndef RVL_PROTO_RUNTIME
+#if __MSL__ != MSL_C_VERSION_8_0
   intmax_argument,
   size_t_argument,
   ptrdiff_argument,
@@ -56,7 +57,7 @@ typedef struct {
 // Guessed name
 static const char *parse_format(const char *format_string, scan_format *format) {
   const char *s = format_string;
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
   int c = *++s;
 #else
   int c;
@@ -64,7 +65,7 @@ static const char *parse_format(const char *format_string, scan_format *format) 
   int flag_found, invert;
   scan_format f = {0, 0, normal_argument, 0, 0x7FFFFFFF, {0}};
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
   if (c == '%') {
 #else
   if (((c = (signed char)*++s) == '%')) {
@@ -120,7 +121,7 @@ static const char *parse_format(const char *format_string, scan_format *format) 
     f.argument_options = long_double_argument;
     break;
 
-#ifndef RVL_PROTO_RUNTIME
+#if __MSL__ != MSL_C_VERSION_8_0
   case 'j':
     f.argument_options = intmax_argument;
     break;
@@ -156,11 +157,11 @@ static const char *parse_format(const char *format_string, scan_format *format) 
     break;
 
   case 'a':
-#ifndef RVL_PROTO_RUNTIME
+#if __MSL__ != MSL_C_VERSION_8_0
   case 'A':
 #endif
   case 'f':
-#ifndef RVL_PROTO_RUNTIME
+#if __MSL__ != MSL_C_VERSION_8_0
   case 'F':
 #endif
   case 'e':
@@ -168,7 +169,7 @@ static const char *parse_format(const char *format_string, scan_format *format) 
   case 'g':
   case 'G':
     if (f.argument_options == char_argument || f.argument_options == short_argument ||
-#ifndef RVL_PROTO_RUNTIME
+#if __MSL__ != MSL_C_VERSION_8_0
         f.argument_options == intmax_argument || f.argument_options == size_t_argument ||
         f.argument_options == ptrdiff_argument ||
 #endif
@@ -289,7 +290,7 @@ static const char *parse_format(const char *format_string, scan_format *format) 
   return ((const char *)s + 1);
 }
 
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
 // Guessed name
 static int __sformatter(int (*ReadProc)(void *, int, int), void *ReadProcArg,
                         const char *format_str, va_list arg) {
@@ -1171,7 +1172,7 @@ static inline int vsscanf(const char *s, const char *format, va_list arg) {
   }
 
   isc.NullCharDetected = 0;
-#ifdef RVL_PROTO_RUNTIME
+#if __MSL__ == MSL_C_VERSION_8_0
   return __sformatter(&__StringRead, (void *)&isc, format, arg);
 #else
   return __sformatter(&__StringRead, (void *)&isc, format, arg, 0);

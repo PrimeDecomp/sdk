@@ -47,12 +47,10 @@ int __write_console(__file_handle handle, unsigned char* buffer, size_t* count,
   return 0;
 }
 
-#ifdef RVL_PROTO_RUNTIME
-int __close_console(void) { return 0; }
-
-char* getenv(const char* name) { return 0; }
-#elif SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
+#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 int __close_console() { return 0; }
 #else
 int __close_console(__file_handle handle) { return 0; }
 #endif
+
+char* getenv(const char* name) { return 0; }

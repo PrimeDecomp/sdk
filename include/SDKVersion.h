@@ -1,8 +1,7 @@
 #ifndef _SDK_VERSION_H
 #define _SDK_VERSION_H
 
-// Identifies the build of the SDK that a game links against. Every version check in the SDK is
-// made against one of these values.
+// Identifies the base SDK build. Separately installed libraries have their own selectors.
 //
 // The game's build configuration (configure.py) picks the value to use for its version and defines
 // SDK_VERSION to it (e.g. -DSDK_VERSION=<number>), and passes the same value to sdk_configure.py.
@@ -44,6 +43,9 @@
                                   // New Play Controls and NTSC Trilogy.
 #define SDK_VERSION_RVL_2008_12 10 // PAL Trilogy, with the Sep 11 2008 KPAD, Oct 2 2008 OS
                                    // and Dec 1 2008 WPAD release builds.
+
+// Separately installed GameCube Socket Library builds, selected by SDK_IP_VERSION.
+#define SDK_IP_VERSION_2003_09 20030925
 
 #ifndef SDK_VERSION
 #error "SDK_VERSION is not defined: the game's build configuration must define it to one of the SDK_VERSION_* values"

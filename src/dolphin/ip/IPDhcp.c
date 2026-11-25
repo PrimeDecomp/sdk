@@ -209,7 +209,7 @@ static void InitDHCPInfo(DHCPInfo* info /* r31 */) {
     memmove(info->router, IPAddrAny, IP_ALEN);
     memmove(info->dns1, IPAddrAny, IP_ALEN);
     memmove(info->dns2, IPAddrAny, IP_ALEN);
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     memset(info->host, 0, sizeof(info->host));
 #endif
     memset(info->domain, 0, sizeof(info->domain));
@@ -242,7 +242,7 @@ static void UpdateDHCPInfo(DHCPInfo* info /* r30 */, DHCPInfo* update /* r31 */)
     if (IPNEQ(update->dns2, IPAddrAny)) {
         memmove(info->dns2, update->dns2, IP_ALEN);
     }
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     if (update->host[0]) {
         memmove(info->host, update->host, sizeof(info->host));
     }
@@ -332,14 +332,14 @@ int DHCPProcessOptions(DHCPHeader* dhcp /* r24 */, int mlen /* r1+0xC */, DHCPIn
                         memmove(info->dns2, opt + 4, IP_ALEN);
                     }
                     break;
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
                 case 12:
                     memmove(info->host, opt, len);
                     info->host[len] = '\0';
                     break;
 #endif
                 case 15:
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
                     memcpy(info->domain, opt,
                            len > sizeof(info->domain) ? sizeof(info->domain) : len);
 #else
@@ -436,7 +436,7 @@ static u8* AddRequestList(u8* opt /* r3 */) {
 
     ptr = opt;
     *ptr++ = 55;
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     *ptr++ = 7;
 #else
     *ptr++ = 2;
@@ -444,7 +444,7 @@ static u8* AddRequestList(u8* opt /* r3 */) {
     *ptr++ = 1;
     *ptr++ = 3;
     *ptr++ = 6;
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     *ptr++ = 26;
 #else
     *ptr++ = 12;
@@ -453,7 +453,7 @@ static u8* AddRequestList(u8* opt /* r3 */) {
     *ptr++ = 28;
     *ptr++ = 58;
     *ptr++ = 59;
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     opt[1] = ptr - opt - 2;
 #endif
     return ptr;
@@ -672,7 +672,7 @@ static s32 DHCPDiscover(DHCPControl* ctrl /* r31 */) {
     memmove(opt, __IFDefault.mac, 6);
     opt += 6;
     opt = AddRequestList(opt);
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     if (ctrl->hostName[0]) {
         u32 len = strlen(ctrl->hostName);
         ASSERTLINE(1006, len <= 255);
@@ -893,7 +893,7 @@ static s32 DHCPRequest(DHCPControl* ctrl /* r31 */) {
     memmove(opt, __IFDefault.mac, 6);
     opt += 6;
     opt = AddRequestList(opt);
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
     if (ctrl->hostName[0]) {
         u32 len = strlen(ctrl->hostName);
         ASSERTLINE(1323, len <= 255);
@@ -1149,7 +1149,7 @@ static int Restart(DHCPControl* ctrl /* r31 */, s64 wait /* r1+0x10 */) {
 static void NullCallback() {}
 
 // Range: 0x23B4 -> 0x24C4
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
 int DHCPStartupEx(void (*callback)(int), int rxmitMax)
 #else
 int DHCPStartupEx(void (*callback)(int), int rxmitMax, const char* hostName)
@@ -1170,7 +1170,7 @@ int DHCPStartupEx(void (*callback)(int), int rxmitMax, const char* hostName)
         memset(ctrl, 0, sizeof(DHCPControl));
         ctrl->flag |= 3;
         ctrl->rxmitMax = (rxmitMax <= 0) ? 4 : rxmitMax;
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
         if (hostName) {
             strncpy(ctrl->hostName, hostName, sizeof(ctrl->hostName));
         }
@@ -1187,7 +1187,7 @@ int DHCPStartupEx(void (*callback)(int), int rxmitMax, const char* hostName)
 
 // Range: 0x24C4 -> 0x24F4
 int DHCPStartup(void (*callback)(int) /* r1+0x8 */) {
-#ifdef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
     return DHCPStartupEx(callback, 4);
 #else
     return DHCPStartupEx(callback, 4, NULL);
@@ -1295,7 +1295,7 @@ int DHCPGetStatus(DHCPInfo* info /* r28 */) {
 }
 
 // Range: 0x2764 -> 0x2960
-#ifndef SDK_DOLPHIN_IP_2003_09
+#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
 int DHCPGetOpt(int opt /* r1+0x8 */, void* buf /* r29 */, int len /* r28 */) {
     // Local variables
     DHCPControl* ctrl; // r30
