@@ -56,6 +56,19 @@ typedef struct TRKReply {
 	/* 0x09 */ u8 _09[0x37];
 } TRKReply;
 
+void OutputData(void* data, int length)
+{
+	u8* bytes = data;
+	int i;
+	for (i = 0; i < length; i++) {
+		MWTRACE(8, "%02x ", bytes[i]);
+		if (i % 16 == 15) {
+			MWTRACE(8, "\n");
+		}
+	}
+	MWTRACE(8, "\n");
+}
+
 static inline DSError TRKSendACK(TRKBuffer* buffer)
 {
 	DSError error;

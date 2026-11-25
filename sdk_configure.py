@@ -1426,7 +1426,7 @@ def modules_for(
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/usr_put.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/dispatch.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/msghndlr.c"),
-                    Object(NonMatching, "TRK_MINNOW_DOLPHIN/support.c"),
+                    Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/support.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/mutex_TRK.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/notify.c"),
                     Object(MatchingFor("PROTO"), "TRK_MINNOW_DOLPHIN/flush_cache.c"),
