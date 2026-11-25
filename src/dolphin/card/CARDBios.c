@@ -36,14 +36,10 @@ static s32 Retry(s32 chan);
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
 BOOL OnReset(BOOL f);
-static OSResetFunctionInfo ResetFunctionInfo = {OnReset, 127};
 #else
 static BOOL OnReset(BOOL f);
-static OSResetFunctionInfo ResetFunctionInfo = {
-    OnReset,
-    OS_RESET_PRIO_CARD,
-};
 #endif
+static OSResetFunctionInfo ResetFunctionInfo = {OnReset, OS_RESET_PRIO_CARD};
 
 void __CARDDefaultApiCallback(s32 chan, s32 result) {}
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
@@ -71,14 +67,14 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   if (card->attached) {
     card->attached = FALSE;
-    EXISetExiCallback(chan, 0);
+    EXISetExiCallback(chan, NULL);
     OSCancelAlarm(&card->alarm);
     callback = card->exiCallback;
 #endif
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     if (callback) {
-      card->exiCallback = 0;
+      card->exiCallback = NULL;
       callback(chan, CARD_RESULT_NOCARD);
     }
 #else
@@ -98,17 +94,17 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
     callback = card->extCallback;
     if (callback && CARD_MAX_MOUNT_STEP <= card->mountStep) {
-      card->extCallback = 0;
+      card->extCallback = NULL;
       callback(chan, CARD_RESULT_NOCARD);
     }
 #else
   card->attached = FALSE;
-  EXISetExiCallback(chan, 0);
+  EXISetExiCallback(chan, NULL);
   OSCancelAlarm(&card->alarm);
   callback = card->exiCallback;
 
   if (callback) {
-    card->exiCallback = 0;
+    card->exiCallback = NULL;
     callback(chan, CARD_RESULT_NOCARD);
   }
 
@@ -118,7 +114,7 @@ void __CARDExtHandler(s32 chan, OSContext* context) {
 
   callback = card->extCallback;
   if (callback && CARD_MAX_MOUNT_STEP <= card->mountStep) {
-    card->extCallback = 0;
+    card->extCallback = NULL;
     callback(chan, CARD_RESULT_NOCARD);
 #endif
   }
@@ -143,7 +139,7 @@ void __CARDExiHandler(s32 chan, OSContext* context) {
     return;
   }
 
-  if (!EXILock(chan, 0, 0)) {
+  if (!EXILock(chan, 0, NULL)) {
     result = CARD_RESULT_FATAL_ERROR;
     goto fatal;
   }
@@ -167,7 +163,7 @@ error:
 fatal:
   callback = card->exiCallback;
   if (callback) {
-    card->exiCallback = 0;
+    card->exiCallback = NULL;
     callback(chan, result);
   }
 }
@@ -187,7 +183,7 @@ void __CARDTxHandler(s32 chan, OSContext* context) {
   EXIUnlock(chan);
   callback = card->txCallback;
   if (callback) {
-    card->txCallback = 0;
+    card->txCallback = NULL;
     callback(chan, (!err && EXIProbe(chan)) ? CARD_RESULT_READY : CARD_RESULT_NOCARD);
   }
 }
@@ -203,7 +199,7 @@ void __CARDUnlockedHandler(s32 chan, OSContext* context) {
   card = &__CARDBlock[chan];
   callback = card->unlockCallback;
   if (callback) {
-    card->unlockCallback = 0;
+    card->unlockCallback = NULL;
     callback(chan, EXIProbe(chan) ? CARD_RESULT_UNLOCKED : CARD_RESULT_NOCARD);
   }
 }
@@ -213,21 +209,15 @@ s32 __CARDEnableInterrupt(s32 chan, BOOL enable) {
   BOOL err;
   u32 cmd;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  if (!EXISelect(chan, 0, 4)) {
-#else
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(0 <= chan && chan < 2);
-#ifdef _DEBUG
-  if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-  if (!EXISelect(chan, 0, 4)) {
 #endif
-#endif
+  if (!EXISelect(chan, 0, CARDFreq)) {
     return CARD_RESULT_NOCARD;
   }
   cmd = enable ? 0x81010000 : 0x81000000;
   err = FALSE;
-  err |= !EXIImm(chan, &cmd, 2, 1, NULL);
+  err |= !EXIImm(chan, &cmd, 2, EXI_WRITE, NULL);
   err |= !EXISync(chan);
   err |= !EXIDeselect(chan);
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
@@ -238,24 +228,18 @@ s32 __CARDReadStatus(s32 chan, u8* status) {
   BOOL err;
   u32 cmd;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  if (!EXISelect(chan, 0, 4)) {
-#else
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   ASSERT(0 <= chan && chan < 2);
-#ifdef _DEBUG
-  if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-  if (!EXISelect(chan, 0, 4)) {
 #endif
-#endif
+  if (!EXISelect(chan, 0, CARDFreq)) {
     return CARD_RESULT_NOCARD;
   }
 
   cmd = 0x83000000;
   err = FALSE;
-  err |= !EXIImm(chan, &cmd, 2, 1, NULL);
+  err |= !EXIImm(chan, &cmd, 2, EXI_WRITE, NULL);
   err |= !EXISync(chan);
-  err |= !EXIImm(chan, status, 1, 0, NULL);
+  err |= !EXIImm(chan, status, 1, EXI_READ, NULL);
   err |= !EXISync(chan);
   err |= !EXIDeselect(chan);
   return err ? CARD_RESULT_NOCARD : CARD_RESULT_READY;
@@ -268,11 +252,7 @@ s32 __CARDReadVendorID(s32 chan, u16* id) {
   u32 cmd;
 
   ASSERT(0 <= chan && chan < 2);
-#ifdef _DEBUG
-  if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-  if (!EXISelect(chan, 0, 4)) {
-#endif
+  if (!EXISelect(chan, 0, CARDFreq)) {
     return CARD_RESULT_NOCARD;
   }
 
@@ -292,21 +272,13 @@ s32 __CARDClearStatus(s32 chan) {
   BOOL err;
   u32 cmd;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  if (!EXISelect(chan, 0, 4)) {
-#else
-#ifdef _DEBUG
-  if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-  if (!EXISelect(chan, 0, 4)) {
-#endif
-#endif
+  if (!EXISelect(chan, 0, CARDFreq)) {
     return CARD_RESULT_NOCARD;
   }
 
   cmd = 0x89000000;
   err = FALSE;
-  err |= !EXIImm(chan, &cmd, 1, 1, 0);
+  err |= !EXIImm(chan, &cmd, 1, EXI_WRITE, NULL);
   err |= !EXISync(chan);
   err |= !EXIDeselect(chan);
 
@@ -320,11 +292,7 @@ s32 __CARDSleep(s32 chan) {
   u32 cmd;
 
   ASSERT(0 <= chan && chan < 2);
-#ifdef _DEBUG
-  if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-  if (!EXISelect(chan, 0, 4)) {
-#endif
+  if (!EXISelect(chan, 0, CARDFreq)) {
     return CARD_RESULT_NOCARD;
   }
 
@@ -342,11 +310,7 @@ s32 __CARDWakeup(s32 chan) {
   u32 cmd;
 
   ASSERT(0 <= chan && chan < 2);
-#ifdef _DEBUG
-  if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-  if (!EXISelect(chan, 0, 4)) {
-#endif
+  if (!EXISelect(chan, 0, CARDFreq)) {
     return CARD_RESULT_NOCARD;
   }
 
@@ -384,7 +348,7 @@ static void TimeoutHandler(OSAlarm* alarm, OSContext* context) {
   EXISetExiCallback(chan, NULL);
   callback = card->exiCallback;
   if (callback) {
-    card->exiCallback = 0;
+    card->exiCallback = NULL;
     callback(chan, CARD_RESULT_IOERROR);
   }
 }
@@ -430,29 +394,21 @@ static s32 Retry(s32 chan) {
 #endif
   card = &__CARDBlock[chan];
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  if (!EXISelect(chan, 0, 4)) {
-#else
-#ifdef _DEBUG
-  if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-  if (!EXISelect(chan, 0, 4)) {
-#endif
-#endif
+  if (!EXISelect(chan, 0, CARDFreq)) {
     EXIUnlock(chan);
     return CARD_RESULT_NOCARD;
   }
 
   SetupTimeoutAlarm(card);
 
-  if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1)) {
+  if (!EXIImmEx(chan, card->cmd, card->cmdlen, EXI_WRITE)) {
     EXIDeselect(chan);
     EXIUnlock(chan);
     return CARD_RESULT_NOCARD;
   }
 
   if (card->cmd[0] == 0x52 &&
-      !EXIImmEx(chan, (u8*)card->workArea + sizeof(CARDID), card->latency, 1)) {
+      !EXIImmEx(chan, (u8*)card->workArea + sizeof(CARDID), card->latency, EXI_WRITE)) {
     EXIDeselect(chan);
     EXIUnlock(chan);
     return CARD_RESULT_NOCARD;
@@ -465,9 +421,9 @@ static s32 Retry(s32 chan) {
   }
 
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  if (!EXIDma(chan, card->buffer, (s32)((card->cmd[0] == 0x52) ? 512 : 128), card->mode,
+  if (!EXIDma(chan, card->buffer, card->cmd[0] == 0x52 ? CARD_SEG_SIZE : CARD_PAGE_SIZE, card->mode,
 #else
-  if (!EXIDma(chan, card->buffer, (s32)((card->cmd[0] == 0x52) ? 512 : card->pageSize), card->mode,
+  if (!EXIDma(chan, card->buffer, card->cmd[0] == 0x52 ? CARD_SEG_SIZE : card->pageSize, card->mode,
 #endif
               __CARDTxHandler)) {
     EXIDeselect(chan);
@@ -492,7 +448,7 @@ static void UnlockedCallback(s32 chan, s32 result) {
     if (!EXILock(chan, 0, __CARDUnlockedHandler)) {
       result = CARD_RESULT_READY;
     } else {
-      card->unlockCallback = 0;
+      card->unlockCallback = NULL;
       result = Retry(chan);
     }
   }
@@ -502,7 +458,7 @@ static void UnlockedCallback(s32 chan, s32 result) {
     case 0x52:
       callback = card->txCallback;
       if (callback) {
-        card->txCallback = 0;
+        card->txCallback = NULL;
         callback(chan, result);
       }
 
@@ -512,7 +468,7 @@ static void UnlockedCallback(s32 chan, s32 result) {
     case 0xF1:
       callback = card->exiCallback;
       if (callback) {
-        card->exiCallback = 0;
+        card->exiCallback = NULL;
         callback(chan, result);
       }
       break;
@@ -546,17 +502,9 @@ static s32 __CARDStart(s32 chan, CARDCallback txCallback, CARDCallback exiCallba
     if (!EXILock(chan, 0, __CARDUnlockedHandler)) {
       result = CARD_RESULT_BUSY;
     } else {
-      card->unlockCallback = 0;
+      card->unlockCallback = NULL;
 
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-      if (!EXISelect(chan, 0, 4)) {
-#else
-#ifdef _DEBUG
-      if (!EXISelect(chan, 0, __CARDFreq)) {
-#else
-      if (!EXISelect(chan, 0, 4)) {
-#endif
-#endif
+      if (!EXISelect(chan, 0, CARDFreq)) {
         EXIUnlock(chan);
         result = CARD_RESULT_NOCARD;
       } else {
@@ -571,7 +519,7 @@ static s32 __CARDStart(s32 chan, CARDCallback txCallback, CARDCallback exiCallba
 }
 
 #define AD1(x) ((u8)(((x) >> 17) & 0x7f))
-#define AD1EX(x) ((u8)(AD1(x) | 0x80));
+#define AD1EX(x) ((u8)(AD1(x) | 0x80))
 #define AD2(x) ((u8)(((x) >> 9) & 0xff))
 #define AD3(x) ((u8)(((x) >> 7) & 0x03))
 #define BA(x) ((u8)((x)&0x7f))
@@ -598,18 +546,18 @@ s32 __CARDReadSegment(s32 chan, CARDCallback callback) {
   card->cmd[3] = AD3(card->addr);
   card->cmd[4] = BA(card->addr);
   card->cmdlen = 5;
-  card->mode = 0;
+  card->mode = EXI_READ;
   card->retry = 0;
 
-  result = __CARDStart(chan, callback, 0);
+  result = __CARDStart(chan, callback, NULL);
   if (result == CARD_RESULT_BUSY) {
     result = CARD_RESULT_READY;
   } else if (result >= 0) {
-    if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1) ||
+    if (!EXIImmEx(chan, card->cmd, card->cmdlen, EXI_WRITE) ||
         !EXIImmEx(chan, (u8*)card->workArea + sizeof(CARDID), card->latency,
-                  1) || // XXX use DMA if possible
-        !EXIDma(chan, card->buffer, 512, card->mode, __CARDTxHandler)) {
-      card->txCallback = 0;
+                  EXI_WRITE) || // XXX use DMA if possible
+        !EXIDma(chan, card->buffer, CARD_SEG_SIZE, card->mode, __CARDTxHandler)) {
+      card->txCallback = NULL;
       EXIDeselect(chan);
       EXIUnlock(chan);
       result = CARD_RESULT_NOCARD;
@@ -650,20 +598,20 @@ s32 __CARDWritePage(s32 chan, CARDCallback callback) {
   card->cmd[3] = AD3(card->addr);
   card->cmd[4] = BA(card->addr);
   card->cmdlen = 5;
-  card->mode = 1;
+  card->mode = EXI_WRITE;
   card->retry = 3;
 
-  result = __CARDStart(chan, 0, callback);
+  result = __CARDStart(chan, NULL, callback);
   if (result == CARD_RESULT_BUSY) {
     result = CARD_RESULT_READY;
   } else if (result >= 0) {
-    if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1) ||
+    if (!EXIImmEx(chan, card->cmd, card->cmdlen, EXI_WRITE) ||
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-        !EXIDma(chan, card->buffer, 128, card->mode, __CARDTxHandler)) {
+        !EXIDma(chan, card->buffer, CARD_PAGE_SIZE, card->mode, __CARDTxHandler)) {
 #else
         !EXIDma(chan, card->buffer, card->pageSize, card->mode, __CARDTxHandler)) {
 #endif
-      card->exiCallback = 0;
+      card->exiCallback = NULL;
       EXIDeselect(chan);
       EXIUnlock(chan);
       result = CARD_RESULT_NOCARD;
@@ -689,13 +637,13 @@ s32 __CARDErase(s32 chan, CARDCallback callback) {
   card->mode = -1;
   card->retry = 3;
 
-  result = __CARDStart(chan, 0, callback);
+  result = __CARDStart(chan, NULL, callback);
   if (result == CARD_RESULT_BUSY) {
     result = CARD_RESULT_READY;
   } else if (0 <= result) {
     if (!EXIImmEx(chan, card->cmd, card->cmdlen, EXI_WRITE)) {
       result = CARD_RESULT_NOCARD;
-      card->exiCallback = 0;
+      card->exiCallback = NULL;
     } else {
       result = CARD_RESULT_READY;
     }
@@ -737,12 +685,12 @@ s32 __CARDEraseSector(s32 chan, u32 addr, CARDCallback callback) {
   card->mode = -1;
   card->retry = 3;
 
-  result = __CARDStart(chan, 0, callback);
+  result = __CARDStart(chan, NULL, callback);
 
   if (result == CARD_RESULT_BUSY) {
     result = CARD_RESULT_READY;
   } else if (result >= 0) {
-    if (!EXIImmEx(chan, card->cmd, card->cmdlen, 1)) {
+    if (!EXIImmEx(chan, card->cmd, card->cmdlen, EXI_WRITE)) {
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
       result = CARD_RESULT_NOCARD;
 #endif
@@ -849,7 +797,7 @@ s32 __CARDGetControlBlock(s32 chan, CARDControl** pcard) {
   } else {
     card->result = CARD_RESULT_BUSY;
     result = CARD_RESULT_READY;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
     *pcard = card;
   }
   OSRestoreInterrupts(enabled);
@@ -902,7 +850,7 @@ s32 CARDFreeBlocks(s32 chan, s32* byteNotUsed, s32* filesNotUsed) {
 
   fat = __CARDGetFatBlock(card);
   dir = __CARDGetDirBlock(card);
-  if (fat == 0 || dir == 0) {
+  if (fat == NULL || dir == NULL) {
     return __CARDPutControlBlock(card, CARD_RESULT_BROKEN);
   }
 
@@ -939,12 +887,7 @@ s32 CARDGetEncoding(s32 chan, u16* encode) {
   id = (CARDID*)card->workArea;
 #endif
   *encode = id->encode;
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  return __CARDPutControlBlock(card, 0);
-#else
-
   return __CARDPutControlBlock(card, CARD_RESULT_READY);
-#endif
 }
 
 s32 CARDGetMemSize(s32 chan, u16* size) {
@@ -956,12 +899,7 @@ s32 CARDGetMemSize(s32 chan, u16* size) {
     return result;
   }
   *size = card->size;
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  return __CARDPutControlBlock(card, 0);
-#else
-
   return __CARDPutControlBlock(card, CARD_RESULT_READY);
-#endif
 }
 
 s32 CARDGetSectorSize(s32 chan, u32* size) {
@@ -974,13 +912,10 @@ s32 CARDGetSectorSize(s32 chan, u32* size) {
   }
 #if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
   *size = card->sectorSize;
-  return __CARDPutControlBlock(card, 0);
 #else
-
   *size = (u32)card->sectorSize;
-
-  return __CARDPutControlBlock(card, CARD_RESULT_READY);
 #endif
+  return __CARDPutControlBlock(card, CARD_RESULT_READY);
 }
 
 s32 __CARDSync(s32 chan) {
@@ -994,11 +929,7 @@ s32 __CARDSync(s32 chan) {
 
   card = &__CARDBlock[chan];
   enabled = OSDisableInterrupts();
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  while ((result = CARDGetResultCode(chan)) == -1) {
-#else
   while ((result = CARDGetResultCode(chan)) == CARD_RESULT_BUSY) {
-#endif
     OSSleepThread(&card->threadQueue);
   }
   OSRestoreInterrupts(enabled);

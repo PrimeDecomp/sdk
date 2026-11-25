@@ -53,16 +53,16 @@ void TRKTraceBufferHex(u8* data, int len);
 DSError TRKSuppAccessFile(u32 file_handle, u8* data, size_t* count,
                           DSIOResult* io_result, BOOL need_reply, BOOL read)
 {
-	u16 replyLength;
-	TRKBuffer* replyBuffer;
-	u8 replyIOResult;
 	DSError error;
-	BOOL exit;
-	u32 done;
-	u32 length;
 	int replyBufferId;
+	TRKBuffer* replyBuffer;
+	u32 length;
 	int bufferId;
 	TRKBuffer* buffer;
+	u32 done;
+	u8 replyIOResult;
+	u32 replyLength;
+	BOOL exit;
 	DSFileRequest req;
 
 	if (data == NULL || *count == 0) {
@@ -95,7 +95,7 @@ DSError TRKSuppAccessFile(u32 file_handle, u8* data, size_t* count,
 
 		if (error == DS_NoError) {
 			if (need_reply) {
-				error = TRKRequestSend(buffer, &replyBufferId, 5, 3,
+				error = TRKRequestSend(buffer, &replyBufferId, read ? 5 : 5, 3,
 				                       !(read && file_handle == 0));
 				if (error == DS_NoError) {
 					replyBuffer = (TRKBuffer*)TRKGetBuffer(replyBufferId);

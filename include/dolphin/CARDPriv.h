@@ -138,6 +138,12 @@ extern u8 __CARDPermMask;
 extern u32 __CARDFreq;
 #endif
 
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04 && defined(_DEBUG)
+#define CARDFreq __CARDFreq
+#else
+#define CARDFreq EXI_FREQ_16M
+#endif
+
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #define CARD_DIR_PERM_PUBLIC 0x04u
 #define CARD_DIR_PERM_NO_COPY 0x08u

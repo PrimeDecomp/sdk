@@ -94,40 +94,39 @@ int wctomb(char* s, wchar_t wchar) { return (unicode_to_UTF8(s, wchar)); }
 #if defined(RVL_PROTO_RUNTIME)
 // Guessed name
 static int is_utf8_complete(const char* s, size_t n);
-#endif
 
-int mbtowc(wchar_t *dst, const char *src, size_t n) {
-#if defined(RVL_PROTO_RUNTIME)
-  unsigned int decoded = 0;
-  wchar_t wide_char;
+static int utf8_to_unicode(wchar_t* dst, const char* src, size_t n) {
   int bytes, expected;
-  const unsigned char* p;
+  char* p;
+  wchar_t wide_char = 0;
 
   if (!src)
     return 0;
-  if (!n)
+
+  if (n <= 0)
     return -1;
 
   bytes = is_utf8_complete(src, n);
   if (bytes < 0)
     return -1;
 
-  p = (const unsigned char*)src;
+  p = (char*)src;
   switch (bytes) {
   case 3:
-    decoded = (*p++ & 0x0f) << 6;
+    wide_char |= (*p++ & 0x0f);
+    wide_char <<= 6;
   case 2:
-    decoded = (decoded | (*p++ & 0x3f)) << 6;
+    wide_char |= (*p++ & 0x3f);
+    wide_char <<= 6;
   case 1:
-    decoded |= *p & 0x7f;
+    wide_char |= (*p++ & 0x7f);
   }
 
-  wide_char = (wchar_t)decoded;
-  if (!wide_char)
+  if (wide_char == 0)
     expected = 0;
-  else if (wide_char < 0x80)
+  else if (wide_char < 0x0080)
     expected = 1;
-  else if (wide_char < 0x800)
+  else if (wide_char < 0x0800)
     expected = 2;
   else
     expected = 3;
@@ -137,7 +136,14 @@ int mbtowc(wchar_t *dst, const char *src, size_t n) {
 
   if (dst)
     *dst = wide_char;
+
   return bytes;
+}
+#endif
+
+int mbtowc(wchar_t *dst, const char *src, size_t n) {
+#if defined(RVL_PROTO_RUNTIME)
+  return utf8_to_unicode(dst, src, n);
 #else
   return _current_locale.ctype_cmpt_ptr->decode_mb(dst, src, n);
 #endif
