@@ -33,7 +33,7 @@ static void WriteCallback(s32 chan, s32 result) {
     ent = &dir[fileInfo->fileNo];
     ent->time = (u32)OSTicksToSeconds(OSGetTime());
     callback = card->apiCallback;
-    card->apiCallback = 0;
+    card->apiCallback = NULL;
     result = __CARDUpdateDir(chan, callback);
   } else {
     fat = __CARDGetFatBlock(card);
@@ -53,7 +53,7 @@ static void WriteCallback(s32 chan, s32 result) {
 
 error:
   callback = card->apiCallback;
-  card->apiCallback = 0;
+  card->apiCallback = NULL;
   __CARDPutControlBlock(card, result);
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 #line 134
@@ -86,10 +86,10 @@ static void EraseCallback(s32 chan, s32 result) {
 
 error:
   callback = card->apiCallback;
-  card->apiCallback = 0;
+  card->apiCallback = NULL;
   __CARDPutControlBlock(card, result);
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
-
+#line 176 // ASSERT below must report line 176 (debug builds); recompute on edit
   ASSERT(callback);
 #endif
   callback(chan, result);
@@ -151,5 +151,4 @@ s32 CARDWrite(CARDFileInfo* fileInfo, const void* buf, s32 length, s32 offset) {
   }
   return __CARDSync(fileInfo->chan);
 }
-
 #endif
