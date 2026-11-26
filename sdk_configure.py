@@ -1331,7 +1331,7 @@ def modules_for(
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPRoute.c"),
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPSocket.c"),
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPTcpUser.c"),
-                Object(NonMatching, "dolphin/ip/IPTcp.c"),
+                Object(MatchingFor("PROTO"), "dolphin/ip/IPTcp.c"),
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPTcpOutput.c"),
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPTcpTimeWait.c"),
                 Object(MatchingFor("PROTO"), "dolphin/ip/IPTcpTimer.c"),
