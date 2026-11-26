@@ -9,7 +9,7 @@ extern "C" {
 #endif
 
 extern IPInterface __IFDefault;
-#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
+#if !SDK_IP_2003_09_OR_EARLIER
 extern SOResolver __SOResolver;
 #endif
 extern PPPConf PPPLcpConf;

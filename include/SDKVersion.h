@@ -47,6 +47,13 @@
 // Separately installed GameCube Socket Library builds, selected by SDK_IP_VERSION.
 #define SDK_IP_VERSION_2003_09 20030925
 
+// The older socket library uses the same date range for code and data layouts.
+#if defined(SDK_IP_VERSION) && SDK_IP_VERSION > 0 && SDK_IP_VERSION <= SDK_IP_VERSION_2003_09
+#define SDK_IP_2003_09_OR_EARLIER 1
+#else
+#define SDK_IP_2003_09_OR_EARLIER 0
+#endif
+
 #ifndef SDK_VERSION
 #error "SDK_VERSION is not defined: the game's build configuration must define it to one of the SDK_VERSION_* values"
 #endif

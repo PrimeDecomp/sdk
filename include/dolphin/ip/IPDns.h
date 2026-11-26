@@ -79,7 +79,7 @@ struct DNSInfo {
     // total size: 0x560
     UDPInfo udp; // offset 0x0, size 0xF0
     IPSocket socket; // offset 0xF0, size 0x8
-#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
+#if SDK_IP_2003_09_OR_EARLIER
     DNSCallback callback;
     OSTime rxmit;
     OSAlarm alarm;
@@ -117,7 +117,7 @@ struct DNSInfo {
 
 s32 DNSClose(DNSInfo * info /* r31 */);
 s32 DNSOpen(DNSInfo * info /* r1+0x8 */, const unsigned char * addr /* r1+0xC */);
-#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
+#if !SDK_IP_2003_09_OR_EARLIER
 s32 DNSOpen2(DNSInfo * info /* r31 */, const unsigned char * dns1 /* r27 */, const unsigned char * dns2 /* r28 */);
 #endif
 void DNSDumpPacket(DNSHeader* dns);

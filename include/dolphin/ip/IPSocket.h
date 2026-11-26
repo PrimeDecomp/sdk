@@ -65,7 +65,7 @@ typedef struct SOResolver {
     char* zero; // offset 0x670, size 0x4
     u8 addrList[140]; // offset 0x674, size 0x8C
     u8* ptrList[36]; // offset 0x700, size 0x90
-#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
+#if SDK_IP_2003_09_OR_EARLIER
     u8 dns1[4];
     u8 dns2[4];
 #endif
@@ -93,13 +93,13 @@ typedef struct SOConfig {
     const char* peerid; // offset 0x40, size 0x4
     const char* passwd; // offset 0x44, size 0x4
     const char* serviceName; // offset 0x48, size 0x4
-#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
+#if SDK_IP_2003_09_OR_EARLIER
     const char* acName; // offset 0x4C, size 0x4
 #else
     const char* hostName; // offset 0x4C, size 0x4
 #endif
     s32 rdhcp; // offset 0x50, size 0x4
-#if SDK_IP_VERSION != SDK_IP_VERSION_2003_09
+#if !SDK_IP_2003_09_OR_EARLIER
     s32 udpSendBuff; // offset 0x54, size 0x4
     s32 udpRecvBuff; // offset 0x58, size 0x4
 #endif

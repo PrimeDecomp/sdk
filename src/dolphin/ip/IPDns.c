@@ -1,6 +1,6 @@
 #include <SDKVersion.h>
 
-#if SDK_IP_VERSION == SDK_IP_VERSION_2003_09
+#if SDK_IP_2003_09_OR_EARLIER
 #include <dolphin/private/ip.h>
 
 typedef DNSInfo DNSCtx;
