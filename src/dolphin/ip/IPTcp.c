@@ -215,7 +215,11 @@ static int DoOption(TCPInfo* info /* r29 */, IPHeader*, TCPHeader* tcp /* r28 */
                 if (len == 4 && (tcp->flag & TCP_FLAG_SYN)) {
                     mss = *(u16*)(opt + 2);
                     info->mss = MIN(mss, info->mss);
+#if SDK_IP_2003_09_OR_EARLIER
+                    info->cWin = info->mss;
+#else
                     info->cWin = 2 * info->mss;
+#endif
                     info->ssThresh = 65535;
                 }
                 break;
@@ -277,7 +281,9 @@ void TCPRespond(IPInterface* interface /* r25 */, TCPInfo* info /* r27 */, u8* d
     len = sizeof(IFDatagram) + sizeof(IPHeader) + sizeof(TCPHeader) + optlen;
     datagram = interface->alloc(interface, len);
     if (datagram != NULL) {
+#if !SDK_IP_2003_09_OR_EARLIER
         IFInitDatagram(datagram, ETH_IP, 1);
+#endif
         ip = (IPHeader*)(datagram + 1);
         memmove(ip->dst, dstAddr, IP_ALEN);
         memmove(ip->src, srcAddr, IP_ALEN);
@@ -299,8 +305,17 @@ void TCPRespond(IPInterface* interface /* r25 */, TCPInfo* info /* r27 */, u8* d
         tcp->sum = 0;
         tcp->urg = 0;
 
+#if SDK_IP_2003_09_OR_EARLIER
+        datagram->nVec = 1;
+#endif
         datagram->vec[0].data = ip;
         datagram->vec[0].len = ip->len;
+#if SDK_IP_2003_09_OR_EARLIER
+        datagram->callback = NULL;
+        datagram->param = NULL;
+        datagram->queue = NULL;
+        datagram->flag = 0;
+#endif
         if (IPOut(datagram) < 0) {
             interface->free(interface, datagram, len);
         }
@@ -346,7 +361,11 @@ static int TCPTrimSegment(TCPInfo* info /* r31 */, TCPHeader* tcp /* r30 */, u16
     ASSERTLINE(654, flag);
     ASSERTLINE(655, TCP_STATE_SYN_RECEIVED <= info->state);
 
+#if SDK_IP_2003_09_OR_EARLIER
+    *flag = (0 < info->segLen) ? TCP_FLAG_ACK : 0;
+#else
     *flag = 0;
+#endif
     drop = info->recvNext - tcp->seq;
     if (0 < drop) {
         *flag |= TCP_FLAG_ACK;
@@ -812,7 +831,11 @@ static TCPInfo* DoListen(IPInterface* interface /* r22 */, TCPInfo* info /* r30 
     memmove(header->src, ip->dst, IP_ALEN);
 
     accepted->mss = interface->mtu - 40;
+#if SDK_IP_2003_09_OR_EARLIER
+    accepted->cWin = accepted->mss;
+#else
     accepted->cWin = 2 * accepted->mss;
+#endif
     accepted->ssThresh = 65535;
 
     accepted->iss = TCPIsn(&accepted->pair);
@@ -1012,7 +1035,9 @@ static void DoData(IPInterface* interface /* r1+0x10 */, TCPInfo* info /* r31 */
 
     if (tcp->flag & TCP_FLAG_FIN) {
         info->recvNext++;
+#if !SDK_IP_2003_09_OR_EARLIER
         flag |= TCP_FLAG_ACK;
+#endif
         switch (info->state) {
             case TCP_STATE_SYN_RECEIVED:
                 ASSERTLINE(1787, info->openCallback == NULL);
@@ -1088,9 +1113,11 @@ s32 TCPSendIn(TCPInfo* info /* r31 */, BOOL nonblock /* r28 */) {
     } else {
         useable = info->sendBuff - info->sendLen;
         len = MIN(useable, info->userSendLen);
+#if !SDK_IP_2003_09_OR_EARLIER
         if (nonblock && len <= 0) {
             return 0;
         }
+#endif
     }
 
     if (0 < len) {
@@ -1191,7 +1218,11 @@ void TCPSourceQuench(IPHeader* ip /* r30 */, const u8*) {
     tcp = (TCPHeader*)((u8*)ip + IP_HLEN(ip));
     info = (TCPInfo*)IPLookupInfo(&TCPInfoQueue, ip->dst, ip->src, tcp->dst, tcp->src, 0);
     if (info) {
+#if SDK_IP_2003_09_OR_EARLIER
+        info->cWin = info->mss;
+#else
         info->cWin = 2 * info->mss;
+#endif
     }
 }
 
