@@ -10,9 +10,7 @@
 u16 __CARDVendorID = 0xffff;
 #if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 u8 __CARDPermMask = CARD_DIR_PERM_PUBLIC | CARD_DIR_PERM_NO_COPY | CARD_DIR_PERM_NO_MOVE;
-#endif
 
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
 u16 CARDSetVendorID(u16 vendorID) {
   u16 prevID;
   prevID = __CARDVendorID;
@@ -21,24 +19,17 @@ u16 CARDSetVendorID(u16 vendorID) {
 }
 
 u16 CARDGetVendorID() { return __CARDVendorID; }
-
-#line 98
 #endif
+
 s32 CARDGetSerialNo(s32 chan, u64* serialNo) {
   CARDControl* card;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   s32 result;
-#endif
   CARDID* id;
-#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
   u64 code;
-#endif
   int i;
-#if SDK_VERSION <= SDK_VERSION_DOLPHIN_2003_02
-  u64 code;
-  s32 result;
-#else
 
+#if SDK_VERSION >= SDK_VERSION_DOLPHIN_2003_04
+#line 114 // ASSERT below must report line 114 (debug builds); recompute on edit
   ASSERT(0 <= chan && chan < 2);
 #endif
 
